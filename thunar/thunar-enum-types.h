@@ -346,6 +346,8 @@ thunar_zoom_level_value_from_string (const gchar     *value_string,
  * @THUNAR_JOB_RESPONSE_SKIP_ALL    :
  * @THUNAR_JOB_RESPONSE_RENAME      :
  * @THUNAR_JOB_RESPONSE_RENAME_ALL  :
+ * @THUNAR_JOB_RESPONSE_MERGE       :
+ * @THUNAR_JOB_RESPONSE_MERGE_ALL   :
  *
  * Possible responses for the ThunarJob::ask signal.
  **/
@@ -364,6 +366,8 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_SKIP_ALL = 1 << 10,
   THUNAR_JOB_RESPONSE_RENAME = 1 << 11,
   THUNAR_JOB_RESPONSE_RENAME_ALL = 1 << 12,
+  THUNAR_JOB_RESPONSE_MERGE = 1 << 13,
+  THUNAR_JOB_RESPONSE_MERGE_ALL = 1 << 14,
 } ThunarJobResponse;
 #define THUNAR_JOB_RESPONSE_MAX_INT 12
 

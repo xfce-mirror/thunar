@@ -122,8 +122,6 @@ struct _ThunarTransferNode
   GFile     *source_file;
   GFileInfo *source_file_info;
   GFile     *target_file;
-  gboolean   replace_confirmed;
-  gboolean   rename_confirmed;
 
   /* List of type <ThunarTransferNode> */
   GList *child_nodes;
@@ -416,8 +414,6 @@ thunar_transfer_job_create_new_node (ThunarTransferJob *job,
   new_node->source_file = g_object_ref (source_file);
   new_node->source_file_info = g_object_ref (source_file_info);
   new_node->target_file = NULL;
-  new_node->replace_confirmed = FALSE;
-  new_node->rename_confirmed = FALSE;
   new_node->child_nodes = NULL;
 
   /* Update the total size of the file operation */
@@ -458,11 +454,9 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return FALSE;
 
+  /* Ignore if we already collected the subfiles for this node */
   if (node->child_nodes != NULL)
-    {
-      g_warning ("subfiles for the directory %s already got collected ... skipping", g_file_info_get_display_name (node->source_file_info));
-      return FALSE;
-    }
+    return FALSE;
 
   /* check if we have a directory here */
   if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
@@ -514,7 +508,6 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
 
           target_file = g_file_get_child (node->target_file, child_base_name);
           child_node = thunar_transfer_job_create_new_node (job, lp->data, child_info, target_file);
-          child_node->replace_confirmed = node->replace_confirmed;
 
           /* add the child node into the list of child nodes */
           node->child_nodes = g_list_append (node->child_nodes, child_node);
@@ -680,9 +673,7 @@ ttj_copy_file (ThunarTransferJob  *job,
               && source_type == G_FILE_TYPE_DIRECTORY
               && target_type == G_FILE_TYPE_DIRECTORY))
         {
-          /* we tried to overwrite a directory with a directory. this normally results
-           * in a merge. ignore that error, since we actually *want* to merge */
-          g_clear_error (&err);
+          /* we tried to overwrite a directory with a directory. Propagate the error, so that the user can decide what to do */
 
           /* in case of a merge, do not register the directory, its descendants
            * will be registered because of the recursion either way */
@@ -755,52 +746,38 @@ ttj_copy_file (ThunarTransferJob  *job,
 /**
  * thunar_transfer_job_copy_file:
  * @job                : a #ThunarTransferJob.
- * @source_file        : the source #GFile to copy.
- * @target_file        : the destination #GFile to copy to.
- * @replace_confirmed  : whether the user has already confirmed that this file should replace an existing one
- * @rename_confirmed   : whether the user has already confirmed that this file should be renamed to a new unique file name
+ * @node               : The node containing all relevant copy information
  * @error              : return location for errors or %NULL.
  *
- * Tries to copy @source_file to @target_file. The real destination is the
- * return value and may differ from @target_file (e.g. if you try to copy
+ * Tries to copy node->source_file to node->target_file. The real destination is the
+ * return value and may differ from node->target_file (e.g. if you try to copy
  * the file "/foo/bar" into the same directory you'll end up with something
  * like "/foo/copy of bar" instead of "/foo/bar"). If an existing file would
- * be replaced, the user is asked to confirm replace or rename it unless
- * @replace_confirmed or @rename_confirmed is TRUE.
+ * be replaced, the user is asked to confirm replace or rename it.
  *
  * The return value is guaranteed to be %NULL on errors and @error will
- * always be set in those cases. If the file is skipped, the return value
- * will be @source_file.
+ * always be set in those cases.
  *
- * Return value: the destination #GFile to which @source_file was copied
- *               or linked. The caller is reposible to release it with
- *               g_object_unref() if no longer needed. It points to
- *               @source_file if the file was skipped and will be %NULL
- *               on error or cancellation.
+ * Return value: If the file is skipped, renamed, merged or replaced, the according #ThunarJobResponse will be returned
  **/
-static GFile *
+static ThunarJobResponse
 thunar_transfer_job_copy_file (ThunarTransferJob  *job,
                                ThunarJobOperation *operation,
-                               GFile              *source_file,
-                               GFile              *target_file,
-                               gboolean            replace_confirmed,
-                               gboolean            rename_confirmed,
+                               ThunarTransferNode *node,
                                GError            **error)
 {
-  ThunarJobResponse response;
-  GFile            *dest_file = target_file;
+  ThunarJobResponse response = 0;
+  GFile            *dest_file = node->target_file;
   GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
   GError           *err = NULL;
   gint              n_rename = 0;
 
-  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE (target_file), NULL);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), 0);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, 0);
 
   /* abort on cancellation */
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
-    return NULL;
+    return response;
 
   /* various attempts to copy the file */
   while (err == NULL)
@@ -809,16 +786,26 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
 
       thunar_transfer_job_check_pause (job);
 
-      if (G_LIKELY (!g_file_equal (source_file, dest_file)))
-        target = g_object_ref (dest_file);
+      if (G_LIKELY (!g_file_equal (node->source_file, dest_file)))
+        {
+          target = g_object_ref (dest_file);
+        }
       else
-        target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), source_file, THUNAR_NEXT_FILE_NAME_MODE_COPY, &err);
+        {
+          target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), node->source_file, THUNAR_NEXT_FILE_NAME_MODE_COPY, &err);
+          response = THUNAR_JOB_RESPONSE_RENAME;
+        }
 
       if (err == NULL)
         {
           /* try to copy the file from source file to the duplicate file */
-          if (ttj_copy_file (job, operation, source_file, target, copy_flags, &err))
-            return target;
+          if (ttj_copy_file (job, operation, node->source_file, target, copy_flags, &err))
+            {
+              /* update the target file */
+              g_object_unref (node->target_file);
+              node->target_file = g_object_ref (target);
+              return response;
+            }
           else /* go to error case */
             g_object_unref (target);
         }
@@ -829,14 +816,11 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
           /* reset the error */
           g_clear_error (&err);
 
-          /* if necessary, ask the user whether to replace or rename the target file */
-          if (replace_confirmed)
-            response = THUNAR_JOB_RESPONSE_REPLACE;
-          else if (rename_confirmed)
-            response = THUNAR_JOB_RESPONSE_RENAME;
+          /* if necessary, ask the user whether to replace / rename / merge */
+          if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
+            response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, dest_file, &err); // thunar_job_ask_merge
           else
-            response = thunar_job_ask_replace (THUNAR_JOB (job), source_file,
-                                               dest_file, &err);
+            response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, dest_file, &err);
 
           if (err != NULL)
             break;
@@ -844,15 +828,19 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
           /* add overwrite flag and retry if we should overwrite */
           if (response == THUNAR_JOB_RESPONSE_REPLACE)
             {
-              replace_confirmed = TRUE;
               copy_flags |= G_FILE_COPY_OVERWRITE;
               continue;
+            }
+          else if (response == THUNAR_JOB_RESPONSE_MERGE)
+            {
+              /* Skip that file (already exists) */
+              return response;
             }
           else if (response == THUNAR_JOB_RESPONSE_RENAME)
             {
               GFile *renamed_file;
               renamed_file = thunar_io_jobs_util_next_renamed_file (THUNAR_JOB (job),
-                                                                    source_file,
+                                                                    node->source_file,
                                                                     dest_file,
                                                                     ++n_rename, &err);
               if (renamed_file != NULL)
@@ -862,22 +850,20 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
                   else
                     {
                       dest_file = renamed_file;
-                      rename_confirmed = TRUE;
                     }
                 }
             }
 
-          /* tell the caller we skipped the file if the user
-           * doesn't want to retry/overwrite */
+          /* tell the caller we skipped the file if the user doesn't want to retry/overwrite */
           if (response == THUNAR_JOB_RESPONSE_SKIP)
-            return g_object_ref (source_file);
+            return THUNAR_JOB_RESPONSE_SKIP;
         }
     }
 
   _thunar_assert (err != NULL);
 
   g_propagate_error (error, err);
-  return NULL;
+  return response;
 }
 
 
@@ -896,6 +882,54 @@ thunar_transfer_node_reparent_target_recursive (ThunarTransferNode *node,
 
   for (GList *lp = node->child_nodes; lp != NULL; lp = lp->next)
     thunar_transfer_node_reparent_target_recursive (lp->data, node->target_file);
+}
+
+
+
+static void
+thunar_transfer_job_remove_node (ThunarTransferJob  *job,
+                                 ThunarTransferNode *node)
+{
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
+  g_autoptr (ThunarApplication) application = NULL;
+  ThunarJobResponse response;
+  GError           *err = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
+  _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+
+  while (TRUE)
+    {
+      thunar_transfer_job_check_pause (job);
+
+      if (g_file_delete (node->source_file,
+                         thunar_job_get_cancellable (THUNAR_JOB (job)),
+                         &err))
+        {
+          /* notify the thumbnail cache of the delete operation */
+          thunar_thumbnail_cache_delete_file (thumbnail_cache, node->source_file);
+          return;
+        }
+      else
+        {
+          /* ask the user to retry */
+          response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to move file \"%s\": %s"),
+                                          g_file_info_get_display_name (node->source_file_info),
+                                          err->message);
+
+          /* reset the error */
+          g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+            continue;
+
+          return;
+        }
+    }
 }
 
 
@@ -928,20 +962,24 @@ retry_copy:
   thunar_transfer_job_check_pause (job);
 
   /* copy the item specified by this node (not recursively) */
-  real_target_file = thunar_transfer_job_copy_file (job, operation,
-                                                    node->source_file,
-                                                    node->target_file,
-                                                    node->replace_confirmed,
-                                                    node->rename_confirmed,
-                                                    &err);
-  if (G_LIKELY (real_target_file != NULL))
+  response = thunar_transfer_job_copy_file (job, operation, node, &err);
+  if (err == NULL)
     {
-      /* update the target file */
-      g_object_unref (node->target_file);
-      node->target_file = g_object_ref (real_target_file);
-
-      /* node->source_file == real_target_file means to skip the file */
-      if (G_LIKELY (node->source_file != real_target_file))
+      /* A directory was skipped, because it's files have to be merged */
+      if (response == THUNAR_JOB_RESPONSE_MERGE)
+        {
+          /* Let's copy the children */
+          for (GList *lp = node->child_nodes; lp != NULL; lp = lp->next)
+            {
+              thunar_transfer_job_copy_node (job, operation, lp->data, &err);
+              if (G_UNLIKELY (err != NULL))
+                {
+                  g_propagate_error (error, err);
+                  return;
+                }
+            }
+        }
+      else if (response != THUNAR_JOB_RESPONSE_SKIP)
         {
           /* notify the thumbnail cache of the copy operation */
           thunar_thumbnail_cache_copy_file (thumbnail_cache,
@@ -962,38 +1000,14 @@ retry_copy:
                 }
             }
 
-retry_remove:
           thunar_transfer_job_check_pause (job);
 
           /* try to remove the source directory if we are on copy+remove fallback for move */
           if (job->type == THUNAR_TRANSFER_JOB_MOVE)
-            {
-              if (g_file_delete (node->source_file,
-                                 thunar_job_get_cancellable (THUNAR_JOB (job)),
-                                 &err))
-                {
-                  /* notify the thumbnail cache of the delete operation */
-                  thunar_thumbnail_cache_delete_file (thumbnail_cache,
-                                                      node->source_file);
-                }
-              else
-                {
-                  /* ask the user to retry */
-                  response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to move file \"%s\": %s"),
-                                                  g_file_info_get_display_name (node->source_file_info),
-                                                  err->message);
-
-                  /* reset the error */
-                  g_clear_error (&err);
-
-                  /* check whether to retry */
-                  if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
-                    goto retry_remove;
-                }
-            }
+            thunar_transfer_job_remove_node (job, node);
         }
     }
-  else if (err != NULL)
+  else
     {
       /* we can only skip if there is space left on the device */
       if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE)
@@ -1200,7 +1214,6 @@ thunar_transfer_job_move_file_with_rename (ThunarJob          *job,
   gint     n_rename = 1;
   GFile   *renamed_file;
 
-  node->rename_confirmed = TRUE;
   while (TRUE)
     {
       g_clear_error (error);
@@ -1259,12 +1272,16 @@ thunar_transfer_job_move_file (ThunarJob            *job,
   if (!move_successful && (*error)->code == G_IO_ERROR_EXISTS)
     {
       g_clear_error (error);
-      response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, node->target_file, NULL);
+      if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
+        response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, node->target_file, NULL); ////thunar_job_ask_merge
+      else
+        response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, node->target_file, NULL);
 
       /* if the user chose to overwrite then try to do so */
       if (response == THUNAR_JOB_RESPONSE_REPLACE)
         {
-          node->replace_confirmed = TRUE;
+          /* Note that G_FILE_COPY_OVERWRITE is not supported for directories! */
+          /* This case only will be executed for single files */
           move_successful = g_file_move (node->source_file,
                                          node->target_file,
                                          move_flags | G_FILE_COPY_OVERWRITE,
@@ -1281,6 +1298,19 @@ thunar_transfer_job_move_file (ThunarJob            *job,
       else if (response == THUNAR_JOB_RESPONSE_RENAME)
         {
           move_successful = thunar_transfer_job_move_file_with_rename (job, operation, node, move_flags, error);
+        }
+      else if (response == THUNAR_JOB_RESPONSE_MERGE)
+        {
+          g_clear_error (error);
+
+          /* Let's move all files inside the directory */
+          thunar_transfer_job_collect_subfiles_recursively (THUNAR_TRANSFER_JOB (job), node, error);
+
+          for (GList *lp = node->child_nodes; lp != NULL; lp = lp->next)
+            thunar_transfer_job_move_file (job, operation, lp->data, move_flags, thumbnail_cache, error);
+
+          /* Remove the folder itself */
+          thunar_transfer_job_remove_node (THUNAR_TRANSFER_JOB (job), node);
         }
       /* if the user chose to cancel then abort all remaining file moves */
       else if (response == THUNAR_JOB_RESPONSE_CANCEL)
