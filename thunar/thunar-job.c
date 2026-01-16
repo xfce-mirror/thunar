@@ -42,7 +42,7 @@ enum
   INFO_MESSAGE,
   PERCENT,
   ASK,
-  ASK_REPLACE,
+  ASK_FOR_ACTION,
   FILES_READY,
   NEW_FILES,
   FROZEN,
@@ -64,9 +64,9 @@ thunar_job_real_ask (ThunarJob        *job,
                      const gchar      *message,
                      ThunarJobResponse choices);
 static ThunarJobResponse
-thunar_job_real_ask_replace (ThunarJob  *job,
-                             ThunarFile *source_file,
-                             ThunarFile *target_file);
+thunar_job_real_ask_for_action (ThunarJob  *job,
+                                ThunarFile *source_file,
+                                ThunarFile *target_file);
 
 
 
@@ -135,7 +135,7 @@ thunar_job_class_init (ThunarJobClass *klass)
   klass->info_message = NULL;
   klass->percent = NULL;
   klass->ask = thunar_job_real_ask;
-  klass->ask_replace = thunar_job_real_ask_replace;
+  klass->ask_for_action = thunar_job_real_ask_for_action;
 
   /**
    * ThunarJob::error:
@@ -241,22 +241,22 @@ thunar_job_class_init (ThunarJobClass *klass)
                 THUNAR_TYPE_JOB_RESPONSE);
 
   /**
-   * ThunarJob::ask-replace:
+   * ThunarJob::ask-for-action:
    * @job      : a #ThunarJob.
    * @src_file : the #ThunarFile of the source file.
-   * @dst_file : the #ThunarFile of the destination file, that
-   *             may be replaced with the source file.
+   * @dst_file : the #ThunarFile of the destination file
    *
    * Emitted to ask the user whether the destination file should
-   * be replaced by the source file.
+   * be merged with the source file, replaced by the source file,
+   * if the file should be skipped, or renamed
    *
    * Return value: the selected choice.
    **/
-  job_signals[ASK_REPLACE] =
-  g_signal_new (I_ ("ask-replace"),
+  job_signals[ASK_FOR_ACTION] =
+  g_signal_new (I_ ("ask-for-action"),
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
-                G_STRUCT_OFFSET (ThunarJobClass, ask_replace),
+                G_STRUCT_OFFSET (ThunarJobClass, ask_for_action),
                 _thunar_job_ask_accumulator, NULL,
                 _thunar_marshal_FLAGS__OBJECT_OBJECT,
                 THUNAR_TYPE_JOB_RESPONSE,
@@ -826,9 +826,9 @@ thunar_job_real_ask (ThunarJob        *job,
 
 
 static ThunarJobResponse
-thunar_job_real_ask_replace (ThunarJob  *job,
-                             ThunarFile *source_file,
-                             ThunarFile *target_file)
+thunar_job_real_ask_for_action (ThunarJob  *job,
+                                ThunarFile *source_file,
+                                ThunarFile *target_file)
 {
   ThunarJobResponse response;
   gchar            *message;
@@ -1061,10 +1061,10 @@ thunar_job_ask_create (ThunarJob   *job,
 
 
 ThunarJobResponse
-thunar_job_ask_replace (ThunarJob *job,
-                        GFile     *source_path,
-                        GFile     *target_path,
-                        GError   **error)
+thunar_job_ask_for_action (ThunarJob *job,
+                           GFile     *source_path,
+                           GFile     *target_path,
+                           GError   **error)
 {
   ThunarJobResponse response;
   ThunarJobResponse earlier_ask_overwrite_response;
@@ -1111,7 +1111,7 @@ thunar_job_ask_replace (ThunarJob *job,
   if (G_UNLIKELY (target_file == NULL))
     return THUNAR_JOB_RESPONSE_SKIP;
 
-  thunar_job_emit (THUNAR_JOB (job), job_signals[ASK_REPLACE], 0,
+  thunar_job_emit (THUNAR_JOB (job), job_signals[ASK_FOR_ACTION], 0,
                    source_file, target_file, &response);
 
   /* remember the response for later */
