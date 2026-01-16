@@ -67,10 +67,10 @@ thunar_progress_view_ask (ThunarProgressView *view,
                           ThunarJobResponse   choices,
                           ThunarJob          *job);
 static ThunarJobResponse
-thunar_progress_view_ask_replace (ThunarProgressView *view,
-                                  ThunarFile         *src_file,
-                                  ThunarFile         *dst_file,
-                                  ThunarJob          *job);
+thunar_progress_view_ask_for_action (ThunarProgressView *view,
+                                     ThunarFile         *src_file,
+                                     ThunarFile         *dst_file,
+                                     ThunarJob          *job);
 static void
 thunar_progress_view_error (ThunarProgressView *view,
                             GError             *error,
@@ -493,10 +493,10 @@ thunar_progress_view_ask (ThunarProgressView *view,
 
 
 static ThunarJobResponse
-thunar_progress_view_ask_replace (ThunarProgressView *view,
-                                  ThunarFile         *src_file,
-                                  ThunarFile         *dst_file,
-                                  ThunarJob          *job)
+thunar_progress_view_ask_for_action (ThunarProgressView *view,
+                                     ThunarFile         *src_file,
+                                     ThunarFile         *dst_file,
+                                     ThunarJob          *job)
 {
   GtkWidget *window;
 
@@ -513,8 +513,8 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
   /* display the question view */
-  return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL,
-                                              src_file, dst_file, thunar_job_get_n_total_files (job) > 1);
+  return thunar_dialogs_show_job_ask_for_action (window != NULL ? GTK_WINDOW (window) : NULL,
+                                                 src_file, dst_file, thunar_job_get_n_total_files (job) > 1);
 }
 
 
@@ -717,7 +717,7 @@ thunar_progress_view_set_job (ThunarProgressView *view,
       g_object_ref (job);
 
       g_signal_connect_swapped (job, "ask", G_CALLBACK (thunar_progress_view_ask), view);
-      g_signal_connect_swapped (job, "ask-replace", G_CALLBACK (thunar_progress_view_ask_replace), view);
+      g_signal_connect_swapped (job, "ask-for-action", G_CALLBACK (thunar_progress_view_ask_for_action), view);
       g_signal_connect_swapped (job, "error", G_CALLBACK (thunar_progress_view_error), view);
       g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_progress_view_finished), view);
       g_signal_connect_swapped (job, "info-message", G_CALLBACK (thunar_progress_view_info_message), view);

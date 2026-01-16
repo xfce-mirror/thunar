@@ -52,10 +52,10 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
                              const gchar      *question,
                              ThunarJobResponse choices);
 ThunarJobResponse
-thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
-                                     ThunarFile *src_file,
-                                     ThunarFile *dst_file,
-                                     gboolean    multiple_files);
+thunar_dialogs_show_job_ask_for_action (GtkWindow  *parent,
+                                        ThunarFile *src_file,
+                                        ThunarFile *dst_file,
+                                        gboolean    multiple_files);
 gboolean
 thunar_dialogs_show_insecure_program (gpointer     parent,
                                       const gchar *title,
