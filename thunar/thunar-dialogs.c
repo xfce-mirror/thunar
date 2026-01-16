@@ -755,22 +755,21 @@ thunar_dialog_image_redraw (GtkWidget          *image,
 
 
 /**
- * thunar_dialogs_show_job_ask_replace:
+ * thunar_dialogs_show_job_ask_for_action:
  * @parent   : the parent #GtkWindow or %NULL.
  * @src_file : the #ThunarFile of the source file.
  * @dst_file : the #ThunarFile of the destination file that
  *             may be replaced with the source file.
  *
- * Asks the user whether to replace the destination file with the
- * source file identified by @src_file.
+ * Asks the user whether to replace / merge / skip / rename
  *
  * Return value: the selected #ThunarJobResponse.
  **/
 ThunarJobResponse
-thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
-                                     ThunarFile *src_file,
-                                     ThunarFile *dst_file,
-                                     gboolean    multiple_files)
+thunar_dialogs_show_job_ask_for_action (GtkWindow  *parent,
+                                        ThunarFile *src_file,
+                                        ThunarFile *dst_file,
+                                        gboolean    multiple_files)
 {
   ThunarIconFactory *icon_factory;
   ThunarPreferences *preferences;

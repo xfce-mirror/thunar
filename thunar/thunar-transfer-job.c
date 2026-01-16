@@ -817,10 +817,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
           g_clear_error (&err);
 
           /* if necessary, ask the user whether to replace / rename / merge */
-          if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
-            response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, dest_file, &err); // thunar_job_ask_merge
-          else
-            response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, dest_file, &err);
+          response = thunar_job_ask_for_action (THUNAR_JOB (job), node->source_file, dest_file, &err);
 
           if (err != NULL)
             break;
@@ -1272,10 +1269,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
   if (!move_successful && (*error)->code == G_IO_ERROR_EXISTS)
     {
       g_clear_error (error);
-      if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
-        response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, node->target_file, NULL); ////thunar_job_ask_merge
-      else
-        response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, node->target_file, NULL);
+      response = thunar_job_ask_for_action (THUNAR_JOB (job), node->source_file, node->target_file, NULL);
 
       /* if the user chose to overwrite then try to do so */
       if (response == THUNAR_JOB_RESPONSE_REPLACE)
