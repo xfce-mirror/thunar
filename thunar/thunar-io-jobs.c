@@ -88,11 +88,13 @@ _tij_collect_nofollow (ThunarJob *job,
 
 
 static gboolean
-_tij_delete_file (GFile        *file,
+_tij_delete_file (ThunarJob    *job,
+                  GFile        *file,
                   GCancellable *cancellable,
                   GError      **error)
 {
-  gchar *path;
+  GError           *err = NULL;
+  g_autofree gchar *path = NULL;
 
   if (!g_file_is_native (file))
     return g_file_delete (file, cancellable, error);
@@ -100,16 +102,51 @@ _tij_delete_file (GFile        *file,
   /* adapted from g_local_file_delete of gio/glocalfile.c */
   path = g_file_get_path (file);
 
+  /* 'g_remove' will only delete non-empty directories */
+  /* If it fails, lets check if we have a directory which needs to be deleted recursively */
   if (g_remove (path) == 0)
     {
-      g_free (path);
       return TRUE;
     }
+  else
+    {
+      g_autoptr (GFileInfo) info = NULL;
 
-  g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno),
-               _("Error removing file: %s"), g_strerror (errno));
+      info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+      if (info && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+        {
+          GList *file_list;
 
-  g_free (path);
+          /* scan the directory for immediate children */
+          file_list = thunar_io_scan_directory (THUNAR_JOB (job), file,
+                                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                                FALSE, TRUE, FALSE, NULL, &err);
+
+          for (GList *lp = file_list; err == NULL && lp != NULL; lp = lp->next)
+            {
+              /* resursively call delete on each child */
+              _tij_delete_file (job, lp->data, cancellable, &err);
+              if (err != NULL)
+                break;
+            }
+
+          /* release the child files */
+          thunar_g_list_free_full (file_list);
+
+          if (err != NULL)
+            {
+              g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), _("Error removing file: %s"), g_strerror (errno));
+              g_clear_error (&err);
+              return FALSE;
+            }
+
+          /* Now try again to delete the directory itself */
+          if (g_remove (path) == 0)
+            return TRUE;
+        }
+    }
+
+  g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), _("Error removing file: %s"), g_strerror (errno));
   return FALSE;
 }
 
@@ -227,7 +264,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file. fail if not possible */
-                  if (_tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+                  if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
             }
@@ -405,7 +442,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file, fail if not possible */
-                  if (_tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+                  if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
             }
@@ -610,7 +647,7 @@ _thunar_io_jobs_unlink (ThunarJob *job,
 
 again:
       /* try to delete the file */
-      if (_tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+      if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
         {
           /* notify the thumbnail cache that the corresponding thumbnail can also
            * be deleted now */
@@ -788,7 +825,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
             {
               /* try to remove the target file. if not possible, err will be set and
                * the while loop will be aborted */
-              _tij_delete_file (target_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
+              _tij_delete_file (job, target_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
             }
 
           /* tell the caller that we skipped this file if the user doesn't want to
@@ -972,7 +1009,7 @@ _thunar_io_jobs_trash (ThunarJob *job,
             break;
 
           if (response == THUNAR_JOB_RESPONSE_YES)
-            _tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
+            _tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
         }
 
       if (err == NULL && log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
