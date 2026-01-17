@@ -36,6 +36,8 @@ typedef struct _ThunarThumbnailCachePrivate ThunarThumbnailCachePrivate;
 typedef struct _ThunarThumbnailCacheClass   ThunarThumbnailCacheClass;
 typedef struct _ThunarThumbnailCache        ThunarThumbnailCache;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarThumbnailCache, g_object_unref)
+
 GType
 thunar_thumbnail_cache_get_type (void) G_GNUC_CONST;
 

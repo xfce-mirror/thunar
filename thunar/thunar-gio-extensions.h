@@ -202,6 +202,10 @@ thunar_g_file_get_content_type (GFile *file);
 void
 thunar_g_update_user_special_dir (GFile       *file,
                                   const gchar *xdg_name);
+gboolean
+thunar_g_file_fs_uses_fat_name_scheme (GFile *gfile);
+GFile *
+thunar_g_file_transform_to_fat_name_scheme (GFile *gfile);
 
 G_END_DECLS
 

@@ -61,9 +61,9 @@ struct _ThunarJobClass
   ThunarJobResponse (*ask) (ThunarJob        *job,
                             const gchar      *message,
                             ThunarJobResponse choices);
-  ThunarJobResponse (*ask_replace) (ThunarJob  *job,
-                                    ThunarFile *source_file,
-                                    ThunarFile *target_file);
+  ThunarJobResponse (*ask_for_action) (ThunarJob  *job,
+                                       ThunarFile *source_file,
+                                       ThunarFile *target_file);
 };
 
 struct _ThunarJob
@@ -148,10 +148,10 @@ thunar_job_ask_delete (ThunarJob   *job,
                        const gchar *format,
                        ...);
 ThunarJobResponse
-thunar_job_ask_replace (ThunarJob *job,
-                        GFile     *source_path,
-                        GFile     *target_path,
-                        GError   **error);
+thunar_job_ask_for_action (ThunarJob *job,
+                           GFile     *source_path,
+                           GFile     *target_path,
+                           GError   **error);
 ThunarJobResponse
 thunar_job_ask_skip (ThunarJob   *job,
                      const gchar *format,

@@ -635,6 +635,8 @@ thunar_job_response_get_type (void)
         { THUNAR_JOB_RESPONSE_SKIP_ALL,    "THUNAR_JOB_RESPONSE_SKIP_ALL",    "skip-all"    },
         { THUNAR_JOB_RESPONSE_RENAME,      "THUNAR_JOB_RESPONSE_RENAME",      "rename"      },
         { THUNAR_JOB_RESPONSE_RENAME_ALL,  "THUNAR_JOB_RESPONSE_RENAME_ALL",  "rename-all " },
+        { THUNAR_JOB_RESPONSE_MERGE,       "THUNAR_JOB_RESPONSE_MERGE",       "merge"      },
+        { THUNAR_JOB_RESPONSE_MERGE_ALL,   "THUNAR_JOB_RESPONSE_MERGE_ALL",   "merge-all " },
         { 0,                               NULL,                              NULL          }
       };
       /* clang-format on */

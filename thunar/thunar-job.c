@@ -42,7 +42,7 @@ enum
   INFO_MESSAGE,
   PERCENT,
   ASK,
-  ASK_REPLACE,
+  ASK_FOR_ACTION,
   FILES_READY,
   NEW_FILES,
   FROZEN,
@@ -64,9 +64,9 @@ thunar_job_real_ask (ThunarJob        *job,
                      const gchar      *message,
                      ThunarJobResponse choices);
 static ThunarJobResponse
-thunar_job_real_ask_replace (ThunarJob  *job,
-                             ThunarFile *source_file,
-                             ThunarFile *target_file);
+thunar_job_real_ask_for_action (ThunarJob  *job,
+                                ThunarFile *source_file,
+                                ThunarFile *target_file);
 
 
 
@@ -80,9 +80,11 @@ struct _ThunarJobPrivate
   GMainContext    *context;
 
   ThunarJobResponse      earlier_ask_create_response;
-  ThunarJobResponse      earlier_ask_overwrite_response;
+  ThunarJobResponse      earlier_ask_overwrite_response_file;
+  ThunarJobResponse      earlier_ask_overwrite_response_folder;
   ThunarJobResponse      earlier_ask_delete_response;
   ThunarJobResponse      earlier_ask_skip_response;
+
   GList                 *total_files;
   guint                  n_total_files;
   gboolean               pausable;
@@ -133,7 +135,7 @@ thunar_job_class_init (ThunarJobClass *klass)
   klass->info_message = NULL;
   klass->percent = NULL;
   klass->ask = thunar_job_real_ask;
-  klass->ask_replace = thunar_job_real_ask_replace;
+  klass->ask_for_action = thunar_job_real_ask_for_action;
 
   /**
    * ThunarJob::error:
@@ -239,22 +241,22 @@ thunar_job_class_init (ThunarJobClass *klass)
                 THUNAR_TYPE_JOB_RESPONSE);
 
   /**
-   * ThunarJob::ask-replace:
+   * ThunarJob::ask-for-action:
    * @job      : a #ThunarJob.
    * @src_file : the #ThunarFile of the source file.
-   * @dst_file : the #ThunarFile of the destination file, that
-   *             may be replaced with the source file.
+   * @dst_file : the #ThunarFile of the destination file
    *
    * Emitted to ask the user whether the destination file should
-   * be replaced by the source file.
+   * be merged with the source file, replaced by the source file,
+   * if the file should be skipped, or renamed
    *
    * Return value: the selected choice.
    **/
-  job_signals[ASK_REPLACE] =
-  g_signal_new (I_ ("ask-replace"),
+  job_signals[ASK_FOR_ACTION] =
+  g_signal_new (I_ ("ask-for-action"),
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
-                G_STRUCT_OFFSET (ThunarJobClass, ask_replace),
+                G_STRUCT_OFFSET (ThunarJobClass, ask_for_action),
                 _thunar_job_ask_accumulator, NULL,
                 _thunar_marshal_FLAGS__OBJECT_OBJECT,
                 THUNAR_TYPE_JOB_RESPONSE,
@@ -355,7 +357,8 @@ thunar_job_init (ThunarJob *job)
   job->priv->failed = FALSE;
   job->priv->context = NULL;
   job->priv->earlier_ask_create_response = 0;
-  job->priv->earlier_ask_overwrite_response = 0;
+  job->priv->earlier_ask_overwrite_response_file = 0;
+  job->priv->earlier_ask_overwrite_response_folder = 0;
   job->priv->earlier_ask_delete_response = 0;
   job->priv->earlier_ask_skip_response = 0;
   job->priv->n_total_files = 0;
@@ -823,9 +826,9 @@ thunar_job_real_ask (ThunarJob        *job,
 
 
 static ThunarJobResponse
-thunar_job_real_ask_replace (ThunarJob  *job,
-                             ThunarFile *source_file,
-                             ThunarFile *target_file)
+thunar_job_real_ask_for_action (ThunarJob  *job,
+                                ThunarFile *source_file,
+                                ThunarFile *target_file)
 {
   ThunarJobResponse response;
   gchar            *message;
@@ -912,11 +915,15 @@ thunar_job_ask_overwrite (ThunarJob   *job,
     return THUNAR_JOB_RESPONSE_CANCEL;
 
   /* check if the user said "Overwrite All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response_file == THUNAR_JOB_RESPONSE_REPLACE_ALL))
     return THUNAR_JOB_RESPONSE_REPLACE;
 
+  /* check if the user said "Merge All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response_file == THUNAR_JOB_RESPONSE_MERGE_ALL))
+    return THUNAR_JOB_RESPONSE_MERGE;
+
   /* check if the user said "Overwrite None" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response_file == THUNAR_JOB_RESPONSE_SKIP_ALL))
     return THUNAR_JOB_RESPONSE_SKIP;
 
   /* ask the user what he wants to do */
@@ -931,7 +938,7 @@ thunar_job_ask_overwrite (ThunarJob   *job,
   va_end (var_args);
 
   /* remember response for later */
-  job->priv->earlier_ask_overwrite_response = response;
+  job->priv->earlier_ask_overwrite_response_file = response;
 
   /* translate response */
   switch (response)
@@ -1054,61 +1061,72 @@ thunar_job_ask_create (ThunarJob   *job,
 
 
 ThunarJobResponse
-thunar_job_ask_replace (ThunarJob *job,
-                        GFile     *source_path,
-                        GFile     *target_path,
-                        GError   **error)
+thunar_job_ask_for_action (ThunarJob *job,
+                           GFile     *source_path,
+                           GFile     *target_path,
+                           GError   **error)
 {
   ThunarJobResponse response;
-  ThunarFile       *source_file;
-  ThunarFile       *target_file;
+  ThunarJobResponse earlier_ask_overwrite_response;
+  g_autoptr (ThunarFile) source_file = NULL;
+  g_autoptr (ThunarFile) target_file = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (G_IS_FILE (source_path), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (G_IS_FILE (target_path), THUNAR_JOB_RESPONSE_CANCEL);
-
-  if (G_UNLIKELY (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error)))
-    return THUNAR_JOB_RESPONSE_CANCEL;
-
-  /* check if the user said "Overwrite All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
-    return THUNAR_JOB_RESPONSE_REPLACE;
-
-  /* check if the user said "Rename All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_RENAME_ALL))
-    return THUNAR_JOB_RESPONSE_RENAME;
-
-  /* check if the user said "Overwrite None" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
-    return THUNAR_JOB_RESPONSE_SKIP;
 
   source_file = thunar_file_get (source_path, error);
 
   if (G_UNLIKELY (source_file == NULL))
     return THUNAR_JOB_RESPONSE_SKIP;
 
+  if (G_UNLIKELY (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error)))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* The previous responses are stored in two separate variables, because both can be used in the same job */
+  /* E.g. during a folder merge operation, replace of single files in that folder can be requested */
+  if (thunar_file_is_directory (source_file))
+    earlier_ask_overwrite_response = job->priv->earlier_ask_overwrite_response_folder;
+  else
+    earlier_ask_overwrite_response = job->priv->earlier_ask_overwrite_response_file;
+
+  /* check if the user said "Overwrite All" earlier (only for non-folders) */
+  if (G_UNLIKELY (earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
+    return THUNAR_JOB_RESPONSE_REPLACE;
+
+  /* check if the user said "Rename All" earlier */
+  if (G_UNLIKELY (earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_RENAME_ALL))
+    return THUNAR_JOB_RESPONSE_RENAME;
+
+  /* check if the user said "Merge All" earlier (only for folders) */
+  if (G_UNLIKELY (earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_MERGE_ALL))
+    return THUNAR_JOB_RESPONSE_MERGE;
+
+  /* check if the user said "Overwrite None" earlier */
+  if (G_UNLIKELY (earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
+    return THUNAR_JOB_RESPONSE_SKIP;
+
   target_file = thunar_file_get (target_path, error);
 
   if (G_UNLIKELY (target_file == NULL))
-    {
-      g_object_unref (source_file);
-      return THUNAR_JOB_RESPONSE_SKIP;
-    }
+    return THUNAR_JOB_RESPONSE_SKIP;
 
-  thunar_job_emit (THUNAR_JOB (job), job_signals[ASK_REPLACE], 0,
+  thunar_job_emit (THUNAR_JOB (job), job_signals[ASK_FOR_ACTION], 0,
                    source_file, target_file, &response);
 
-  g_object_unref (source_file);
-  g_object_unref (target_file);
-
   /* remember the response for later */
-  job->priv->earlier_ask_overwrite_response = response;
+  if (thunar_file_is_directory (source_file))
+    job->priv->earlier_ask_overwrite_response_folder = response;
+  else
+    job->priv->earlier_ask_overwrite_response_file = response;
 
   /* translate the response */
   if (response == THUNAR_JOB_RESPONSE_REPLACE_ALL)
     response = THUNAR_JOB_RESPONSE_REPLACE;
   else if (response == THUNAR_JOB_RESPONSE_RENAME_ALL)
     response = THUNAR_JOB_RESPONSE_RENAME;
+  else if (response == THUNAR_JOB_RESPONSE_MERGE_ALL)
+    response = THUNAR_JOB_RESPONSE_MERGE;
   else if (response == THUNAR_JOB_RESPONSE_SKIP_ALL)
     response = THUNAR_JOB_RESPONSE_SKIP;
   else if (response == THUNAR_JOB_RESPONSE_CANCEL)
