@@ -88,10 +88,11 @@ _tij_collect_nofollow (ThunarJob *job,
 
 
 static gboolean
-_tij_delete_file (ThunarJob    *job,
-                  GFile        *file,
-                  GCancellable *cancellable,
-                  GError      **error)
+_tij_delete_file (ThunarJob            *job,
+                  GFile                *file,
+                  ThunarThumbnailCache *thumbnail_cache,
+                  GCancellable         *cancellable,
+                  GError              **error)
 {
   GError           *err = NULL;
   g_autofree gchar *path = NULL;
@@ -106,6 +107,8 @@ _tij_delete_file (ThunarJob    *job,
   /* If it fails, lets check if we have a directory which needs to be deleted recursively */
   if (g_remove (path) == 0)
     {
+      /* notify the thumbnail cache that the corresponding thumbnail can also be deleted now */
+      thunar_thumbnail_cache_delete_file (thumbnail_cache, file);
       return TRUE;
     }
   else
@@ -125,7 +128,7 @@ _tij_delete_file (ThunarJob    *job,
           for (GList *lp = file_list; err == NULL && lp != NULL; lp = lp->next)
             {
               /* resursively call delete on each child */
-              _tij_delete_file (job, lp->data, cancellable, &err);
+              _tij_delete_file (job, lp->data, thumbnail_cache, cancellable, &err);
               if (err != NULL)
                 break;
             }
@@ -142,7 +145,11 @@ _tij_delete_file (ThunarJob    *job,
 
           /* Now try again to delete the directory itself */
           if (g_remove (path) == 0)
-            return TRUE;
+            {
+              /* notify the thumbnail cache that the corresponding thumbnail can also be deleted now */
+              thunar_thumbnail_cache_delete_file (thumbnail_cache, file);
+              return TRUE;
+            }
         }
     }
 
@@ -157,6 +164,8 @@ _thunar_io_jobs_create (ThunarJob *job,
                         GArray    *param_values,
                         GError   **error)
 {
+  g_autoptr (ThunarApplication) application = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   GFileOutputStream     *stream;
   ThunarJobResponse      response = THUNAR_JOB_RESPONSE_CANCEL;
   GFileInfo             *info;
@@ -196,6 +205,9 @@ _thunar_io_jobs_create (ThunarJob *job,
     }
 
   log_mode = thunar_job_get_log_mode (job);
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE_FILE);
@@ -264,7 +276,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file. fail if not possible */
-                  if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+                  if (_tij_delete_file (job, lp->data, thumbnail_cache, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
             }
@@ -358,6 +370,8 @@ _thunar_io_jobs_mkdir (ThunarJob *job,
                        GArray    *param_values,
                        GError   **error)
 {
+  g_autoptr (ThunarApplication) application = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   ThunarJobResponse      response;
   GFileInfo             *info;
   GError                *err = NULL;
@@ -380,6 +394,9 @@ _thunar_io_jobs_mkdir (ThunarJob *job,
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
   log_mode = thunar_job_get_log_mode (job);
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER);
@@ -442,7 +459,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file, fail if not possible */
-                  if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+                  if (_tij_delete_file (job, lp->data, thumbnail_cache, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
             }
@@ -519,8 +536,8 @@ _thunar_io_jobs_unlink (ThunarJob *job,
                         GArray    *param_values,
                         GError   **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
+  g_autoptr (ThunarApplication) application = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   ThunarJobResponse     response;
   GFileInfo            *info;
   GError               *err = NULL;
@@ -626,10 +643,8 @@ _thunar_io_jobs_unlink (ThunarJob *job,
   /* we know the total list of files to process */
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
-  /* take a reference on the thumbnail cache */
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-  g_object_unref (application);
 
   /* remove all the files */
   for (lp = file_list;
@@ -647,13 +662,7 @@ _thunar_io_jobs_unlink (ThunarJob *job,
 
 again:
       /* try to delete the file */
-      if (_tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
-        {
-          /* notify the thumbnail cache that the corresponding thumbnail can also
-           * be deleted now */
-          thunar_thumbnail_cache_delete_file (thumbnail_cache, lp->data);
-        }
-      else
+      if (_tij_delete_file (job, lp->data, thumbnail_cache, thunar_job_get_cancellable (THUNAR_JOB (job)), &err) == FALSE)
         {
           /* query the file info for the display name */
           info = g_file_query_info (lp->data,
@@ -696,9 +705,6 @@ again:
             goto again;
         }
     }
-
-  /* release the thumbnail cache */
-  g_object_unref (thumbnail_cache);
 
   /* release the file list */
   thunar_g_list_free_full (file_list);
@@ -766,6 +772,8 @@ _thunar_io_jobs_link_file (ThunarJob *job,
                            GFile     *target_file,
                            GError   **error)
 {
+  g_autoptr (ThunarApplication) application = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   ThunarJobResponse response;
   GError           *err = NULL;
   gchar            *symlink_target;
@@ -778,6 +786,9 @@ _thunar_io_jobs_link_file (ThunarJob *job,
   /* abort on cancellation */
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return NULL;
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
 
   /* various attempts to create the symbolic link */
   while (err == NULL)
@@ -825,7 +836,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
             {
               /* try to remove the target file. if not possible, err will be set and
                * the while loop will be aborted */
-              _tij_delete_file (job, target_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
+              _tij_delete_file (job, target_file, thumbnail_cache, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
             }
 
           /* tell the caller that we skipped this file if the user doesn't want to
@@ -963,8 +974,8 @@ _thunar_io_jobs_trash (ThunarJob *job,
                        GArray    *param_values,
                        GError   **error)
 {
-  ThunarThumbnailCache  *thumbnail_cache;
-  ThunarApplication     *application;
+  g_autoptr (ThunarApplication) application = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   ThunarJobOperation    *operation = NULL;
   ThunarJobResponse      response;
   ThunarOperationLogMode log_mode;
@@ -982,10 +993,8 @@ _thunar_io_jobs_trash (ThunarJob *job,
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return FALSE;
 
-  /* take a reference on the thumbnail cache */
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-  g_object_unref (application);
 
   log_mode = thunar_job_get_log_mode (job);
 
@@ -1009,18 +1018,12 @@ _thunar_io_jobs_trash (ThunarJob *job,
             break;
 
           if (response == THUNAR_JOB_RESPONSE_YES)
-            _tij_delete_file (job, lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
+            _tij_delete_file (job, lp->data, thumbnail_cache, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
         }
 
       if (err == NULL && log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
         thunar_job_operation_add (operation, lp->data, NULL);
-
-      /* update the thumbnail cache */
-      thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
     }
-
-  /* release the thumbnail cache */
-  g_object_unref (thumbnail_cache);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     {
