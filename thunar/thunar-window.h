@@ -190,10 +190,11 @@ thunar_window_update_statusbar (ThunarWindow *window);
 void
 thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
                                               gint          index);
+
 void
-thunar_window_toolbar_swap_items (ThunarWindow *window,
-                                  gint          index_a,
-                                  gint          index_b);
+thunar_window_toolbar_move_item (ThunarWindow *window,
+                                 gint          source_index,
+                                 gint          dest_index);
 
 XfceGtkActionEntry *
 thunar_window_get_action_entries (void);
