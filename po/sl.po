@@ -6,15 +6,16 @@
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2024
 # Arnold Marko <arnold.marko@gmail.com>, 2025
+# Dejweed, 2026
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: thunar.xfce-4-20\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-09-25 00:52+0200\n"
+"POT-Creation-Date: 2025-12-12 12:53+0100\n"
 "PO-Revision-Date: 2024-12-30 16:00+0000\n"
-"Last-Translator: Arnold Marko <arnold.marko@gmail.com>, 2025\n"
+"Last-Translator: Dejweed, 2026\n"
 "Language-Team: Slovenian (https://app.transifex.com/xfce/teams/16840/sl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -331,12 +332,12 @@ msgstr "Napaka pri odpiranju \"%s\""
 
 #: thunar/thunar-action-manager.c:1534
 msgid "File does not exist anymore"
-msgstr ""
+msgstr "Datoteka ne obstaja več"
 
 #: thunar/thunar-action-manager.c:1535
 #, c-format
 msgid "Failed to open location for \"%s\""
-msgstr ""
+msgstr "Odpiranje lokacije \"%s\" ni uspelo"
 
 #. aka "activate"
 #: thunar/thunar-action-manager.c:1659
@@ -359,19 +360,19 @@ msgstr[3] "Izvedi izbrane datoteke"
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "Odpri izbrane mape v %d novem zavihku"
-msgstr[1] "Odpri izbrane mape v %d novih zavihkih"
-msgstr[2] "Odpri izbrane mape v %d novih zavihkih"
-msgstr[3] "Odpri izbrane mape v %d novih zavihkih"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: thunar/thunar-action-manager.c:1683
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Odpri izbrane mape v %d novem oknu"
-msgstr[1] "Odpri izbrane mape v %d novih oknih"
-msgstr[2] "Odpri izbrane mape v %d novih oknih"
-msgstr[3] "Odpri izbrane mape v %d novih oknih"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: thunar/thunar-action-manager.c:1721
 msgid "Create a symbolic link for the selected file"
@@ -1649,7 +1650,7 @@ msgid "Delete (opposite of create)"
 msgstr "Izbriši (obratno od ustvari)"
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1087
-#: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1157
+#: thunar/thunar-gio-extensions.c:572 thunar/thunar-shortcuts-model.c:1157
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "Koš"
@@ -1691,7 +1692,7 @@ msgstr "Vdelano"
 msgid "Only for local files"
 msgstr "Zgolj za lokalne datoteke"
 
-#: thunar/thunar-file.c:1094 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1094 thunar/thunar-gio-extensions.c:570
 #: thunar/thunar-shortcuts-model.c:1039
 msgid "File System"
 msgstr "Datotečni sistem"
@@ -1812,12 +1813,12 @@ msgid "Phone"
 msgstr "Telefon"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:590
+#: thunar/thunar-gio-extensions.c:652
 #, c-format
 msgid "%s on %s"
 msgstr "%s na %s"
 
-#: thunar/thunar-gio-extensions.c:701
+#: thunar/thunar-gio-extensions.c:763
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr "%s porabljeno (%.0f%%)  |  %s prosto (%.0f%%)"
@@ -2305,11 +2306,11 @@ msgstr "Izgled"
 
 #: thunar/thunar-preferences-dialog.c:312
 msgid "Window Settings"
-msgstr ""
+msgstr "Nastavitve okna"
 
 #: thunar/thunar-preferences-dialog.c:331
 msgid "Use custom window decorations (only applied to new windows)"
-msgstr ""
+msgstr "Uporabi okraske okna po meri (velja samo za nova okna)"
 
 #: thunar/thunar-preferences-dialog.c:338
 msgid ""
@@ -2319,7 +2320,7 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:346
 msgid "Use current folder icon as window icon"
-msgstr ""
+msgstr "Uporabi ikono trenutne mape za ikono okna"
 
 #: thunar/thunar-preferences-dialog.c:352
 msgid "Select this option to use the current folder icon as window icon"
@@ -2607,16 +2608,16 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:772
 msgid "Icon Style"
-msgstr ""
+msgstr "Slog ikon"
 
 #: thunar/thunar-preferences-dialog.c:788
 msgid "Use symbolic folder icons"
-msgstr ""
+msgstr "Uporabi simbolične ikone map"
 
 #: thunar/thunar-preferences-dialog.c:794
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
-msgstr ""
+msgstr "Izberite to možnost za uporabo simboličnih ikon map namesto navadnih."
 
 #: thunar/thunar-preferences-dialog.c:803
 msgid "Image Preview"
@@ -2954,10 +2955,6 @@ msgstr "Opravilo je v čakalni vrsti"
 #: thunar/thunar-progress-view.c:639
 msgid "Resuming job..."
 msgstr "Nadaljevanje opravila..."
-
-#: thunar/thunar-progress-view.c:661
-msgid "Queued"
-msgstr "V vrsti"
 
 #: thunar/thunar-properties-dialog.c:358
 msgid "General"
@@ -3367,9 +3364,9 @@ msgstr "Izračunavanje prekinjeno"
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d mapa"
-msgstr[1] "%dmapi"
-msgstr[2] "%dmape"
-msgstr[3] "%dmape"
+msgstr[1] "%d mapi"
+msgstr[2] "%d mape"
+msgstr[3] "%d map"
 
 #: thunar/thunar-size-label.c:483
 #, c-format
@@ -3499,10 +3496,10 @@ msgstr "Nalaganje vsebine mape..."
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Najdena %d datoteka"
+msgstr[1] "Najdeni %d datoteki"
+msgstr[2] "Najdene %d datoteke"
+msgstr[3] "Najdenih %d datotek"
 
 #. display an error to the user
 #: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4514
@@ -3672,15 +3669,15 @@ msgstr "P_rivzeti vrstni red"
 #. create the "Symbolic Icons" checkbox
 #: thunar/thunar-toolbar-editor.c:266
 msgid "_Symbolic Icons"
-msgstr ""
+msgstr "_Simbolične ikone"
 
 #: thunar/thunar-toolbar-editor.c:272
 msgid "Use symbolic icons instead of regular ones (if available)."
-msgstr ""
+msgstr "Uporabi simbolične ikone namesto navadnih (če so na voljo)."
 
 #: thunar/thunar-toolbar-editor.c:630
 msgid "Only visible when the menubar is hidden"
-msgstr ""
+msgstr "Viden samo, kadar je menijska vrstica skrita"
 
 #: thunar/thunar-transfer-job.c:552
 msgid "Verifying file contents..."
@@ -3956,7 +3953,7 @@ msgstr "_Nastavitve..."
 
 #: thunar/thunar-window.c:659
 msgid "Edit Thunar's Preferences"
-msgstr ""
+msgstr "Uredite Thunarjeve nastavitve"
 
 #: thunar/thunar-window.c:661
 msgid "_View"
@@ -4275,7 +4272,7 @@ msgstr "Meni"
 
 #: thunar/thunar-window.c:725
 msgid "Show the menu"
-msgstr ""
+msgstr "Prikaži meni"
 
 #. add the label with the root warning
 #: thunar/thunar-window.c:1066
