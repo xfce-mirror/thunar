@@ -180,6 +180,8 @@ thunar_shortcuts_model_file_destroyed (ThunarFile           *file,
 
 static GFile *
 thunar_shortcut_get_file (ThunarShortcut *shortcut);
+static ThunarShortcut *
+thunar_shortcut_new (void);
 static void
 thunar_shortcut_free (ThunarShortcut       *shortcut,
                       ThunarShortcutsModel *model);
@@ -1046,13 +1048,13 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   GList          *lp;
 
   /* add the devices heading */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_HEADER;
   shortcut->name = g_strdup (_("Devices"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
   /* the filesystem entry */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM;
   shortcut->name = g_strdup (_("File System"));
   shortcut->tooltip = g_strdup (_("Browse the file system"));
@@ -1089,7 +1091,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   ThunarShortcut *shortcut;
 
   /* add the network heading */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_HEADER;
   shortcut->name = g_strdup (_("Network"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1097,7 +1099,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   /* append the browse network entry if it is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
     {
-      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut = thunar_shortcut_new ();
       shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT;
       shortcut->name = g_strdup (_("Browse Network"));
       shortcut->tooltip = g_strdup (_("Browse local network connections"));
@@ -1120,7 +1122,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   ThunarFile     *file;
 
   /* add the places heading */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_HEADER;
   shortcut->name = g_strdup (_("Places"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1132,7 +1134,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   file = thunar_file_get (home, NULL);
   if (file != NULL)
     {
-      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut = thunar_shortcut_new ();
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
       shortcut->tooltip = g_strdup (_("Open the home folder"));
       shortcut->file = file;
@@ -1149,7 +1151,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       file = thunar_file_get (desktop, NULL);
       if (file != NULL)
         {
-          shortcut = g_slice_new0 (ThunarShortcut);
+          shortcut = thunar_shortcut_new ();
           shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
           shortcut->tooltip = g_strdup (_("Open the desktop folder"));
           shortcut->file = file;
@@ -1170,7 +1172,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
 
       if (file != NULL)
         {
-          shortcut = g_slice_new0 (ThunarShortcut);
+          shortcut = thunar_shortcut_new ();
           shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_TRASH;
           shortcut->name = g_strdup (_("Trash"));
           shortcut->file = file;
@@ -1197,7 +1199,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   /* append the computer icon if browsing the computer is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("computer"))
     {
-      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut = thunar_shortcut_new ();
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER;
       shortcut->name = g_strdup (_("Computer"));
       shortcut->tooltip = g_strdup (_("Browse the computer"));
@@ -1210,7 +1212,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   /* append the recent icon if browsing recent is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
     {
-      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut = thunar_shortcut_new ();
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_RECENT;
       shortcut->name = g_strdup (_("Recent"));
       shortcut->tooltip = g_strdup (_("Browse recently used files"));
@@ -1398,7 +1400,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
 
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
   shortcut->location = g_object_ref (file_path);
 
@@ -1615,7 +1617,7 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
   /* allocate a new shortcut */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->device = g_object_ref (device);
   shortcut->hidden = thunar_device_get_hidden (device);
 
@@ -1872,6 +1874,33 @@ thunar_shortcut_get_file (ThunarShortcut *shortcut)
     return g_object_ref (thunar_file_get_file (shortcut->file));
 
   return NULL;
+}
+
+
+
+static ThunarShortcut *
+thunar_shortcut_new (void)
+{
+  ThunarShortcut *shortcut;
+
+  shortcut = g_slice_new0 (ThunarShortcut);
+
+  shortcut->group = 0;
+
+  shortcut->name = NULL;
+  shortcut->gicon = NULL;
+  shortcut->tooltip = NULL;
+  shortcut->sort_id = 0;
+
+  shortcut->busy = 0;
+  shortcut->busy_pulse = 0;
+
+  shortcut->location = NULL;
+  shortcut->file = NULL;
+  shortcut->device = NULL;
+  shortcut->hidden = 0;
+
+  return shortcut;
 }
 
 
@@ -2170,7 +2199,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
     return;
 
   /* create the new shortcut that will be inserted */
-  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut = thunar_shortcut_new ();
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
   shortcut->location = G_FILE (g_object_ref (G_OBJECT (location)));
 
