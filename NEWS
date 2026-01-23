@@ -1,3 +1,43 @@
+4.21.4 (2026-01-23)
+======
+- Properly initialize struct (#1778)
+- Prevent crash on unmount (#1778)
+- Notify thumbnail cache for delete
+- Fix 'delete' for folders (#1378)
+- Rename *_ask_replace to *_ask_for_action
+- Allow to properly merge directories (#1273)(#1762)
+- Untrash: Fix warning
+- TransferJob: Reduce filesystem io
+- TransferJob: Refactoring
+- TransferJob: Simplification
+- Preload preview images of neightb. files (#1267)
+- Revert "Preload image-preview thumbnails"
+- Simplify trash/delete logic (#1761)
+- Fix GtkTreePath leaks in thunar_details_view_key_press_event
+- Fix string leaks and typos in drop-descendant-files code
+- ListView: Ellipsize in middle (#1765)
+- Expandable folders: fix multiselect with keyboard (#1500)
+- Fix tab-switch on new tab (#1764)
+- Show 'queued' message only for queued jobs (#1755)
+- Prevent "set but not used" build warning
+- Prevent crash on non-local symlinks (#1757)
+- Fix g_object_unref warning
+- Add unit tests for "thunar_g_file_resolve_symlink" (#1757)
+- Fix symlink resolve for desktop files (#1757)
+- Fix move/delete when selected files contain other files (#1749)
+- Do not use 'g_log_set_always_fatal'
+- Cache the "smart sort" preference (#1744)
+- Make build with terminal optional (#1735)
+- Translation Updates:
+  Albanian, Arabic, Asturian, Basque, Belarusian, Bulgarian, Catalan,
+  Chinese (China), Chinese (Taiwan), Czech, Danish, Dutch, English
+  (United Kingdom), Estonian, Finnish, French, Galician, Georgian,
+  German, Greek, Hebrew, Hungarian, Indonesian, Interlingue, Italian,
+  Japanese, Kazakh, Malay, Norwegian Bokmål, Occitan (post 1500),
+  Polish, Portuguese, Portuguese (Brazil), Romanian, Russian, Serbian,
+  Slovak, Slovenian, Spanish, Swedish, Thai, Turkish, Uyghur, Venetian,
+  Vietnamese
+
 4.21.3 (2025-10-16)
 ======
 - Location Selector: Force focus view on Activate (#1732)
