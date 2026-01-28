@@ -247,6 +247,7 @@ struct _ThunarApplication
   GSList *volman_udis;
   guint   volman_idle_id;
   guint   volman_watch_id;
+  GHashTable *media_fs_uuids;
 #endif
 
   GList                         *files_to_launch;
@@ -406,6 +407,8 @@ thunar_application_startup (GApplication *gapp)
    * or disconnected from the computer */
   g_signal_connect (application->udev_client, "uevent",
                     G_CALLBACK (thunar_application_uevent), application);
+
+  application->media_fs_uuids = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 #endif
 
   thunar_application_dbus_init (application);
@@ -455,6 +458,8 @@ thunar_application_shutdown (GApplication *gapp)
 
   /* disconnect from the udev client */
   g_object_unref (application->udev_client);
+
+  g_hash_table_destroy (application->media_fs_uuids);
 #endif
 
   /* drop any running "show dialogs" timer */
@@ -1068,6 +1073,37 @@ thunar_application_launch (ThunarApplication     *application,
 
 
 #ifdef HAVE_GUDEV
+static gboolean has_cdrom_media_changed(GUdevDevice       *device,
+					ThunarApplication *application)
+{
+  const gchar *media_fs_uuid;
+  const gchar *sysfs_path;
+  gchar       *old_fs_uuid;
+
+  /* check if the device is a CD drive */
+  if (!g_udev_device_get_property_as_boolean (device, "ID_CDROM"))
+	  return FALSE;
+
+  sysfs_path = g_udev_device_get_sysfs_path (device);
+
+  /* check if the CD drive has a media */
+  if (!g_udev_device_get_property_as_boolean (device, "ID_CDROM_MEDIA"))
+  {
+    g_hash_table_remove (application->media_fs_uuids, sysfs_path);
+    return FALSE;
+  }
+
+  media_fs_uuid = g_udev_device_get_property (device, "ID_FS_UUID");
+  old_fs_uuid = g_hash_table_lookup (application->media_fs_uuids, sysfs_path);
+
+  if (g_strcmp0 (old_fs_uuid, media_fs_uuid) == 0)
+    return FALSE;
+
+  g_hash_table_insert (application->media_fs_uuids, g_strdup (sysfs_path), g_strdup (media_fs_uuid));
+
+  return TRUE;
+}
+
 static void
 thunar_application_uevent (GUdevClient       *client,
                            const gchar       *action,
@@ -1075,8 +1111,6 @@ thunar_application_uevent (GUdevClient       *client,
                            ThunarApplication *application)
 {
   const gchar *sysfs_path;
-  gboolean     is_cdrom = FALSE;
-  gboolean     has_media = FALSE;
   GSList      *lp;
 
   _thunar_return_if_fail (G_UDEV_IS_CLIENT (client));
@@ -1088,13 +1122,9 @@ thunar_application_uevent (GUdevClient       *client,
   /* determine the sysfs path of the device */
   sysfs_path = g_udev_device_get_sysfs_path (device);
 
-  /* check if the device is a CD drive */
-  is_cdrom = g_udev_device_get_property_as_boolean (device, "ID_CDROM");
-  has_media = g_udev_device_get_property_as_boolean (device, "ID_CDROM_MEDIA");
-
   /* distinguish between "add", "change" and "remove" actions, ignore "move" */
   if (g_strcmp0 (action, "add") == 0
-      || (is_cdrom && has_media && g_strcmp0 (action, "change") == 0))
+      || (has_cdrom_media_changed(device, application) && g_strcmp0 (action, "change") == 0))
     {
       /* only insert the path if we don't have it already */
       if (g_slist_find_custom (application->volman_udis, sysfs_path,
@@ -1123,6 +1153,8 @@ thunar_application_uevent (GUdevClient       *client,
 
       if (G_LIKELY (lp != NULL))
         {
+          g_hash_table_remove (application->media_fs_uuids, sysfs_path);
+
           /* free the sysfs path string */
           g_free (lp->data);
 
