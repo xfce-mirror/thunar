@@ -2705,7 +2705,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
       if (file == NULL)
         return FALSE;
 
-      /* For s single file we load the text without using a separate job */
+      /* For a single file we load the text without using a separate job */
       statusbar_text = thunar_util_get_statusbar_text_for_single_file (file);
       if (statusbar_text != NULL)
         thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
@@ -2718,6 +2718,12 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     {
       GHashTable *selected_g_files = g_hash_table_new (g_direct_hash, NULL);
       GList      *lp;
+
+      /* clear information from the statusbar */
+      statusbar_text = g_strdup (_("Loading selection information..."));
+      thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
+      g_free (statusbar_text);
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
 
       /* build GList of files from selection */
       for (lp = selected_items_tree_path_list; lp != NULL; lp = lp->next)
