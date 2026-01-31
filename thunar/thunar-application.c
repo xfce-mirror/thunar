@@ -1084,7 +1084,7 @@ has_cdrom_media_changed (GUdevDevice       *device,
 
   /* check if the device is a CD drive */
   if (!g_udev_device_get_property_as_boolean (device, "ID_CDROM"))
-	  return FALSE;
+    return FALSE;
 
   sysfs_path = g_udev_device_get_sysfs_path (device);
 
