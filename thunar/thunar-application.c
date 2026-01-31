@@ -1074,7 +1074,9 @@ thunar_application_launch (ThunarApplication     *application,
 
 #ifdef HAVE_GUDEV
 static gboolean has_cdrom_media_changed(GUdevDevice       *device,
-					ThunarApplication *application)
+static gboolean
+has_cdrom_media_changed (GUdevDevice       *device,
+                         ThunarApplication *application)
 {
   const gchar *media_fs_uuid;
   const gchar *sysfs_path;
