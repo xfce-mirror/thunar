@@ -1127,7 +1127,7 @@ thunar_application_uevent (GUdevClient       *client,
 
   /* distinguish between "add", "change" and "remove" actions, ignore "move" */
   if (g_strcmp0 (action, "add") == 0
-      || (has_cdrom_media_changed(device, application) && g_strcmp0 (action, "change") == 0))
+      || (has_cdrom_media_changed (device, application) && g_strcmp0 (action, "change") == 0))
     {
       /* only insert the path if we don't have it already */
       if (g_slist_find_custom (application->volman_udis, sysfs_path,
