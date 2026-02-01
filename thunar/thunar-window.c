@@ -467,7 +467,7 @@ static void
 thunar_window_recent_reload (GtkRecentManager *recent_manager,
                              ThunarWindow     *window);
 static void
-thunar_window_catfish_dialog_configure (GtkWidget *entry);
+thunar_window_catfish_dialog_configure (ThunarWindow *window);
 static gboolean
 thunar_window_paned_notebooks_update_orientation (ThunarWindow *window);
 static void
@@ -6520,20 +6520,27 @@ thunar_window_recent_reload (GtkRecentManager *recent_manager,
 
 
 static void
-thunar_window_catfish_dialog_configure (GtkWidget *entry)
+thunar_window_catfish_dialog_configure (ThunarWindow *window)
 {
-  GError    *err = NULL;
-  gchar     *argv[4];
-  GdkScreen *screen;
-  char      *display = NULL;
+  GError           *err = NULL;
+  gchar            *argv[5];
+  GdkScreen        *screen;
+  char             *display = NULL;
+  g_autofree gchar *search_path = NULL;
+  g_autofree gchar *search_path_arg = g_strdup ("--path=");
+
+  search_path = g_file_get_path (thunar_file_get_file (window->current_directory));
+  if (search_path != NULL)
+    search_path_arg = g_strconcat (search_path_arg, search_path, NULL);
 
   /* prepare the argument vector */
   argv[0] = (gchar *) "catfish";
-  argv[1] = THUNAR_WINDOW (entry)->search_query;
-  argv[2] = (gchar *) "--start";
-  argv[3] = NULL;
+  argv[1] = window->search_query;
+  argv[2] = search_path_arg;
+  argv[3] = (gchar *) "--start";
+  argv[4] = NULL;
 
-  screen = gtk_widget_get_screen (entry);
+  screen = gtk_widget_get_screen (GTK_WIDGET (window));
 
   if (screen != NULL)
     display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
@@ -6541,7 +6548,7 @@ thunar_window_catfish_dialog_configure (GtkWidget *entry)
   /* invoke the configuration interface of Catfish */
   if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
     {
-      thunar_dialogs_show_error (entry, err, _("Failed to launch search with Catfish"));
+      thunar_dialogs_show_error (window, err, _("Failed to launch search with Catfish"));
       g_error_free (err);
     }
 
