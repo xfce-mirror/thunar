@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-01-17 12:48+0100\n"
+"POT-Creation-Date: 2026-02-01 00:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Emanuele Petriglia <inbox@emanuelepetriglia.com>, 2025-2026\n"
 "Language-Team: Italian (http://app.transifex.com/xfce/thunar/language/it/)\n"
@@ -1584,7 +1584,7 @@ msgid "Delete (opposite of create)"
 msgstr "Elimina (l'opposto di crea)"
 
 #: thunar/thunar-enum-types.c:789 thunar/thunar-file.c:1111
-#: thunar/thunar-gio-extensions.c:568 thunar/thunar-shortcuts-model.c:1175
+#: thunar/thunar-gio-extensions.c:568 thunar/thunar-shortcuts-model.c:1177
 #: thunar.desktop.in:25
 msgid "Trash"
 msgstr "Cestino"
@@ -1643,7 +1643,7 @@ msgid "Both Ways"
 msgstr "Entrambe le vie"
 
 #: thunar/thunar-file.c:1118 thunar/thunar-gio-extensions.c:566
-#: thunar/thunar-shortcuts-model.c:1057
+#: thunar/thunar-shortcuts-model.c:1059
 msgid "File System"
 msgstr "File system"
 
@@ -1795,63 +1795,63 @@ msgstr "Elenco delle cartelle basato su icone"
 msgid "Icon view"
 msgstr "Visualizzazione a icone"
 
-#: thunar/thunar-io-jobs.c:110
+#: thunar/thunar-io-jobs.c:141 thunar/thunar-io-jobs.c:156
 #, c-format
 msgid "Error removing file: %s"
 msgstr "Impossibile rimuovere il file: %s"
 
-#: thunar/thunar-io-jobs.c:220 thunar/thunar-io-jobs.c:398
+#: thunar/thunar-io-jobs.c:269 thunar/thunar-io-jobs.c:452
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Il file \"%s\" è già esistente"
 
-#: thunar/thunar-io-jobs.c:243
+#: thunar/thunar-io-jobs.c:292
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Impossibile creare il file vuoto \"%s\": %s"
 
-#: thunar/thunar-io-jobs.c:421
+#: thunar/thunar-io-jobs.c:475
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Impossibile creare la cartella \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
-#: thunar/thunar-io-jobs.c:508
+#: thunar/thunar-io-jobs.c:562
 msgid "Preparing..."
 msgstr "Preparazione in corso…"
 
-#: thunar/thunar-io-jobs.c:554
+#: thunar/thunar-io-jobs.c:608
 #, c-format
 msgid "You do not have permission to delete the file \"%s\""
 msgstr "Non si hanno i permessi per eliminare il file \"%s\""
 
-#: thunar/thunar-io-jobs.c:650
+#: thunar/thunar-io-jobs.c:696
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Impossibile eliminare il file \"%s\": %s"
 
 #. generate a useful error message
-#: thunar/thunar-io-jobs.c:1125
+#: thunar/thunar-io-jobs.c:1165
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Impossibile cambiare il proprietario di \"%s\": %s"
 
-#: thunar/thunar-io-jobs.c:1126
+#: thunar/thunar-io-jobs.c:1166
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Impossibile cambiare il gruppo di \"%s\": %s"
 
-#: thunar/thunar-io-jobs.c:1279
+#: thunar/thunar-io-jobs.c:1319
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Impossibile cambiare i permessi di \"%s\": %s"
 
-#: thunar/thunar-io-jobs.c:2043
+#: thunar/thunar-io-jobs.c:2083
 #, c-format
 msgid "Selection: %s"
 msgstr "Selezione: %s"
 
-#: thunar/thunar-io-jobs.c:2056
+#: thunar/thunar-io-jobs.c:2096
 #, c-format
 msgid "Free space: %s"
 msgstr "Spazio libero: %s"
@@ -3123,21 +3123,21 @@ msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Saltare questo file e continuare a rinominare i file rimanenti?"
 
-#: thunar/thunar-shortcuts-model.c:675 thunar/thunar-shortcuts-model.c:1058
+#: thunar/thunar-shortcuts-model.c:677 thunar/thunar-shortcuts-model.c:1060
 #: thunar/thunar-window.c:707
 msgid "Browse the file system"
 msgstr "Esplora il file system"
 
-#: thunar/thunar-shortcuts-model.c:709
+#: thunar/thunar-shortcuts-model.c:711
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr "Monta e apri %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:722 plugins/thunar-tpa/thunar-tpa.c:304
+#: thunar/thunar-shortcuts-model.c:724 plugins/thunar-tpa/thunar-tpa.c:304
 msgid "Trash is empty"
 msgstr "Cestino vuoto"
 
-#: thunar/thunar-shortcuts-model.c:726
+#: thunar/thunar-shortcuts-model.c:728
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
@@ -3145,47 +3145,47 @@ msgstr[0] "Il cestino contiene %d file"
 msgstr[1] "Il cestino contiene %d file"
 msgstr[2] "Il cestino contiene %d file"
 
-#: thunar/thunar-shortcuts-model.c:1051
+#: thunar/thunar-shortcuts-model.c:1053
 msgid "Devices"
 msgstr "Dispositivi"
 
-#: thunar/thunar-shortcuts-model.c:1094
+#: thunar/thunar-shortcuts-model.c:1096
 msgid "Network"
 msgstr "Rete"
 
-#: thunar/thunar-shortcuts-model.c:1102
+#: thunar/thunar-shortcuts-model.c:1104
 msgid "Browse Network"
 msgstr "Esplora la rete"
 
-#: thunar/thunar-shortcuts-model.c:1103 thunar/thunar-window.c:717
+#: thunar/thunar-shortcuts-model.c:1105 thunar/thunar-window.c:717
 msgid "Browse local network connections"
 msgstr "Esplora la connessioni locali"
 
-#: thunar/thunar-shortcuts-model.c:1125
+#: thunar/thunar-shortcuts-model.c:1127
 msgid "Places"
 msgstr "Posizioni"
 
-#: thunar/thunar-shortcuts-model.c:1137
+#: thunar/thunar-shortcuts-model.c:1139
 msgid "Open the home folder"
 msgstr "Apri la cartella home"
 
-#: thunar/thunar-shortcuts-model.c:1154
+#: thunar/thunar-shortcuts-model.c:1156
 msgid "Open the desktop folder"
 msgstr "Apri la cartella della scrivania"
 
-#: thunar/thunar-shortcuts-model.c:1202 thunar.desktop.in:21
+#: thunar/thunar-shortcuts-model.c:1204 thunar.desktop.in:21
 msgid "Computer"
 msgstr "Computer"
 
-#: thunar/thunar-shortcuts-model.c:1203
+#: thunar/thunar-shortcuts-model.c:1205
 msgid "Browse the computer"
 msgstr "Esplora il computer"
 
-#: thunar/thunar-shortcuts-model.c:1215
+#: thunar/thunar-shortcuts-model.c:1217
 msgid "Recent"
 msgstr "Recenti"
 
-#: thunar/thunar-shortcuts-model.c:1216
+#: thunar/thunar-shortcuts-model.c:1218
 msgid "Browse recently used files"
 msgstr "Esplora file usati di recente"
 
@@ -3381,32 +3381,37 @@ msgstr[0] "%d file trovato"
 msgstr[1] "%d file trovati"
 msgstr[2] "%d file trovati"
 
+#. clear information from the statusbar
+#: thunar/thunar-standard-view.c:2723
+msgid "Loading selection information..."
+msgstr "Caricamento delle informazioni sulla selezione in corso…"
+
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2849 thunar/thunar-window.c:4765
+#: thunar/thunar-standard-view.c:2855 thunar/thunar-window.c:4765
 msgid "Failed to open the home folder"
 msgstr "Impossibile aprire la cartella home dell'utente"
 
-#: thunar/thunar-standard-view.c:2927
+#: thunar/thunar-standard-view.c:2933
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Seleziona in base a un criterio"
 
-#: thunar/thunar-standard-view.c:2932
+#: thunar/thunar-standard-view.c:2938
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "A_nnulla"
 
-#: thunar/thunar-standard-view.c:2935
+#: thunar/thunar-standard-view.c:2941
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Seleziona"
 
-#: thunar/thunar-standard-view.c:2949
+#: thunar/thunar-standard-view.c:2955
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Cr_iterio:"
 
-#: thunar/thunar-standard-view.c:2950
+#: thunar/thunar-standard-view.c:2956
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3416,7 +3421,7 @@ msgstr "I file con il nome corrispondente al criterio con caratteri jolly verran
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2964
+#: thunar/thunar-standard-view.c:2970
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3427,24 +3432,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? corrisponde esattamente un carattere,\n* corrisponde un qualsiasi numero (anche zero) di caratteri.\n\nPer esempio: *.txt, file??.png, pict\n\nSenza nessun carattere jolly * o ? il criterio corrisponderà in qualsiasi punto del nome. Con i caratteri jolly il criterio corrisponde con l'inizio o la fine del nome."
 
-#: thunar/thunar-standard-view.c:2968
+#: thunar/thunar-standard-view.c:2974
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "_Distingui maiuscole e minuscole"
 
-#: thunar/thunar-standard-view.c:2969
+#: thunar/thunar-standard-view.c:2975
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Se abilitato, le lettere maiuscole e minuscole sono distinte nel criterio.\nExamp* corrisponderà con Example.txt ma non con example.txt"
 
-#: thunar/thunar-standard-view.c:2974
+#: thunar/thunar-standard-view.c:2980
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Corrispondi diacritici"
 
-#: thunar/thunar-standard-view.c:2975
+#: thunar/thunar-standard-view.c:2981
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3453,21 +3458,21 @@ msgstr "Se abilitato, gli accenti sono distinti nel criterio.\nRés* corrisponde
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3413
+#: thunar/thunar-standard-view.c:3419
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nome del file fornito dalla sorgente XDS non valido"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3609
+#: thunar/thunar-standard-view.c:3615
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Impossibile creare un collegamento per l'URL \"%s\""
 
-#: thunar/thunar-standard-view.c:3656
+#: thunar/thunar-standard-view.c:3662
 msgid "Untitled document"
 msgstr "Documento senza titolo"
 
-#: thunar/thunar-standard-view.c:4156 thunar/thunar-window.c:4862
+#: thunar/thunar-standard-view.c:4162 thunar/thunar-window.c:4862
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Impossibile aprire la cartella \"%s\""
