@@ -544,6 +544,7 @@ ttj_copy_file (ThunarTransferJob  *job,
   gboolean   use_partial;
   gboolean   verify_file;
   gboolean   add_to_operation = TRUE;
+  gboolean   success;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -596,9 +597,9 @@ ttj_copy_file (ThunarTransferJob  *job,
     }
 
   /* try to copy the file */
-  thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
-                      thunar_job_get_cancellable (THUNAR_JOB (job)),
-                      thunar_transfer_job_progress, job, &err);
+  success = thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
+                                thunar_job_get_cancellable (THUNAR_JOB (job)),
+                                thunar_transfer_job_progress, job, &err);
 
   switch (job->transfer_verify_file)
     {
@@ -718,6 +719,12 @@ ttj_copy_file (ThunarTransferJob  *job,
                                          &err);
                 }
             }
+        }
+      else if (success && err->code == G_IO_ERROR_NOT_SUPPORTED)
+        {
+          /* It might happen that some copy flags are not supported by the target filesystem, but the operation actually worked */
+          /* In such a case, just ignore the error */
+          g_clear_error (&err);
         }
     }
 
