@@ -1654,8 +1654,8 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
 
     case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB:
       n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-      label_text = g_strdup_printf (ngettext ("Open in new _Tab", "Open in %d New _Tabs", n), n);
-      tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new tab",
+      label_text = g_strdup_printf (ngettext ("Open in %d new _Tab", "Open in %d New _Tabs", n), n);
+      tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in %d new tab",
                                                 "Open the selected directories in %d new tabs", n),
                                       n);
       item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), menu);
@@ -1665,8 +1665,8 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
 
     case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW:
       n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-      label_text = g_strdup_printf (ngettext ("Open in new _Window", "Open in %d New _Windows", n), n);
-      tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new window",
+      label_text = g_strdup_printf (ngettext ("Open in %d new _Window", "Open in %d New _Windows", n), n);
+      tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
                                                 "Open the selected directories in %d new windows", n),
                                       n);
       item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), menu);
