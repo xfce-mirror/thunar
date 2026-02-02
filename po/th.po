@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-02-01 00:48+0100\n"
+"POT-Creation-Date: 2026-02-02 00:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Warut Bunprasert <warut.b@disroot.org>, 2025-2026\n"
 "Language-Team: Thai (http://app.transifex.com/xfce/thunar/language/th/)\n"
@@ -49,17 +49,13 @@ msgstr "แก้ไขตัวเ_รียกโปรแกรม"
 msgid "Edit the selected launcher"
 msgstr "แก้ไขตัวเรียกโปรแกรมที่เลือก"
 
-#: thunar/thunar-action-manager.c:323 thunar/thunar-action-manager.c:1657
-#, c-format
+#: thunar/thunar-action-manager.c:323
 msgid "Open in new _Tab"
-msgid_plural "Open in %d New _Tabs"
-msgstr[0] "เปิดในแ_ท็บใหม่ %d แท็บ"
+msgstr "เปิดในแ_ท็บใหม่"
 
-#: thunar/thunar-action-manager.c:324 thunar/thunar-action-manager.c:1668
-#, c-format
+#: thunar/thunar-action-manager.c:324
 msgid "Open in new _Window"
-msgid_plural "Open in %d New _Windows"
-msgstr[0] "เปิดใน_หน้าต่างใหม่ %d บาน"
+msgstr "เปิดใน_หน้าต่างใหม่"
 
 #: thunar/thunar-action-manager.c:325
 msgid "Open Item _Location"
@@ -337,17 +333,29 @@ msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "เรียกทำงานแฟ้มที่เลือก"
 
+#: thunar/thunar-action-manager.c:1657
+#, c-format
+msgid "Open in %d new _Tab"
+msgid_plural "Open in %d New _Tabs"
+msgstr[0] ""
+
 #: thunar/thunar-action-manager.c:1658
 #, c-format
-msgid "Open the selected directory in new tab"
+msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "เปิดไดเรกทอรีที่เลือกในแท็บใหม่ %d แท็บ"
+msgstr[0] "เปิดโฟลเดอร์ที่เลือกในแท็บใหม่ %d แท็บ"
+
+#: thunar/thunar-action-manager.c:1668
+#, c-format
+msgid "Open in %d new _Window"
+msgid_plural "Open in %d New _Windows"
+msgstr[0] ""
 
 #: thunar/thunar-action-manager.c:1669
 #, c-format
-msgid "Open the selected directory in new window"
+msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "เปิดไดเรกทอรีที่เลือกในหน้าต่างใหม่ %d บาน"
+msgstr[0] "เปิดโฟลเดอร์ที่เลือกในหน้าต่างใหม่ %d บาน"
 
 #: thunar/thunar-action-manager.c:1707
 msgid "Create a symbolic link for the selected file"
@@ -3480,23 +3488,23 @@ msgstr "ใช้ไอคอนสัญลักษณ์แทนไอคอ
 msgid "Only visible when the menubar is hidden"
 msgstr "มองเห็นได้เฉพาะเมื่อซ่อนแถบเมนูเท่านั้น"
 
-#: thunar/thunar-transfer-job.c:621
+#: thunar/thunar-transfer-job.c:622
 msgid "Verifying file contents..."
 msgstr "กำลังตรวจสอบเนื้อหาแฟ้ม..."
 
 #. ask the user to retry
-#: thunar/thunar-transfer-job.c:914
+#: thunar/thunar-transfer-job.c:921
 #, c-format
 msgid "Failed to move file \"%s\": %s"
 msgstr "ย้ายแฟ้ม \"%s\" ไม่สำเร็จ: %s"
 
 #. ask the user to skip this node and all subnodes
-#: thunar/thunar-transfer-job.c:1011
+#: thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
 msgstr "คัดลอกแฟ้ม \"%s\" ไม่สำเร็จ: %s"
 
-#: thunar/thunar-transfer-job.c:1094
+#: thunar/thunar-transfer-job.c:1101
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3504,57 +3512,57 @@ msgid ""
 msgstr "เกิดข้อผิดพลาดขณะคัดลอกไปยัง \"%s\": ต้องการเนื้อที่อีก %s เพื่อจะคัดลอกไปยังปลายทางได้"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1127
+#: thunar/thunar-transfer-job.c:1134
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "กำลังพยายามกู้คืน \"%s\""
 
-#: thunar/thunar-transfer-job.c:1155
+#: thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "โฟลเดอร์ \"%s\" ไม่มีอยู่อีกต่อไปแล้ว แต่ต้องใช้ในการกู้คืนแฟ้ม \"%s\" จากถังขยะ"
 
-#: thunar/thunar-transfer-job.c:1181
+#: thunar/thunar-transfer-job.c:1188
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "กู้คืนโฟลเดอร์ \"%s\" ไม่สำเร็จ"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1259
+#: thunar/thunar-transfer-job.c:1266
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "กำลังพยายามย้าย \"%s\""
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1342
+#: thunar/thunar-transfer-job.c:1349
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "ไม่สามารถย้าย \"%s\" ตรงๆ ได้ กำลังรวบรวมแฟ้มเพื่อคัดลอก..."
 
-#: thunar/thunar-transfer-job.c:1608
+#: thunar/thunar-transfer-job.c:1615
 msgid "Collecting files..."
 msgstr "กำลังรวบรวมแฟ้ม..."
 
-#: thunar/thunar-transfer-job.c:1783
+#: thunar/thunar-transfer-job.c:1790
 #, c-format
 msgid "%s of %s"
 msgstr "%s จาก %s"
 
-#: thunar/thunar-transfer-job.c:1803
+#: thunar/thunar-transfer-job.c:1810
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "เหลืออีก %lu ชั่วโมง (%s/วิ)"
 
-#: thunar/thunar-transfer-job.c:1809
+#: thunar/thunar-transfer-job.c:1816
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "เหลืออีก %lu นาที (%s/วิ)"
 
-#: thunar/thunar-transfer-job.c:1814
+#: thunar/thunar-transfer-job.c:1821
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4179,23 +4187,23 @@ msgstr "Thunar คือโปรแกรมจัดการแฟ้มท�
 msgid "Select an image to preview"
 msgstr "เลือกรูปภาพเพื่อดูตัวอย่าง"
 
-#: thunar/thunar-window.c:6544
+#: thunar/thunar-window.c:6551
 msgid "Failed to launch search with Catfish"
 msgstr "ไม่สามารถเปิดการค้นหาด้วย Catfish"
 
-#: thunar/thunar-window.c:6875
+#: thunar/thunar-window.c:6882
 msgid "Change the active view type"
 msgstr "เปลี่ยนประเภทมุมมองที่ใช้งานอยู่"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6878 thunar/thunar-window.c:6903
+#: thunar/thunar-window.c:6885 thunar/thunar-window.c:6910
 msgid "View Switcher"
 msgstr "แสดงเครื่องมือสลับ"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7068 thunar/thunar-window.c:7073
+#: thunar/thunar-window.c:7075 thunar/thunar-window.c:7080
 msgid "Location Bar"
 msgstr "แถบตำแหน่ง"
 
