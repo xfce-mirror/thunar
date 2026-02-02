@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-02-01 00:48+0100\n"
+"POT-Creation-Date: 2026-02-02 00:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Quentin PAGÈS, 2021-2022,2024-2026\n"
 "Language-Team: Occitan (post 1500) (http://app.transifex.com/xfce/thunar/language/oc/)\n"
@@ -46,19 +46,13 @@ msgstr "Modificar _aviador"
 msgid "Edit the selected launcher"
 msgstr "Modificar l’aviador seleccionat"
 
-#: thunar/thunar-action-manager.c:323 thunar/thunar-action-manager.c:1657
-#, c-format
+#: thunar/thunar-action-manager.c:323
 msgid "Open in new _Tab"
-msgid_plural "Open in %d New _Tabs"
-msgstr[0] "Dobrir dins un _onglet novèl"
-msgstr[1] "Dobrir dins %d _onglets novèls"
+msgstr "Dobrir dins un _onglet novèl"
 
-#: thunar/thunar-action-manager.c:324 thunar/thunar-action-manager.c:1668
-#, c-format
+#: thunar/thunar-action-manager.c:324
 msgid "Open in new _Window"
-msgid_plural "Open in %d New _Windows"
-msgstr[0] "Dobrir dins fenèstra novèla"
-msgstr[1] "Dobrir dins %d _fenèstras novèlas"
+msgstr "Dobrir dins una _fenèstra novèla"
 
 #: thunar/thunar-action-manager.c:325
 msgid "Open Item _Location"
@@ -342,18 +336,32 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Executar lo fichièr seleccionat"
 msgstr[1] "Executar los fichièrs seleccionats"
 
+#: thunar/thunar-action-manager.c:1657
+#, c-format
+msgid "Open in %d new _Tab"
+msgid_plural "Open in %d New _Tabs"
+msgstr[0] "Dobrir dins %d _onglet novèl"
+msgstr[1] "Dobrir dins %d _onglets novèls"
+
 #: thunar/thunar-action-manager.c:1658
 #, c-format
-msgid "Open the selected directory in new tab"
+msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "Dobrir lo repertòri seleccionat dins un onglet novèl"
-msgstr[1] "Dobrir los repertòris seleccionats dins %d onglets novèls"
+msgstr[0] "Dobrir lo repertòri seleccionat dins %d fenèstra novèla"
+msgstr[1] "Dobrir los repertòris seleccionats dins %d fenèstras novèlas"
+
+#: thunar/thunar-action-manager.c:1668
+#, c-format
+msgid "Open in %d new _Window"
+msgid_plural "Open in %d New _Windows"
+msgstr[0] "Dobrir dins %d _fenèstra novèla"
+msgstr[1] "Dobrir dins %d _fenèstras novèlas"
 
 #: thunar/thunar-action-manager.c:1669
 #, c-format
-msgid "Open the selected directory in new window"
+msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Dobrir lo repertòri seleccionat dins una fenèstra novèla"
+msgstr[0] "Dobrir lo repertòri seleccionat dins %d fenèstra novèla"
 msgstr[1] "Dobrir los repertòris seleccionats dins %d fenèstras novèlas"
 
 #: thunar/thunar-action-manager.c:1707
@@ -3510,23 +3518,23 @@ msgstr "Utilizar las icònas simbolicas a la plaça de las costumièras (se disp
 msgid "Only visible when the menubar is hidden"
 msgstr "Sonque visible quand la barra de menú es amagada"
 
-#: thunar/thunar-transfer-job.c:621
+#: thunar/thunar-transfer-job.c:622
 msgid "Verifying file contents..."
 msgstr "Verificacion del contengut del fichièr..."
 
 #. ask the user to retry
-#: thunar/thunar-transfer-job.c:914
+#: thunar/thunar-transfer-job.c:921
 #, c-format
 msgid "Failed to move file \"%s\": %s"
 msgstr "Fracàs del desplaçament del fichièr « %s » : %s"
 
 #. ask the user to skip this node and all subnodes
-#: thunar/thunar-transfer-job.c:1011
+#: thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
 msgstr "Fracàs de la còpia del fichièr « %s » : %s"
 
-#: thunar/thunar-transfer-job.c:1094
+#: thunar/thunar-transfer-job.c:1101
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3534,59 +3542,59 @@ msgid ""
 msgstr "Error al moment de la còpia cap a « %s » : %s mai d'espaci es necessari per copiar cap a la destinacion"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1127
+#: thunar/thunar-transfer-job.c:1134
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Ensag de restablir « %s »"
 
-#: thunar/thunar-transfer-job.c:1155
+#: thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Lo dorsièr « %s » existís pas mai, mas es necessari per restablir lo fichièr « %s » de l'escobilhièr"
 
-#: thunar/thunar-transfer-job.c:1181
+#: thunar/thunar-transfer-job.c:1188
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Impossible de restablir lo dorsièr « %s »"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1259
+#: thunar/thunar-transfer-job.c:1266
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Ensag de desplaçar « %s »"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1342
+#: thunar/thunar-transfer-job.c:1349
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Impossible de desplaçar « %s » dirèctament. Collècta de fichièrs per èsser copiats ..."
 
-#: thunar/thunar-transfer-job.c:1608
+#: thunar/thunar-transfer-job.c:1615
 msgid "Collecting files..."
 msgstr "Recuperacion dels fichièrs..."
 
-#: thunar/thunar-transfer-job.c:1783
+#: thunar/thunar-transfer-job.c:1790
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: thunar/thunar-transfer-job.c:1803
+#: thunar/thunar-transfer-job.c:1810
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu ora restanta (%s/seg)"
 msgstr[1] "%lu oras restantas (%s/seg)"
 
-#: thunar/thunar-transfer-job.c:1809
+#: thunar/thunar-transfer-job.c:1816
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minuta restanta (%s/seg)"
 msgstr[1] "%lu minutas restantas (%s/seg)"
 
-#: thunar/thunar-transfer-job.c:1814
+#: thunar/thunar-transfer-job.c:1821
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4213,23 +4221,23 @@ msgstr "Thunar es un gestionari de fichièrs rapid e aisit\nd'utilizacion per l'
 msgid "Select an image to preview"
 msgstr "Seleccionar un imatge de previsualizar"
 
-#: thunar/thunar-window.c:6544
+#: thunar/thunar-window.c:6551
 msgid "Failed to launch search with Catfish"
 msgstr "Fracàs de l’aviada de la recèrca de fichièrs Catfish"
 
-#: thunar/thunar-window.c:6875
+#: thunar/thunar-window.c:6882
 msgid "Change the active view type"
 msgstr "Cambiar lo tipe de la vista activa"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6878 thunar/thunar-window.c:6903
+#: thunar/thunar-window.c:6885 thunar/thunar-window.c:6910
 msgid "View Switcher"
 msgstr "Bascula de vista"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7068 thunar/thunar-window.c:7073
+#: thunar/thunar-window.c:7075 thunar/thunar-window.c:7080
 msgid "Location Bar"
 msgstr "Barra d’adreça"
 
