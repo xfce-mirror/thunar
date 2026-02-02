@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-02-01 00:48+0100\n"
+"POT-Creation-Date: 2026-02-02 00:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Marek Adamski, 2021-2026\n"
 "Language-Team: Polish (http://app.transifex.com/xfce/thunar/language/pl/)\n"
@@ -56,23 +56,13 @@ msgstr "Edytuj _aktywator"
 msgid "Edit the selected launcher"
 msgstr "Edytuje wybrany aktywator"
 
-#: thunar/thunar-action-manager.c:323 thunar/thunar-action-manager.c:1657
-#, c-format
+#: thunar/thunar-action-manager.c:323
 msgid "Open in new _Tab"
-msgid_plural "Open in %d New _Tabs"
-msgstr[0] "Otwórz w nowej _karcie"
-msgstr[1] "Otwórz w %d nowych _kartach"
-msgstr[2] "Otwórz w %d nowych _kartach"
-msgstr[3] "Otwórz w %d nowych _kartach"
+msgstr "Otwórz w nowej _karcie"
 
-#: thunar/thunar-action-manager.c:324 thunar/thunar-action-manager.c:1668
-#, c-format
+#: thunar/thunar-action-manager.c:324
 msgid "Open in new _Window"
-msgid_plural "Open in %d New _Windows"
-msgstr[0] "Otwórz w nowym _oknie"
-msgstr[1] "Otwórz w %d nowych _oknach"
-msgstr[2] "Otwórz w %d nowych _oknach"
-msgstr[3] "Otwórz w %d nowych _oknach"
+msgstr "Otwórz w nowym _oknie"
 
 #: thunar/thunar-action-manager.c:325
 msgid "Open Item _Location"
@@ -368,20 +358,38 @@ msgstr[1] "Uruchom zaznaczone pliki"
 msgstr[2] "Uruchom zaznaczone pliki"
 msgstr[3] "Uruchom zaznaczone pliki"
 
+#: thunar/thunar-action-manager.c:1657
+#, c-format
+msgid "Open in %d new _Tab"
+msgid_plural "Open in %d New _Tabs"
+msgstr[0] "Otwórz w %d nowej _karcie"
+msgstr[1] "Otwórz w %d nowych _kartach"
+msgstr[2] "Otwórz w %d nowych _kartach"
+msgstr[3] "Otwórz w %d nowych _kartach"
+
 #: thunar/thunar-action-manager.c:1658
 #, c-format
-msgid "Open the selected directory in new tab"
+msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "Otwiera zaznaczony katalog w nowej karcie"
+msgstr[0] "Otwiera zaznaczony katalog w %d nowej karcie"
 msgstr[1] "Otwiera zaznaczone katalogi w %d nowych kartach"
 msgstr[2] "Otwiera zaznaczone katalogi w %d nowych kartach"
 msgstr[3] "Otwiera zaznaczone katalogi w %d nowych kartach"
 
+#: thunar/thunar-action-manager.c:1668
+#, c-format
+msgid "Open in %d new _Window"
+msgid_plural "Open in %d New _Windows"
+msgstr[0] "Otwórz w %d nowym _oknie"
+msgstr[1] "Otwórz w %d nowych _oknach"
+msgstr[2] "Otwórz w %d nowych _oknach"
+msgstr[3] "Otwórz w %d nowych _oknach"
+
 #: thunar/thunar-action-manager.c:1669
 #, c-format
-msgid "Open the selected directory in new window"
+msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Otwiera zaznaczony katalog w nowym oknie"
+msgstr[0] "Otwiera zaznaczony katalog w %d nowym oknie"
 msgstr[1] "Otwiera zaznaczone katalogi w %d nowych oknach"
 msgstr[2] "Otwiera zaznaczone katalogi w %d nowych oknach"
 msgstr[3] "Otwiera zaznaczone katalogi w %d nowych oknach"
@@ -3586,23 +3594,23 @@ msgstr "Używanie ikon symbolicznych zamiast zwykłych (jeśli są dostępne)."
 msgid "Only visible when the menubar is hidden"
 msgstr "Widoczne tylko wtedy, gdy pasek menu jest ukryty"
 
-#: thunar/thunar-transfer-job.c:621
+#: thunar/thunar-transfer-job.c:622
 msgid "Verifying file contents..."
 msgstr "Sprawdzanie zawartości pliku..."
 
 #. ask the user to retry
-#: thunar/thunar-transfer-job.c:914
+#: thunar/thunar-transfer-job.c:921
 #, c-format
 msgid "Failed to move file \"%s\": %s"
 msgstr "Nie udało się przenieść pliku „%s”: %s"
 
 #. ask the user to skip this node and all subnodes
-#: thunar/thunar-transfer-job.c:1011
+#: thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
 msgstr "Nie udało się skopiować pliku „%s”: %s"
 
-#: thunar/thunar-transfer-job.c:1094
+#: thunar/thunar-transfer-job.c:1101
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3610,45 +3618,45 @@ msgid ""
 msgstr "Błąd podczas kopiowania do „%s”: wymagane jest %s więcej wolnej przestrzeni, aby skopiować do położenia docelowego"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1127
+#: thunar/thunar-transfer-job.c:1134
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Próbowanie przywrócenia „%s”"
 
-#: thunar/thunar-transfer-job.c:1155
+#: thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Katalog „%s” już nie istnieje, lecz jest potrzebny do przywrócenia pliku „%s” z kosza"
 
-#: thunar/thunar-transfer-job.c:1181
+#: thunar/thunar-transfer-job.c:1188
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nie udało się przywrócić katalogu „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1259
+#: thunar/thunar-transfer-job.c:1266
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Próbowanie przeniesienia „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1342
+#: thunar/thunar-transfer-job.c:1349
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Nie można przenieść „%s” bezpośrednio. Zliczanie plików do skopiowania..."
 
-#: thunar/thunar-transfer-job.c:1608
+#: thunar/thunar-transfer-job.c:1615
 msgid "Collecting files..."
 msgstr "Wyszukiwanie plików..."
 
-#: thunar/thunar-transfer-job.c:1783
+#: thunar/thunar-transfer-job.c:1790
 #, c-format
 msgid "%s of %s"
 msgstr "%s z %s"
 
-#: thunar/thunar-transfer-job.c:1803
+#: thunar/thunar-transfer-job.c:1810
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3657,7 +3665,7 @@ msgstr[1] "pozostały %lu godziny (%s/s)"
 msgstr[2] "pozostało %lu godzin (%s/s)"
 msgstr[3] "pozostało %lu godzin (%s/s)"
 
-#: thunar/thunar-transfer-job.c:1809
+#: thunar/thunar-transfer-job.c:1816
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3666,7 +3674,7 @@ msgstr[1] "pozostały %lu minuty (%s/s)"
 msgstr[2] "pozostało %lu minut (%s/s)"
 msgstr[3] "pozostało %lu minut (%s/s)"
 
-#: thunar/thunar-transfer-job.c:1814
+#: thunar/thunar-transfer-job.c:1821
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4297,23 +4305,23 @@ msgstr "Zarządza zawartością sytemu plików, wyróżniając się\nszybkości�
 msgid "Select an image to preview"
 msgstr "Wybór obrazu do podglądu"
 
-#: thunar/thunar-window.c:6544
+#: thunar/thunar-window.c:6551
 msgid "Failed to launch search with Catfish"
 msgstr "Nie udało się uruchomić wyszukiwania za pomocą Catfish"
 
-#: thunar/thunar-window.c:6875
+#: thunar/thunar-window.c:6882
 msgid "Change the active view type"
 msgstr "Zmienia typ aktywnego widoku"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6878 thunar/thunar-window.c:6903
+#: thunar/thunar-window.c:6885 thunar/thunar-window.c:6910
 msgid "View Switcher"
 msgstr "Przełącznik widoku"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7068 thunar/thunar-window.c:7073
+#: thunar/thunar-window.c:7075 thunar/thunar-window.c:7080
 msgid "Location Bar"
 msgstr "Pasek położenia"
 
