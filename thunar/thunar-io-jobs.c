@@ -2070,6 +2070,10 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
   date_custom_style = g_value_get_string (&g_array_index (param_values, GValue, 6));
   status_bar_active_info = g_value_get_uint (&g_array_index (param_values, GValue, 7));
 
+  /* If the view is still loading, dont set the statusbar text */
+  if (thunar_standard_view_get_loading (THUNAR_VIEW (standard_view)))
+    return TRUE;
+
   text_for_files = thunar_util_get_statusbar_text_for_files (g_files,
                                                              show_hidden,
                                                              show_file_size_binary_format,
