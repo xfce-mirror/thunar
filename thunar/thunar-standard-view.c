@@ -154,8 +154,6 @@ thunar_standard_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
                                             ThunarFile      *current_directory);
-static gboolean
-thunar_standard_view_get_loading (ThunarView *view);
 static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading);
@@ -1932,7 +1930,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
 
 
-static gboolean
+gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->loading;
@@ -1992,15 +1990,14 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
    * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
   if (THUNAR_IS_DETAILS_VIEW (standard_view))
     {
-      gchar *statusbar_text;
-
-      statusbar_text = g_strdup (_("Loading folder contents..."));
-      thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
-      g_free (statusbar_text);
-      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+      g_autofree gchar *statusbar_text = g_strdup (_("Loading folder content..."));
 
       if (G_UNLIKELY (!loading))
         {
+          /* If loading already is done, */
+          g_clear_pointer (&statusbar_text, g_free);
+          statusbar_text = g_strdup (_("Loading statusbar information..."));
+
           /* update the statusbar text after loading is finished */
           thunar_standard_view_update_statusbar_text (standard_view);
 
@@ -2039,6 +2036,9 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                 }
             }
         }
+
+      thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
     }
 
   /* notify listeners */
