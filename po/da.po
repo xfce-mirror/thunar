@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-02-02 00:48+0100\n"
+"POT-Creation-Date: 2026-02-08 00:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: scootergrisen, 2016-2025\n"
 "Language-Team: Danish (http://app.transifex.com/xfce/thunar/language/da/)\n"
@@ -126,7 +126,7 @@ msgid "_Rename..."
 msgstr "_Omdøb ..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:338 thunar/thunar-application.c:2841
+#: thunar/thunar-action-manager.c:338 thunar/thunar-application.c:2877
 #: plugins/thunar-tpa/thunar-tpa.c:187
 msgid "_Empty Trash"
 msgstr "_Tøm papirkurv"
@@ -171,7 +171,7 @@ msgstr "_Gendan og vis"
 msgid "Mo_ve to Trash"
 msgstr "_Flyt til papirkurv"
 
-#: thunar/thunar-action-manager.c:348 thunar/thunar-application.c:2576
+#: thunar/thunar-action-manager.c:348 thunar/thunar-application.c:2612
 #: plugins/thunar-uca/thunar-uca-chooser.c:379
 msgid "_Delete"
 msgstr "_Slet"
@@ -281,8 +281,8 @@ msgstr[1] "Åbn %d i nye vinduer"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1063 thunar/thunar-application.c:2575
-#: thunar/thunar-application.c:2840 thunar/thunar-chooser-dialog.c:311
+#: thunar/thunar-action-manager.c:1063 thunar/thunar-application.c:2611
+#: thunar/thunar-application.c:2876 thunar/thunar-chooser-dialog.c:311
 #: thunar/thunar-chooser-dialog.c:777 thunar/thunar-chooser-dialog.c:852
 #: thunar/thunar-chooser-dialog.c:902 thunar/thunar-dialogs.c:101
 #: thunar/thunar-dialogs.c:251 thunar/thunar-dialogs.c:705
@@ -308,8 +308,8 @@ msgid "Failed to mount \"%s\""
 msgstr "Kunne ikke montere \"%s\""
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1202 thunar/thunar-application.c:1733
-#: thunar/thunar-application.c:1894 thunar/thunar-location-entry.c:369
+#: thunar/thunar-action-manager.c:1202 thunar/thunar-application.c:1769
+#: thunar/thunar-application.c:1930 thunar/thunar-location-entry.c:369
 #: thunar/thunar-location-entry.c:402
 #, c-format
 msgid "Failed to open \"%s\""
@@ -465,16 +465,16 @@ msgstr[0] "Send den valgte fil til \"%s\""
 msgstr[1] "Send de valgte filer til \"%s\""
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2735 thunar/thunar-application.c:2082
+#: thunar/thunar-action-manager.c:2735 thunar/thunar-application.c:2118
 msgid "New Folder"
 msgstr "Ny mappe"
 
-#: thunar/thunar-action-manager.c:2739 thunar/thunar-application.c:2083
+#: thunar/thunar-action-manager.c:2739 thunar/thunar-application.c:2119
 msgid "Create New Folder"
 msgstr "Opret ny mappe"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2792 thunar/thunar-application.c:2144
+#: thunar/thunar-action-manager.c:2792 thunar/thunar-application.c:2180
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Opret dokument fra skabelonen \"%s\""
@@ -554,135 +554,135 @@ msgstr "Afslut en igangværende Thunar-instans"
 msgid "Print version information and exit"
 msgstr "Udskriv versionsinformation og afslut"
 
-#: thunar/thunar-application.c:338
+#: thunar/thunar-application.c:339
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "Erhvervede sessionens meddelelsesbus '%s'\n"
 
-#: thunar/thunar-application.c:348
+#: thunar/thunar-application.c:349
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "Erhvervede navnet '%s' på sessionens meddelelsesbus\n"
 
-#: thunar/thunar-application.c:358
+#: thunar/thunar-application.c:359
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "Navnet '%s' blev tabt på meddelelses-dbus'en."
 
-#: thunar/thunar-application.c:506
+#: thunar/thunar-application.c:511
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar's udviklingshold. Alle rettigheder forbeholdes."
 
-#: thunar/thunar-application.c:507
+#: thunar/thunar-application.c:512
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Skrevet af Benedikt Meurer <benny@xfce.org>."
 
-#: thunar/thunar-application.c:508
+#: thunar/thunar-application.c:513
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Rapportér venligst fejl til <%s>."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:945
+#: thunar/thunar-application.c:950
 msgid "Failed to launch operation"
 msgstr "Kunne ikke starte handlingen"
 
-#: thunar/thunar-application.c:1729
+#: thunar/thunar-application.c:1765
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "Kunne ikke åbne \"%s\" (%s)"
 
-#: thunar/thunar-application.c:1898
+#: thunar/thunar-application.c:1934
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Kunne ikke åbne \"%s\": %s"
 
-#: thunar/thunar-application.c:1957 thunar/thunar-properties-dialog.c:1106
+#: thunar/thunar-application.c:1993 thunar/thunar-properties-dialog.c:1106
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "Kunne ikke omdøbe \"%s\" (%s)"
 
-#: thunar/thunar-application.c:1961 thunar/thunar-properties-dialog.c:1110
+#: thunar/thunar-application.c:1997 thunar/thunar-properties-dialog.c:1110
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Kunne ikke omdøbe \"%s\""
 
-#: thunar/thunar-application.c:2007
+#: thunar/thunar-application.c:2043
 msgid "Rename Launcher Options"
 msgstr "Indstillinger for omdøb opstarter"
 
-#: thunar/thunar-application.c:2010
+#: thunar/thunar-application.c:2046
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Vil du omdøbe opstarteren eller selve filen?"
 
-#: thunar/thunar-application.c:2011
+#: thunar/thunar-application.c:2047
 msgid "Rename _Launcher"
 msgstr "Omdøb _opstarter"
 
-#: thunar/thunar-application.c:2012
+#: thunar/thunar-application.c:2048
 msgid "Rename _File"
 msgstr "Omdøb _fil"
 
-#: thunar/thunar-application.c:2087
+#: thunar/thunar-application.c:2123
 msgid "New File"
 msgstr "Ny fil"
 
-#: thunar/thunar-application.c:2088
+#: thunar/thunar-application.c:2124
 msgid "Create New File"
 msgstr "Opret ny fil"
 
-#: thunar/thunar-application.c:2209
+#: thunar/thunar-application.c:2245
 msgid "Copying files..."
 msgstr "Kopierer filer ..."
 
-#: thunar/thunar-application.c:2269
+#: thunar/thunar-application.c:2305
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Kopierer filer til \"%s\" ..."
 
-#: thunar/thunar-application.c:2328
+#: thunar/thunar-application.c:2364
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Opretter symbolske henvisninger i \"%s\" ..."
 
-#: thunar/thunar-application.c:2418
+#: thunar/thunar-application.c:2454
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Flytter filer til \"%s\" ..."
 
-#: thunar/thunar-application.c:2465
+#: thunar/thunar-application.c:2501
 msgid "Moving files ..."
 msgstr "Flytter filer ..."
 
-#: thunar/thunar-application.c:2529
+#: thunar/thunar-application.c:2565
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Er du sikker på, at du vil\nslette \"%s\" permanent?"
 
-#: thunar/thunar-application.c:2532
+#: thunar/thunar-application.c:2568
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr "Er du sikker på, at du vil\nslette \"%s\" (%s) permanent?"
 
-#: thunar/thunar-application.c:2536
+#: thunar/thunar-application.c:2572
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr "Er du sikker på, at du vil\nflytte \"%s\" til papirkurven?"
 
-#: thunar/thunar-application.c:2539
+#: thunar/thunar-application.c:2575
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr "Er du sikker på, at du vil\nflytte \"%s\" (%s) til papirkurven?"
 
-#: thunar/thunar-application.c:2548
+#: thunar/thunar-application.c:2584
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -693,7 +693,7 @@ msgid_plural ""
 msgstr[0] "Er du sikker på, at du vil slette\nden valgte fil permanent?"
 msgstr[1] "Er du sikker på, at du vil slette\nde %u valgte filer permanent?"
 
-#: thunar/thunar-application.c:2555
+#: thunar/thunar-application.c:2591
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -704,70 +704,70 @@ msgid_plural ""
 msgstr[0] "Er du sikker på, at du vil\nflytte den valgte fil til papirkurven?"
 msgstr[1] "Er du sikker på, at du vil\nflytte de %u valgte filer til papirkurven?"
 
-#: thunar/thunar-application.c:2573 thunar/thunar-dialogs.c:615
+#: thunar/thunar-application.c:2609 thunar/thunar-dialogs.c:615
 #: thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "OBS"
 
-#: thunar/thunar-application.c:2583
+#: thunar/thunar-application.c:2619
 msgid "If you delete a file, it is permanently lost."
 msgstr "Hvis du sletter en fil, går den tabt permanent."
 
-#: thunar/thunar-application.c:2644
+#: thunar/thunar-application.c:2680
 msgid "Deleting files..."
 msgstr "Sletter filer ..."
 
-#: thunar/thunar-application.c:2702
+#: thunar/thunar-application.c:2738
 msgid "Moving files into the trash..."
 msgstr "Flytter filer til papirkurven ..."
 
-#: thunar/thunar-application.c:2752
+#: thunar/thunar-application.c:2788
 msgid "Creating files..."
 msgstr "Opretter filer ..."
 
-#: thunar/thunar-application.c:2793
+#: thunar/thunar-application.c:2829
 msgid "Creating directories..."
 msgstr "Opretter mapper ..."
 
-#: thunar/thunar-application.c:2831
+#: thunar/thunar-application.c:2867
 msgid "Remove all files and folders from the Trash?"
 msgstr "Fjern alle filer og mapper fra papirkurven?"
 
-#: thunar/thunar-application.c:2838 thunar/thunar-window.c:1285
+#: thunar/thunar-application.c:2874 thunar/thunar-window.c:1285
 msgid "Empty Trash"
 msgstr "Tøm papirkurv"
 
-#: thunar/thunar-application.c:2845
+#: thunar/thunar-application.c:2881
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Hvis du vælger at tømme papirkurven, vil alle elementer i den gå tabt permanent. Bemærk venligst at du også kan slette dem enkeltvis."
 
-#: thunar/thunar-application.c:2862
+#: thunar/thunar-application.c:2898
 msgid "Emptying the Trash..."
 msgstr "Tømmer papirkurven ..."
 
-#: thunar/thunar-application.c:2909
+#: thunar/thunar-application.c:2945
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr "Kunne ikke afgøre den originale sti for \"%s\" (%s)"
 
-#: thunar/thunar-application.c:2914
+#: thunar/thunar-application.c:2950
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Kunne ikke afgøre den originale sti for \"%s\""
 
-#: thunar/thunar-application.c:2932
+#: thunar/thunar-application.c:2968
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr "Kunne ikke gendanne \"%s\" (%s)"
 
-#: thunar/thunar-application.c:2936
+#: thunar/thunar-application.c:2972
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kunne ikke gendanne \"%s\""
 
-#: thunar/thunar-application.c:2944
+#: thunar/thunar-application.c:2980
 msgid "Restoring files..."
 msgstr "Gendanner filer ..."
 
@@ -1822,12 +1822,12 @@ msgstr "Kunne ikke skifte gruppen for \"%s\": %s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Kunne ikke ændre tilladelserne for \"%s\": %s"
 
-#: thunar/thunar-io-jobs.c:2083
+#: thunar/thunar-io-jobs.c:2087
 #, c-format
 msgid "Selection: %s"
 msgstr "Markering: %s"
 
-#: thunar/thunar-io-jobs.c:2096
+#: thunar/thunar-io-jobs.c:2100
 #, c-format
 msgid "Free space: %s"
 msgstr "Ledig plads: %s"
@@ -3220,128 +3220,132 @@ msgstr[1] "%u elementer (%s, %s)"
 msgid "(some contents unreadable)"
 msgstr "(noget af indholdet er ulæseligt)"
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:495
 msgid "Select _all Files"
 msgstr "Vælg _alle filer"
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:495
 msgid "Select all files in this window"
 msgstr "Vælg alle filer i vinduet"
 
-#: thunar/thunar-standard-view.c:498
+#: thunar/thunar-standard-view.c:496
 msgid "Select _by Pattern..."
 msgstr "Vælg _med mønster ..."
 
-#: thunar/thunar-standard-view.c:498
+#: thunar/thunar-standard-view.c:496
 msgid "Select all files that match a certain pattern"
 msgstr "Vælg alle filer der passer et bestemt mønster"
 
-#: thunar/thunar-standard-view.c:499
+#: thunar/thunar-standard-view.c:497
 msgid "_Invert Selection"
 msgstr "Om_vendt markering"
 
-#: thunar/thunar-standard-view.c:499
+#: thunar/thunar-standard-view.c:497
 msgid "Select all files but not those currently selected"
 msgstr "Vælg alle filer, undtagen dem som allerede er valgt"
 
-#: thunar/thunar-standard-view.c:500
+#: thunar/thunar-standard-view.c:498
 msgid "U_nselect all Files"
 msgstr "_Fravælg alle filer"
 
-#: thunar/thunar-standard-view.c:500
+#: thunar/thunar-standard-view.c:498
 msgid "Unselect all files in this window"
 msgstr "Fravælg alle filer i vinduet"
 
-#: thunar/thunar-standard-view.c:501
+#: thunar/thunar-standard-view.c:499
 msgid "Arran_ge Items"
 msgstr "_Opstil elementer"
 
-#: thunar/thunar-standard-view.c:502
+#: thunar/thunar-standard-view.c:500
 msgid "_Reversed Order"
 msgstr "_Omvendt rækkefølge"
 
-#: thunar/thunar-standard-view.c:502
+#: thunar/thunar-standard-view.c:500
 msgid "Reverse the sort order"
 msgstr "Gør sorteringsrækkefølgen omvendt"
 
-#: thunar/thunar-standard-view.c:503
+#: thunar/thunar-standard-view.c:501
 msgid "By _Name"
 msgstr "Efter _navn"
 
-#: thunar/thunar-standard-view.c:503
+#: thunar/thunar-standard-view.c:501
 msgid "Keep items sorted by their name"
 msgstr "Hold elementer sorteret efter deres navn"
 
-#: thunar/thunar-standard-view.c:504
+#: thunar/thunar-standard-view.c:502
 msgid "By _Size"
 msgstr "Efter _størrelse"
 
-#: thunar/thunar-standard-view.c:504
+#: thunar/thunar-standard-view.c:502
 msgid "Keep items sorted by their size"
 msgstr "Hold elementer sorteret efter deres størrelse"
 
-#: thunar/thunar-standard-view.c:505
+#: thunar/thunar-standard-view.c:503
 msgid "By _Type"
 msgstr "Efter _type"
 
-#: thunar/thunar-standard-view.c:505
+#: thunar/thunar-standard-view.c:503
 msgid "Keep items sorted by their type"
 msgstr "Hold elementer sorteret efter deres type"
 
-#: thunar/thunar-standard-view.c:506
+#: thunar/thunar-standard-view.c:504
 msgid "By _Modification Date"
 msgstr "Efter ændrings_dato"
 
-#: thunar/thunar-standard-view.c:506
+#: thunar/thunar-standard-view.c:504
 msgid "Keep items sorted by their modification date"
 msgstr "Hold elementer sorteret efter deres ændringsdato"
 
-#: thunar/thunar-standard-view.c:507
+#: thunar/thunar-standard-view.c:505
 msgid "By D_eletion Date"
 msgstr "Efter _sletningsdato"
 
-#: thunar/thunar-standard-view.c:507
+#: thunar/thunar-standard-view.c:505
 msgid "Keep items sorted by their deletion date"
 msgstr "Hold elementer sorteret efter deres sletningsdato"
 
-#: thunar/thunar-standard-view.c:508
+#: thunar/thunar-standard-view.c:506
 msgid "_Ascending"
 msgstr "_Stigende"
 
-#: thunar/thunar-standard-view.c:508
+#: thunar/thunar-standard-view.c:506
 msgid "Sort items in ascending order"
 msgstr "Sortér elementer i stigende rækkefølge"
 
-#: thunar/thunar-standard-view.c:509
+#: thunar/thunar-standard-view.c:507
 msgid "_Descending"
 msgstr "_Faldende"
 
-#: thunar/thunar-standard-view.c:509
+#: thunar/thunar-standard-view.c:507
 msgid "Sort items in descending order"
 msgstr "Sortér elementer i faldende rækkefølge"
 
-#: thunar/thunar-standard-view.c:510
+#: thunar/thunar-standard-view.c:508
 msgid "_Folders First"
 msgstr "_Mapper først"
 
-#: thunar/thunar-standard-view.c:510
+#: thunar/thunar-standard-view.c:508
 msgid "Sort folders before files"
 msgstr "Sortér mapper før filer"
 
 #. TRANSLATORS: You can swap the order of the arguments if required.
-#: thunar/thunar-standard-view.c:1379
+#: thunar/thunar-standard-view.c:1377
 #, c-format
 msgid "Search for '%1$s' in %2$s"
 msgstr "Søg efter '%1$s' i %2$s"
 
-#: thunar/thunar-standard-view.c:1381
+#: thunar/thunar-standard-view.c:1379
 #, c-format
 msgid "Search in %s"
 msgstr "Søg i %s"
 
-#: thunar/thunar-standard-view.c:1997
-msgid "Loading folder contents..."
-msgstr "Indlæser mappeindhold ..."
+#: thunar/thunar-standard-view.c:1993
+msgid "Loading folder content..."
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1999
+msgid "Loading statusbar information..."
+msgstr ""
 
 #: thunar/thunar-standard-view.c:2681
 #, c-format
