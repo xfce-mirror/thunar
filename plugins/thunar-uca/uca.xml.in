@@ -33,15 +33,21 @@
   This should act more like an example, and is therefore kept simple.
 -->
 
+<!-- Translation Hack:
+ 'xgettext' does not know about xml format and will parse this file like a C-File.
+  As such, it will not recognize which strings are to be translated
+  So we will provide the strings which are to be translated in C-Style
+-->
+
 <actions>
 
   <action>
     <icon>utilities-terminal</icon>
     <patterns>*</patterns>
     <range></range>
-    <name>Open Terminal Here</name>
+    <name>Open Terminal Here</name> <!-- Translation: _("Open Terminal Here") -->
     <command>xfce-open --working-directory %f --launch TerminalEmulator</command>
-    <description>Example for a custom action</description>
+    <description>Example for a custom action</description><!-- Translation: _("Example for a custom action") -->
     <startup-notify/>
     <directories/>
   </action>
