@@ -201,6 +201,8 @@ thunar_application_volman_watch (GPid     pid,
                                  gpointer user_data);
 static void
 thunar_application_volman_watch_destroy (gpointer user_data);
+static void
+thunar_application_initialize_media_fs_uuids (ThunarApplication *application);
 #endif
 static gboolean
 thunar_application_show_progress_dialog_timeout (gpointer user_data);
@@ -408,7 +410,8 @@ thunar_application_startup (GApplication *gapp)
   g_signal_connect (application->udev_client, "uevent",
                     G_CALLBACK (thunar_application_uevent), application);
 
-  application->media_fs_uuids = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  /* create and populate the hash table with currently present media */
+  thunar_application_initialize_media_fs_uuids (application);
 #endif
 
   thunar_application_dbus_init (application);
@@ -1166,6 +1169,50 @@ thunar_application_uevent (GUdevClient       *client,
           application->volman_udis = g_slist_delete_link (application->volman_udis, lp);
         }
     }
+}
+
+
+
+static void
+thunar_application_initialize_media_fs_uuids (ThunarApplication *application)
+{
+  GList       *devices;
+  GList       *lp;
+  GUdevDevice *device;
+  const gchar *sysfs_path;
+  const gchar *media_fs_uuid;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (G_UDEV_IS_CLIENT (application->udev_client));
+  _thunar_return_if_fail (application->media_fs_uuids == NULL);
+
+  application->media_fs_uuids = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
+  /* query all block devices from udev */
+  devices = g_udev_client_query_by_subsystem (application->udev_client, "block");
+
+  for (lp = devices; lp != NULL; lp = lp->next)
+    {
+      device = G_UDEV_DEVICE (lp->data);
+
+      /* check if this is a CD/DVD drive with media currently present */
+      if (g_udev_device_get_property_as_boolean (device, "ID_CDROM") &&
+          g_udev_device_get_property_as_boolean (device, "ID_CDROM_MEDIA"))
+        {
+          sysfs_path = g_udev_device_get_sysfs_path (device);
+          media_fs_uuid = g_udev_device_get_property (device, "ID_FS_UUID");
+
+          /* store the filesystem UUID for this device if it has one */
+          if (media_fs_uuid != NULL)
+            {
+              g_hash_table_insert (application->media_fs_uuids,
+                                   g_strdup (sysfs_path),
+                                   g_strdup (media_fs_uuid));
+            }
+        }
+    }
+
+  g_list_free_full (devices, g_object_unref);
 }
 
 
