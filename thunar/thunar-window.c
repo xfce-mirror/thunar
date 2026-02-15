@@ -34,6 +34,7 @@
 #include "thunar/thunar-details-view.h"
 #include "thunar/thunar-device-monitor.h"
 #include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-filter-bar.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
@@ -277,6 +278,15 @@ static gboolean
 thunar_window_action_image_preview (ThunarWindow *window);
 static gboolean
 thunar_window_action_statusbar_changed (ThunarWindow *window);
+static gboolean
+thunar_window_action_filter_bar_changed (ThunarWindow *window);
+static void
+thunar_window_filter_bar_closed (ThunarFilterBar *filter_bar,
+                                 ThunarWindow    *window);
+static void
+thunar_window_filter_bar_text_changed (ThunarFilterBar *filter_bar,
+                                       GParamSpec      *pspec,
+                                       ThunarWindow    *window);
 static void
 thunar_window_action_menubar_update (ThunarWindow *window);
 static gboolean
@@ -567,6 +577,7 @@ struct _ThunarWindow
   GtkWidget *sidepane_preview_image;
   GtkWidget *view_box;
   GtkWidget *view;
+  GtkWidget *filter_bar;
   GtkWidget *statusbar;
 
   /* image preview pane */
@@ -684,6 +695,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,               "<Actions>/ThunarWindow/toggle-side-pane",                "F9",                   XFCE_GTK_MENU_ITEM,       NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_toggle_sidepane),           },
     { THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW,           "<Actions>/ThunarWindow/toggle-image-preview",            "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Image Preview"),          N_ ("Change the visibility of this window's image preview"),                         NULL,                     G_CALLBACK (thunar_window_action_image_preview),  },
     { THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,                 "<Actions>/ThunarWindow/view-statusbar",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("St_atusbar"),             N_ ("Change the visibility of this window's statusbar"),                             NULL,                      G_CALLBACK (thunar_window_action_statusbar_changed),  },
+    { THUNAR_WINDOW_ACTION_VIEW_FILTER_BAR,                "<Actions>/ThunarWindow/view-filter-bar",                 "<Primary>i",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("F_ilter Bar"),            N_ ("Toggle the visibility of this window's filter bar"),                            NULL,                      G_CALLBACK (thunar_window_action_filter_bar_changed), },
     { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               "open-menu",               G_CALLBACK (thunar_window_action_menubar_changed),    },
     #ifdef HAVE_VTE
       { THUNAR_WINDOW_ACTION_VIEW_TERMINAL,                  "<Actions>/ThunarWindow/view-terminal",                   "F4",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Terminal"),              N_ ("Toggle the visibility of the terminal emulator"),                               "utilities-terminal",      G_CALLBACK (thunar_window_action_view_terminal),      },
@@ -966,6 +978,7 @@ thunar_window_init (ThunarWindow *window)
   gint               last_window_height;
   gboolean           last_window_maximized;
   gboolean           last_statusbar_visible;
+  gboolean           last_filter_bar_visible;
   gboolean           last_image_preview_visible;
   gint               max_paned_position;
   GtkStyleContext   *context;
@@ -1000,6 +1013,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-separator-position", &last_separator_position,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
+                "last-filter-bar-visible", &last_filter_bar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
                 "misc-use-csd", &misc_use_csd,
                 NULL);
@@ -1190,8 +1204,22 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack1 (GTK_PANED (window->paned_right), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
+  /* setup the filter bar at the top of the view_box */
+  window->filter_bar = thunar_filter_bar_new ();
+  gtk_widget_set_hexpand (window->filter_bar, TRUE);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->filter_bar, 0, 0, 1, 1);
+  /* restore the filter bar's visibility from the user's last session */
+  if (last_filter_bar_visible)
+    gtk_widget_show (window->filter_bar);
+  /* handle the close button / Escape key in the filter bar */
+  g_signal_connect (G_OBJECT (window->filter_bar), "closed",
+                    G_CALLBACK (thunar_window_filter_bar_closed), window);
+  /* propagate filter text changes to the current view's model */
+  g_signal_connect (G_OBJECT (window->filter_bar), "notify::filter-text",
+                    G_CALLBACK (thunar_window_filter_bar_text_changed), window);
+
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 1);
   gtk_widget_show (window->paned_notebooks);
 
   g_object_get (window->paned_right, "max-position", &max_paned_position, NULL);
@@ -1269,7 +1297,7 @@ thunar_window_init (ThunarWindow *window)
     {
       /* TRANSLATORS: `Catfish' is a software package, please don't translate it. */
       window->catfish_search_button = gtk_button_new_with_label (_("Search with Catfish..."));
-      gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
+      gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 2, 1, 1);
       g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
       gtk_widget_hide (window->catfish_search_button);
       g_free (catfish_path);
@@ -1279,7 +1307,7 @@ thunar_window_init (ThunarWindow *window)
 
   /* setup the trash infobar */
   window->trash_infobar = gtk_info_bar_new ();
-  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 3, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Restore Selected Items"), RESTORE);
   gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
   window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Empty Trash"), EMPTY);
@@ -1294,7 +1322,7 @@ thunar_window_init (ThunarWindow *window)
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
   gtk_widget_set_hexpand (window->statusbar, TRUE);
   gtk_container_add (GTK_CONTAINER (event_box), window->statusbar);
-  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 4, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
   gtk_widget_show (event_box);
@@ -1652,6 +1680,8 @@ thunar_window_update_view_menu (ThunarWindow *window,
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_FILTER_BAR), G_OBJECT (window),
+                                                   gtk_widget_get_visible (window->filter_bar), GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
                                                    window->menubar_visible, GTK_MENU_SHELL (menu));
 #ifdef HAVE_VTE
@@ -4459,6 +4489,101 @@ thunar_window_action_statusbar_changed (ThunarWindow *window)
 
 
 
+/**
+ * thunar_window_action_filter_bar_changed:
+ * @window : a #ThunarWindow instance.
+ *
+ * Toggles the filter bar visibility (Ctrl+I). When showing the bar,
+ * the text entry is focused so the user can type immediately. When
+ * hiding it, the filter text is cleared so the view returns to its
+ * unfiltered state. The new visibility is persisted to preferences.
+ **/
+static gboolean
+thunar_window_action_filter_bar_changed (ThunarWindow *window)
+{
+  gboolean filter_bar_visible;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  filter_bar_visible = gtk_widget_get_visible (window->filter_bar);
+
+  gtk_widget_set_visible (window->filter_bar, !filter_bar_visible);
+
+  g_object_set (G_OBJECT (window->preferences), "last-filter-bar-visible", !filter_bar_visible, NULL);
+
+  /* when showing the filter bar, grab focus on the entry */
+  if (!filter_bar_visible)
+    thunar_filter_bar_focus_entry (THUNAR_FILTER_BAR (window->filter_bar));
+
+  /* when hiding the filter bar, clear the filter text */
+  if (filter_bar_visible)
+    thunar_filter_bar_set_filter_text (THUNAR_FILTER_BAR (window->filter_bar), NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+/**
+ * thunar_window_filter_bar_closed:
+ * @filter_bar : the #ThunarFilterBar that emitted the "closed" signal.
+ * @window     : the parent #ThunarWindow.
+ *
+ * Handles the filter bar's "closed" signal, emitted when the user
+ * clicks the close button or presses Escape with an empty filter.
+ * Hides the bar, clears the filter text to restore the unfiltered
+ * view, and persists the hidden state to preferences.
+ **/
+static void
+thunar_window_filter_bar_closed (ThunarFilterBar *filter_bar,
+                                 ThunarWindow    *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILTER_BAR (filter_bar));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* hide the filter bar and clear the filter text */
+  gtk_widget_hide (window->filter_bar);
+  thunar_filter_bar_set_filter_text (filter_bar, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-filter-bar-visible", FALSE, NULL);
+}
+
+
+
+/**
+ * thunar_window_filter_bar_text_changed:
+ * @filter_bar : the #ThunarFilterBar whose filter-text property changed.
+ * @pspec      : the #GParamSpec for the "filter-text" property (unused).
+ * @window     : the parent #ThunarWindow.
+ *
+ * Handles "notify::filter-text" from the filter bar. Propagates the
+ * new filter string to the current view's ThunarTreeViewModel, which
+ * re-filters the visible file list. Safe to call when the view or
+ * model is NULL (e.g., during tab switches or early initialization).
+ **/
+static void
+thunar_window_filter_bar_text_changed (ThunarFilterBar *filter_bar,
+                                       GParamSpec      *pspec,
+                                       ThunarWindow    *window)
+{
+  const gchar *filter_text;
+
+  _thunar_return_if_fail (THUNAR_IS_FILTER_BAR (filter_bar));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  filter_text = thunar_filter_bar_get_filter_text (filter_bar);
+
+  /* pass the filter text to the current view's model */
+  if (window->view != NULL)
+    {
+      ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (window->view);
+      if (standard_view->model != NULL)
+        thunar_tree_view_model_set_filter_text (standard_view->model, filter_text);
+    }
+}
+
+
+
 static void
 thunar_window_action_menubar_update (ThunarWindow *window)
 {
@@ -5836,6 +5961,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* exit search mode if currently enabled */
   if (window->search_mode == TRUE)
     thunar_window_cancel_search (window);
+
+  /* clear filter bar text when navigating to a new directory */
+  if (gtk_widget_get_visible (window->filter_bar))
+    thunar_filter_bar_set_filter_text (THUNAR_FILTER_BAR (window->filter_bar), NULL);
 
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
