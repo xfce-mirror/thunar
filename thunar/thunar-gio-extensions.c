@@ -1852,9 +1852,13 @@ thunar_g_file_get_content_type (GFile *gfile)
           if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
             content_type = g_strdup ("inode/symlink");
           else
-            g_warning ("Content type loading failed for %s: %s",
-                       g_file_get_uri (gfile),
-                       err->message);
+            {
+              gchar *uri = g_file_get_uri (gfile);
+              g_warning ("Content type loading failed for %s: %s",
+                         uri,
+                         err->message);
+              g_free (uri);
+            }
           g_error_free (err);
         }
     }
