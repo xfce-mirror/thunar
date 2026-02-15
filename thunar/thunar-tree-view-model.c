@@ -86,6 +86,7 @@ enum
   PROP_HIDDEN_LAST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
+  PROP_FILTER_TEXT,
   PROP_FOLDER_ITEM_COUNT,
   PROP_FILE_SIZE_BINARY,
   PROP_LOADING,
@@ -290,6 +291,9 @@ thunar_tree_view_model_set_loading (ThunarTreeViewModel *model,
                                     gboolean             loading);
 static gboolean
 thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model);
+static gboolean
+_thunar_tree_view_model_file_matches_filter (ThunarTreeViewModel *model,
+                                             ThunarFile          *file);
 
 
 /*************************************************
@@ -338,6 +342,7 @@ struct _ThunarTreeViewModel
   ThunarDateStyle       date_style;
   char                 *date_custom_style;
   gboolean              show_hidden;
+  gchar                *filter_text; /* normalized filter string, or NULL if no filter */
 
   gint n_visible_files;
   gint loading;
@@ -371,6 +376,7 @@ struct _Node
    * contains mappings of (gfile -> GSequenceIter *(_child_node->ptr)) */
   GHashTable *set;
   GHashTable *hidden_files;
+  GHashTable *filtered_files; /* files excluded by the filter bar */
 
   GSequence           *children; /* Nodes */
   ThunarTreeViewModel *model;
@@ -465,6 +471,12 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
                                                              FALSE,
                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+  tree_model_props[PROP_FILTER_TEXT] = g_param_spec_string ("filter-text",
+                                                            "filter-text",
+                                                            "filter-text",
+                                                            NULL,
+                                                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
   tree_model_props[PROP_FILE_SIZE_BINARY] = g_param_spec_boolean ("file-size-binary",
                                                                   "file-size-binary",
                                                                   "file-size-binary",
@@ -546,6 +558,14 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
    **/
   g_object_class_install_property (gobject_class, PROP_SHOW_HIDDEN,
                                    tree_model_props[PROP_SHOW_HIDDEN]);
+
+  /**
+   * ThunarTreeViewModel::filter-text:
+   *
+   * Text to filter files by display name in the current directory.
+   **/
+  g_object_class_install_property (gobject_class, PROP_FILTER_TEXT,
+                                   tree_model_props[PROP_FILTER_TEXT]);
 
   /**
    * ThunarTreeViewModel::file-size-binary:
@@ -697,6 +717,7 @@ thunar_tree_view_model_finalize (GObject *object)
   g_mutex_clear (&model->mutex_add_search_files);
 
   g_free (model->date_custom_style);
+  g_free (model->filter_text);
   g_strfreev (model->search_terms);
 
   g_hash_table_destroy (model->subdirs);
@@ -746,6 +767,10 @@ thunar_tree_view_model_get_property (GObject    *object,
 
     case PROP_SHOW_HIDDEN:
       g_value_set_boolean (value, thunar_tree_view_model_get_show_hidden (THUNAR_TREE_VIEW_MODEL (model)));
+      break;
+
+    case PROP_FILTER_TEXT:
+      g_value_set_string (value, thunar_tree_view_model_get_filter_text (THUNAR_TREE_VIEW_MODEL (model)));
       break;
 
     case PROP_FILE_SIZE_BINARY:
@@ -804,6 +829,10 @@ thunar_tree_view_model_set_property (GObject      *object,
 
     case PROP_SHOW_HIDDEN:
       thunar_tree_view_model_set_show_hidden (THUNAR_TREE_VIEW_MODEL (model), g_value_get_boolean (value));
+      break;
+
+    case PROP_FILTER_TEXT:
+      thunar_tree_view_model_set_filter_text (THUNAR_TREE_VIEW_MODEL (model), g_value_get_string (value));
       break;
 
     case PROP_FILE_SIZE_BINARY:
@@ -1897,6 +1926,117 @@ thunar_tree_view_model_set_show_hidden (ThunarTreeViewModel *model,
 
 
 
+/**
+ * _thunar_tree_view_model_refilter_node:
+ *
+ * Re-evaluates filter text visibility for all files in a node.
+ * Files that no longer match are removed from the view; files
+ * that now match are added back.
+ **/
+static void
+_thunar_tree_view_model_refilter_node (Node     *node,
+                                       gpointer  data)
+{
+  GSequenceIter  *seq_iter;
+  GHashTableIter  hash_iter;
+  gpointer        key;
+  GList          *to_add = NULL;
+  GList          *to_remove = NULL;
+  GList          *lp;
+
+  /* skip dummy nodes */
+  if (node->file == NULL || node->dir == NULL
+      || thunar_tree_view_model_node_has_dummy_child (node))
+    return;
+
+  /* recurse into children first */
+  g_sequence_foreach (node->children,
+                      (GFunc) _thunar_tree_view_model_refilter_node, NULL);
+
+  /* check currently visible files — remove those that no longer match */
+  seq_iter = g_sequence_get_begin_iter (node->children);
+  while (!g_sequence_iter_is_end (seq_iter))
+    {
+      Node *child = g_sequence_get (seq_iter);
+      seq_iter = g_sequence_iter_next (seq_iter);
+
+      if (child->file == NULL)
+        continue;
+
+      if (!_thunar_tree_view_model_file_matches_filter (node->model, child->file))
+        to_remove = g_list_prepend (to_remove, child->file);
+    }
+
+  for (lp = to_remove; lp != NULL; lp = lp->next)
+    {
+      ThunarFile *file = THUNAR_FILE (lp->data);
+      if (!g_hash_table_contains (node->filtered_files, file))
+        g_hash_table_add (node->filtered_files, g_object_ref (file));
+      thunar_tree_view_model_dir_remove_file (node, file);
+    }
+  g_list_free (to_remove);
+
+  /* check filtered files — add back those that now match */
+  g_hash_table_iter_init (&hash_iter, node->filtered_files);
+  while (g_hash_table_iter_next (&hash_iter, &key, NULL))
+    {
+      ThunarFile *file = THUNAR_FILE (key);
+      if (_thunar_tree_view_model_file_matches_filter (node->model, file))
+        to_add = g_list_prepend (to_add, file);
+    }
+
+  for (lp = to_add; lp != NULL; lp = lp->next)
+    {
+      ThunarFile *file = THUNAR_FILE (lp->data);
+      /* skip files that are hidden and show_hidden is off */
+      if (thunar_file_is_hidden (file) && !node->model->show_hidden)
+        continue;
+      /* steal (not remove) so the hash table's destroy func doesn't unref
+       * the file prematurely; dir_add_file takes its own ref via new_node,
+       * then we manually unref to balance the stolen ref */
+      g_hash_table_steal (node->filtered_files, file);
+      if (!g_hash_table_contains (node->set, file))
+        thunar_tree_view_model_dir_add_file (node, file);
+      g_object_unref (file);
+    }
+  g_list_free (to_add);
+}
+
+
+
+const gchar *
+thunar_tree_view_model_get_filter_text (ThunarTreeViewModel *model)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
+
+  return model->filter_text;
+}
+
+
+
+void
+thunar_tree_view_model_set_filter_text (ThunarTreeViewModel *model,
+                                        const gchar         *filter_text)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  /* normalize the filter text for case-insensitive matching */
+  g_free (model->filter_text);
+  if (filter_text != NULL && *filter_text != '\0')
+    model->filter_text = thunar_g_utf8_normalize_for_search (filter_text, TRUE, TRUE);
+  else
+    model->filter_text = NULL;
+
+  /* re-evaluate visibility for all nodes */
+  if (model->root != NULL)
+    _thunar_tree_view_model_refilter_node (model->root, NULL);
+
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_FILTER_TEXT]);
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
+}
+
+
+
 void
 thunar_tree_view_model_set_folders_first (ThunarTreeViewModel *model,
                                           gboolean             folders_first)
@@ -2197,6 +2337,7 @@ thunar_tree_view_model_new_node (ThunarFile *file)
 
   _node->set = g_hash_table_new (g_direct_hash, g_direct_equal);
   _node->hidden_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  _node->filtered_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
   _node->children = g_sequence_new (NULL);
 
   _node->scheduled_unload_id = 0;
@@ -2228,6 +2369,7 @@ thunar_tree_view_model_new_dummy_node (void)
 
   _node->set = NULL;
   _node->hidden_files = NULL;
+  _node->filtered_files = NULL; /* dummy nodes have no filter tracking */
   _node->children = NULL;
 
   _node->scheduled_unload_id = 0;
@@ -2659,6 +2801,36 @@ _thunar_tree_view_model_folder_error (Node         *node,
 
 
 
+/**
+ * _thunar_tree_view_model_file_matches_filter:
+ *
+ * Checks whether a file's display name contains the filter text.
+ * Returns TRUE if no filter is active or the file matches.
+ **/
+static gboolean
+_thunar_tree_view_model_file_matches_filter (ThunarTreeViewModel *model,
+                                             ThunarFile          *file)
+{
+  const gchar *display_name;
+  gchar       *name_normalized;
+  gboolean     matches;
+
+  /* no filter active means everything matches */
+  if (model->filter_text == NULL)
+    return TRUE;
+
+  display_name = thunar_file_get_display_name (file);
+  name_normalized = thunar_g_utf8_normalize_for_search (display_name, TRUE, TRUE);
+  if (G_UNLIKELY (name_normalized == NULL))
+    return FALSE;
+  matches = (strstr (name_normalized, model->filter_text) != NULL);
+  g_free (name_normalized);
+
+  return matches;
+}
+
+
+
 static void
 _thunar_tree_view_model_dir_files_added (Node       *node,
                                          GHashTable *files)
@@ -2678,6 +2850,14 @@ _thunar_tree_view_model_dir_files_added (Node       *node,
 
           if (!node->model->show_hidden)
             continue;
+        }
+
+      /* check if the file matches the current filter text */
+      if (!_thunar_tree_view_model_file_matches_filter (node->model, file))
+        {
+          if (!g_hash_table_contains (node->filtered_files, file))
+            g_hash_table_add (node->filtered_files, g_object_ref (file));
+          continue;
         }
 
       if (!g_hash_table_contains (node->set, file))
@@ -2701,6 +2881,13 @@ _thunar_tree_view_model_dir_files_removed (Node       *node,
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       file = THUNAR_FILE (key);
+
+      /* clean up from the filter tracking table first, before the
+       * hidden_files check which may 'continue' and skip the rest */
+      if (g_hash_table_contains (node->filtered_files, file))
+        {
+          g_hash_table_remove (node->filtered_files, file);
+        }
 
       /* we cannot trust thunar_file_is_hidden here;
        * don't know why. Maybe the file has gone through dispose */
@@ -2906,6 +3093,7 @@ thunar_tree_view_model_node_destroy (Node *node)
   g_sequence_free (node->children);
   g_hash_table_destroy (node->set);
   g_hash_table_destroy (node->hidden_files);
+  g_hash_table_destroy (node->filtered_files);
 
   g_object_unref (node->file);
   g_free (node);
@@ -2941,7 +3129,11 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
       if (g_hash_table_contains (node_parent->hidden_files, file) && !thunar_file_is_hidden (file))
         {
           g_hash_table_remove (node_parent->hidden_files, file);
-          thunar_tree_view_model_dir_add_file (node_parent, file);
+          /* only add to view if the file also passes the active filter */
+          if (_thunar_tree_view_model_file_matches_filter (model, file))
+            thunar_tree_view_model_dir_add_file (node_parent, file);
+          else if (!g_hash_table_contains (node_parent->filtered_files, file))
+            g_hash_table_add (node_parent->filtered_files, g_object_ref (file));
           continue;
         }
 
@@ -2952,6 +3144,31 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
             thunar_tree_view_model_dir_remove_file (node_parent, file);
 
           g_hash_table_add (node_parent->hidden_files, g_object_ref (file));
+        }
+
+      /* check if filter state has changed (e.g. file was renamed) */
+      if (g_hash_table_contains (node_parent->filtered_files, file))
+        {
+          /* file was filtered out — check if it now matches */
+          if (_thunar_tree_view_model_file_matches_filter (model, file))
+            {
+              /* steal (not remove) to avoid premature unref; we manually
+               * unref after dir_add_file takes its own ref via new_node */
+              g_hash_table_steal (node_parent->filtered_files, file);
+              if (!(thunar_file_is_hidden (file) && !model->show_hidden))
+                thunar_tree_view_model_dir_add_file (node_parent, file);
+              g_object_unref (file);
+              continue;
+            }
+        }
+      else if (g_hash_table_contains (node_parent->set, file)
+               && !_thunar_tree_view_model_file_matches_filter (model, file))
+        {
+          /* file was visible but no longer matches the filter */
+          if (!g_hash_table_contains (node_parent->filtered_files, file))
+            g_hash_table_add (node_parent->filtered_files, g_object_ref (file));
+          thunar_tree_view_model_dir_remove_file (node_parent, file);
+          continue;
         }
 
       node = thunar_tree_view_model_locate_file (model, file);
@@ -3095,7 +3312,9 @@ _thunar_tree_view_model_dir_unload_timeout (Node *node)
 
   gtk_tree_path_free (path);
 
+  /* clear all tracking tables; the directory will be re-populated on next load */
   g_hash_table_remove_all (node->hidden_files);
+  g_hash_table_remove_all (node->filtered_files);
   g_hash_table_remove_all (node->set);
 
   thunar_tree_view_model_node_add_dummy_child (node);
