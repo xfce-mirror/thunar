@@ -1120,8 +1120,18 @@ thunar_standard_view_constructor (GType                  type,
   g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
 
   /* setup the real view as drag source */
-  thunar_standard_view_update_file_drag_mode (standard_view);
+  /* Check if drag and drop is enabled in preferences */
+  {
+    gboolean drag_enabled;
+    g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-enabled", &drag_enabled, NULL);
+    if (drag_enabled)
+      thunar_standard_view_update_file_drag_mode (standard_view);
+    else
+      /* Disable drag source completely when disabled */
+      gtk_drag_source_set (GTK_WIDGET (view), 0, NULL, 0, 0);
+  }
   g_signal_connect_swapped (G_OBJECT (standard_view->preferences), "notify::misc-file-drag-mode", G_CALLBACK (thunar_standard_view_update_file_drag_mode), standard_view);
+  g_signal_connect_swapped (G_OBJECT (standard_view->preferences), "notify::misc-file-drag-enabled", G_CALLBACK (thunar_standard_view_update_file_drag_mode), standard_view);
 
   g_signal_connect (G_OBJECT (view), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
   g_signal_connect (G_OBJECT (view), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
@@ -3362,12 +3372,22 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
                                 guint               timestamp,
                                 ThunarStandardView *standard_view)
 {
+  gboolean    drag_enabled;
   ThunarFile *file = NULL;
   GdkAtom     target;
   guchar     *prop_text;
   GFile      *path;
   gchar      *uri = NULL;
   gint        prop_len;
+
+  /* Check if drag and drop is enabled in preferences */
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-enabled", &drag_enabled, NULL);
+  if (!drag_enabled)
+    {
+      /* If drag is disabled, immediately finish the drag operation */
+      gtk_drag_finish (context, FALSE, FALSE, timestamp);
+      return TRUE; /* Return TRUE to indicate we handled the signal */
+    }
 
   target = gtk_drag_dest_find_target (view, context, NULL);
   if (G_UNLIKELY (target == GDK_NONE))

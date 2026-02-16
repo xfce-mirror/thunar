@@ -147,6 +147,7 @@ enum
   PROP_MISC_USE_CSD,
   PROP_SMART_SORT,
   PROP_MISC_FILE_DRAG_MODE,
+  PROP_MISC_FILE_DRAG_ENABLED,
 #ifdef HAVE_VTE
   PROP_TERMINAL_HEIGHT,
   PROP_TERMINAL_VISIBLE,
@@ -272,7 +273,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   * 
+   *
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
@@ -1498,8 +1499,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * ThunarPreferences:misc-file-drag-enabled:
+   *
+   * Whether to enable drag and drop functionality.
+   * When disabled, drag operations are prevented to avoid accidental drops.
+   **/
+  preferences_props[PROP_MISC_FILE_DRAG_ENABLED] =
+  g_param_spec_boolean ("misc-file-drag-enabled",
+                        "misc-file-drag-enabled",
+                        NULL,
+                        TRUE, /* Default: enabled to maintain backward compatibility */
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
 #ifdef HAVE_VTE
-  /**              
+  /**
    * ThunarPreferences:terminal-height:
    *
    * Height of the terminal widget in pixels.
