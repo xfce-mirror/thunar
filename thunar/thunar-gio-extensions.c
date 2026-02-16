@@ -111,8 +111,8 @@ device_icon_name [] =
 static const gchar *
 guess_device_type_from_icon_name (const gchar *icon_name);
 static GFileInfo *
-thunar_g_file_get_content_type_query_info (GFile  *gfile,
-                                           GError *err);
+thunar_g_file_get_content_type_query_info (GFile   *gfile,
+                                           GError **err);
 static void
 thunar_g_file_info_set_attribute (GFileInfo   *info,
                                   ThunarGType  type,
@@ -1775,15 +1775,15 @@ thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
 
 
 static GFileInfo *
-thunar_g_file_get_content_type_query_info (GFile  *gfile,
-                                           GError *err)
+thunar_g_file_get_content_type_query_info (GFile   *gfile,
+                                           GError **err)
 {
   GFileInfo *info = NULL;
 
   info = g_file_query_info (gfile,
                             G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                             G_FILE_QUERY_INFO_NONE,
-                            NULL, &err);
+                            NULL, err);
   return info;
 }
 
@@ -1806,7 +1806,7 @@ thunar_g_file_get_content_type (GFile *gfile)
   GError    *err = NULL;
   gchar     *content_type = NULL;
 
-  info = thunar_g_file_get_content_type_query_info (gfile, err);
+  info = thunar_g_file_get_content_type_query_info (gfile, &err);
 
   /* follow symlink, if found */
   if (G_LIKELY (info != NULL))
@@ -1819,7 +1819,7 @@ thunar_g_file_get_content_type (GFile *gfile)
           info = NULL;
           if (link_target != NULL)
             {
-              info = thunar_g_file_get_content_type_query_info (link_target, err);
+              info = thunar_g_file_get_content_type_query_info (link_target, &err);
               g_object_unref (link_target);
             }
         }
@@ -1852,9 +1852,13 @@ thunar_g_file_get_content_type (GFile *gfile)
           if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
             content_type = g_strdup ("inode/symlink");
           else
-            g_warning ("Content type loading failed for %s: %s",
-                       g_file_get_uri (gfile),
-                       err->message);
+            {
+              gchar *uri = g_file_get_uri (gfile);
+              g_warning ("Content type loading failed for %s: %s",
+                         uri,
+                         err->message);
+              g_free (uri);
+            }
           g_error_free (err);
         }
     }

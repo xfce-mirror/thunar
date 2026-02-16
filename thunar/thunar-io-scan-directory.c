@@ -144,7 +144,11 @@ thunar_io_scan_directory (ThunarJob          *job,
               if (info != NULL)
                 g_warning ("Error while scanning file: %s : %s", g_file_info_get_display_name (info), err->message);
               else
-                g_warning ("Error while scanning directory: %s : %s", g_file_get_uri (file), err->message);
+                {
+                  gchar *uri = g_file_get_uri (file);
+                  g_warning ("Error while scanning directory: %s : %s", uri, err->message);
+                  g_free (uri);
+                }
 
               if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_FAILED))
                 {
