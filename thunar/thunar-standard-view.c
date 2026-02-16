@@ -1113,11 +1113,24 @@ thunar_standard_view_constructor (GType                  type,
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_standard_view_key_press_event), object);
 
   /* setup the real view as drop site */
-  gtk_drag_dest_set (view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
-  g_signal_connect (G_OBJECT (view), "drag-drop", G_CALLBACK (thunar_standard_view_drag_drop), object);
-  g_signal_connect (G_OBJECT (view), "drag-data-received", G_CALLBACK (thunar_standard_view_drag_data_received), object);
-  g_signal_connect (G_OBJECT (view), "drag-leave", G_CALLBACK (thunar_standard_view_drag_leave), object);
-  g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
+  /* Check if drag and drop is enabled in preferences */
+  {
+    gboolean drag_enabled;
+    g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-enabled", &drag_enabled, NULL);
+    if (drag_enabled)
+      {
+        gtk_drag_dest_set (view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
+        g_signal_connect (G_OBJECT (view), "drag-drop", G_CALLBACK (thunar_standard_view_drag_drop), object);
+        g_signal_connect (G_OBJECT (view), "drag-data-received", G_CALLBACK (thunar_standard_view_drag_data_received), object);
+        g_signal_connect (G_OBJECT (view), "drag-leave", G_CALLBACK (thunar_standard_view_drag_leave), object);
+        g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
+      }
+    else
+      {
+        /* Disable drag destination when disabled */
+        gtk_drag_dest_unset (view);
+      }
+  }
 
   /* setup the real view as drag source */
   /* Check if drag and drop is enabled in preferences */
@@ -1128,7 +1141,7 @@ thunar_standard_view_constructor (GType                  type,
       thunar_standard_view_update_file_drag_mode (standard_view);
     else
       /* Disable drag source completely when disabled */
-      gtk_drag_source_set (GTK_WIDGET (view), 0, NULL, 0, 0);
+      gtk_drag_source_unset (GTK_WIDGET (view));
   }
   g_signal_connect_swapped (G_OBJECT (standard_view->preferences), "notify::misc-file-drag-mode", G_CALLBACK (thunar_standard_view_update_file_drag_mode), standard_view);
   g_signal_connect_swapped (G_OBJECT (standard_view->preferences), "notify::misc-file-drag-enabled", G_CALLBACK (thunar_standard_view_update_file_drag_mode), standard_view);
@@ -5217,11 +5230,20 @@ thunar_standard_view_update_file_drag_mode (ThunarStandardView *standard_view)
 {
   ThunarFileDragMode drag_mode;
   GtkWidget         *view;
+  gboolean           drag_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the real view widget (treeview or iconview) */
   view = gtk_bin_get_child (GTK_BIN (standard_view));
+
+  /* Check if drag and drop is enabled in preferences */
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-enabled", &drag_enabled, NULL);
+  if (!drag_enabled)
+    {
+      gtk_drag_source_unset (view);
+      return;
+    }
 
   g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-mode", &drag_mode, NULL);
   if (drag_mode == THUNAR_FILE_DRAG_MODE_MENU_ALWAYS)
@@ -5229,7 +5251,7 @@ thunar_standard_view_update_file_drag_mode (ThunarStandardView *standard_view)
   else if (drag_mode == THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL)
     gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
   else if (drag_mode == THUNAR_FILE_DRAG_MODE_DISABLED)
-    gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), 0);
+    gtk_drag_source_unset (view);
   else
     g_warning ("Unsupported value received for thunar property misc-file-drag-mode");
 }
