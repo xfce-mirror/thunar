@@ -1193,6 +1193,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_enum_value_to_index,
                                transform_index_to_enum_value,
                                (gpointer) thunar_file_drag_mode_get_type, NULL);
+  gtk_widget_set_tooltip_text (combo, _("- Disabled: No file dragging (jittery hands / fingers)\n"
+                                         "- Menu on Right-Click Only: Left-drag uses keyboard modifiers\n"
+                                         "  Ctrl=Copy, Shift=Move, Ctrl+Shift=Link\n"
+                                         "  Right-drag shows menu\n"
+                                         "- Menu Always: Always ask which action to perform on drop"));
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
