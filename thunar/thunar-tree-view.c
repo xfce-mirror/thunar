@@ -182,8 +182,8 @@ thunar_tree_view_select_files (ThunarTreeView *view,
                                GList          *files_to_selected);
 static gboolean
 thunar_tree_view_visible_func (GtkTreeModel *model,
-                               GtkTreeIter     *iter,
-                               gpointer         user_data);
+                               GtkTreeIter  *iter,
+                               gpointer      user_data);
 static gboolean
 thunar_tree_view_selection_func (GtkTreeSelection *selection,
                                  GtkTreeModel     *model,
@@ -1211,11 +1211,11 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
   ThunarTreeView *view = THUNAR_TREE_VIEW (tree_view);
   gboolean        expandable = TRUE;
   ThunarDevice   *device;
-  GtkTreeModel *filter_model = gtk_tree_view_get_model (tree_view);
-  GtkTreeIter   iter;
+  GtkTreeModel   *filter_model = gtk_tree_view_get_model (tree_view);
+  GtkTreeIter     iter;
 
   // Convert FILTER model iter → model iter
-  gtk_tree_model_filter_convert_iter_to_child_iter ( GTK_TREE_MODEL_FILTER (filter_model), &iter, filter_iter);
+  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (filter_model), &iter, filter_iter);
 
   /* determine the device for the iterator */
   gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_DEVICE, &device, -1);
@@ -1624,9 +1624,9 @@ thunar_tree_view_select_files (ThunarTreeView *view,
 
 
 static gboolean
-thunar_tree_view_visible_func (GtkTreeModel    *model,
-                               GtkTreeIter     *iter,
-                               gpointer         user_data)
+thunar_tree_view_visible_func (GtkTreeModel *model,
+                               GtkTreeIter  *iter,
+                               gpointer      user_data)
 {
   ThunarTreeView *view;
   ThunarFile     *file = NULL;

@@ -1379,7 +1379,6 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
           gtk_tree_path_free (path);
         }
     }
-
 }
 
 
