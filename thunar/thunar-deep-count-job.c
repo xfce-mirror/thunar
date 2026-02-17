@@ -242,7 +242,7 @@ thunar_deep_count_job_process (ThunarJob   *job,
     }
 
   /* recurse if we have a directory */
-  if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+  if (thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
     {
       /* try to read from the directory */
       enumerator = g_file_enumerate_children (file,

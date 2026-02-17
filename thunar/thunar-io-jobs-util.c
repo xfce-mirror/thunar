@@ -164,7 +164,7 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
 
   old_filename = g_file_get_basename (src_file);
   /* get file extension if file is not a directory */
-  if (g_file_info_get_file_type (info) != G_FILE_TYPE_DIRECTORY)
+  if (thunar_g_file_info_get_file_type (info) != G_FILE_TYPE_DIRECTORY)
     extension = thunar_util_str_get_extension (old_filename);
 
   if (extension != NULL)

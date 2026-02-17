@@ -465,7 +465,7 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
     return FALSE;
 
   /* check if we have a directory here */
-  if (g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
+  if (thunar_g_file_info_get_file_type (node->source_file_info) == G_FILE_TYPE_DIRECTORY)
     {
       gboolean should_use_copy_name;
 

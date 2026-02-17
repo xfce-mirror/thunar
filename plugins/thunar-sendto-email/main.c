@@ -189,7 +189,7 @@ tse_ask_compress (GList *infos)
       /* need to compress if we have any directories */
       tse_data = (TseData *) lp->data;
 
-      if (g_file_info_get_file_type (tse_data->info) == G_FILE_TYPE_DIRECTORY)
+      if (g_file_info_has_attribute (tse_data->info, G_FILE_ATTRIBUTE_STANDARD_TYPE) && g_file_info_get_file_type (tse_data->info) == G_FILE_TYPE_DIRECTORY)
         return TSE_RESPONSE_COMPRESS;
 
       if (tse_file_is_archive (tse_data->info))

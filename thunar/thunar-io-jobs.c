@@ -116,7 +116,7 @@ _tij_delete_file (ThunarJob            *job,
       g_autoptr (GFileInfo) info = NULL;
 
       info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NONE, NULL, NULL);
-      if (info && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+      if (info && thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           GList *file_list;
 
@@ -1283,7 +1283,7 @@ _thunar_io_jobs_chmod (ThunarJob *job,
 
 retry_chown:
       /* different actions depending on the type of the file */
-      if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+      if (thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           mask = dir_mask;
           mode = dir_mode;
@@ -1682,7 +1682,7 @@ _thunar_search_folder (ThunarTreeViewModel           *model,
             }
         }
 
-      type = g_file_info_get_file_type (info);
+      type = thunar_g_file_info_get_file_type (info);
 
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_TREE_VIEW_MODEL_SEARCH_RECURSIVE)

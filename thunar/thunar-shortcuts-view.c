@@ -1587,7 +1587,7 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
           if (G_UNLIKELY (info == NULL))
             return 0;
 
-          is_directory = g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
+          is_directory = thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
           g_object_unref (info);
 
           if (!is_directory)

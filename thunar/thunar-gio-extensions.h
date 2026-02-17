@@ -206,7 +206,8 @@ gboolean
 thunar_g_file_fs_uses_fat_name_scheme (GFile *gfile);
 GFile *
 thunar_g_file_transform_to_fat_name_scheme (GFile *gfile);
-
+GFileType
+thunar_g_file_info_get_file_type (GFileInfo* info);
 G_END_DECLS
 
 #endif /* !__THUNAR_GIO_EXTENSIONS_H__ */

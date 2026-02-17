@@ -872,7 +872,7 @@ thunar_g_file_copy (GFile                *source,
     }
   else
     {
-      use_partial = g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR;
+      use_partial = thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR;
       g_clear_object (&info);
     }
 
@@ -1717,7 +1717,7 @@ thunar_g_file_is_desktop_file (GFile *file)
   if (g_str_has_suffix (basename, ".desktop"))
     {
       info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, NULL);
-      if (G_LIKELY (info != NULL && g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR))
+      if (G_LIKELY (info != NULL && thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR))
         is_desktop_file = TRUE;
       g_object_unref (info);
     }
@@ -1827,7 +1827,7 @@ thunar_g_file_get_content_type (GFile *gfile)
 
   if (G_LIKELY (info != NULL))
     {
-      if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+      if (thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           /* this we known for sure */
           content_type = g_strdup ("inode/directory");
@@ -2249,4 +2249,28 @@ thunar_g_file_transform_to_fat_name_scheme (GFile *gfile)
     }
 
   return g_file_get_child (parent, base_name);
+}
+
+
+
+/**
+ * thunar_g_file_info_get_file_type:
+ * @GFileInfo     : a #GFileInfo.
+ *
+ * Wrapper for g_file_info_get_file_type to always return a reasonable value
+ *
+ * Required, since even when using "G_FILE_ATTRIBUTE_STANDARD_TYPE" for g_file_query_info,
+ * for non readable files, GLib-GIO-CRITICAL **: GFileInfo created without standard::type can be issued.
+ *
+ * In order to prevent that critical, this methoid checks for existence of the attribute, and returns G_FILE_TYPE_UNKNOWN in that case.
+ *
+ * Return value: A GFileType for the given file.
+ */
+GFileType
+thunar_g_file_info_get_file_type (GFileInfo* info)
+{
+  if (!g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_STANDARD_TYPE))
+    return G_FILE_TYPE_UNKNOWN;
+
+  return g_file_info_get_file_type (info);
 }

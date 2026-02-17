@@ -204,7 +204,7 @@ thunar_io_scan_directory (ThunarJob          *job,
       /* if the child is a directory and we need to recurse ... just do so */
       if (recursively
           && is_mounted
-          && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+          && thunar_g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           child_files = thunar_io_scan_directory (job, child_file, flags, recursively,
                                                   unlinking, return_thunar_files, n_files_max, &err);
