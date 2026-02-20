@@ -94,6 +94,9 @@ static gboolean
 thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
                                             GdkEventButton *event);
 static gboolean
+thunar_shortcuts_view_key_press_event (GtkWidget   *widget,
+                                       GdkEventKey *event);
+static gboolean
 thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
                                          GdkEventKey *event);
 static void
@@ -289,6 +292,7 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->button_press_event = thunar_shortcuts_view_button_press_event;
   gtkwidget_class->button_release_event = thunar_shortcuts_view_button_release_event;
+  gtkwidget_class->key_press_event = thunar_shortcuts_view_key_press_event;
   gtkwidget_class->key_release_event = thunar_shortcuts_view_key_release_event;
   gtkwidget_class->drag_begin = thunar_shortcuts_view_drag_begin;
   gtkwidget_class->drag_data_received = thunar_shortcuts_view_drag_data_received;
@@ -737,10 +741,11 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
 
 
 static gboolean
-thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
-                                         GdkEventKey *event)
+thunar_shortcuts_view_key_press_event (GtkWidget   *widget,
+                                       GdkEventKey *event)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+  GtkTreePath         *path;
 
   /* work nicer with keyboard navigation */
   switch (event->keyval)
@@ -749,13 +754,34 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_Down:
     case GDK_KEY_KP_Up:
     case GDK_KEY_KP_Down:
-      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+      /* Add GDK_CONTROL_MASK to move focus only, not selection */
+      event->state |= GDK_CONTROL_MASK;
+      break;
 
-      /* keep focus on us */
-      gtk_widget_grab_focus (widget);
+    case GDK_KEY_Return:
+    case GDK_KEY_KP_Enter:
+      /* Select the item at the cursor before opening */
+      gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
+      if (path != NULL)
+        {
+          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+          gtk_tree_selection_select_path (selection, path);
+          gtk_tree_path_free (path);
+        }
+      /* row_activated will be called by parent and handle the opening */
       break;
     }
 
+  /* call the parent's press event handler */
+  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->key_press_event) (widget, event);
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
+                                         GdkEventKey *event)
+{
   /* call the parent's release event handler */
   return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->key_release_event) (widget, event);
 }

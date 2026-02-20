@@ -881,13 +881,9 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
     case GDK_KEY_KP_Up:
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-      /* the default actions works good, but we want to update the right pane */
+      /* Add GDK_CONTROL_MASK to move focus only, not selection */
+      event->state |= GDK_CONTROL_MASK;
       GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->key_press_event (widget, event);
-
-      /* sync with new tree view selection */
-      gtk_tree_path_free (path);
-      gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
-      thunar_tree_view_open_selection (view);
 
       stopPropagation = TRUE;
       break;
@@ -921,7 +917,6 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
                   g_object_unref (G_OBJECT (device));
                 }
           }
-      thunar_tree_view_open_selection (view);
 
       stopPropagation = TRUE;
       break;
@@ -946,7 +941,6 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
             {
               gtk_tree_path_down (path);
               gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
-              thunar_tree_view_action_open (view);
             }
         }
       stopPropagation = TRUE;
@@ -955,8 +949,15 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
     case GDK_KEY_space:
     case GDK_KEY_Return:
     case GDK_KEY_KP_Enter:
+      if (path != NULL)
+        {
+          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+          gtk_tree_selection_select_path (selection, path);
+        }
       thunar_tree_view_open_selection (view);
-      stopPropagation = TRUE;
+      gtk_tree_path_free (path);
+      return TRUE;
+
       break;
     }
 
@@ -1193,9 +1194,6 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
         }
     }
 
-  /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
-   * looses the focus. Get the focus back: */
-  gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 }
 
 
