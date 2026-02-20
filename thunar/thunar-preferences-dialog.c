@@ -1176,7 +1176,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
   gtk_widget_show (grid);
 
-  label = gtk_label_new_with_mnemonic (_("_Drag-and-Drop mode:"));
+  label = gtk_label_new_with_mnemonic (_("_Drag and Drop behavior:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
