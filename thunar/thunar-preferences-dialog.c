@@ -1183,8 +1183,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Disabled"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Menu on Right-Click Only"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Menu Always"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Show menu only on Right Click"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always show menu"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-file-drag-mode",
                                G_OBJECT (combo),
