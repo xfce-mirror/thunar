@@ -1170,9 +1170,11 @@ thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
       thunar_action_manager_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
       g_list_free (directories);
     }
-  else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
+  else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY || poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK)
     {
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
+      if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK)
+        gtk_widget_grab_focus (THUNAR_ACTION_MANAGER (browser)->widget);
     }
 
   /* add device to `recent:///` */
@@ -1280,11 +1282,13 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
             {
               thunar_action_manager_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
             }
-          else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
+          else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY || poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK)
             {
               /* If multiple directories are passed, we assume that we should open them all */
               if (directories->next == NULL)
                 thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), directories->data);
+              if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK)
+                gtk_widget_grab_focus (THUNAR_ACTION_MANAGER (browser)->widget);
               else
                 {
                   g_object_get (G_OBJECT (THUNAR_ACTION_MANAGER (browser)->preferences), "misc-open-new-window-as-tab", &open_new_window_as_tab, NULL);
