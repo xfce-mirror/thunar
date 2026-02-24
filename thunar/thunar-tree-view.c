@@ -1770,20 +1770,16 @@ thunar_tree_view_set_cursor (gpointer user_data)
         g_object_unref (folder);
 
       /* 4. Loop on all items of current tree-level to see if any folder matches the path we search */
-      while (TRUE)
+      gboolean matches = FALSE;
+      do
         {
           gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
           if (file == file_in_tree)
-            {
-              g_object_unref (file_in_tree);
-              break;
-            }
+              matches = TRUE;
           if (file_in_tree)
             g_object_unref (file_in_tree);
-
-          if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &iter))
-            break;
-        }
+        } while (!matches && gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &iter));
+      if (!matches) break;
 
       /* 5. Did we already find the full path ?*/
       if (lp->next == NULL)
