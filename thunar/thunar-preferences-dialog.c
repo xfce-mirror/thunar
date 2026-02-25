@@ -1074,7 +1074,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                         "\t- Ignore file dragging.\n"
                                         "Show menu only on Right Click:\n"
                                         "\t- Left click + drag:\n"
-                                        "\t\tOn same drive: Move\n"
+                                        "\t\tTo same drive: Move\n"
                                         "\t\tTo different drive: Copy\n"
                                         "\t- Right click + drag:\n"
                                         "\t\tShow a menu to select an action.\n"
