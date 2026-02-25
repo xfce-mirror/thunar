@@ -3189,9 +3189,19 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
                                           ThunarStandardView *standard_view)
 {
   GtkTargetList *target_list;
+  ThunarFileDragMode drag_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (standard_view->priv->drag_timer_id != 0, FALSE);
+
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-file-drag-mode", &drag_mode, NULL);
+  if (drag_mode == THUNAR_FILE_DRAG_MODE_DISABLED)
+    {
+      /* cancel the drag timer, as we won't popup the menu anymore */
+      g_source_remove (standard_view->priv->drag_timer_id);
+
+      return FALSE;
+    }
 
   /* check if we passed the DnD threshold */
   if (gtk_drag_check_threshold (view, standard_view->priv->drag_x, standard_view->priv->drag_y, event->x, event->y))
@@ -5209,7 +5219,7 @@ thunar_standard_view_update_file_drag_mode (ThunarStandardView *standard_view)
   else if (drag_mode == THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL)
     gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
   else if (drag_mode == THUNAR_FILE_DRAG_MODE_DISABLED)
-    gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), 0);
+    gtk_drag_source_unset (view);
   else
     g_warning ("Unsupported value received for thunar property misc-file-drag-mode");
 }
