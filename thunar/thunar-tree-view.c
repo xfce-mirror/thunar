@@ -850,7 +850,6 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
               view->select_path = NULL;
             }
         }
-      gtk_widget_grab_focus (widget);
     }
 
   /* reset the pressed button state */
@@ -961,8 +960,6 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
     }
 
   gtk_tree_path_free (path);
-  if (stopPropagation)
-    gtk_widget_grab_focus (widget);
 
   return stopPropagation;
 }
@@ -1193,9 +1190,6 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
         }
     }
 
-  /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
-   * looses the focus. Get the focus back: */
-  gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 }
 
 

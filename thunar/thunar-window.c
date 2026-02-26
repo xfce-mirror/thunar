@@ -5897,7 +5897,16 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   /* grab the focus to the main view */
   if (window->view != NULL)
-    gtk_widget_grab_focus (window->view);
+    {
+      GtkWidget *focused_widget = gtk_window_get_focus (GTK_WINDOW (window));
+      gboolean   focus_in_sidepane = FALSE;
+
+      if (focused_widget != NULL && window->sidepane != NULL)
+        focus_in_sidepane = (focused_widget == window->sidepane || gtk_widget_is_ancestor (focused_widget, window->sidepane));
+
+      if (!focus_in_sidepane)
+        gtk_widget_grab_focus (window->view);
+    }
 
   is_trashed = thunar_file_is_trashed (current_directory);
   is_recent = thunar_file_is_recent (current_directory);
