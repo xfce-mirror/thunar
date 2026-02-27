@@ -64,6 +64,7 @@ enum
   PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS,
   PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
+  PROP_LAST_FILTER_BAR_VISIBLE,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_MENUBAR_VISIBLE,
@@ -425,6 +426,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_TYPE_ZOOM_LEVEL,
                      THUNAR_ZOOM_LEVEL_38_PERCENT,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:last-filter-bar-visible:
+   *
+   * Whether to display a filter bar in new windows by default.
+   **/
+  preferences_props[PROP_LAST_FILTER_BAR_VISIBLE] =
+  g_param_spec_boolean ("last-filter-bar-visible",
+                        "LastFilterBarVisible",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-icon-view-zoom-level:

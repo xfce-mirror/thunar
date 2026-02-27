@@ -79,6 +79,12 @@ void
 thunar_tree_view_model_set_show_hidden (ThunarTreeViewModel *model,
                                         gboolean             show_hidden);
 
+const gchar *
+thunar_tree_view_model_get_filter_text (ThunarTreeViewModel *model);
+void
+thunar_tree_view_model_set_filter_text (ThunarTreeViewModel *model,
+                                        const gchar         *filter_text);
+
 gboolean
 thunar_tree_view_model_get_file_size_binary (ThunarTreeViewModel *model);
 void
