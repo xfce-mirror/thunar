@@ -5898,7 +5898,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     thunar_window_replace_view (window, window->view, type);
 
   /* grab the focus to the main view */
-  if (window->view != NULL)
+  if (grab_focus && window->view != NULL)
     gtk_widget_grab_focus (window->view);
 
   is_trashed = thunar_file_is_trashed (current_directory);
