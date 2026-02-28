@@ -749,10 +749,7 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_Down:
     case GDK_KEY_KP_Up:
     case GDK_KEY_KP_Down:
-      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
-
-      /* keep focus on us */
-      gtk_widget_grab_focus (widget);
+      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK);
       break;
     }
 
@@ -1792,7 +1789,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView                *view,
       thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL);
 
       /* return the focus to the current folder, unless the folder changed */
-      if (open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
+      if (open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY && open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY_GRAB_FOCUS_BACK)
         thunar_shortcuts_view_select_by_file (view, view->current_directory);
 
       if (file != NULL)
