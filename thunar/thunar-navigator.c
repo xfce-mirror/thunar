@@ -194,8 +194,9 @@ thunar_navigator_set_current_directory (ThunarNavigator *navigator,
 
 /**
  * thunar_navigator_change_directory:
- * @navigator : a #ThunarNavigator instance.
- * @directory : a #ThunarFile referring to a directory.
+ * @navigator  : a #ThunarNavigator instance.
+ * @directory  : a #ThunarFile referring to a directory.
+ * @grab_focus : TRUE to grab focus after changing the directory. Default TRUE.
  *
  * Emits the "change-directory" signal on @navigator with
  * the specified @directory.
@@ -211,7 +212,8 @@ thunar_navigator_set_current_directory (ThunarNavigator *navigator,
  **/
 void
 thunar_navigator_change_directory (ThunarNavigator *navigator,
-                                   ThunarFile      *directory)
+                                   ThunarFile      *directory,
+                                   gboolean         grab_focus)
 {
   _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
   _thunar_return_if_fail (THUNAR_IS_FILE (directory));

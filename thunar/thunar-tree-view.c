@@ -1588,7 +1588,7 @@ thunar_tree_view_open_selection (ThunarTreeView *view)
   if (G_LIKELY (file != NULL))
     {
       /* open that folder in the main view */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }
@@ -1612,7 +1612,7 @@ thunar_tree_view_select_files (ThunarTreeView *view,
   if (G_LIKELY (file != NULL))
     {
       if (G_LIKELY (thunar_file_is_directory (file)))
-        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }

@@ -1179,7 +1179,7 @@ thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
     }
   else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
     {
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point, poke_data->grab_focus);
     }
 
   /* add device to `recent:///` */
@@ -1291,7 +1291,7 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
             {
               /* If multiple directories are passed, we assume that we should open them all */
               if (directories->next == NULL)
-                thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), directories->data);
+                thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), directories->data, poke_data->grab_focus);
               else
                 {
                   g_object_get (G_OBJECT (THUNAR_ACTION_MANAGER (browser)->preferences), "misc-open-new-window-as-tab", &open_new_window_as_tab, NULL);

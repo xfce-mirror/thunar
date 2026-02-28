@@ -391,7 +391,7 @@ thunar_history_go_back (ThunarHistory *history,
 
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory, TRUE);
 }
 
 
@@ -463,7 +463,7 @@ thunar_history_go_forward (ThunarHistory *history,
 
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory, TRUE);
 }
 
 
