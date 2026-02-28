@@ -5255,7 +5255,7 @@ thunar_window_action_open_bookmark (GFile *g_file)
   window = g_object_get_data (G_OBJECT (g_file), I_ ("thunar-window"));
 
   g_object_set (G_OBJECT (window->action_mgr), "selected-location", g_file, NULL);
-  thunar_action_manager_activate_selected_files (window->action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (window->action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL, TRUE);
 }
 
 
