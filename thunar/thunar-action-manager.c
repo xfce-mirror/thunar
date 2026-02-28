@@ -152,7 +152,8 @@ thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
 static void
 thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                             GAppInfo                           *application_to_use,
-                            ThunarActionManagerFolderOpenAction folder_open_action);
+                            ThunarActionManagerFolderOpenAction folder_open_action,
+                            gboolean                            grab_focus);
 static void
 thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
                                           ThunarDevice  *volume,
@@ -829,7 +830,7 @@ thunar_action_manager_activate_selected_files (ThunarActionManager              
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  thunar_action_manager_poke (action_mgr, app_info, action);
+  thunar_action_manager_poke (action_mgr, app_info, action, grab_focus);
 }
 
 
@@ -1095,7 +1096,8 @@ thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
 static void
 thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                             GAppInfo                           *application_to_use,
-                            ThunarActionManagerFolderOpenAction folder_open_action)
+                            ThunarActionManagerFolderOpenAction folder_open_action,
+                            gboolean                            grab_focus)
 {
   ThunarActionManagerPokeData *poke_data;
 
@@ -1112,7 +1114,7 @@ thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                                                    folder_open_action,
                                                    action_mgr->location_to_process,
                                                    action_mgr->device_to_process,
-                                                   TRUE);
+                                                   grab_focus);
 
   if (action_mgr->device_to_process != NULL)
     {
@@ -1449,9 +1451,9 @@ thunar_action_manager_open_selected_folders (ThunarActionManager *action_mgr,
     _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
 
   if (open_in_tabs)
-    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB, TRUE);
   else
-    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, TRUE);
 }
 
 
@@ -3196,7 +3198,7 @@ thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 void
 thunar_action_manager_action_mount (ThunarActionManager *action_mgr)
 {
-  thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_NO_ACTION);
+  thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_NO_ACTION, TRUE);
 }
 
 
