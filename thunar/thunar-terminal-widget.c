@@ -567,7 +567,7 @@ thunar_terminal_widget_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_NAVIGATOR_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -900,7 +900,7 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
           window = gtk_widget_get_toplevel (GTK_WIDGET (self));
 
           if (THUNAR_IS_WINDOW (window))
-            thunar_window_set_current_directory (THUNAR_WINDOW (window), priv->current_directory);
+            thunar_window_set_current_directory (THUNAR_WINDOW (window), priv->current_directory, TRUE);
 
           /* Inform potential subscribers */
           g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
@@ -1528,7 +1528,8 @@ thunar_terminal_widget_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_terminal_widget_set_current_directory (ThunarNavigator *navigator,
-                                              ThunarFile      *current_directory)
+                                              ThunarFile      *current_directory,
+                                              gboolean         grab_focus)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (navigator);
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);

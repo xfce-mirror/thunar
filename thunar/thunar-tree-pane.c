@@ -55,7 +55,8 @@ static ThunarFile *
 thunar_tree_pane_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_tree_pane_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory);
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus);
 static gboolean
 thunar_tree_pane_get_show_hidden (ThunarSidePane *side_pane);
 static void
@@ -162,7 +163,7 @@ thunar_tree_pane_dispose (GObject *object)
 {
   ThunarTreePane *tree_pane = THUNAR_TREE_PANE (object);
 
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (tree_pane), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (tree_pane), NULL, TRUE);
   thunar_component_set_selected_files (THUNAR_COMPONENT (tree_pane), NULL);
 
   (*G_OBJECT_CLASS (thunar_tree_pane_parent_class)->dispose) (object);
@@ -207,7 +208,7 @@ thunar_tree_pane_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SELECTED_FILES:
@@ -236,7 +237,8 @@ thunar_tree_pane_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_tree_pane_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory)
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus)
 {
   ThunarTreePane *tree_pane = THUNAR_TREE_PANE (navigator);
 

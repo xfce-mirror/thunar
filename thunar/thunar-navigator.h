@@ -39,7 +39,8 @@ struct _ThunarNavigatorIface
   /* methods */
   ThunarFile *(*get_current_directory) (ThunarNavigator *navigator);
   void (*set_current_directory) (ThunarNavigator *navigator,
-                                 ThunarFile      *current_directory);
+                                 ThunarFile      *current_directory,
+                                 gboolean         grab_focus);
 
   /* signals */
   void (*change_directory) (ThunarNavigator *navigator,
@@ -56,7 +57,8 @@ ThunarFile *
 thunar_navigator_get_current_directory (ThunarNavigator *navigator);
 void
 thunar_navigator_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory);
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus);
 
 void
 thunar_navigator_change_directory (ThunarNavigator *navigator,

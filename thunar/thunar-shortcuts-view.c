@@ -86,7 +86,8 @@ static ThunarFile *
 thunar_shortcuts_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_shortcuts_view_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static gboolean
 thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                                           GdkEventButton *event);
@@ -504,7 +505,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
 
   /* reset the current-directory property */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL, TRUE);
 
   /* release reference on the action manager */
   g_object_unref (view->action_mgr);
@@ -547,7 +548,7 @@ thunar_shortcuts_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     default:
@@ -578,7 +579,8 @@ thunar_shortcuts_view_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_shortcuts_view_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (navigator);
 

@@ -616,7 +616,7 @@ thunar_application_command_line (GApplication            *gapp,
                 {
                   /* replace the first tab if opened by default */
                   if (filenames == 0 && i == 0)
-                    thunar_window_set_current_directory (window, directory);
+                    thunar_window_set_current_directory (window, directory, TRUE);
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
@@ -647,7 +647,7 @@ thunar_application_command_line (GApplication            *gapp,
                 {
                   /* replace the first tab (opened by default via "thunar_window_notebook_toggle_split_view") */
                   if (i == 0)
-                    thunar_window_set_current_directory (window, directory);
+                    thunar_window_set_current_directory (window, directory, TRUE);
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
@@ -1623,7 +1623,7 @@ thunar_application_open_window (ThunarApplication *application,
 
   /* change the directory */
   if (directory != NULL)
-    thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+    thunar_window_set_current_directory (THUNAR_WINDOW (window), directory, TRUE);
 
   /* Migrate old "misc-open-new-windows-in-split-view" preference. Drop for or after 4.22 */
   if (thunar_preferences_has_property (application->preferences, "/misc-open-new-windows-in-split-view")

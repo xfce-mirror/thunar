@@ -69,7 +69,8 @@ static ThunarFile *
 thunar_location_buttons_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
-                                               ThunarFile      *current_directory);
+                                               ThunarFile      *current_directory,
+                                               gboolean         grab_focus);
 static void
 thunar_location_buttons_unmap (GtkWidget *widget);
 static void
@@ -354,7 +355,7 @@ thunar_location_buttons_finalize (GObject *object)
   thunar_location_buttons_stop_scrolling (buttons);
 
   /* release from the current_directory */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL, TRUE);
 
   /* release reference on the action manager */
   g_object_unref (buttons->action_mgr);
@@ -393,7 +394,7 @@ thunar_location_buttons_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     default:
@@ -425,7 +426,8 @@ eglible_for_fake_root (ThunarFile *file)
 
 static void
 thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
-                                               ThunarFile      *current_directory)
+                                               ThunarFile      *current_directory,
+                                               gboolean         grab_focus)
 {
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (navigator);
   ThunarFile            *file_parent;
