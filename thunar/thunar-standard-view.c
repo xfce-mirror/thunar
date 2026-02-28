@@ -4342,7 +4342,7 @@ thunar_standard_view_drag_enter_timer (gpointer user_data)
       thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
       /* open the drag target folder */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target, TRUE);
     }
 
   return FALSE;
