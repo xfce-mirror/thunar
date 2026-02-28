@@ -1247,7 +1247,7 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
     }
 
   /* notify the surrounding module that we want to change to a different directory.  */
-  thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory);
+  thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory, TRUE);
 }
 
 

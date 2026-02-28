@@ -3436,7 +3436,7 @@ thunar_window_update_directories (ThunarWindow *window,
       if (directory == old_directory)
         {
           if (n == active_page)
-            thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory);
+            thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory, TRUE);
           else
             thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory);
         }

@@ -1990,7 +1990,7 @@ thunar_shortcuts_view_new_files_created (ThunarShortcutsView *view,
   if (G_LIKELY (file != NULL))
     {
       if (G_LIKELY (thunar_file_is_directory (file)))
-        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }
