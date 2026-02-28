@@ -311,6 +311,9 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
           gchar name[256];
           gint  is_visible;
 
+          if (xfce_str_is_empty (names[i]))
+            continue;
+
           if (sscanf (names[i], "%255[^=]=%d", name, &is_visible) == 2)
             {
               for (GList *l = order_model->items; l != NULL; l = l->next)
