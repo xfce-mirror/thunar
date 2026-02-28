@@ -103,12 +103,7 @@ thunar_context_menu_order_editor_insert_item (ThunarContextMenuOrderEditor      
                                               gint                                   index,
                                               const ThunarContextMenuOrderModelItem *item)
 {
-  GIcon   *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
-  gboolean is_special = (item->id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR)
-                        || (item->id == THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION && item->secondary_id == NULL);
-
-  if (icon == NULL && !is_special)
-    icon = g_themed_icon_new ("open-menu");
+  GIcon *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
 
   xfce_item_list_store_insert_with_values (menu_editor->store, index,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, item->visibility,
