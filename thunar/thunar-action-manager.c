@@ -802,7 +802,7 @@ thunar_action_manager_menu_item_activated (ThunarActionManager *action_mgr,
 
   /* if we have a mime handler associated with the menu_item, we pass it to the action_mgr (g_object_get_qdata will return NULL otherwise)*/
   app_info = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_appinfo_quark);
-  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -815,13 +815,15 @@ thunar_action_manager_menu_item_activated (ThunarActionManager *action_mgr,
  * @action_mgr : a #ThunarActionManager instance
  * @action     : the #ThunarActionManagerFolderOpenAction to use, if there are folders among the selected files
  * @app_info   : a #GAppInfo instance
+ * @grab_focus : TRUE to grab focus to main view after opening the file. Default TRUE.
  *
  * Will try to open all selected files with the provided #GAppInfo
  **/
 void
 thunar_action_manager_activate_selected_files (ThunarActionManager                *action_mgr,
                                                ThunarActionManagerFolderOpenAction action,
-                                               GAppInfo                           *app_info)
+                                               GAppInfo                           *app_info,
+                                               gboolean                            grab_focus)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
@@ -1457,7 +1459,7 @@ thunar_action_manager_action_open (ThunarActionManager *action_mgr)
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return TRUE;
 
-  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;

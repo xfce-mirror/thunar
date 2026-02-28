@@ -97,7 +97,8 @@ thunar_action_manager_get_type (void) G_GNUC_CONST;
 void
 thunar_action_manager_activate_selected_files (ThunarActionManager                *action_mgr,
                                                ThunarActionManagerFolderOpenAction action,
-                                               GAppInfo                           *app_info);
+                                               GAppInfo                           *app_info,
+                                               gboolean                            grab_focus);
 void
 thunar_action_manager_open_selected_folders (ThunarActionManager *action_mgr,
                                              gboolean             open_in_tabs);
