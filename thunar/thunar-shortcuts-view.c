@@ -1791,7 +1791,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView                *view,
           g_object_set (G_OBJECT (view->action_mgr), "selected-location", location, NULL);
         }
 
-      thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL);
+      thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL, grab_focus);
 
       /* return the focus to the current folder, unless the folder changed */
       if (open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
