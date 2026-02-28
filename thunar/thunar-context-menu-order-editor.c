@@ -243,7 +243,7 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
                 | XFCE_ITEM_LIST_MODEL_RESETTABLE,
                 NULL);
   g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_context_menu_order_editor_move), menu_editor);
-  g_signal_connect_swapped (store, "before-set-activity", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
+  g_signal_connect_swapped (store, "activity-changed", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
   g_signal_connect_swapped (store, "before-remove-item", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
   g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_context_menu_order_editor_reset), menu_editor);
   g_signal_connect_swapped (menu_editor->order_model, "changed", G_CALLBACK (thunar_context_menu_order_editor_populate), menu_editor);
