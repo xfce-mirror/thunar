@@ -754,8 +754,6 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_KP_Down:
       thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, FALSE);
 
-      /* keep focus on us */
-      gtk_widget_grab_focus (widget);
       break;
     }
 
