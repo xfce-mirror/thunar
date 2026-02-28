@@ -60,7 +60,8 @@ static ThunarFile *
 thunar_shortcuts_pane_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static GList *
 thunar_shortcuts_pane_get_selected_files (ThunarComponent *component);
 static void
@@ -192,7 +193,7 @@ thunar_shortcuts_pane_dispose (GObject *object)
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
 
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), NULL, TRUE);
   thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), NULL);
 
   (*G_OBJECT_CLASS (thunar_shortcuts_pane_parent_class)->dispose) (object);
@@ -245,7 +246,7 @@ thunar_shortcuts_pane_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SELECTED_FILES:
@@ -293,7 +294,8 @@ thunar_shortcuts_pane_set_current_directory_idle (gpointer data)
 
 static void
 thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (navigator);
 

@@ -2051,7 +2051,7 @@ thunar_window_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_window_set_current_directory (window, g_value_get_object (value));
+      thunar_window_set_current_directory (window, g_value_get_object (value), TRUE);
       break;
 
     case PROP_SEARCHING:
@@ -2496,7 +2496,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* update the directory of the current window */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (new_view));
-  thunar_window_set_current_directory (window, current_directory);
+  thunar_window_set_current_directory (window, current_directory, TRUE);
 
   /* add stock bindings */
   thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
@@ -3438,7 +3438,7 @@ thunar_window_update_directories (ThunarWindow *window,
           if (n == active_page)
             thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory, TRUE);
           else
-            thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory);
+            thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory, TRUE);
         }
     }
 }
@@ -4682,7 +4682,7 @@ thunar_window_action_go_up (ThunarWindow *window)
   parent = thunar_file_get_parent (window->current_directory, &error);
   if (G_LIKELY (parent != NULL))
     {
-      thunar_window_set_current_directory (window, parent);
+      thunar_window_set_current_directory (window, parent, TRUE);
       g_object_unref (G_OBJECT (parent));
     }
   else
@@ -4768,7 +4768,7 @@ thunar_window_action_open_home (ThunarWindow *window)
   else
     {
       /* open the home folder */
-      thunar_window_set_current_directory (window, home_file);
+      thunar_window_set_current_directory (window, home_file, TRUE);
       g_object_unref (G_OBJECT (home_file));
     }
 
@@ -4852,7 +4852,7 @@ thunar_window_open_user_folder (ThunarWindow  *window,
   if (G_LIKELY (user_file != NULL))
     {
       /* open the folder */
-      thunar_window_set_current_directory (window, user_file);
+      thunar_window_set_current_directory (window, user_file, TRUE);
       g_object_unref (G_OBJECT (user_file));
       result = TRUE;
     }
@@ -4910,7 +4910,7 @@ thunar_window_action_open_computer (ThunarWindow *window)
   else
     {
       /* open the computer location */
-      thunar_window_set_current_directory (window, computer_file);
+      thunar_window_set_current_directory (window, computer_file, TRUE);
       g_object_unref (G_OBJECT (computer_file));
     }
 
@@ -5028,7 +5028,7 @@ thunar_window_action_open_file_system (ThunarWindow *window)
   else
     {
       /* open the root folder */
-      thunar_window_set_current_directory (window, root_file);
+      thunar_window_set_current_directory (window, root_file, TRUE);
       g_object_unref (G_OBJECT (root_file));
     }
 
@@ -5064,7 +5064,7 @@ thunar_window_action_open_recent (ThunarWindow *window)
   else
     {
       /* open the `Recent` folder */
-      thunar_window_set_current_directory (window, recent_file);
+      thunar_window_set_current_directory (window, recent_file, TRUE);
       g_object_unref (G_OBJECT (recent_file));
     }
 
@@ -5100,7 +5100,7 @@ thunar_window_action_open_trash (ThunarWindow *window)
   else
     {
       /* open the trash folder */
-      thunar_window_set_current_directory (window, trash_bin_file);
+      thunar_window_set_current_directory (window, trash_bin_file, TRUE);
       g_object_unref (G_OBJECT (trash_bin_file));
     }
 
@@ -5136,7 +5136,7 @@ thunar_window_action_open_network (ThunarWindow *window)
   else
     {
       /* open the network root location */
-      thunar_window_set_current_directory (window, network_file);
+      thunar_window_set_current_directory (window, network_file, TRUE);
       g_object_unref (G_OBJECT (network_file));
     }
 
@@ -5815,10 +5815,12 @@ thunar_window_get_current_directory (ThunarWindow *window)
  * thunar_window_set_current_directory:
  * @window            : a #ThunarWindow instance.
  * @current_directory : the new directory or %NULL.
+ * @grab_focus        : TRUE to grab focus on the main view after setting the current directory. Default TRUE.
  **/
 void
 thunar_window_set_current_directory (ThunarWindow *window,
-                                     ThunarFile   *current_directory)
+                                     ThunarFile   *current_directory,
+                                     gboolean      grab_focus)
 {
   GType    type;
   gchar   *type_name;
@@ -5982,7 +5984,7 @@ thunar_window_set_directories (ThunarWindow *window,
       if (thunar_file_is_directory (directory))
         {
           if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) == 0)
-            thunar_window_set_current_directory (window, directory);
+            thunar_window_set_current_directory (window, directory, TRUE);
           else
             thunar_window_notebook_open_new_tab (window, directory);
         }

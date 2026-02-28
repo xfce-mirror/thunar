@@ -130,7 +130,8 @@ static ThunarFile *
 thunar_action_manager_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static void
 thunar_action_manager_set_selected_files (ThunarComponent *component,
                                           GList           *selected_files);
@@ -537,7 +538,7 @@ thunar_action_manager_dispose (GObject *object)
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
   /* reset our properties */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (action_mgr), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (action_mgr), NULL, TRUE);
   thunar_action_manager_set_widget (THUNAR_ACTION_MANAGER (action_mgr), NULL);
 
   /* unref all members */
@@ -613,7 +614,7 @@ thunar_action_manager_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SELECTED_FILES:
@@ -650,7 +651,8 @@ thunar_action_manager_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (navigator);
 
