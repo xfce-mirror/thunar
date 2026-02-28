@@ -176,7 +176,8 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
                                      GtkTreePath         *dst_path);
 static void
 thunar_shortcuts_view_open (ThunarShortcutsView                *view,
-                            ThunarActionManagerFolderOpenAction open_in);
+                            ThunarActionManagerFolderOpenAction open_in,
+                            gboolean                            grab_focus);
 static void
 thunar_shortcuts_view_eject (ThunarShortcutsView *view);
 static void
@@ -711,7 +712,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
       else if (G_LIKELY (event->button == 1))
         {
           /* button 1 opens in the same window */
-          thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+          thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, TRUE);
         }
       else if (G_UNLIKELY (event->button == 2))
         {
@@ -722,7 +723,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
           if ((event->state & GDK_CONTROL_MASK) != 0)
             in_tab = !in_tab;
 
-          thunar_shortcuts_view_open (view, in_tab ? THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB : THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
+          thunar_shortcuts_view_open (view, in_tab ? THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB : THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, TRUE);
         }
     }
 
@@ -749,7 +750,7 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_Down:
     case GDK_KEY_KP_Up:
     case GDK_KEY_KP_Down:
-      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, FALSE);
 
       /* keep focus on us */
       gtk_widget_grab_focus (widget);
@@ -1128,7 +1129,7 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 
   /* open the selected shortcut */
-  thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+  thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, TRUE);
 }
 
 
@@ -1746,7 +1747,8 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
 
 static void
 thunar_shortcuts_view_open (ThunarShortcutsView                *view,
-                            ThunarActionManagerFolderOpenAction open_in)
+                            ThunarActionManagerFolderOpenAction open_in,
+                            gboolean                            grab_focus)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
