@@ -178,7 +178,8 @@ thunar_action_manager_poke_data_new (GList                              *files_t
                                      GAppInfo                           *application_to_use,
                                      ThunarActionManagerFolderOpenAction folder_open_action,
                                      GFile                              *location_to_poke,
-                                     ThunarDevice                       *device_to_poke);
+                                     ThunarDevice                       *device_to_poke,
+                                     gboolean                            grab_focus);
 static void
 thunar_action_manager_poke_data_free (ThunarActionManagerPokeData *data);
 static void
@@ -308,6 +309,7 @@ struct _ThunarActionManagerPokeData
   ThunarDevice                       *device_to_poke;
   GAppInfo                           *application_to_use;
   ThunarActionManagerFolderOpenAction folder_open_action;
+  gboolean                            grab_focus;
 };
 
 static GParamSpec *action_manager_props[N_PROPERTIES] = {
@@ -1109,7 +1111,8 @@ thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                                                    application_to_use,
                                                    folder_open_action,
                                                    action_mgr->location_to_process,
-                                                   action_mgr->device_to_process);
+                                                   action_mgr->device_to_process,
+                                                   TRUE);
 
   if (action_mgr->device_to_process != NULL)
     {
@@ -1365,7 +1368,8 @@ thunar_action_manager_poke_data_new (GList                              *files_t
                                      GAppInfo                           *application_to_use,
                                      ThunarActionManagerFolderOpenAction folder_open_action,
                                      GFile                              *location_to_poke,
-                                     ThunarDevice                       *device_to_poke)
+                                     ThunarDevice                       *device_to_poke,
+                                     gboolean                            grab_focus)
 {
   ThunarActionManagerPokeData *data;
 
@@ -1384,6 +1388,7 @@ thunar_action_manager_poke_data_new (GList                              *files_t
   if (application_to_use != NULL)
     g_object_ref (application_to_use);
   data->folder_open_action = folder_open_action;
+  data->grab_focus = grab_focus;
 
   return data;
 }
