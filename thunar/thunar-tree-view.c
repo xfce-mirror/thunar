@@ -97,7 +97,8 @@ static ThunarFile *
 thunar_tree_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory);
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus);
 static void
 thunar_tree_view_realize (GtkWidget *widget);
 static void
@@ -496,7 +497,7 @@ thunar_tree_view_finalize (GObject *object)
     gtk_tree_path_free (view->select_path);
 
   /* reset the current-directory property */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL, TRUE);
 
   /* release reference on the action manager */
   g_object_unref (view->action_mgr);
@@ -546,7 +547,7 @@ thunar_tree_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SHOW_HIDDEN:
@@ -581,7 +582,8 @@ thunar_tree_view_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory)
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (navigator);
   ThunarFile     *file;
@@ -1588,7 +1590,7 @@ thunar_tree_view_open_selection (ThunarTreeView *view)
   if (G_LIKELY (file != NULL))
     {
       /* open that folder in the main view */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }
@@ -1612,7 +1614,7 @@ thunar_tree_view_select_files (ThunarTreeView *view,
   if (G_LIKELY (file != NULL))
     {
       if (G_LIKELY (thunar_file_is_directory (file)))
-        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }

@@ -130,7 +130,8 @@ static ThunarFile *
 thunar_action_manager_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static void
 thunar_action_manager_set_selected_files (ThunarComponent *component,
                                           GList           *selected_files);
@@ -152,7 +153,8 @@ thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
 static void
 thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                             GAppInfo                           *application_to_use,
-                            ThunarActionManagerFolderOpenAction folder_open_action);
+                            ThunarActionManagerFolderOpenAction folder_open_action,
+                            gboolean                            grab_focus);
 static void
 thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
                                           ThunarDevice  *volume,
@@ -178,7 +180,8 @@ thunar_action_manager_poke_data_new (GList                              *files_t
                                      GAppInfo                           *application_to_use,
                                      ThunarActionManagerFolderOpenAction folder_open_action,
                                      GFile                              *location_to_poke,
-                                     ThunarDevice                       *device_to_poke);
+                                     ThunarDevice                       *device_to_poke,
+                                     gboolean                            grab_focus);
 static void
 thunar_action_manager_poke_data_free (ThunarActionManagerPokeData *data);
 static void
@@ -308,6 +311,7 @@ struct _ThunarActionManagerPokeData
   ThunarDevice                       *device_to_poke;
   GAppInfo                           *application_to_use;
   ThunarActionManagerFolderOpenAction folder_open_action;
+  gboolean                            grab_focus;
 };
 
 static GParamSpec *action_manager_props[N_PROPERTIES] = {
@@ -534,7 +538,7 @@ thunar_action_manager_dispose (GObject *object)
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
   /* reset our properties */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (action_mgr), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (action_mgr), NULL, TRUE);
   thunar_action_manager_set_widget (THUNAR_ACTION_MANAGER (action_mgr), NULL);
 
   /* unref all members */
@@ -610,7 +614,7 @@ thunar_action_manager_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SELECTED_FILES:
@@ -647,7 +651,8 @@ thunar_action_manager_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (navigator);
 
@@ -802,7 +807,7 @@ thunar_action_manager_menu_item_activated (ThunarActionManager *action_mgr,
 
   /* if we have a mime handler associated with the menu_item, we pass it to the action_mgr (g_object_get_qdata will return NULL otherwise)*/
   app_info = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_appinfo_quark);
-  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -815,17 +820,19 @@ thunar_action_manager_menu_item_activated (ThunarActionManager *action_mgr,
  * @action_mgr : a #ThunarActionManager instance
  * @action     : the #ThunarActionManagerFolderOpenAction to use, if there are folders among the selected files
  * @app_info   : a #GAppInfo instance
+ * @grab_focus : TRUE to grab focus to main view after opening the file. Default TRUE.
  *
  * Will try to open all selected files with the provided #GAppInfo
  **/
 void
 thunar_action_manager_activate_selected_files (ThunarActionManager                *action_mgr,
                                                ThunarActionManagerFolderOpenAction action,
-                                               GAppInfo                           *app_info)
+                                               GAppInfo                           *app_info,
+                                               gboolean                            grab_focus)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  thunar_action_manager_poke (action_mgr, app_info, action);
+  thunar_action_manager_poke (action_mgr, app_info, action, grab_focus);
 }
 
 
@@ -1091,7 +1098,8 @@ thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
 static void
 thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                             GAppInfo                           *application_to_use,
-                            ThunarActionManagerFolderOpenAction folder_open_action)
+                            ThunarActionManagerFolderOpenAction folder_open_action,
+                            gboolean                            grab_focus)
 {
   ThunarActionManagerPokeData *poke_data;
 
@@ -1107,7 +1115,8 @@ thunar_action_manager_poke (ThunarActionManager                *action_mgr,
                                                    application_to_use,
                                                    folder_open_action,
                                                    action_mgr->location_to_process,
-                                                   action_mgr->device_to_process);
+                                                   action_mgr->device_to_process,
+                                                   grab_focus);
 
   if (action_mgr->device_to_process != NULL)
     {
@@ -1172,7 +1181,7 @@ thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
     }
   else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
     {
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point, poke_data->grab_focus);
     }
 
   /* add device to `recent:///` */
@@ -1284,7 +1293,7 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
             {
               /* If multiple directories are passed, we assume that we should open them all */
               if (directories->next == NULL)
-                thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), directories->data);
+                thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), directories->data, poke_data->grab_focus);
               else
                 {
                   g_object_get (G_OBJECT (THUNAR_ACTION_MANAGER (browser)->preferences), "misc-open-new-window-as-tab", &open_new_window_as_tab, NULL);
@@ -1363,7 +1372,8 @@ thunar_action_manager_poke_data_new (GList                              *files_t
                                      GAppInfo                           *application_to_use,
                                      ThunarActionManagerFolderOpenAction folder_open_action,
                                      GFile                              *location_to_poke,
-                                     ThunarDevice                       *device_to_poke)
+                                     ThunarDevice                       *device_to_poke,
+                                     gboolean                            grab_focus)
 {
   ThunarActionManagerPokeData *data;
 
@@ -1382,6 +1392,7 @@ thunar_action_manager_poke_data_new (GList                              *files_t
   if (application_to_use != NULL)
     g_object_ref (application_to_use);
   data->folder_open_action = folder_open_action;
+  data->grab_focus = grab_focus;
 
   return data;
 }
@@ -1442,9 +1453,9 @@ thunar_action_manager_open_selected_folders (ThunarActionManager *action_mgr,
     _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
 
   if (open_in_tabs)
-    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB, TRUE);
   else
-    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, TRUE);
 }
 
 
@@ -1457,7 +1468,7 @@ thunar_action_manager_action_open (ThunarActionManager *action_mgr)
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return TRUE;
 
-  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -3189,7 +3200,7 @@ thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 void
 thunar_action_manager_action_mount (ThunarActionManager *action_mgr)
 {
-  thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_NO_ACTION);
+  thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_NO_ACTION, TRUE);
 }
 
 
