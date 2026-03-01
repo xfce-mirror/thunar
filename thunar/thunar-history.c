@@ -64,7 +64,8 @@ static ThunarFile *
 thunar_history_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_history_set_current_directory (ThunarNavigator *navigator,
-                                      ThunarFile      *current_directory);
+                                      ThunarFile      *current_directory,
+                                      gboolean         grab_focus);
 static void
 thunar_history_go_back (ThunarHistory *history,
                         GFile         *goto_file);
@@ -202,7 +203,7 @@ thunar_history_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (history), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (history), g_value_get_object (value), TRUE);
       break;
 
     default:
@@ -242,7 +243,8 @@ thunar_history_get_gfile (ThunarFile *file)
 
 static void
 thunar_history_set_current_directory (ThunarNavigator *navigator,
-                                      ThunarFile      *current_directory)
+                                      ThunarFile      *current_directory,
+                                      gboolean         grab_focus)
 {
   ThunarHistory *history = THUNAR_HISTORY (navigator);
   GFile         *gfile;
@@ -391,7 +393,7 @@ thunar_history_go_back (ThunarHistory *history,
 
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory, TRUE);
 }
 
 
@@ -463,7 +465,7 @@ thunar_history_go_forward (ThunarHistory *history,
 
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory, TRUE);
 }
 
 
@@ -751,5 +753,5 @@ void
 thunar_history_add (ThunarHistory *history,
                     ThunarFile    *directory)
 {
-  thunar_history_set_current_directory (THUNAR_NAVIGATOR (history), directory);
+  thunar_history_set_current_directory (THUNAR_NAVIGATOR (history), directory, TRUE);
 }

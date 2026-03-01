@@ -691,7 +691,7 @@ thunar_abstract_icon_view_item_activated (XfceIconView           *view,
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
-  thunar_action_manager_activate_selected_files (thunar_window_get_action_manager (THUNAR_WINDOW (window)), THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (thunar_window_get_action_manager (THUNAR_WINDOW (window)), THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL, TRUE);
 }
 
 

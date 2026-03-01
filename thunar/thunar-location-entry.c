@@ -65,7 +65,8 @@ static ThunarFile *
 thunar_location_entry_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static void
 thunar_location_entry_activate (GtkWidget           *path_entry,
                                 ThunarLocationEntry *location_entry);
@@ -200,7 +201,7 @@ static void
 thunar_location_entry_finalize (GObject *object)
 {
   /* disconnect from the current directory */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), NULL, TRUE);
 
   (*G_OBJECT_CLASS (thunar_location_entry_parent_class)->finalize) (object);
 }
@@ -238,7 +239,7 @@ thunar_location_entry_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       thunar_path_entry_set_working_directory (THUNAR_PATH_ENTRY (entry->path_entry),
                                                entry->current_directory);
       break;
@@ -261,7 +262,8 @@ thunar_location_entry_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (navigator);
 
@@ -325,7 +327,7 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
           GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
 
           /* open the directory */
-          thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file, TRUE);
 
           /* Make sure the view gets focus (even if the directory is already open) */
           thunar_window_show_and_select_files (THUNAR_WINDOW (window), NULL);
@@ -341,7 +343,7 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
               GList     *selected = NULL;
 
               /* change to the parent directory */
-              thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
+              thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent, TRUE);
 
               selected = g_list_append (selected, thunar_file_get_file (file));
               thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);

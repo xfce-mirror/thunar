@@ -107,8 +107,8 @@ thunar_navigator_base_init (gpointer klass)
                     G_SIGNAL_RUN_LAST,
                     G_STRUCT_OFFSET (ThunarNavigatorIface, change_directory),
                     NULL, NULL,
-                    g_cclosure_marshal_VOID__OBJECT,
-                    G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+                    g_cclosure_marshal_generic,
+                    G_TYPE_NONE, 2, THUNAR_TYPE_FILE, G_TYPE_BOOLEAN);
 
       navigator_signals[OPEN_NEW_TAB] =
       g_signal_new (I_ ("open-new-tab"),
@@ -183,19 +183,21 @@ thunar_navigator_get_current_directory (ThunarNavigator *navigator)
  **/
 void
 thunar_navigator_set_current_directory (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory)
+                                        ThunarFile      *current_directory,
+                                        gboolean         grab_focus)
 {
   _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
-  THUNAR_NAVIGATOR_GET_IFACE (navigator)->set_current_directory (navigator, current_directory);
+  THUNAR_NAVIGATOR_GET_IFACE (navigator)->set_current_directory (navigator, current_directory, grab_focus);
 }
 
 
 
 /**
  * thunar_navigator_change_directory:
- * @navigator : a #ThunarNavigator instance.
- * @directory : a #ThunarFile referring to a directory.
+ * @navigator  : a #ThunarNavigator instance.
+ * @directory  : a #ThunarFile referring to a directory.
+ * @grab_focus : TRUE to grab focus after changing the directory. Default TRUE.
  *
  * Emits the "change-directory" signal on @navigator with
  * the specified @directory.
@@ -211,13 +213,14 @@ thunar_navigator_set_current_directory (ThunarNavigator *navigator,
  **/
 void
 thunar_navigator_change_directory (ThunarNavigator *navigator,
-                                   ThunarFile      *directory)
+                                   ThunarFile      *directory,
+                                   gboolean         grab_focus)
 {
   _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
   _thunar_return_if_fail (THUNAR_IS_FILE (directory));
   _thunar_return_if_fail (thunar_file_is_directory (directory));
 
-  g_signal_emit (G_OBJECT (navigator), navigator_signals[CHANGE_DIRECTORY], 0, directory);
+  g_signal_emit (G_OBJECT (navigator), navigator_signals[CHANGE_DIRECTORY], 0, directory, grab_focus);
 }
 
 
