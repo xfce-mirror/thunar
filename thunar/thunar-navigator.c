@@ -177,6 +177,7 @@ thunar_navigator_get_current_directory (ThunarNavigator *navigator)
  * thunar_navigator_set_current_directory:
  * @navigator         : a #ThunarNavigator instance.
  * @current_directory : the new directory to display or %NULL.
+ * @grab_focus        : TRUE to grab focus after changing the directory
  *
  * Sets a new current directory that should be displayed by
  * the @navigator.
