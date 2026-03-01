@@ -894,6 +894,8 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
 
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
+      if (G_UNLIKELY (path == NULL))
+        break;
       /* if branch is expanded then collapse it */
       if (gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), path))
         gtk_tree_view_collapse_row (GTK_TREE_VIEW (view), path);
@@ -928,6 +930,8 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
 
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
+      if (G_UNLIKELY (path == NULL))
+        break;
       /* if this is a toplevel item and a mountable device, mount it */
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
         gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter,
