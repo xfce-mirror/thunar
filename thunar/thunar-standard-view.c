@@ -153,7 +153,8 @@ static ThunarFile *
 thunar_standard_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
-                                            ThunarFile      *current_directory);
+                                            ThunarFile      *current_directory,
+                                            gboolean         grab_focus);
 static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading);
@@ -1446,7 +1447,7 @@ thunar_standard_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_LOADING:
@@ -1822,7 +1823,8 @@ thunar_standard_view_restore_selection_from_history (ThunarStandardView *standar
 
 static void
 thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
-                                            ThunarFile      *current_directory)
+                                            ThunarFile      *current_directory,
+                                            gboolean         grab_focus)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
@@ -1880,7 +1882,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   gtk_adjustment_set_value (gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view)), 0.0);
 
   /* store the directory in the history */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (standard_view->priv->history), current_directory);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (standard_view->priv->history), current_directory, TRUE);
 
   /* if directory specific settings are enabled, apply them */
   if (standard_view->priv->directory_specific_settings)
@@ -4352,7 +4354,7 @@ thunar_standard_view_drag_enter_timer (gpointer user_data)
       thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
       /* open the drag target folder */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target, TRUE);
     }
 
   return FALSE;

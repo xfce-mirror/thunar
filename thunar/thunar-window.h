@@ -122,7 +122,8 @@ ThunarFile *
 thunar_window_get_current_directory (ThunarWindow *window);
 void
 thunar_window_set_current_directory (ThunarWindow *window,
-                                     ThunarFile   *current_directory);
+                                     ThunarFile   *current_directory,
+                                     gboolean      grab_focus);
 GList *
 thunar_window_get_directories (ThunarWindow *window,
                                gint         *active_page);
