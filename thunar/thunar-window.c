@@ -2451,7 +2451,8 @@ thunar_window_create_view_binding (ThunarWindow *window,
 
 static void
 thunar_window_switch_current_view (ThunarWindow *window,
-                                   GtkWidget    *new_view)
+                                   GtkWidget    *new_view,
+                                   gboolean      grab_focus)
 {
   GSList        *view_bindings;
   ThunarFile    *current_directory;
@@ -2627,7 +2628,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
 
-  thunar_window_switch_current_view (window, view);
+  thunar_window_switch_current_view (window, view, TRUE);
 
   /* update the selection (will as well update the preview image) */
   thunar_window_selection_changed (window);
@@ -4012,7 +4013,7 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   g_object_unref (tab_page_container);
 
   /* Explicitly set the new window's current view and active terminal. */
-  thunar_window_switch_current_view (new_thunar_window, view_to_move);
+  thunar_window_switch_current_view (new_thunar_window, view_to_move, TRUE);
 
   return TRUE;
 }
@@ -4642,7 +4643,7 @@ thunar_window_replace_view (ThunarWindow *window,
 #endif
   /* If the replaced view was the active one, update the main window view pointer. */
   if (view_to_replace == window->view)
-    thunar_window_switch_current_view (window, new_view);
+    thunar_window_switch_current_view (window, new_view, grab_focus);
 
   /* scroll to the previously visible file in the old view */
   if (G_UNLIKELY (file != NULL))
