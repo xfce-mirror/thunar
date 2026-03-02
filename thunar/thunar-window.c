@@ -292,7 +292,8 @@ thunar_window_action_show_toolbar_editor (ThunarWindow *window);
 static void
 thunar_window_replace_view (ThunarWindow *window,
                             GtkWidget    *view_to_replace,
-                            GType         view_type);
+                            GType         view_type,
+                            gboolean      grab_focus);
 static void
 thunar_window_action_view_changed (ThunarWindow *window,
                                    GType         view_type);
@@ -4515,7 +4516,7 @@ thunar_window_action_clear_directory_specific_settings (ThunarWindow *window)
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 
   /* replace the active view with a new one of the correct type */
-  thunar_window_replace_view (window, window->view, view_type);
+  thunar_window_replace_view (window, window->view, view_type, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -4565,7 +4566,8 @@ thunar_window_action_compact_view (ThunarWindow *window)
 static void
 thunar_window_replace_view (ThunarWindow *window,
                             GtkWidget    *view_to_replace,
-                            GType         view_type)
+                            GType         view_type,
+                            gboolean      grab_focus)
 {
   ThunarFile *file = NULL;
   ThunarFile *current_directory = NULL;
@@ -4662,7 +4664,7 @@ static void
 thunar_window_action_view_changed (ThunarWindow *window,
                                    GType         view_type)
 {
-  thunar_window_replace_view (window, window->view, view_type);
+  thunar_window_replace_view (window, window->view, view_type, TRUE);
 
   thunar_window_view_switcher_update (window);
 
@@ -5784,7 +5786,7 @@ thunar_window_set_directory_specific_settings (ThunarWindow *window,
       view_type = thunar_window_view_type_for_directory (window, directory);
 
       /* replace the old view with a new one */
-      thunar_window_replace_view (window, lp->data, view_type);
+      thunar_window_replace_view (window, lp->data, view_type, TRUE);
     }
 
   g_list_free (tabs);
@@ -5895,7 +5897,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   /* change the view type if necessary */
   if (window->view != NULL && window->view_type != type)
-    thunar_window_replace_view (window, window->view, type);
+    thunar_window_replace_view (window, window->view, type, grab_focus);
 
   /* grab the focus to the main view */
   if (grab_focus && window->view != NULL)
