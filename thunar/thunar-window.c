@@ -2603,7 +2603,8 @@ thunar_window_switch_current_view (ThunarWindow *window,
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
   /* take focus on the new view */
-  gtk_widget_grab_focus (window->view);
+  if (grab_focus)
+    gtk_widget_grab_focus (window->view);
 }
 
 
