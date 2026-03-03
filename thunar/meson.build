@@ -45,6 +45,8 @@ thunar_sources = [
   'thunar-enum-types.h',
   'thunar-file.c',
   'thunar-file.h',
+  'thunar-filter-bar.c',
+  'thunar-filter-bar.h',
   'thunar-folder.c',
   'thunar-folder.h',
   'thunar-gdk-extensions.c',
