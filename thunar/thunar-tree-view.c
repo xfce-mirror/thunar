@@ -1710,6 +1710,7 @@ thunar_tree_view_set_cursor (gpointer user_data)
   gboolean        done = FALSE;
   GList          *lp;
   GList          *path_as_list = NULL;
+  gboolean        matching_file_found = FALSE;
 
   /* Stop attempt to set the cursor if we fail to do so after 5 seconds */
   if (time (NULL) > view->set_cursor_start_timestamp + 5)
@@ -1764,6 +1765,7 @@ thunar_tree_view_set_cursor (gpointer user_data)
   for (; lp != NULL; lp = lp->next)
     {
       file = THUNAR_FILE (lp->data);
+      matching_file_found = FALSE;
 
       /* 3. Check if the contents of the corresponding folder is still being loaded */
       folder = thunar_folder_get_for_file (file);
@@ -1780,16 +1782,16 @@ thunar_tree_view_set_cursor (gpointer user_data)
         {
           gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
           if (file == file_in_tree)
-            {
-              g_object_unref (file_in_tree);
-              break;
-            }
+            matching_file_found = TRUE;
+
           if (file_in_tree)
             g_object_unref (file_in_tree);
 
-          if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &iter))
+          if (matching_file_found || !gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &iter))
             break;
         }
+      if (!matching_file_found)
+        break;
 
       /* 5. Did we already find the full path ?*/
       if (lp->next == NULL)
