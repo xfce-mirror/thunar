@@ -852,7 +852,6 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
               view->select_path = NULL;
             }
         }
-      gtk_widget_grab_focus (widget);
     }
 
   /* reset the pressed button state */
@@ -967,8 +966,6 @@ thunar_tree_view_key_press_event (GtkWidget   *widget,
     }
 
   gtk_tree_path_free (path);
-  if (stopPropagation)
-    gtk_widget_grab_focus (widget);
 
   return stopPropagation;
 }
@@ -1198,10 +1195,6 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
           thunar_tree_view_action_open (THUNAR_TREE_VIEW (tree_view));
         }
     }
-
-  /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
-   * looses the focus. Get the focus back: */
-  gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 }
 
 
@@ -1589,8 +1582,8 @@ thunar_tree_view_open_selection (ThunarTreeView *view)
   file = thunar_tree_view_get_selected_file (view);
   if (G_LIKELY (file != NULL))
     {
-      /* open that folder in the main view */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
+      /* open that folder in the main view, but keep the focus on the tree-view */
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, FALSE);
       g_object_unref (file);
     }
 }
