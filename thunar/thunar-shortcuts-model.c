@@ -1681,7 +1681,9 @@ thunar_shortcuts_model_device_removed (ThunarDeviceMonitor  *device_monitor,
   /* something is broken if we don't have a shortcut here */
   if (lp == NULL)
     {
-      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      gchar *device_name = thunar_device_get_name (device);
+      g_warning ("No shortcut found for device '%s'", device_name);
+      g_free (device_name);
       return;
     }
 
