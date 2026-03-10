@@ -160,8 +160,6 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item);
 static void
 thunar_tree_model_item_reset (ThunarTreeModelItem *item);
 static void
-thunar_tree_model_item_load_folder (ThunarTreeModelItem *item);
-static void
 thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
                                     GHashTable          *files,
                                     ThunarFolder        *folder);
@@ -807,26 +805,10 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
   if (G_UNLIKELY (node == model->root))
     return;
 
-  /* check if we have a dummy item here */
+  /* increment the reference count */
   item = node->data;
-  if (G_UNLIKELY (item == NULL))
-    {
-      /* tell the parent to load the folder */
-      thunar_tree_model_item_load_folder (node->parent->data);
-    }
-  else
-    {
-      /* do not load `Recent` to avoid slowing down the view */
-      if (item->file != NULL && thunar_file_is_recent (item->file))
-        return;
-
-      /* schedule a reload of the folder if it is cleaned earlier */
-      if (G_UNLIKELY (item->ref_count == 0))
-        thunar_tree_model_item_load_folder (item);
-
-      /* increment the reference count */
-      item->ref_count += 1;
-    }
+  if (item != NULL)
+    item->ref_count += 1;
 }
 
 
@@ -847,7 +829,7 @@ thunar_tree_model_unref_node (GtkTreeModel *tree_model,
   if (G_UNLIKELY (node == model->root))
     return;
 
-  /* check if this a non-dummy item, if so, decrement the reference count */
+  /* decrement the reference count */
   item = node->data;
   if (G_LIKELY (item != NULL))
     item->ref_count -= 1;
@@ -1027,7 +1009,7 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
           item->file = thunar_file_get (mount_point, NULL);
 
           /* because the volume node is already reffed, we need to load the folder manually here */
-          thunar_tree_model_item_load_folder (item);
+          thunar_tree_model_load_node (model, node);
 
           g_object_unref (mount_point);
         }
@@ -1260,9 +1242,11 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
 
 
 
-static void
-thunar_tree_model_item_load_folder (ThunarTreeModelItem *item)
+void
+thunar_tree_model_load_node (ThunarTreeModel *model, GNode *node)
 {
+  ThunarTreeModelItem *item = THUNAR_TREE_MODEL_ITEM (node->data);
+
   _thunar_return_if_fail (THUNAR_IS_FILE (item->file) || THUNAR_IS_DEVICE (item->device));
 
   /* schedule the "load" idle source (if not already done) */
@@ -1446,6 +1430,10 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   /* verify that we have a file */
   if (G_LIKELY (item->file != NULL) && item->folder == NULL)
     {
+      /* do not load `Recent` to avoid slowing down the view */
+      if (thunar_file_is_recent (item->file))
+        return FALSE;
+
       /* open the folder for the item */
       item->folder = thunar_folder_get_for_file (item->file);
       if (G_LIKELY (item->folder != NULL))

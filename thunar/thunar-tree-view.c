@@ -211,6 +211,12 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
 static GtkTreePath *
 thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
                                               ThunarFile     *file);
+static void
+thunar_tree_view_cell_data_func (GtkTreeViewColumn *col,
+                                 GtkCellRenderer   *cell,
+                                 GtkTreeModel      *model,
+                                 GtkTreeIter       *iter,
+                                 gpointer           data);
 
 
 
@@ -417,6 +423,8 @@ thunar_tree_view_init (ThunarTreeView *view)
 
   /* allocate the special icon renderer */
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
+  gtk_tree_view_column_set_cell_data_func (column, view->icon_renderer, thunar_tree_view_cell_data_func, NULL, NULL);
+
   gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "file", THUNAR_TREE_MODEL_COLUMN_FILE,
@@ -2187,4 +2195,23 @@ GtkWidget *
 thunar_tree_view_new (void)
 {
   return g_object_new (THUNAR_TYPE_TREE_VIEW, NULL);
+}
+
+
+
+static void
+thunar_tree_view_cell_data_func (GtkTreeViewColumn *col,
+                                 GtkCellRenderer   *cell,
+                                 GtkTreeModel       *model,
+                                 GtkTreeIter       *filter_iter,
+                                 gpointer           data)
+{
+  GtkTreeIter iter;
+
+  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &iter, filter_iter);
+
+  /* Like that, we will load new nodes of the tree.view as soon as they are visible in the view */
+  thunar_tree_model_load_node (THUNAR_TREE_MODEL (model), iter.user_data);
+
+  /* Unloading will happen on collapse of nodes (see thunar_tree_model_cleanup)*/
 }
