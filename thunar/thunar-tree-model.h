@@ -69,7 +69,9 @@ void
 thunar_tree_model_add_child (ThunarTreeModel *model,
                              GNode           *node,
                              ThunarFile      *file);
-
+void
+thunar_tree_model_load_node (ThunarTreeModel *model,
+                             GNode           *node);
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_MODEL_H__ */
