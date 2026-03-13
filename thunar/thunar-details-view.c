@@ -20,7 +20,9 @@
 #include "thunar/thunar-details-view.h"
 
 #include "thunar/thunar-action-manager.h"
-#include "thunar/thunar-column-editor.h"
+#include "thunar/thunar-column-model.h"
+#include "thunar/thunar-column-order-editor.h"
+#include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
@@ -202,7 +204,7 @@ struct _ThunarDetailsView
 /* clang-format off */
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,           "<Actions>/ThunarStandardView/configure-columns",         "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."),      N_ ("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor),                     },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,           "<Actions>/ThunarStandardView/configure-columns",         "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."),      N_ ("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_column_order_editor_show),               },
     { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS,   "<Actions>/ThunarDetailsView/expandable-folders",         "", XFCE_GTK_CHECK_MENU_ITEM,  N_ ("E_xpandable Folders"),        N_ ("Allow tree like expansion of folders"),            NULL, G_CALLBACK (thunar_details_view_toggle_expandable_folders), },
 };
 /* clang-format on */
@@ -1447,11 +1449,15 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
                                        GtkAccelGroup      *accel_group)
 {
   ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  GtkWidget         *item;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS), G_OBJECT (details_view), details_view->expandable_folders, GTK_MENU_SHELL (menu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+  thunar_context_menu_item_set_id (item, THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS);
+
+  item = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS), G_OBJECT (details_view), details_view->expandable_folders, GTK_MENU_SHELL (menu));
+  thunar_context_menu_item_set_id (item, THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS);
 }
 
 
