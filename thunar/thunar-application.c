@@ -330,6 +330,10 @@ thunar_application_init (ThunarApplication *application)
 
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
+
+  g_application_set_option_context_parameter_string (G_APPLICATION (application), _("[URL...]"));
+  g_application_set_option_context_summary (G_APPLICATION (application), _( "Arguments:\n"
+                                                                             "  URL                        Location to open"));
 }
 
 
