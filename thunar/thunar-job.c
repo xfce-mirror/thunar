@@ -31,7 +31,7 @@
 #include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>
-
+#include <xfconf/xfconf.h>
 
 
 /* Signal identifiers */
@@ -448,13 +448,25 @@ thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
   GError    *error = NULL;
   gboolean   success;
   GSource   *source;
+  gboolean   xfconf_initialized;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
 
   job->priv->scheduler_job = scheduler_job;
 
+  /* initialize xfconf for each thread */
+  xfconf_initialized = xfconf_init (&error);
+  if (!xfconf_initialized)
+    {
+      g_warning (PACKAGE_NAME ": Failed to initialize Xfconf: %s", error->message);
+      g_clear_error (&error);
+    }
+
   success = (*THUNAR_JOB_GET_CLASS (job)->execute) (job, &error);
+
+  if (xfconf_initialized)
+    xfconf_shutdown ();
 
   if (!success)
     {
