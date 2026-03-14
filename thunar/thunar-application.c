@@ -246,9 +246,9 @@ struct _ThunarApplication
 #ifdef HAVE_GUDEV
   GUdevClient *udev_client;
 
-  GSList *volman_udis;
-  guint   volman_idle_id;
-  guint   volman_watch_id;
+  GSList     *volman_udis;
+  guint       volman_idle_id;
+  guint       volman_watch_id;
   GHashTable *media_fs_uuids;
 #endif
 
@@ -330,6 +330,13 @@ thunar_application_init (ThunarApplication *application)
 
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
+
+  g_application_set_option_context_parameter_string (G_APPLICATION (application), _("[FILEPATH...]"));
+  g_application_set_option_context_summary (
+  G_APPLICATION (application),
+  _( "Opens the specified FILEPATH(s). "
+     "Multiple filepaths will open in separate windows. "
+     "If no arguments are provided, opens the current working directory."));
 }
 
 
