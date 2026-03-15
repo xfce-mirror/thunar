@@ -319,6 +319,8 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 static void
 thunar_application_init (ThunarApplication *application)
 {
+  g_autofree gchar *argument_help_string;
+
   /* we do most initialization in GApplication::startup since it is only needed
    * in the primary instance anyways */
 
@@ -331,9 +333,12 @@ thunar_application_init (ThunarApplication *application)
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
 
-  g_application_set_option_context_parameter_string (G_APPLICATION (application), _("[URL...]"));
-  g_application_set_option_context_summary (G_APPLICATION (application), _( "Arguments:\n"
-                                                                             "  URL                        Location to open"));
+  g_application_set_option_context_parameter_string (G_APPLICATION (application), ("[URL …]"));
+
+  /* Dont have a better idea for indendation formatting the 'Arguments:' section */
+  argument_help_string = g_strconcat(_("Arguments:\n"),
+  "  ", _("URL"), "                        ",("Location to open"), NULL); 
+  g_application_set_option_context_summary (G_APPLICATION (application), argument_help_string);
 }
 
 
