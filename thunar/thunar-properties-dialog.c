@@ -336,6 +336,7 @@ thunar_properties_dialog_constructed (GObject *object)
   GtkWidget *button;
   GtkWidget *infobar;
   GtkWidget *frame;
+  GtkWidget *separator;
 
   G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructed (object);
 
@@ -708,6 +709,16 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
   dialog->content_value_label = label;
+
+  ++row;
+
+  /* Separate filesystem data from file data */
+  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_widget_set_halign (separator, GTK_ALIGN_FILL);
+  gtk_widget_set_margin_top (separator, 5);
+  gtk_widget_set_margin_bottom (separator, 5);
+  gtk_grid_attach (GTK_GRID (grid), separator, 0, row, 2, 1);
+  gtk_widget_show (separator);
 
   ++row;
 
