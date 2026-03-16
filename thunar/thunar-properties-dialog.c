@@ -1309,14 +1309,10 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *volume_name;
   gchar             *volume_id;
   gchar             *volume_label;
-  guint64            capacity = 0;
   gchar             *capacity_str = NULL;
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
-  guint64            fs_free;
-  guint64            fs_size;
-  gdouble            fs_fraction = 0.0;
   gchar             *background;
   gchar             *foreground;
 
@@ -1522,20 +1518,23 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* update the capacity and the free space (only for folders) */
   if (thunar_file_is_directory (file))
     {
+      ThunarFilesystemSpaceInfo fs_size_info;
+      gdouble                   fs_fraction = 0.0;
+
+      thunar_g_file_get_fs_space (thunar_file_get_file (file), &fs_size_info);
+
       /* capacity (space of containing volume) */
-      if (thunar_g_file_get_free_space (thunar_file_get_file (file), NULL, &capacity))
-        capacity_str = g_format_size_full (capacity, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      if (fs_size_info.fs_size_total_read_ok)
+        capacity_str = g_format_size_full (fs_size_info.fs_size_total, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
       g_free (capacity_str);
 
-      /* free space */
-      fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file),
-                                                       dialog->file_size_binary);
-      if (thunar_g_file_get_free_space (thunar_file_get_file (file), &fs_free, &fs_size)
-          && fs_size > 0)
+      /* free/used space */
+      fs_string = thunar_g_file_get_free_space_string (&fs_size_info, dialog->file_size_binary);
+      if (fs_size_info.fs_size_usable_read_ok && fs_size_info.fs_usable_space > 0)
         {
-          /* free disk space fraction */
-          fs_fraction = ((fs_size - fs_free) * 100 / fs_size);
+          /* usable disk space fraction */
+          fs_fraction = ((fs_size_info.fs_used_space) * 100 / fs_size_info.fs_usable_space);
         }
       if (fs_string != NULL)
         {

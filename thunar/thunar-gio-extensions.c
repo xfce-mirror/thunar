@@ -691,78 +691,107 @@ thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
 
 
 /**
- * thunar_g_file_get_free_space:
- * @file           : a #GFile instance.
- * @fs_free_return : return location for the amount of
- *                   free space or %NULL.
- * @fs_size_return : return location for the total volume size.
+ * thunar_g_file_get_fs_space:
+ * @file                 : a #GFile instance.
+ * @fs_space_info_return : Container values are filled as much as possible
  *
- * Determines the amount of free space of the volume on
- * which @file resides. Returns %TRUE if the amount of
- * free space was determined successfully and placed into
- * @free_space_return, else %FALSE will be returned.
+ * Determines the amount of free/used space and the total size of the volume on
+ * which @file resides. It fills the container values of the passed struct accordingly.
  *
- * Return value: %TRUE if successfull, else %FALSE.
  **/
-gboolean
-thunar_g_file_get_free_space (GFile   *file,
-                              guint64 *fs_free_return,
-                              guint64 *fs_size_return)
+void
+thunar_g_file_get_fs_space (GFile                     *file,
+                            ThunarFilesystemSpaceInfo *fs_space_info_return)
 {
-  GFileInfo *filesystem_info;
-  gboolean   success = FALSE;
+  g_autoptr (GFileInfo) filesystem_info = NULL;
 
-  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  _thunar_return_if_fail (G_IS_FILE (file));
+  _thunar_return_if_fail (fs_space_info_return != NULL);
 
   filesystem_info = g_file_query_filesystem_info (file,
                                                   THUNARX_FILESYSTEM_INFO_NAMESPACE,
                                                   NULL, NULL);
 
-  if (filesystem_info != NULL)
+  fs_space_info_return->fs_size_total_read_ok = FALSE;
+  fs_space_info_return->fs_size_free_read_ok = FALSE;
+  fs_space_info_return->fs_size_used_read_ok = FALSE;
+  fs_space_info_return->fs_size_usable_read_ok = FALSE;
+
+  if (filesystem_info == NULL)
+    return;
+
+  if (g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE))
     {
-      if (fs_free_return != NULL)
-        {
-          *fs_free_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-        }
-
-      if (fs_size_return != NULL)
-        {
-          *fs_size_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-        }
-
-      g_object_unref (filesystem_info);
+      fs_space_info_return->fs_size_total = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+      fs_space_info_return->fs_size_total_read_ok = TRUE;
     }
 
-  return success;
+  if (g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE))
+    {
+      fs_space_info_return->fs_free_space = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+      fs_space_info_return->fs_size_free_read_ok = TRUE;
+    }
+
+  if (g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_USED))
+    {
+      fs_space_info_return->fs_used_space = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+      fs_space_info_return->fs_size_used_read_ok = TRUE;
+    }
+  else
+    {
+      /* Fallback. Some filesystems do not provide 'used' info. In that case, we tr to calculate the used space */
+      if (fs_space_info_return->fs_size_free_read_ok == TRUE && fs_space_info_return->fs_size_total_read_ok == TRUE)
+        {
+          if (fs_space_info_return->fs_size_total >= fs_space_info_return->fs_free_space)
+            {
+              fs_space_info_return->fs_used_space = fs_space_info_return->fs_size_total - fs_space_info_return->fs_free_space;
+              fs_space_info_return->fs_size_used_read_ok = TRUE;
+            }
+        }
+    }
+
+  /* Usable space is not provided by filesystems, it needs to be calculated */
+  if (fs_space_info_return->fs_size_free_read_ok == TRUE)
+    {
+      if (fs_space_info_return->fs_size_used_read_ok == TRUE)
+        {
+          /* Note: size_total = size_free + size_used + size_reserved */
+          fs_space_info_return->fs_usable_space = fs_space_info_return->fs_free_space + fs_space_info_return->fs_used_space;
+          fs_space_info_return->fs_size_usable_read_ok = TRUE;
+        }
+      else if (fs_space_info_return->fs_size_total_read_ok == TRUE)
+        {
+          /* Fallback. Some filesystems do not provide 'used' info. In that case, we just assume the whole fs space can be used */
+          fs_space_info_return->fs_usable_space = fs_space_info_return->fs_size_total;
+          fs_space_info_return->fs_size_usable_read_ok = TRUE;
+        }
+    }
 }
 
 
 
 gchar *
-thunar_g_file_get_free_space_string (GFile *file, gboolean file_size_binary)
+thunar_g_file_get_free_space_string (const ThunarFilesystemSpaceInfo *fs_space_info,
+                                     gboolean                         file_size_binary)
 {
-  gchar  *fs_size_free_str;
-  gchar  *fs_size_used_str;
-  guint64 fs_size_free;
-  guint64 fs_size_total;
+  g_autofree gchar *fs_size_free_str = NULL;
+  g_autofree gchar *fs_size_used_str = NULL;
   gchar  *free_space_string = NULL;
 
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (fs_space_info != NULL, NULL);
 
-  if (thunar_g_file_get_free_space (file, &fs_size_free, &fs_size_total) && fs_size_total > 0)
-    {
-      fs_size_free_str = g_format_size_full (fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-      fs_size_used_str = g_format_size_full (fs_size_total - fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  if (fs_space_info->fs_size_usable_read_ok == FALSE || fs_space_info->fs_usable_space == 0)
+    return NULL;
 
-      free_space_string = g_strdup_printf (_("%s used (%.0f%%)  |  %s free (%.0f%%)"),
-                                           fs_size_used_str, ((fs_size_total - fs_size_free) * 100.0 / fs_size_total),
-                                           fs_size_free_str, (fs_size_free * 100.0 / fs_size_total));
+  if (fs_space_info->fs_size_free_read_ok == FALSE || fs_space_info->fs_size_used_read_ok == FALSE)
+    return NULL;
 
-      g_free (fs_size_free_str);
-      g_free (fs_size_used_str);
-    }
+  fs_size_free_str = g_format_size_full (fs_space_info->fs_free_space, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  fs_size_used_str = g_format_size_full (fs_space_info->fs_used_space, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+
+  free_space_string = g_strdup_printf (_("%s used (%.0f%%)  |  %s free (%.0f%%)"),
+                                       fs_size_used_str, (fs_space_info->fs_used_space * 100.0 / fs_space_info->fs_usable_space),
+                                       fs_size_free_str, (fs_space_info->fs_free_space * 100.0 / fs_space_info->fs_usable_space));
 
   return free_space_string;
 }
