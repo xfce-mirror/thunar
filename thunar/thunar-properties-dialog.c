@@ -1309,7 +1309,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *volume_name;
   gchar             *volume_id;
   gchar             *volume_label;
-  gchar             *capacity_str = NULL;
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
@@ -1520,14 +1519,26 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       ThunarFilesystemSpaceInfo fs_size_info;
       gdouble                   fs_fraction = 0.0;
+      g_autofree gchar         *size_total_str = NULL;
+      g_autofree gchar         *size_usable_str = NULL;
+      g_autofree gchar         *capacity_str = NULL;
 
       thunar_g_file_get_fs_space (thunar_file_get_file (file), &fs_size_info);
 
       /* capacity (space of containing volume) */
       if (fs_size_info.fs_size_total_read_ok)
-        capacity_str = g_format_size_full (fs_size_info.fs_size_total, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+        size_total_str = g_format_size_full (fs_size_info.fs_size_total, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+
+      if (fs_size_info.fs_size_usable_read_ok)
+        size_usable_str = g_format_size_full (fs_size_info.fs_usable_space, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+
+      /* show "usable" only, if it differs from total (we cannot tell for some filesystems)*/
+      if (fs_size_info.fs_size_total != fs_size_info.fs_usable_space)
+        capacity_str = g_strconcat (size_total_str, " (", size_usable_str, " ", _("usable"), ")", NULL);
+      else
+        capacity_str = g_strdup (size_total_str);
+
       gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
-      g_free (capacity_str);
 
       /* free/used space */
       fs_string = thunar_g_file_get_free_space_string (&fs_size_info, dialog->file_size_binary);
