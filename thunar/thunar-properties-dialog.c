@@ -177,6 +177,8 @@ struct _ThunarPropertiesDialog
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
   GtkWidget *deleted_label;
+  GtkWidget *filesystem_vbox;
+  GtkWidget *filesystem_label;
   GtkWidget *capacity_vbox;
   GtkWidget *capacity_label;
   GtkWidget *freespace_vbox;
@@ -706,6 +708,28 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
   dialog->content_value_label = label;
+
+  ++row;
+
+  label = gtk_label_new (_("Filesystem:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_yalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->filesystem_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+  gtk_widget_set_hexpand (dialog->filesystem_vbox, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->filesystem_vbox, 1, row, 1, 1);
+  g_object_bind_property (G_OBJECT (dialog->filesystem_vbox), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_show (dialog->filesystem_vbox);
+
+  dialog->filesystem_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->filesystem_label), TRUE);
+  gtk_box_pack_start (GTK_BOX (dialog->filesystem_vbox), dialog->filesystem_label, TRUE, TRUE, 0);
+  gtk_widget_show (dialog->filesystem_label);
 
   ++row;
 
@@ -1525,8 +1549,16 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       g_autofree gchar         *size_total_str = NULL;
       g_autofree gchar         *size_usable_str = NULL;
       g_autofree gchar         *capacity_str = NULL;
+      g_autofree gchar         *fs_type = NULL;
+
 
       thunar_g_file_get_fs_space (thunar_file_get_file (file), &fs_size_info);
+
+      fs_type = thunar_g_file_get_fs_type (thunar_file_get_file (file));
+      if (fs_type != NULL)
+        gtk_label_set_text (GTK_LABEL (dialog->filesystem_label), fs_type);
+      else
+        gtk_label_set_text (GTK_LABEL (dialog->filesystem_label), _("Unknown"));
 
       /* capacity (space of containing volume) */
       if (fs_size_info.fs_size_total_read_ok)

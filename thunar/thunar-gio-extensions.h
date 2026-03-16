@@ -107,6 +107,9 @@ thunar_g_file_get_display_name_remote (GFile *file);
 gboolean
 thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme);
 
+gchar *
+thunar_g_file_get_fs_type (GFile *file);
+
 void
 thunar_g_file_get_fs_space (GFile                     *file,
                             ThunarFilesystemSpaceInfo *fs_space_info_return);

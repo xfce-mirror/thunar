@@ -691,6 +691,34 @@ thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
 
 
 /**
+ * thunar_g_file_get_fs_type:
+ * @file : a #GFile instance.
+ *
+ * Returns : (transfer full) (nullable): the filesystem type of @file or %NULL if not found.
+ **/
+gchar *
+thunar_g_file_get_fs_type (GFile *file)
+{
+  g_autoptr (GFileInfo) filesystem_info = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  filesystem_info = g_file_query_filesystem_info (file,
+                                                  G_FILE_ATTRIBUTE_FILESYSTEM_TYPE "," G_FILE_ATTRIBUTE_UNIX_DEVICE ",id::filesystem",
+                                                  NULL, NULL);
+
+  if (!filesystem_info)
+    return NULL;
+
+  if (!g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE))
+    return NULL;
+
+  return g_strdup (g_file_info_get_attribute_string (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE));
+}
+
+
+
+/**
  * thunar_g_file_get_fs_space:
  * @file                 : a #GFile instance.
  * @fs_space_info_return : Container values are filled as much as possible
