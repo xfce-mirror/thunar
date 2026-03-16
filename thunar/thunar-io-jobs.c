@@ -2090,13 +2090,16 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
     }
   else
     {
+      ThunarFilesystemSpaceInfo fs_size_info;
+
       text_list = g_list_append (text_list, text_for_files);
 
       /* check if we can determine the amount of free space for the volume */
-      if (thunar_g_file_get_free_space (thunar_file_get_file (thunar_folder), &size, NULL))
+      thunar_g_file_get_fs_space (thunar_file_get_file (thunar_folder), &fs_size_info);
+      if (fs_size_info.fs_size_free_read_ok == TRUE)
         {
           /* humanize the free space */
-          gchar *size_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+          gchar *size_string = g_format_size_full (fs_size_info.fs_free_space, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           temp_string = g_strdup_printf (_ ("Free space: %s"), size_string);
           text_list = g_list_append (text_list, temp_string);
           g_free (size_string);

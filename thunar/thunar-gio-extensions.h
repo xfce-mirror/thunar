@@ -33,6 +33,19 @@ typedef enum
   THUNAR_GTYPE_STRINGV
 } ThunarGType;
 
+typedef struct
+{
+  guint64 fs_free_space;
+  guint64 fs_used_space;
+  guint64 fs_usable_space;
+  guint64 fs_size_total;
+
+  gboolean fs_size_total_read_ok;
+  gboolean fs_size_free_read_ok;
+  gboolean fs_size_used_read_ok;
+  gboolean fs_size_usable_read_ok;
+} ThunarFilesystemSpaceInfo;
+
 GFile *
 thunar_g_file_new_for_home (void);
 GFile *
@@ -94,14 +107,13 @@ thunar_g_file_get_display_name_remote (GFile *file);
 gboolean
 thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme);
 
-gboolean
-thunar_g_file_get_free_space (GFile   *file,
-                              guint64 *fs_free_return,
-                              guint64 *fs_size_return);
+void
+thunar_g_file_get_fs_space (GFile                     *file,
+                            ThunarFilesystemSpaceInfo *fs_space_info_return);
 
 gchar *
-thunar_g_file_get_free_space_string (GFile   *file,
-                                     gboolean file_size_binary);
+thunar_g_file_get_free_space_string (const ThunarFilesystemSpaceInfo *fs_space_info,
+                                     gboolean                         file_size_binary);
 
 gboolean
 thunar_g_file_copy (GFile                *source,
