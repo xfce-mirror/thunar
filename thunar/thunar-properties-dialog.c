@@ -726,6 +726,8 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->capacity_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->capacity_label), TRUE);
+  gtk_widget_set_tooltip_text (dialog->capacity_label, _("Be aware that a portion of the filesystem’s total capacity is reserved for metadata. "
+    "Consequently, the usable capacity is less than the total capacity."));
   gtk_box_pack_start (GTK_BOX (dialog->capacity_vbox), dialog->capacity_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->capacity_label);
 
@@ -748,6 +750,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
+  gtk_widget_set_tooltip_text (dialog->freespace_label, _("If the filesystem’s usable capacity is unknown, its total capacity is assumed to represent 100%%."));
   gtk_box_pack_start (GTK_BOX (dialog->freespace_vbox), dialog->freespace_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->freespace_label);
 
