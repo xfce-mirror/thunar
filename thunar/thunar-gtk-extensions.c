@@ -29,6 +29,9 @@
 #include <libxfce4ui/libxfce4ui.h>
 
 
+static gboolean
+thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
+                                GdkEvent *event);
 
 /**
  * thunar_gtk_label_set_a11y_relation:
@@ -268,7 +271,13 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
       device = gdk_event_get_device (event);
 
       if (device != NULL && gdk_device_get_source (device) == GDK_SOURCE_KEYBOARD)
-        device = gdk_device_get_associated_device (device);
+        {
+          /* for keyboard interaction, try to position menu at keyboard focus */
+          if (thunar_gtk_menu_popup_at_focus (menu, event))
+            return;
+
+          device = gdk_device_get_associated_device (device);
+        }
 
       if (device != NULL)
         {
@@ -301,6 +310,31 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
                           event);
 }
 
+static gboolean
+thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
+                                GdkEvent *event)
+{
+  GtkWidget *event_widget = gtk_get_event_widget (event);
+  if (event_widget == NULL)
+    return FALSE;
+
+  /* sometimes is not the focus widget that handled the event, find the focused widget */
+  GtkWidget *toplevel = gtk_widget_get_toplevel (event_widget);
+  if (!GTK_IS_WINDOW (toplevel))
+    return FALSE;
+
+  GtkWidget *focus_widget = gtk_window_get_focus (GTK_WINDOW (toplevel));
+  if (focus_widget == NULL)
+    return FALSE;
+
+  gtk_menu_popup_at_widget (menu,
+                            focus_widget,
+                            GDK_GRAVITY_SOUTH_WEST,
+                            GDK_GRAVITY_NORTH_WEST,
+                            event);
+
+  return TRUE;
+}
 
 
 /**
