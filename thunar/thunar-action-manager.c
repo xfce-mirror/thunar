@@ -2747,6 +2747,7 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
   name = thunar_dialogs_show_create (action_mgr->widget,
                                      "inode/directory",
                                      generated_name,
+                                     thunar_file_get_file (action_mgr->current_directory),
                                      _("Create New Folder"),
                                      NULL);
   g_free (generated_name);
@@ -2809,6 +2810,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
                                          generated_name,
+                                         thunar_file_get_file (action_mgr->current_directory),
                                          title,
                                          NULL);
       /* cleanup */
@@ -2821,6 +2823,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          "text/plain",
                                          generated_name,
+                                         thunar_file_get_file (action_mgr->current_directory),
                                          _("New Empty File..."),
                                          NULL);
     }

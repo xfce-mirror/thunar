@@ -2166,7 +2166,7 @@ thunar_application_create_file (ThunarApplication     *application,
     }
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_dialogs_show_create (parent, content_type, dialog_title, title, startup_id);
+  name = thunar_dialogs_show_create (parent, content_type, dialog_title, thunar_file_get_file (parent_directory), title, startup_id);
   if (G_LIKELY (name != NULL))
     {
       path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
@@ -2225,6 +2225,7 @@ thunar_application_create_file_from_template (ThunarApplication     *application
   name = thunar_dialogs_show_create (parent,
                                      thunar_file_get_content_type (template_file),
                                      thunar_file_get_display_name (template_file),
+                                     thunar_file_get_file (parent_directory),
                                      title,
                                      startup_id);
   if (G_LIKELY (name != NULL))

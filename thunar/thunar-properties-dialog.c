@@ -384,7 +384,7 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
-  dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, NULL);
+  dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, "max-text-length", thunar_g_file_get_fs_max_name_length (NULL), NULL);
   gtk_widget_set_hexpand (GTK_WIDGET (dialog->name_entry), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (dialog->name_entry), GTK_ALIGN_CENTER);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)));

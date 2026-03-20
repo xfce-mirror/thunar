@@ -53,12 +53,13 @@ thunar_dialogs_select_filename (GtkWidget *entry);
 
 /**
  * thunar_dialogs_show_create:
- * @parent       : a #GdkScreen, a #GtkWidget or %NULL.
- * @content_type : the content type of the file or folder to create.
- * @filename     : the suggested filename or %NULL.
- * @title        : the dialog title.
- * @startup_id   : startup id from startup notification passed along
- *                 with dbus to make focus stealing work properly. Ignored if NULL.
+ * @parent           : a #GdkScreen, a #GtkWidget or %NULL.
+ * @content_type     : the content type of the file or folder to create.
+ * @filename         : the suggested filename or %NULL.
+ * @parent_directory : directory in which the file will be created
+ * @title            : the dialog title.
+ * @startup_id       : startup id from startup notification passed along
+ *                     with dbus to make focus stealing work properly. Ignored if NULL.
  *
  * Displays a Thunar create dialog  with the specified
  * parameters that asks the user to enter a name for a new file or
@@ -74,6 +75,7 @@ gchar *
 thunar_dialogs_show_create (gpointer     parent,
                             const gchar *content_type,
                             const gchar *filename,
+                            GFile       *parent_directory,
                             const gchar *title,
                             const gchar *startup_id)
 {
@@ -87,6 +89,7 @@ thunar_dialogs_show_create (gpointer     parent,
   XfceFilenameInput *filename_input;
   GIcon             *icon = NULL;
   gint               row = 0;
+  gint               max_name_length;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
@@ -141,7 +144,8 @@ thunar_dialogs_show_create (gpointer     parent,
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
-  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
+  max_name_length = thunar_g_file_get_fs_max_name_length (parent_directory);
+  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, "max-text-length", max_name_length, NULL);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_START);
 
@@ -231,6 +235,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gint               dialog_width;
   gint               parent_width = 500;
   gint               row = 0;
+  gint               max_name_length;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -301,7 +306,8 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   row++;
 
   /* set up the widget for entering the filename */
-  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
+  max_name_length = thunar_g_file_get_fs_max_name_length (thunar_file_get_file (file));
+  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, "max-text-length", max_name_length, NULL);
   filename_input_entry = xfce_filename_input_get_entry (filename_input);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_START);

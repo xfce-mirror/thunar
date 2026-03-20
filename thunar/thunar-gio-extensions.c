@@ -719,6 +719,32 @@ thunar_g_file_get_fs_type (GFile *file)
 
 
 /**
+ * thunar_g_file_get_fs_max_name_length:
+ * @file : (nullable): a #GFile instance.
+ *
+ * Returns the maximum length a file is allowed to have on the filesystem of @file
+ * Default is 255
+ *
+ * Returns : The maximum length
+ **/
+gint
+thunar_g_file_get_fs_max_name_length (GFile *file)
+{
+  g_autofree gchar *fs_type = NULL;
+
+  if (file == NULL)
+    return 255;
+
+  fs_type = thunar_g_file_get_fs_type (file);
+  if (g_strstr_len (fs_type, -1, "bcachefs") != NULL)
+    return 512;
+
+  return 255;
+}
+
+
+
+/**
  * thunar_g_file_get_fs_space:
  * @file                 : a #GFile instance.
  * @fs_space_info_return : Container values are filled as much as possible
