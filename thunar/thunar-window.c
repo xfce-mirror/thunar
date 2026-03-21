@@ -428,6 +428,9 @@ thunar_window_toolbar_button_press_event (GtkWidget      *toolbar,
                                           GdkEventButton *event,
                                           ThunarWindow   *window);
 static gboolean
+thunar_window_toolbar_popup_menu (GtkWidget    *toolbar,
+                                  ThunarWindow *window);
+static gboolean
 thunar_window_button_press_event (GtkWidget      *view,
                                   GdkEventButton *event,
                                   ThunarWindow   *window);
@@ -745,9 +748,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries), id)
 
 
-
 static guint window_signals[LAST_SIGNAL];
-
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW,
@@ -6275,26 +6276,32 @@ thunar_window_toolbar_button_press_event (GtkWidget      *toolbar,
                                           GdkEventButton *event,
                                           ThunarWindow   *window)
 {
-  GtkWidget *menu;
-
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
   if (event->button == 3)
-    {
-      menu = gtk_menu_new ();
-      xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
-      xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window), window->menubar_visible, GTK_MENU_SHELL (menu));
-      gtk_widget_show_all (menu);
-
-      /* run the menu (takes over the floating of menu) */
-      thunar_gtk_menu_run (GTK_MENU (menu));
-
-      return TRUE;
-    }
+    return thunar_window_toolbar_popup_menu (toolbar, window);
 
   return FALSE;
 }
 
+
+
+static gboolean
+thunar_window_toolbar_popup_menu (GtkWidget    *toolbar,
+                                  ThunarWindow *window)
+{
+  GtkWidget *menu;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  menu = gtk_menu_new ();
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window), window->menubar_visible, GTK_MENU_SHELL (menu));
+  gtk_widget_show_all (menu);
+
+  /* run the menu (takes over the floating of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
+
+  return TRUE;
+}
 
 
 /**
@@ -7039,6 +7046,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
 
   g_signal_connect (G_OBJECT (window->location_toolbar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_press_event), window);
+  g_signal_connect (G_OBJECT (window->location_toolbar), "popup-menu", G_CALLBACK (thunar_window_toolbar_popup_menu), window);
 
   /* add toolbar items */
   window->location_toolbar_item_menu = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_MENU, FALSE, item_order++);
