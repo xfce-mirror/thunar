@@ -2580,9 +2580,7 @@ _thunar_application_confirm_file_removal (gpointer parent,
                                           gboolean will_unlink)
 {
   GtkWidget   *dialog;
-  GtkWidget   *message_area;
   GtkWindow   *window;
-  GList       *children;
   const gchar *file_basename;
   const gchar *file_display_name;
   gboolean     file_names_match;
@@ -2656,21 +2654,11 @@ _thunar_application_confirm_file_removal (gpointer parent,
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
   /* include additional disclaimer for permanent deletions */
   if (will_unlink)
-    {
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                                _("If you delete a file, it is permanently lost."));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
 
-      /* additionally wrap long single-word filenames at character boundaries */
-      message_area = gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog));
-      children = gtk_container_get_children (GTK_CONTAINER (message_area));
-      if (children != NULL && GTK_IS_LABEL (children->data))
-        {
-          gtk_label_set_line_wrap_mode (GTK_LABEL (children->data), PANGO_WRAP_WORD_CHAR);
-          thunar_gtk_label_disable_hyphens (GTK_LABEL (children->data));
-        }
-      g_list_free (children);
-    }
 
+  /* Make sure the dialog wont expand for very long filenames */
+  thunar_gtk_dialog_wrap_long_text (GTK_DIALOG (dialog));
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
   g_free (message);

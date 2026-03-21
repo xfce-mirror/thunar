@@ -622,6 +622,9 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
   if (G_LIKELY (*secondary->str != '\0'))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", secondary->str);
 
+  /* additionally wrap long single-word filenames at character boundaries */
+  thunar_gtk_dialog_wrap_long_text (GTK_DIALOG (dialog));
+
   /* add the buttons based on the possible choices */
   for (n = THUNAR_JOB_RESPONSE_MAX_INT; n >= 0; --n)
     {

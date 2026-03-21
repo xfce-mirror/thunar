@@ -64,7 +64,7 @@ thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
  * thunar_gtk_label_disable_hyphens:
  * @label : a #GtkLabel.
  *
- * Tells @label to not insert hyphens by adding the attribute to its #PangoAttrList.
+ * Tells @label to not insert hyphens when splitting a string into multiple lines
  **/
 void
 thunar_gtk_label_disable_hyphens (GtkLabel *label)
@@ -78,6 +78,28 @@ thunar_gtk_label_disable_hyphens (GtkLabel *label)
   pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
   gtk_label_set_attributes (label, attr_list);
 #endif
+}
+
+
+
+void
+thunar_gtk_dialog_wrap_long_text (GtkDialog *dialog)
+{
+  GtkWidget *message_area;
+  GList     *children, *lp;
+
+  /* additionally wrap long single-word filenames at character boundaries */
+  message_area = gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog));
+  children = gtk_container_get_children (GTK_CONTAINER (message_area));
+  for (lp = children; lp != NULL; lp = lp->next)
+    {
+      if (GTK_IS_LABEL (lp->data))
+        {
+          gtk_label_set_line_wrap_mode (GTK_LABEL (lp->data), PANGO_WRAP_WORD_CHAR);
+          thunar_gtk_label_disable_hyphens (GTK_LABEL (lp->data));
+        }
+    }
+  g_list_free (children);
 }
 
 
