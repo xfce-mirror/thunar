@@ -70,13 +70,25 @@ void
 thunar_gtk_label_disable_hyphens (GtkLabel *label)
 {
 #ifdef PANGO_VERSION_1_44
+  gboolean       list_created = FALSE;
   PangoAttrList *attr_list;
 
   _thunar_return_if_fail (GTK_IS_LABEL (label));
 
   attr_list = gtk_label_get_attributes (label);
+  if (attr_list == NULL)
+    {
+      attr_list = pango_attr_list_new ();
+      list_created = TRUE;
+    }
+
   pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
   gtk_label_set_attributes (label, attr_list);
+
+  /* We only need to dereference, if we created the list at our own */
+  /* (the label takes the ownership) */
+  if (list_created)
+    pango_attr_list_unref (attr_list);
 #endif
 }
 
