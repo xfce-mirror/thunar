@@ -472,6 +472,9 @@ thunar_tree_view_init (ThunarTreeView *view)
   g_signal_connect_swapped (G_OBJECT (view->action_mgr), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), view);
   g_signal_connect_swapped (G_OBJECT (view->action_mgr), "new-files-created", G_CALLBACK (thunar_tree_view_select_files), view);
   g_object_bind_property (G_OBJECT (view), "current-directory", G_OBJECT (view->action_mgr), "current-directory", G_BINDING_SYNC_CREATE);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (view->preferences), "misc-support-overlay-scrolling", G_OBJECT (view), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 }
 
 

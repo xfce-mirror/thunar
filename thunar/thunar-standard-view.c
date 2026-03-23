@@ -1008,6 +1008,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (standard_view), GTK_SHADOW_IN);
 
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-support-overlay-scrolling", G_OBJECT (standard_view), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+
   /* setup the history support */
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);

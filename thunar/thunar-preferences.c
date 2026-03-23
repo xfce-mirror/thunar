@@ -145,6 +145,7 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
+  PROP_MISC_SUPPORT_OVERLAY_SCROLLING,
   PROP_SMART_SORT,
   PROP_MISC_FILE_DRAG_MODE,
 #ifdef HAVE_VTE
@@ -1481,6 +1482,22 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_USE_CSD] =
   g_param_spec_boolean ("misc-use-csd",
                         "MiscUseCSD",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-support-overlay-scrolling:
+   *
+   * Controls if 'overlay scrolling' should be supported by thunar widgets
+   * (A scroll bar will only be shown when mouse-hovering on widgets)
+   *
+   * False: No overlay scrolling in Thunar
+   * True: Value of global Gtk property "OverlayScrolling" will be used
+   **/
+  preferences_props[PROP_MISC_SUPPORT_OVERLAY_SCROLLING] =
+  g_param_spec_boolean ("misc-support-overlay-scrolling",
+                        "miscSupportOverlayScrolling",
                         NULL,
                         FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
