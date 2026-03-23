@@ -100,6 +100,8 @@ struct _ThunarEmblemChooser
 
   ThunarJob *emblem_change_job;
   gulong     emblem_change_job_finish_signal;
+
+  ThunarPreferences *preferences;
 };
 
 
@@ -142,10 +144,15 @@ thunar_emblem_chooser_init (ThunarEmblemChooser *chooser)
 {
   GtkWidget *viewport;
 
+  chooser->preferences = thunar_preferences_get ();
+
   /* setup the scrolled window instance */
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (chooser), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (chooser), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (chooser), NULL);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (chooser->preferences), "misc-support-overlay-scrolling", G_OBJECT (chooser), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 
   /* setup the viewport */
   viewport = gtk_viewport_new (gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (chooser)),
@@ -178,6 +185,8 @@ thunar_emblem_chooser_dispose (GObject *object)
 
   if (chooser->emblem_change_job != NULL && chooser->emblem_change_job_finish_signal != 0)
     g_signal_handler_disconnect (chooser->emblem_change_job, chooser->emblem_change_job_finish_signal);
+
+  g_object_unref (chooser->preferences);
 
   /* disconnect from the file */
   thunar_emblem_chooser_set_files (chooser, NULL);

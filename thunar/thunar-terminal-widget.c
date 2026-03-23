@@ -479,6 +479,9 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   gtk_widget_set_vexpand (priv->scrolled_window, TRUE);
   gtk_widget_set_hexpand (priv->scrolled_window, TRUE);
 
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (priv->preferences), "misc-support-overlay-scrolling", G_OBJECT (priv->scrolled_window), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+
   priv->terminal = VTE_TERMINAL (vte_terminal_new ());
   vte_terminal_set_scroll_on_output (priv->terminal, FALSE);
   vte_terminal_set_scroll_on_keystroke (priv->terminal, TRUE);

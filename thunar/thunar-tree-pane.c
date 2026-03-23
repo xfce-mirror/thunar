@@ -18,6 +18,8 @@
  */
 
 #include "thunar/thunar-tree-pane.h"
+
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-tree-view.h"
 
 
@@ -40,7 +42,7 @@ thunar_tree_pane_navigator_init (ThunarNavigatorIface *iface);
 static void
 thunar_tree_pane_side_pane_init (ThunarSidePaneIface *iface);
 static void
-thunar_tree_pane_dispose (GObject *object);
+thunar_tree_pane_finalize (GObject *object);
 static void
 thunar_tree_pane_get_property (GObject    *object,
                                guint       prop_id,
@@ -77,6 +79,7 @@ struct _ThunarTreePane
   ThunarFile *current_directory;
   GtkWidget  *view;
   gboolean    show_hidden;
+  ThunarPreferences *preferences;
 };
 
 
@@ -94,7 +97,7 @@ thunar_tree_pane_class_init (ThunarTreePaneClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose = thunar_tree_pane_dispose;
+  gobject_class->finalize = thunar_tree_pane_finalize;
   gobject_class->get_property = thunar_tree_pane_get_property;
   gobject_class->set_property = thunar_tree_pane_set_property;
 
@@ -140,11 +143,16 @@ thunar_tree_pane_side_pane_init (ThunarSidePaneIface *iface)
 static void
 thunar_tree_pane_init (ThunarTreePane *tree_pane)
 {
+  tree_pane->preferences = thunar_preferences_get ();
+
   /* configure the GtkScrolledWindow */
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (tree_pane), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (tree_pane), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (tree_pane), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (tree_pane), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (tree_pane->preferences), "misc-support-overlay-scrolling", G_OBJECT (tree_pane), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 
   /* allocate the tree view */
   tree_pane->view = thunar_tree_view_new ();
@@ -159,14 +167,16 @@ thunar_tree_pane_init (ThunarTreePane *tree_pane)
 
 
 static void
-thunar_tree_pane_dispose (GObject *object)
+thunar_tree_pane_finalize (GObject *object)
 {
   ThunarTreePane *tree_pane = THUNAR_TREE_PANE (object);
 
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (tree_pane), NULL, TRUE);
   thunar_component_set_selected_files (THUNAR_COMPONENT (tree_pane), NULL);
 
-  (*G_OBJECT_CLASS (thunar_tree_pane_parent_class)->dispose) (object);
+  g_object_unref (tree_pane->preferences);
+
+  (*G_OBJECT_CLASS (thunar_tree_pane_parent_class)->finalize) (object);
 }
 
 
