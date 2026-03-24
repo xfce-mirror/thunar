@@ -416,6 +416,9 @@ thunar_window_history_clicked (GtkWidget      *button,
                                GdkEventButton *event,
                                ThunarWindow   *window);
 static gboolean
+thunar_window_history_popup_menu (GtkWidget    *button,
+                                  ThunarWindow *window);
+static gboolean
 thunar_window_open_parent_clicked (GtkWidget      *button,
                                    GdkEventButton *event,
                                    ThunarWindow   *window);
@@ -6150,22 +6153,14 @@ thunar_window_history_clicked (GtkWidget      *button,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
+  if (event->button == 3)
+    return thunar_window_history_popup_menu (button, window);
+
   if (window->search_mode)
     return FALSE;
 
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
-  if (event->button == 3)
-    {
-      if (button == window->location_toolbar_item_back)
-        thunar_history_show_menu (history, THUNAR_HISTORY_MENU_BACK, button);
-      else if (button == window->location_toolbar_item_forward)
-        thunar_history_show_menu (history, THUNAR_HISTORY_MENU_FORWARD, button);
-      else
-        g_warning ("This button is not able to spawn a history menu");
-
-      return TRUE;
-    }
-  else if (event->button == 2)
+  if (event->button == 2)
     {
       /* middle click to open a new tab/window */
       g_object_get (window->preferences, "misc-middle-click-in-tab", &open_in_tab, NULL);
@@ -6193,6 +6188,29 @@ thunar_window_history_clicked (GtkWidget      *button,
   return FALSE;
 }
 
+
+
+static gboolean
+thunar_window_history_popup_menu (GtkWidget    *button,
+                                  ThunarWindow *window)
+{
+  ThunarHistory *history = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (window->search_mode)
+    return FALSE;
+
+  history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
+  if (button == window->location_toolbar_item_back)
+    thunar_history_show_menu (history, THUNAR_HISTORY_MENU_BACK, button);
+  else if (button == window->location_toolbar_item_forward)
+    thunar_history_show_menu (history, THUNAR_HISTORY_MENU_FORWARD, button);
+  else
+    g_warning ("This button is not able to spawn a history menu");
+
+  return TRUE;
+}
 
 
 static gboolean
@@ -7068,7 +7086,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_view_switcher = thunar_window_create_toolbar_view_switcher (window, item_order++);
 
   g_signal_connect (window->location_toolbar_item_back, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
+  g_signal_connect (window->location_toolbar_item_back, "popup-menu", G_CALLBACK (thunar_window_history_popup_menu), window);
   g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
+  g_signal_connect (window->location_toolbar_item_forward, "popup-menu", G_CALLBACK (thunar_window_history_popup_menu), window);
   g_signal_connect (window->location_toolbar_item_parent, "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), window);
   g_signal_connect (window->location_toolbar_item_home, "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), window);
 
