@@ -360,6 +360,22 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
         }
     }
 
+  if (GTK_IS_NOTEBOOK (focus_widget))
+    {
+      GtkNotebook *notebook = GTK_NOTEBOOK (focus_widget);
+      gint         page_num = gtk_notebook_get_current_page (notebook);
+      if (page_num > -1)
+        {
+          GtkWidget *page = gtk_notebook_get_nth_page (notebook, page_num);
+          if (page != NULL)
+            {
+              GtkWidget *tab_label = gtk_notebook_get_tab_label (notebook, page);
+              if (tab_label != NULL)
+                focus_widget = tab_label;
+            }
+        }
+    }
+
   gtk_menu_popup_at_widget (menu,
                             focus_widget,
                             GDK_GRAVITY_SOUTH_WEST,
