@@ -309,6 +309,8 @@ static GtkWidget *
 create_terminal_popup_menu (ThunarTerminalWidget *self);
 static gboolean
 on_terminal_button_release (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+static gboolean
+on_terminal_popup_menu (GtkWidget *widget, gpointer user_data);
 
 
 /******************************************************************
@@ -523,6 +525,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   /* Connect signals */
   g_signal_connect (priv->terminal, "child-exited", G_CALLBACK (on_terminal_child_exited), self);
   g_signal_connect (priv->terminal, "button-release-event", G_CALLBACK (on_terminal_button_release), self);
+  g_signal_connect (priv->terminal, "popup-menu", G_CALLBACK (on_terminal_popup_menu), self);
   g_signal_connect (self, "show", G_CALLBACK (thunar_terminal_widget_handle_show), NULL);
 
 #if VTE_CHECK_VERSION(0, 78, 0)
@@ -1252,6 +1255,23 @@ on_terminal_button_release (GtkWidget      *widget,
       return TRUE;
     }
   return FALSE;
+}
+
+
+
+static gboolean
+on_terminal_popup_menu (GtkWidget *widget,
+                        gpointer   user_data)
+{
+  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  GtkWidget            *menu = create_terminal_popup_menu (self);
+
+  gtk_menu_popup_at_widget (GTK_MENU (menu),
+                            widget,
+                            GDK_GRAVITY_SOUTH_WEST,
+                            GDK_GRAVITY_NORTH_WEST,
+                            NULL);
+  return TRUE;
 }
 
 static gchar *
