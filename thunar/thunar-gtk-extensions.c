@@ -311,6 +311,35 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
 }
 
 static gboolean
+thunar_gtk_popup_menu_at_rect (GtkMenu     *menu,
+                               GdkRectangle rect,
+                               GdkWindow   *widget_window)
+{
+  GdkRectangle widget_area;
+
+  if (!GDK_IS_WINDOW (widget_window))
+    return FALSE;
+
+  /* check if rect is inside widget_window area */
+  widget_area.y = 0;
+  widget_area.x = 0;
+  widget_area.height = gdk_window_get_height (widget_window);
+  widget_area.width = gdk_window_get_width (widget_window);
+  if (!gdk_rectangle_intersect (&rect, &widget_area, &rect))
+    return FALSE;
+
+  gtk_menu_popup_at_rect (menu,
+                          widget_window,
+                          &rect,
+                          GDK_GRAVITY_SOUTH_WEST,
+                          GDK_GRAVITY_NORTH_WEST,
+                          NULL);
+
+  return TRUE;
+}
+
+
+static gboolean
 thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
                                 GdkEvent *event)
 {
@@ -357,6 +386,32 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
                                       event);
               return TRUE;
             }
+        }
+    }
+
+  /* position menu in files inside icon view */
+  if (XFCE_IS_ICON_VIEW (focus_widget))
+    {
+      GList *selected_files = xfce_icon_view_get_selected_items (XFCE_ICON_VIEW (focus_widget));
+      if (selected_files != NULL)
+        {
+          GdkRectangle rect;
+          GdkWindow   *widget_window;
+          GtkTreePath *path = (GtkTreePath *) g_list_last (selected_files)->data;
+
+          xfce_icon_view_get_cell_area (XFCE_ICON_VIEW (focus_widget), path, NULL, &rect);
+          path = NULL;
+          g_list_free_full (selected_files, (GDestroyNotify) gtk_tree_path_free);
+
+          /* convert rect coordinates to widget_window coordinates */
+          GtkAdjustment *h_adjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (focus_widget));
+          GtkAdjustment *v_adjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (focus_widget));
+          rect.x -= (int) gtk_adjustment_get_value (h_adjustment);
+          rect.y -= (int) gtk_adjustment_get_value (v_adjustment);
+
+          widget_window = gtk_widget_get_window (focus_widget);
+          if (thunar_gtk_popup_menu_at_rect (menu, rect, widget_window))
+            return TRUE;
         }
     }
 
