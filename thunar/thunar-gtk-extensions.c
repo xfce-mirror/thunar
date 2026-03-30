@@ -360,22 +360,23 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
   if (GTK_IS_TREE_VIEW (focus_widget))
     {
       GtkTreeView       *tree = GTK_TREE_VIEW (focus_widget);
-      GtkTreePath       *path;
-      GtkTreeViewColumn *column;
-
-      gtk_tree_view_get_cursor (tree, &path, &column);
-      if (path)
+      GtkTreeSelection  *selection = gtk_tree_view_get_selection (tree);
+      GList             *selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+      if (selected_rows != NULL)
         {
           GdkRectangle  rect;
           GdkWindow         *widget_window;
+          GtkTreePath       *path = (GtkTreePath *) g_list_last (selected_rows)->data;
+          GtkTreeViewColumn *column = gtk_tree_view_get_column (tree, 0);
 
           gtk_tree_view_get_cell_area (tree, path, column, &rect);
+          path = NULL;
+          g_list_free_full (selected_rows, (GDestroyNotify) gtk_tree_path_free);
 
           /* convert rect coordinates to widget_window coordinates */
           gtk_tree_view_convert_bin_window_to_widget_coords (tree, rect.x, rect.y, &rect.x, &rect.y);
 
           widget_window = gtk_widget_get_window (focus_widget);
-          gtk_tree_path_free (path);
           if (thunar_gtk_popup_menu_at_rect (menu, rect, widget_window))
             return TRUE;
         }
