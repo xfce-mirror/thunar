@@ -367,25 +367,17 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
       if (path)
         {
           GdkRectangle  rect;
-          GtkAllocation tree_view_alloc;
+          GdkWindow         *widget_window;
+
           gtk_tree_view_get_cell_area (tree, path, column, &rect);
 
-          /* limit to tree_view visible area */
-          gtk_widget_get_allocation (GTK_WIDGET (tree), &tree_view_alloc);
-          rect.y = CLAMP (rect.y, 0, tree_view_alloc.height - rect.height);
+          /* convert rect coordinates to widget_window coordinates */
+          gtk_tree_view_convert_bin_window_to_widget_coords (tree, rect.x, rect.y, &rect.x, &rect.y);
 
-          GdkWindow *bin_window = gtk_tree_view_get_bin_window (tree);
+          widget_window = gtk_widget_get_window (focus_widget);
           gtk_tree_path_free (path);
-          if (bin_window != NULL)
-            {
-              gtk_menu_popup_at_rect (menu,
-                                      bin_window,
-                                      &rect,
-                                      GDK_GRAVITY_SOUTH_WEST,
-                                      GDK_GRAVITY_NORTH_WEST,
-                                      event);
-              return TRUE;
-            }
+          if (thunar_gtk_popup_menu_at_rect (menu, rect, widget_window))
+            return TRUE;
         }
     }
 
