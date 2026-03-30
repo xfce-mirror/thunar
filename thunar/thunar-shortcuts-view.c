@@ -465,6 +465,9 @@ thunar_shortcuts_view_finalize (GObject *object)
   /* Disconnect from the model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (view->model), view);
 
+  /* Disconnect from the action manager */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (view->action_mgr), view);
+
   /* release our reference on the model */
   g_object_unref (view->model);
 
