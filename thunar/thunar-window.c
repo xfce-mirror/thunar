@@ -2634,9 +2634,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
    * thunar_window_notebook_select_current_page() is going to take care of that */
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
-  
-    /*update button to show hidden file state*/
-  window->show_hidden = thunar_view_get_show_hidden(THUNAR_VIEW(view));
+
+  /*update button to show hidden file state*/
+  window->show_hidden = thunar_view_get_show_hidden (THUNAR_VIEW (view));
   if (window->location_toolbar_item_show_hidden != NULL)
     {
       g_signal_handlers_block_by_func (window->location_toolbar_item_show_hidden, get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN)->callback, window);
@@ -2648,7 +2648,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 
   /* update the selection (will as well update the preview image) */
   thunar_window_selection_changed (window);
-
 }
 
 
@@ -7094,7 +7093,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_TAB, item_order++);
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_WINDOW, item_order++);
   window->location_toolbar_item_split_view = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
-  window->location_toolbar_item_show_hidden= thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SHOW_HIDDEN, window->show_hidden, item_order++);
+  window->location_toolbar_item_show_hidden = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SHOW_HIDDEN, window->show_hidden, item_order++);
   window->location_toolbar_item_undo = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_UNDO, item_order++);
   window->location_toolbar_item_redo = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_REDO, item_order++);
   window->location_toolbar_item_zoom_out = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
