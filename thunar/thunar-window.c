@@ -629,6 +629,7 @@ struct _ThunarWindow
   GtkWidget *location_toolbar_item_compact_view;
   GtkWidget *location_toolbar_item_view_switcher;
   GtkWidget *location_toolbar_item_search;
+  GtkWidget *location_toolbar_item_show_hidden;
 
   ThunarActionManager *action_mgr;
 
@@ -697,7 +698,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     #endif
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
     { THUNAR_WINDOW_ACTION_CLEAR_DIRECTORY_SPECIFIC_SETTINGS,"<Actions>/ThunarWindow/clear-directory-specific-settings","",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cl_ear Saved Folder View Settings"), N_ ("Delete saved view settings for this folder"),                        NULL,                      G_CALLBACK (thunar_window_action_clear_directory_specific_settings), },
-    { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current window"),                    NULL,                      G_CALLBACK (thunar_window_action_show_hidden),        },
+    { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current tab"),                       "view-more",               G_CALLBACK (thunar_window_action_show_hidden),        },
     { THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,                 "<Actions>/ThunarWindow/show-highlight",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _File Highlight"),   N_ ("Toggles the display of file highlight which can be configured in the file specific property dialog"), NULL,G_CALLBACK (thunar_window_action_show_highlight),     },
     { THUNAR_WINDOW_ACTION_ZOOM_IN,                        "<Actions>/ThunarWindow/zoom-in",                         "<Primary>plus",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Zoom I_n"),               N_ ("Show the contents in more detail"),                                             "zoom-in",                 G_CALLBACK (thunar_window_zoom_in),                   },
     { THUNAR_WINDOW_ACTION_ZOOM_IN_ALT_1,                  "<Actions>/ThunarWindow/zoom-in-alt1",                    "<Primary>KP_Add",      XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_zoom_in),                   },
@@ -1635,6 +1636,9 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SPLIT), G_OBJECT (window), thunar_window_split_view_is_active (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
+                                                   window->show_hidden, GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items = gtk_menu_new ();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
@@ -1673,8 +1677,6 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                        G_OBJECT (window), GTK_MENU_SHELL (menu));
       gtk_widget_set_sensitive (item, thunar_file_has_directory_specific_settings (window->current_directory));
     }
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
-                                                   window->show_hidden, GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_metadata_is_supported ())
     {
       g_object_get (G_OBJECT (window->preferences), "misc-highlighting-enabled", &highlight_enabled, NULL);
@@ -2632,11 +2634,21 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
    * thunar_window_notebook_select_current_page() is going to take care of that */
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
+  
+    /*update button to show hidden file state*/
+  window->show_hidden = thunar_view_get_show_hidden(THUNAR_VIEW(view));
+  if (window->location_toolbar_item_show_hidden != NULL)
+    {
+      g_signal_handlers_block_by_func (window->location_toolbar_item_show_hidden, get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN)->callback, window);
+      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_show_hidden), window->show_hidden);
+      g_signal_handlers_unblock_by_func (window->location_toolbar_item_show_hidden, get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN)->callback, window);
+    }
 
   thunar_window_switch_current_view (window, view, TRUE);
 
   /* update the selection (will as well update the preview image) */
   thunar_window_selection_changed (window);
+
 }
 
 
@@ -5319,6 +5331,13 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
 
+  if (window->location_toolbar_item_show_hidden != NULL)
+    {
+      g_signal_handlers_block_by_func (window->location_toolbar_item_show_hidden, get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN)->callback, window);
+      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_show_hidden), window->show_hidden);
+      g_signal_handlers_unblock_by_func (window->location_toolbar_item_show_hidden, get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN)->callback, window);
+    }
+
   /* restart any active search */
   if (G_UNLIKELY (window->search_mode))
     thunar_window_update_search (window);
@@ -7075,6 +7094,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_TAB, item_order++);
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_WINDOW, item_order++);
   window->location_toolbar_item_split_view = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
+  window->location_toolbar_item_show_hidden= thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SHOW_HIDDEN, window->show_hidden, item_order++);
   window->location_toolbar_item_undo = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_UNDO, item_order++);
   window->location_toolbar_item_redo = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_REDO, item_order++);
   window->location_toolbar_item_zoom_out = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
