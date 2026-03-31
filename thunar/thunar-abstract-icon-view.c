@@ -18,6 +18,7 @@
  */
 
 #include "thunar/thunar-abstract-icon-view.h"
+
 #include "thunar/thunar-action-manager.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"

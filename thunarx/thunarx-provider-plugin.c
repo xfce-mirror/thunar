@@ -18,8 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-plugin.h"
+
+#include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>

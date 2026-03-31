@@ -3193,7 +3193,7 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
                                           GdkEventMotion     *event,
                                           ThunarStandardView *standard_view)
 {
-  GtkTargetList *target_list;
+  GtkTargetList     *target_list;
   ThunarFileDragMode drag_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);

@@ -20,6 +20,7 @@
  */
 
 #include "thunar/thunar-deep-count-job.h"
+
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-private.h"

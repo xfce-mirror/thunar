@@ -19,13 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-location-entry.h"
+
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-folder.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-location-entry.h"
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-path-entry.h"
 #include "thunar/thunar-private.h"

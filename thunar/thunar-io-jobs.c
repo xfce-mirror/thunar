@@ -538,17 +538,17 @@ _thunar_io_jobs_unlink (ThunarJob *job,
 {
   g_autoptr (ThunarApplication) application = NULL;
   g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
-  ThunarJobResponse     response;
-  GFileInfo            *info;
-  GError               *err = NULL;
-  GList                *file_list;
-  GList                *stage_file_list = NULL;
-  GList                *lp;
-  GFile                *parent;
-  gchar                *base_name;
-  gchar                *display_name;
-  gboolean              retry;
-  guint                 n_processed = 0;
+  ThunarJobResponse response;
+  GFileInfo        *info;
+  GError           *err = NULL;
+  GList            *file_list;
+  GList            *stage_file_list = NULL;
+  GList            *lp;
+  GFile            *parent;
+  gchar            *base_name;
+  gchar            *display_name;
+  gboolean          retry;
+  guint             n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);

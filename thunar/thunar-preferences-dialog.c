@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-preferences-dialog.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-compact-view.h"
 #include "thunar/thunar-details-view.h"
@@ -26,7 +28,6 @@
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-icon-view.h"
 #include "thunar/thunar-pango-extensions.h"
-#include "thunar/thunar-preferences-dialog.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-renamer-dialog.h"

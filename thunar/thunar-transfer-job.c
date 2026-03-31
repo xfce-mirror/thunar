@@ -19,6 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-transfer-job.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-jobs-util.h"
@@ -28,7 +30,6 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnail-cache.h"
-#include "thunar/thunar-transfer-job.h"
 
 #include <gio/gio.h>
 
@@ -141,7 +142,7 @@ G_DEFINE_TYPE (ThunarTransferJob, thunar_transfer_job, THUNAR_TYPE_JOB)
 static void
 thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass   *gobject_class;
   ThunarJobClass *xfcejob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
@@ -448,10 +449,10 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
                                                   ThunarTransferNode *node,
                                                   GError            **error)
 {
-  guint               n_total_files;
-  GError             *err = NULL;
-  GList              *file_list;
-  GList              *lp;
+  guint   n_total_files;
+  GError *err = NULL;
+  GList  *file_list;
+  GList  *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (node != NULL && G_IS_FILE (node->source_file), FALSE);
@@ -775,10 +776,10 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
                                ThunarTransferNode *node,
                                GError            **error)
 {
-  GFile            *dest_file = node->target_file;
-  GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
-  GError           *err = NULL;
-  gint              n_rename = 0;
+  GFile         *dest_file = node->target_file;
+  GFileCopyFlags copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
+  GError        *err = NULL;
+  gint           n_rename = 0;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (error == NULL || *error == NULL);
@@ -898,7 +899,7 @@ thunar_transfer_job_remove_node (ThunarTransferJob  *job,
 {
   g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
   g_autoptr (ThunarApplication) application = NULL;
-  GError           *err = NULL;
+  GError *err = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));

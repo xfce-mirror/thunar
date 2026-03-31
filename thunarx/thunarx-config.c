@@ -19,6 +19,7 @@
  */
 
 #include "thunarx/thunarx-config.h"
+
 #include "thunarx/thunarx-visibility.h"
 
 

@@ -67,7 +67,7 @@ G_DEFINE_TYPE (ThunarSimpleJob, thunar_simple_job, THUNAR_TYPE_JOB)
 static void
 thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass   *gobject_class;
   ThunarJobClass *xfcejob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);

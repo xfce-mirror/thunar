@@ -19,6 +19,7 @@
  */
 
 #include "thunar/thunar-folder.h"
+
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-job.h"

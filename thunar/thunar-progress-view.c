@@ -18,12 +18,13 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-progress-view.h"
+
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-pango-extensions.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-progress-view.h"
 #include "thunar/thunar-transfer-job.h"
 #include "thunar/thunar-util.h"
 

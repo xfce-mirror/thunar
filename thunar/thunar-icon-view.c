@@ -18,6 +18,7 @@
  */
 
 #include "thunar/thunar-icon-view.h"
+
 #include "thunar/thunar-private.h"
 
 #include <libxfce4ui/libxfce4ui.h>

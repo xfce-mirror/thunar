@@ -19,11 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-thumbnailer.h"
+
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnailer-proxy.h"
-#include "thunar/thunar-thumbnailer.h"
 
 #include <libxfce4util/libxfce4util.h>
 

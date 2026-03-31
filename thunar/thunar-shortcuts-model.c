@@ -1802,7 +1802,7 @@ thunar_shortcuts_model_file_destroyed (ThunarFile           *file,
           /* remove the thunar file from the list and set the g_file instead */
           if (shortcut->location == NULL)
             {
-              shortcut->location = g_object_ref (thunar_file_get_file (file)) ;
+              shortcut->location = g_object_ref (thunar_file_get_file (file));
             }
 
           if (shortcut->gicon == NULL)

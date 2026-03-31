@@ -79,11 +79,11 @@ struct _ThunarJobPrivate
   gboolean         failed;
   GMainContext    *context;
 
-  ThunarJobResponse      earlier_ask_create_response;
-  ThunarJobResponse      earlier_ask_overwrite_response_file;
-  ThunarJobResponse      earlier_ask_overwrite_response_folder;
-  ThunarJobResponse      earlier_ask_delete_response;
-  ThunarJobResponse      earlier_ask_skip_response;
+  ThunarJobResponse earlier_ask_create_response;
+  ThunarJobResponse earlier_ask_overwrite_response_file;
+  ThunarJobResponse earlier_ask_overwrite_response_folder;
+  ThunarJobResponse earlier_ask_delete_response;
+  ThunarJobResponse earlier_ask_skip_response;
 
   GList                 *total_files;
   guint                  n_total_files;

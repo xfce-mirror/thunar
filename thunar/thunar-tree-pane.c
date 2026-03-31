@@ -76,9 +76,9 @@ struct _ThunarTreePane
 {
   GtkScrolledWindow __parent__;
 
-  ThunarFile *current_directory;
-  GtkWidget  *view;
-  gboolean    show_hidden;
+  ThunarFile        *current_directory;
+  GtkWidget         *view;
+  gboolean           show_hidden;
   ThunarPreferences *preferences;
 };
 

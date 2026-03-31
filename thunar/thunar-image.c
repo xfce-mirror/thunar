@@ -18,9 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-image.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-image.h"
 #include "thunar/thunar-private.h"
 
 #include <glib-object.h>

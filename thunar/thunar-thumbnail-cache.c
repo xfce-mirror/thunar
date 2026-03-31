@@ -18,10 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-thumbnail-cache.h"
+
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnail-cache-proxy.h"
-#include "thunar/thunar-thumbnail-cache.h"
 
 #include <gio/gio.h>
 #include <glib-object.h>

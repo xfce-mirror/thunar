@@ -18,6 +18,7 @@
  */
 
 #include "thunar/thunar-location-bar.h"
+
 #include "thunar/thunar-location-buttons.h"
 #include "thunar/thunar-location-entry.h"
 #include "thunar/thunar-navigator.h"

@@ -19,12 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "thunar/thunar-statusbar.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-statusbar.h"
 #include "thunar/thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>

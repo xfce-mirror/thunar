@@ -18,6 +18,7 @@
  */
 
 #include "thunar/thunar-navigator.h"
+
 #include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>

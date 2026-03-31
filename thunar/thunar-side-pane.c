@@ -17,8 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "thunar/thunar-private.h"
 #include "thunar/thunar-side-pane.h"
+
+#include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>
 

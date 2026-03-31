@@ -18,12 +18,13 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-shortcuts-icon-renderer.h"
+
 #include "thunar/thunar-device.h"
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-shortcuts-icon-renderer.h"
 
 #include <gio/gio.h>
 #include <libxfce4ui/libxfce4ui.h>

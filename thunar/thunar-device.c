@@ -17,8 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "thunar/thunar-device-monitor.h"
 #include "thunar/thunar-device.h"
+
+#include "thunar/thunar-device-monitor.h"
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-notify.h"
 #include "thunar/thunar-private.h"

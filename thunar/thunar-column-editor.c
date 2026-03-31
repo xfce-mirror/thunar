@@ -17,8 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "thunar/thunar-abstract-dialog.h"
 #include "thunar/thunar-column-editor.h"
+
+#include "thunar/thunar-abstract-dialog.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-pango-extensions.h"

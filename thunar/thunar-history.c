@@ -17,10 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-history.h"
+
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
-#include "thunar/thunar-history.h"
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-navigator.h"
 #include "thunar/thunar-private.h"

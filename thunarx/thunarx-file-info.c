@@ -20,6 +20,7 @@
  */
 
 #include "thunarx/thunarx-file-info.h"
+
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-visibility.h"
 

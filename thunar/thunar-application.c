@@ -246,9 +246,9 @@ struct _ThunarApplication
 #ifdef HAVE_GUDEV
   GUdevClient *udev_client;
 
-  GSList *volman_udis;
-  guint   volman_idle_id;
-  guint   volman_watch_id;
+  GSList     *volman_udis;
+  guint       volman_idle_id;
+  guint       volman_watch_id;
   GHashTable *media_fs_uuids;
 #endif
 
@@ -336,8 +336,8 @@ thunar_application_init (ThunarApplication *application)
   g_application_set_option_context_parameter_string (G_APPLICATION (application), ("[URL …]"));
 
   /* Dont have a better idea for indendation formatting the 'Arguments:' section */
-  argument_help_string = g_strconcat(_("Arguments:\n"),
-  "  ", _("URL"), "                        ",("Location to open"), NULL); 
+  argument_help_string = g_strconcat (_("Arguments:\n"),
+                                      "  ", _("URL"), "                        ", ("Location to open"), NULL);
   g_application_set_option_context_summary (G_APPLICATION (application), argument_help_string);
 }
 

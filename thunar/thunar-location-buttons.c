@@ -21,6 +21,8 @@
  * Red Hat, Inc.
  */
 
+#include "thunar/thunar-location-buttons.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-dialogs.h"
@@ -28,7 +30,6 @@
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-location-button.h"
-#include "thunar/thunar-location-buttons.h"
 #include "thunar/thunar-menu.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"

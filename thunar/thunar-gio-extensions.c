@@ -830,7 +830,7 @@ thunar_g_file_get_free_space_string (const ThunarFilesystemSpaceInfo *fs_space_i
 {
   g_autofree gchar *fs_size_free_str = NULL;
   g_autofree gchar *fs_size_used_str = NULL;
-  gchar  *free_space_string = NULL;
+  gchar            *free_space_string = NULL;
 
   _thunar_return_val_if_fail (fs_space_info != NULL, NULL);
 

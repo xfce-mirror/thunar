@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-toolbar-editor.h"
+
 #include "thunar/thunar-abstract-dialog.h"
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-dialogs.h"
@@ -24,7 +26,6 @@
 #include "thunar/thunar-pango-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-toolbar-editor.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 

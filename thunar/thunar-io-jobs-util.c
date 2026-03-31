@@ -18,8 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-jobs-util.h"
+
+#include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
