@@ -1194,9 +1194,12 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
   _thunar_return_if_fail (iter->stamp == (THUNAR_TREE_VIEW_MODEL (model))->stamp);
 
   node = g_sequence_get (iter->user_data);
-  file = node->file;
-  if (file != NULL)
-    g_object_ref (file);
+  if (node != NULL)
+    {
+      file = node->file;
+      if (file != NULL)
+        g_object_ref (file);
+    }
 
   switch (column)
     {
