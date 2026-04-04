@@ -312,7 +312,6 @@ static void
 thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
-  ThunarFile          *file;
   GList               *system_paths = NULL;
   GList               *devices;
   GList               *lp;
@@ -362,11 +361,11 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_network ());
 
-  /* append the system defined nodes ('Computer', 'Home', 'Trash', 'File System', 'Network') */
+  /* append the system defined nodes */
   for (lp = system_paths; lp != NULL; lp = lp->next)
     {
       /* determine the file for the path */
-      file = thunar_file_get (lp->data, NULL);
+      g_autoptr (ThunarFile) file = thunar_file_get (lp->data, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* create and append the new node */
@@ -381,10 +380,10 @@ thunar_tree_model_init (ThunarTreeModel *model)
           if (thunar_file_has_uri_scheme (file, "network"))
             model->network = node;
 
-          g_object_unref (G_OBJECT (file));
+          /* Add the dummy node only for nodes which can be expanded) */
+          if (thunar_file_has_uri_scheme (file, "file"))
 
-          /* add the dummy node */
-          g_node_append_data (node, NULL);
+            g_node_append_data (node, NULL);
         }
     }
 
@@ -1022,9 +1021,6 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
       /* release all child nodes */
       while (node->children != NULL)
         g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-
-      /* append the dummy node */
-      thunar_tree_model_node_insert_dummy (node, model);
     }
 
   /* generate an iterator for the item */
@@ -1067,9 +1063,6 @@ thunar_tree_model_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   /* remove all child nodes */
   while (node->children != NULL)
     g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-
-  /* add the dummy node */
-  thunar_tree_model_node_insert_dummy (node, model);
 }
 
 
@@ -1123,9 +1116,6 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
   gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
   gtk_tree_path_free (path);
-
-  /* add the dummy node */
-  thunar_tree_model_node_insert_dummy (node, model);
 }
 
 
