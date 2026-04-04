@@ -1642,8 +1642,8 @@ thunar_tree_view_visible_func (GtkTreeModel *model,
                                gpointer      user_data)
 {
   ThunarTreeView *view;
-  ThunarDevice   *device = NULL;
-  ThunarFile     *file = NULL;
+  g_autoptr (ThunarDevice) device = NULL;
+  g_autoptr (ThunarFile) file = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (user_data), FALSE);

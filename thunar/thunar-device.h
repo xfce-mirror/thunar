@@ -45,6 +45,7 @@ enum _ThunarDeviceKind
 #define THUNAR_IS_DEVICE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DEVICE))
 #define THUNAR_IS_DEVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_DEVICE))
 #define THUNAR_DEVICE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEVICE, ThunarDeviceClass))
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarDevice, g_object_unref)
 
 GType
 thunar_device_get_type (void) G_GNUC_CONST;
