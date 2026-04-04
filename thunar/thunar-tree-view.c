@@ -1642,8 +1642,8 @@ thunar_tree_view_visible_func (GtkTreeModel *model,
                                gpointer      user_data)
 {
   ThunarTreeView *view;
+  ThunarDevice   *device = NULL;
   ThunarFile     *file = NULL;
-  gboolean        visible = TRUE;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (user_data), FALSE);
@@ -1654,16 +1654,26 @@ thunar_tree_view_visible_func (GtkTreeModel *model,
   if (view->show_hidden)
     return TRUE;
 
-  gtk_tree_model_get (model, iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+  gtk_tree_model_get (model, iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, THUNAR_TREE_MODEL_COLUMN_DEVICE, &device, -1);
+
+  /* always show devices, no matter if they already have an according ThunarFile (are mounted) */
+  if (device != NULL)
+    return TRUE;
 
   if (file == NULL)
     return FALSE;
 
-  /* we display all non-hidden file and hidden files that are ancestors of the current directory */
-  visible = !thunar_file_is_hidden (file) || (view->current_directory == file)
-            || (view->current_directory != NULL && thunar_file_is_ancestor (view->current_directory, file));
+  if (!thunar_file_is_hidden (file))
+    return TRUE;
 
-  return visible;
+  if (view->current_directory == file)
+    return TRUE;
+
+  /* we display all hidden files that are ancestors of the current directory */
+  if (view->current_directory != NULL && thunar_file_is_ancestor (view->current_directory, file))
+    return TRUE;
+
+  return FALSE;
 }
 
 
