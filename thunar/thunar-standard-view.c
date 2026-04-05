@@ -4949,10 +4949,6 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
 
-
-  /* change the display name in the tab */
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
-
   if (THUNAR_IS_DETAILS_VIEW (standard_view))
     tree_view = GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
 
@@ -4977,6 +4973,9 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCH_MODE_ACTIVE]);
+
+  /* change the display name in the tab */
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
 }
 
 
