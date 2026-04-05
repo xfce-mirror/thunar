@@ -145,8 +145,10 @@ static void
 thunar_path_entry_check_completion_idle_destroy (gpointer user_data);
 static void
 thunar_path_entry_start_search (ThunarPathEntry *path_entry);
-
-
+static void
+thunar_path_entry_start_searching (ThunarPathEntry *path_entry);
+static void
+thunar_path_entry_stop_searching (ThunarPathEntry *path_entry);
 
 struct _ThunarPathEntryClass
 {
@@ -878,9 +880,9 @@ thunar_path_entry_notify_searching (ThunarPathEntry *path_entry,
 
   /* setup the path entry to indicate an ongoing search */
   if (searching)
-    thunar_path_entry_start_search (path_entry);
+    thunar_path_entry_start_searching (path_entry);
   else
-    thunar_path_entry_cancel_search (path_entry);
+    thunar_path_entry_stop_searching (path_entry);
 }
 
 
@@ -1475,20 +1477,12 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 static void
-thunar_path_entry_start_search (ThunarPathEntry *path_entry)
+thunar_path_entry_start_searching (ThunarPathEntry *path_entry)
 {
   ThunarPreferences *preferences;
   gboolean           use_symbolic_icons;
 
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
-
-  if (path_entry->search_mode == TRUE)
-    return;
-
-  path_entry->search_mode = TRUE;
-
-  /* update the path entry whenever there is an ongoing search */
-  path_entry->notify_searching_handler_id = g_signal_connect_swapped (G_OBJECT (path_entry->window), "notify::searching", G_CALLBACK (thunar_path_entry_notify_searching), path_entry);
 
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
@@ -1505,6 +1499,37 @@ thunar_path_entry_start_search (ThunarPathEntry *path_entry)
 
 
 
+static void
+thunar_path_entry_stop_searching (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  /* remove the cancel button */
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+
+  /* remove the tooltip */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), NULL);
+}
+
+
+
+static void
+thunar_path_entry_start_search (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  if (path_entry->search_mode == TRUE)
+    return;
+
+  path_entry->search_mode = TRUE;
+
+  /* update the path entry whenever there is an ongoing search */
+  path_entry->notify_searching_handler_id = g_signal_connect_swapped (G_OBJECT (path_entry->window), "notify::searching", G_CALLBACK (thunar_path_entry_notify_searching), path_entry);
+}
+
+
+
 /**
  * thunar_path_entry_cancel_search:
  * @path_entry : a #ThunarPathEntry.
@@ -1516,17 +1541,12 @@ thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
 {
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
 
+  thunar_path_entry_stop_searching (path_entry);
+
   if (path_entry->search_mode == FALSE)
     return;
 
   path_entry->search_mode = FALSE;
-
-  /* remove the cancel button */
-  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
-  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
-
-  /* remove the tooltip */
-  gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), NULL);
 
   /* disconnect the "notify::searching" signal handler */
   if (path_entry->notify_searching_handler_id > 0)
