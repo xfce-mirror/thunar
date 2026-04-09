@@ -765,10 +765,10 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
       if (G_UNLIKELY (event->button == 3))
         {
           /* determine the iterator for the path */
-          if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
+          if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->filter_model), &iter, path))
             {
               /* popup the context menu */
-              thunar_tree_view_context_menu (view, GTK_TREE_MODEL (view->model), &iter);
+              thunar_tree_view_context_menu (view, GTK_TREE_MODEL (view->filter_model), &iter);
 
               /* we effectively handled the event */
               result = TRUE;
@@ -791,8 +791,8 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
           /* only open the item if it is mounted (otherwise opening and selecting it won't work correctly) */
           gtk_tree_path_free (path);
           gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
-          if (path != NULL && gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
-            gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter,
+          if (path != NULL && gtk_tree_model_get_iter (GTK_TREE_MODEL (view->filter_model), &iter, path))
+            gtk_tree_model_get (GTK_TREE_MODEL (view->filter_model), &iter,
                                 THUNAR_TREE_MODEL_COLUMN_FILE, &file,
                                 THUNAR_TREE_MODEL_COLUMN_DEVICE, &device, -1);
 
