@@ -1021,6 +1021,7 @@ thunar_util_clip_view_background (GtkCellRenderer     *cell,
   gint             side = DRAW_ON_ALL_SIDES;
   GtkWidget       *toplevel;
   gboolean         window_is_backdrop = TRUE;
+  gboolean         theme_unfocused_color_found = FALSE;
 
   g_object_get (G_OBJECT (cell),
                 "highlight-color", &highlight_color,
@@ -1058,9 +1059,8 @@ thunar_util_clip_view_background (GtkCellRenderer     *cell,
   if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_color != NULL)))
     {
       context = gtk_widget_get_style_context (widget);
-      if (window_is_backdrop)
-        gtk_style_context_lookup_color (context, "theme_unfocused_selected_bg_color", &highlight_color_rgba);
-      else
+      theme_unfocused_color_found = gtk_style_context_lookup_color (context, "theme_unfocused_selected_bg_color", &highlight_color_rgba);
+      if (!window_is_backdrop || !theme_unfocused_color_found)
         gtk_style_context_lookup_color (context, "theme_selected_bg_color", &highlight_color_rgba);
 
       if (color)

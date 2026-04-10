@@ -1387,10 +1387,16 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         }
       if (thunar_file_is_mountable (file))
         {
+          ThunarFilesystemSpaceInfo fs_size_info;
+          gchar                    *disk_usage;
+
           g_file = thunar_file_get_target_location (file);
           if (g_file == NULL)
             break;
-          g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_TREE_VIEW_MODEL (model)->file_size_binary));
+
+          thunar_g_file_get_fs_space (g_file, &fs_size_info);
+          disk_usage = thunar_g_file_get_free_space_string (&fs_size_info, THUNAR_TREE_VIEW_MODEL (model)->file_size_binary);
+          g_value_take_string (value, disk_usage);
           g_object_unref (g_file);
           break;
         }

@@ -45,6 +45,7 @@ main (int argc, char **argv)
 {
   ThunarApplication *application;
   GError            *error = NULL;
+  gboolean           xfconf_initialized;
 
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
@@ -53,7 +54,8 @@ main (int argc, char **argv)
   g_set_application_name (_("Thunar"));
 
   /* initialize xfconf */
-  if (!xfconf_init (&error))
+  xfconf_initialized = xfconf_init (&error);
+  if (!xfconf_initialized)
     {
       g_warning (PACKAGE_NAME ": Failed to initialize Xfconf: %s", error->message);
       g_clear_error (&error);
@@ -83,6 +85,10 @@ main (int argc, char **argv)
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_uninit ();
 #endif
+
+  /* disconnect from xfconf */
+  if (xfconf_initialized)
+    xfconf_shutdown ();
 
   return EXIT_SUCCESS;
 }

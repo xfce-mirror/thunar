@@ -28,9 +28,6 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-/* Helper macro to make g_autoptr work with ThunarPreferences */
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarPreferences, g_object_unref)
-
 /* UI constants */
 #define MIN_FONT_SIZE 6
 #define MAX_FONT_SIZE 72
@@ -75,6 +72,8 @@ struct _ThunarTerminalWidgetPrivate
   gchar      *ssh_username;      /* The username for the current SSH connection. */
   gchar      *ssh_port;          /* The port for the current SSH connection. */
   gchar      *ssh_remote_path;   /* The remote path to change to after an SSH connection is established. */
+
+  ThunarPreferences *preferences;
 };
 
 /* Keys for g_object_set_data() */
@@ -309,6 +308,8 @@ static GtkWidget *
 create_terminal_popup_menu (ThunarTerminalWidget *self);
 static gboolean
 on_terminal_button_release (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+static gboolean
+on_terminal_popup_menu (GtkWidget *widget, gpointer user_data);
 
 
 /******************************************************************
@@ -328,7 +329,7 @@ thunar_terminal_widget_get_color_scheme (ThunarTerminalWidget *self)
   _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (self), "system");
 
   if (priv->color_scheme == NULL)
-    g_object_get (thunar_preferences_get (), "terminal-color-scheme", &priv->color_scheme, NULL);
+    g_object_get (priv->preferences, "terminal-color-scheme", &priv->color_scheme, NULL);
   return priv->color_scheme;
 }
 
@@ -375,7 +376,7 @@ thunar_terminal_widget_set_color_scheme (ThunarTerminalWidget *self,
 
   g_free (priv->color_scheme);
   priv->color_scheme = g_strdup (scheme);
-  g_object_set (thunar_preferences_get (), "terminal-color-scheme", priv->color_scheme, NULL);
+  g_object_set (priv->preferences, "terminal-color-scheme", priv->color_scheme, NULL);
   thunar_terminal_widget_apply_color_scheme (self);
 }
 
@@ -422,7 +423,7 @@ thunar_terminal_widget_class_init (ThunarTerminalWidgetClass *klass)
 static void
 on_terminal_child_exited (VteTerminal *terminal, gint status, gpointer user_data);
 static int
-get_terminal_font_size (void);
+get_terminal_font_size (ThunarTerminalWidget *self);
 
 #if VTE_CHECK_VERSION(0, 78, 0)
 /* Modern VTE uses termprop-changed signal */
@@ -436,12 +437,14 @@ on_legacy_directory_changed (VteTerminal *terminal, gpointer user_data);
 
 
 static void
-setup_terminal_font (VteTerminal *terminal)
+setup_terminal_font (ThunarTerminalWidget *self)
 {
+  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
+
   g_autoptr (PangoFontDescription) font_desc = NULL;
   g_autoptr (GSettings) interface_settings = g_settings_new ("org.gnome.desktop.interface");
   g_autofree gchar *font_name = g_settings_get_string (interface_settings, "monospace-font-name");
-  int               font_size_pts = get_terminal_font_size ();
+  int               font_size_pts = get_terminal_font_size (self);
 
   if (font_name && *font_name)
     font_desc = pango_font_description_from_string (font_name);
@@ -449,7 +452,7 @@ setup_terminal_font (VteTerminal *terminal)
     font_desc = pango_font_description_new ();
 
   pango_font_description_set_size (font_desc, font_size_pts * PANGO_SCALE);
-  vte_terminal_set_font (terminal, font_desc);
+  vte_terminal_set_font (priv->terminal, font_desc);
 }
 
 static void
@@ -458,7 +461,6 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   GtkStyleContext             *context = NULL;
   g_autoptr (GtkCssProvider) provider = NULL;
-  g_autoptr (ThunarPreferences) prefs = NULL;
   GtkWidget *vbox;
 
   self->priv = priv;
@@ -472,10 +474,15 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   priv->child_pid = -1;
   priv->spawn_cancellable = g_cancellable_new ();
 
+  priv->preferences = thunar_preferences_get ();
+
   /* Build UI */
   priv->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_set_vexpand (priv->scrolled_window, TRUE);
   gtk_widget_set_hexpand (priv->scrolled_window, TRUE);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (priv->preferences), "misc-support-overlay-scrolling", G_OBJECT (priv->scrolled_window), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 
   priv->terminal = VTE_TERMINAL (vte_terminal_new ());
   vte_terminal_set_scroll_on_output (priv->terminal, FALSE);
@@ -504,25 +511,25 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   gtk_box_pack_start (GTK_BOX (vbox), priv->scrolled_window, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (self), vbox, TRUE, TRUE, 0);
 
-  /* Load preferences and set up listeners to keep the widget state in sync. */
-  prefs = thunar_preferences_get ();
-  g_object_get (prefs, "terminal-sync-mode", &priv->terminal_sync_mode, NULL);
-  g_object_get (prefs, "terminal-ssh-auto-connect", &priv->ssh_auto_connect, NULL);
-  g_object_get (prefs, "terminal-ssh-auto-disconnect", &priv->ssh_auto_disconnect, NULL);
+  /* set up listeners to keep the widget state in sync. */
+  g_object_get (priv->preferences, "terminal-sync-mode", &priv->terminal_sync_mode, NULL);
+  g_object_get (priv->preferences, "terminal-ssh-auto-connect", &priv->ssh_auto_connect, NULL);
+  g_object_get (priv->preferences, "terminal-ssh-auto-disconnect", &priv->ssh_auto_disconnect, NULL);
 
-  setup_terminal_font (priv->terminal);
+  setup_terminal_font (self);
 
   thunar_terminal_widget_get_color_scheme (self);
   thunar_terminal_widget_apply_color_scheme (self);
 
   /* Connect to preference changes to update the widget's state live. */
-  g_signal_connect (prefs, "notify::terminal-sync-mode", G_CALLBACK (on_terminal_preference_changed), self);
-  g_signal_connect (prefs, "notify::terminal-ssh-auto-connect", G_CALLBACK (on_terminal_preference_changed), self);
-  g_signal_connect (prefs, "notify::terminal-ssh-auto-disconnect", G_CALLBACK (on_terminal_preference_changed), self);
+  g_signal_connect (priv->preferences, "notify::terminal-sync-mode", G_CALLBACK (on_terminal_preference_changed), self);
+  g_signal_connect (priv->preferences, "notify::terminal-ssh-auto-connect", G_CALLBACK (on_terminal_preference_changed), self);
+  g_signal_connect (priv->preferences, "notify::terminal-ssh-auto-disconnect", G_CALLBACK (on_terminal_preference_changed), self);
 
   /* Connect signals */
   g_signal_connect (priv->terminal, "child-exited", G_CALLBACK (on_terminal_child_exited), self);
   g_signal_connect (priv->terminal, "button-release-event", G_CALLBACK (on_terminal_button_release), self);
+  g_signal_connect (priv->terminal, "popup-menu", G_CALLBACK (on_terminal_popup_menu), self);
   g_signal_connect (self, "show", G_CALLBACK (thunar_terminal_widget_handle_show), NULL);
 
 #if VTE_CHECK_VERSION(0, 78, 0)
@@ -541,10 +548,9 @@ thunar_terminal_widget_finalize (GObject *object)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (object);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  g_autoptr (ThunarPreferences) prefs = thunar_preferences_get ();
 
   /* Disconnect from all signals to prevent use-after-free during destruction. */
-  g_signal_handlers_disconnect_by_data (prefs, self);
+  g_signal_handlers_disconnect_by_data (priv->preferences, self);
 
   /* Cancel any pending async operations and free all allocated resources. */
   g_cancellable_cancel (priv->spawn_cancellable);
@@ -554,6 +560,8 @@ thunar_terminal_widget_finalize (GObject *object)
 
   /* Use the helper to clean up all SSH-related pointers. */
   _clear_ssh_connection_data (priv);
+
+  g_object_unref (priv->preferences);
 
   G_OBJECT_CLASS (thunar_terminal_widget_parent_class)->finalize (object);
 }
@@ -567,7 +575,7 @@ thunar_terminal_widget_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_NAVIGATOR_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -900,13 +908,10 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
           window = gtk_widget_get_toplevel (GTK_WIDGET (self));
 
           if (THUNAR_IS_WINDOW (window))
-            thunar_window_set_current_directory (THUNAR_WINDOW (window), priv->current_directory);
+            thunar_window_set_current_directory (THUNAR_WINDOW (window), priv->current_directory, FALSE);
 
           /* Inform potential subscribers */
           g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
-
-          /* Make sure we still have focus */
-          gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
         }
     }
 }
@@ -1072,10 +1077,11 @@ _build_color_scheme_submenu (ThunarTerminalWidget *self)
 }
 
 static int
-get_terminal_font_size (void)
+get_terminal_font_size (ThunarTerminalWidget *self)
 {
   int saved_size_pts;
-  g_object_get (thunar_preferences_get (), "terminal-font-size", &saved_size_pts, NULL);
+
+  g_object_get (self->priv->preferences, "terminal-font-size", &saved_size_pts, NULL);
   /* Clamp the value on retrieval for robustness against manual config edits. */
   return CLAMP (saved_size_pts, MIN_FONT_SIZE, MAX_FONT_SIZE);
 }
@@ -1085,7 +1091,7 @@ _build_font_size_submenu (ThunarTerminalWidget *self)
 {
   GtkWidget *submenu = gtk_menu_new ();
   GSList    *radio_group = NULL;
-  int        current_size_pts = get_terminal_font_size ();
+  int        current_size_pts = get_terminal_font_size (self);
 
   for (gsize i = 0; i < G_N_ELEMENTS (FONT_SIZE_ENTRIES); ++i)
     {
@@ -1108,12 +1114,11 @@ _build_ssh_options_submenu (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = self->priv;
   GtkWidget                   *submenu = gtk_menu_new ();
   GtkWidget                   *auto_connect_item, *auto_disconnect_item;
-  g_autoptr (ThunarPreferences) prefs = thunar_preferences_get ();
 
   /* Auto Connect checkbox */
   auto_connect_item = gtk_check_menu_item_new_with_label (_("Auto Connect"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (auto_connect_item), priv->ssh_auto_connect);
-  g_object_bind_property (prefs, "terminal-ssh-auto-connect",
+  g_object_bind_property (priv->preferences, "terminal-ssh-auto-connect",
                           auto_connect_item, "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_menu_shell_append (GTK_MENU_SHELL (submenu), auto_connect_item);
@@ -1121,7 +1126,7 @@ _build_ssh_options_submenu (ThunarTerminalWidget *self)
   /* Auto Disconnect checkbox */
   auto_disconnect_item = gtk_check_menu_item_new_with_label (_("Auto Disconnect"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (auto_disconnect_item), priv->ssh_auto_disconnect);
-  g_object_bind_property (prefs, "terminal-ssh-auto-disconnect",
+  g_object_bind_property (priv->preferences, "terminal-ssh-auto-disconnect",
                           auto_disconnect_item, "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_menu_shell_append (GTK_MENU_SHELL (submenu), auto_disconnect_item);
@@ -1255,6 +1260,23 @@ on_terminal_button_release (GtkWidget      *widget,
       return TRUE;
     }
   return FALSE;
+}
+
+
+
+static gboolean
+on_terminal_popup_menu (GtkWidget *widget,
+                        gpointer   user_data)
+{
+  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  GtkWidget            *menu = create_terminal_popup_menu (self);
+
+  gtk_menu_popup_at_widget (GTK_MENU (menu),
+                            widget,
+                            GDK_GRAVITY_SOUTH_WEST,
+                            GDK_GRAVITY_NORTH_WEST,
+                            NULL);
+  return TRUE;
 }
 
 static gchar *
@@ -1449,9 +1471,10 @@ _initiate_ssh_connection (ThunarTerminalWidget  *self,
 }
 
 static void
-save_terminal_font_size (int font_size_pts)
+save_terminal_font_size (ThunarTerminalWidget *self,
+                         int                   font_size_pts)
 {
-  g_object_set (thunar_preferences_get (), "terminal-font-size", font_size_pts, NULL);
+  g_object_set (self->priv->preferences, "terminal-font-size", font_size_pts, NULL);
 }
 
 static void
@@ -1478,7 +1501,7 @@ on_font_size_changed (GtkCheckMenuItem *menuitem,
       g_autoptr (PangoFontDescription) font_desc = pango_font_description_copy (vte_terminal_get_font (priv->terminal));
       pango_font_description_set_size (font_desc, font_size_pts * PANGO_SCALE);
       vte_terminal_set_font (priv->terminal, font_desc);
-      save_terminal_font_size (font_size_pts);
+      save_terminal_font_size (self, font_size_pts);
     }
 }
 
@@ -1490,8 +1513,9 @@ on_enum_pref_changed (GtkCheckMenuItem *menuitem,
   const gchar *pref_name = user_data;
   if (gtk_check_menu_item_get_active (menuitem))
     {
+      g_autoptr (ThunarPreferences) preferences = thunar_preferences_get ();
       gint new_value = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (menuitem), DATA_KEY_VALUE));
-      g_object_set (thunar_preferences_get (), pref_name, new_value, NULL);
+      g_object_set (preferences, pref_name, new_value, NULL);
     }
 }
 
@@ -1528,7 +1552,8 @@ thunar_terminal_widget_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_terminal_widget_set_current_directory (ThunarNavigator *navigator,
-                                              ThunarFile      *current_directory)
+                                              ThunarFile      *current_directory,
+                                              gboolean         grab_focus)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (navigator);
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);

@@ -67,6 +67,8 @@ thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable);
 void
 thunar_gtk_window_set_screen (GtkWindow *window,
                               GdkScreen *screen);
+void
+thunar_gtk_dialog_wrap_long_text (GtkDialog *dialog);
 
 G_END_DECLS;
 

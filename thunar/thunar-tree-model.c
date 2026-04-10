@@ -160,8 +160,6 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item);
 static void
 thunar_tree_model_item_reset (ThunarTreeModelItem *item);
 static void
-thunar_tree_model_item_load_folder (ThunarTreeModelItem *item);
-static void
 thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
                                     GHashTable          *files,
                                     ThunarFolder        *folder);
@@ -203,17 +201,10 @@ static gboolean
 thunar_tree_model_node_traverse_free (GNode   *node,
                                       gpointer user_data);
 static gboolean
-thunar_tree_model_node_traverse_visible (GNode   *node,
-                                         gpointer user_data);
-static gboolean
 thunar_tree_model_get_case_sensitive (ThunarTreeModel *model);
 static void
 thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
                                       gboolean         case_sensitive);
-static gboolean
-thunar_tree_model_default_visiblity (ThunarTreeModel *model,
-                                     ThunarFile      *file,
-                                     gpointer         data);
 
 
 
@@ -239,9 +230,6 @@ struct _ThunarTreeModel
 
   gboolean sort_case_sensitive;
 
-  ThunarTreeModelVisibleFunc visible_func;
-  gpointer                   visible_data;
-
   GNode *root;
   GNode *file_system;
   GNode *network;
@@ -257,10 +245,6 @@ struct _ThunarTreeModelItem
   ThunarFolder    *folder;
   ThunarDevice    *device;
   ThunarTreeModel *model;
-
-  /* list of children of this node that are
-   * not visible in the treeview */
-  GSList *invisible_children;
 };
 
 typedef struct
@@ -328,7 +312,6 @@ static void
 thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
-  ThunarFile          *file;
   GList               *system_paths = NULL;
   GList               *devices;
   GList               *lp;
@@ -341,8 +324,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
 
   /* initialize the model data */
   model->sort_case_sensitive = TRUE;
-  model->visible_func = thunar_tree_model_default_visiblity;
-  model->visible_data = NULL;
   model->cleanup_idle_id = 0;
 
   /* allocate the "virtual root node" */
@@ -380,11 +361,11 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_network ());
 
-  /* append the system defined nodes ('Computer', 'Home', 'Trash', 'File System', 'Network') */
+  /* append the system defined nodes */
   for (lp = system_paths; lp != NULL; lp = lp->next)
     {
       /* determine the file for the path */
-      file = thunar_file_get (lp->data, NULL);
+      g_autoptr (ThunarFile) file = thunar_file_get (lp->data, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* create and append the new node */
@@ -399,10 +380,10 @@ thunar_tree_model_init (ThunarTreeModel *model)
           if (thunar_file_has_uri_scheme (file, "network"))
             model->network = node;
 
-          g_object_unref (G_OBJECT (file));
+          /* Add the dummy node only for nodes which can be expanded) */
+          if (thunar_file_has_uri_scheme (file, "file"))
 
-          /* add the dummy node */
-          g_node_append_data (node, NULL);
+            g_node_append_data (node, NULL);
         }
     }
 
@@ -823,26 +804,10 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
   if (G_UNLIKELY (node == model->root))
     return;
 
-  /* check if we have a dummy item here */
+  /* increment the reference count */
   item = node->data;
-  if (G_UNLIKELY (item == NULL))
-    {
-      /* tell the parent to load the folder */
-      thunar_tree_model_item_load_folder (node->parent->data);
-    }
-  else
-    {
-      /* do not load `Recent` to avoid slowing down the view */
-      if (item->file != NULL && thunar_file_is_recent (item->file))
-        return;
-
-      /* schedule a reload of the folder if it is cleaned earlier */
-      if (G_UNLIKELY (item->ref_count == 0))
-        thunar_tree_model_item_load_folder (item);
-
-      /* increment the reference count */
-      item->ref_count += 1;
-    }
+  if (item != NULL)
+    item->ref_count += 1;
 }
 
 
@@ -863,7 +828,7 @@ thunar_tree_model_unref_node (GtkTreeModel *tree_model,
   if (G_UNLIKELY (node == model->root))
     return;
 
-  /* check if this a non-dummy item, if so, decrement the reference count */
+  /* decrement the reference count */
   item = node->data;
   if (G_LIKELY (item != NULL))
     item->ref_count -= 1;
@@ -1043,7 +1008,7 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
           item->file = thunar_file_get (mount_point, NULL);
 
           /* because the volume node is already reffed, we need to load the folder manually here */
-          thunar_tree_model_item_load_folder (item);
+          thunar_tree_model_load_node (model, node);
 
           g_object_unref (mount_point);
         }
@@ -1056,9 +1021,6 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
       /* release all child nodes */
       while (node->children != NULL)
         g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-
-      /* append the dummy node */
-      thunar_tree_model_node_insert_dummy (node, model);
     }
 
   /* generate an iterator for the item */
@@ -1086,7 +1048,7 @@ thunar_tree_model_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (G_IS_FILE (root_file));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
-  /* lookup the node for the volume (if visible) */
+  /* lookup the node for the volume */
   for (node = model->root->children; node != NULL; node = node->next)
     if (THUNAR_TREE_MODEL_ITEM (node->data)->device == device)
       break;
@@ -1101,9 +1063,6 @@ thunar_tree_model_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   /* remove all child nodes */
   while (node->children != NULL)
     g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-
-  /* add the dummy node */
-  thunar_tree_model_node_insert_dummy (node, model);
 }
 
 
@@ -1157,9 +1116,6 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
   gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
   gtk_tree_path_free (path);
-
-  /* add the dummy node */
-  thunar_tree_model_node_insert_dummy (node, model);
 }
 
 
@@ -1265,13 +1221,6 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
       item->folder = NULL;
     }
 
-  /* free all the invisible children */
-  if (item->invisible_children != NULL)
-    {
-      g_slist_free_full (item->invisible_children, g_object_unref);
-      item->invisible_children = NULL;
-    }
-
   /* disconnect from the file */
   if (G_LIKELY (item->file != NULL))
     {
@@ -1283,9 +1232,12 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
 
 
 
-static void
-thunar_tree_model_item_load_folder (ThunarTreeModelItem *item)
+void
+thunar_tree_model_load_node (ThunarTreeModel *model,
+                             GNode           *node)
 {
+  ThunarTreeModelItem *item = THUNAR_TREE_MODEL_ITEM (node->data);
+
   _thunar_return_if_fail (THUNAR_IS_FILE (item->file) || THUNAR_IS_DEVICE (item->device));
 
   /* schedule the "load" idle source (if not already done) */
@@ -1311,7 +1263,6 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
-  _thunar_return_if_fail (model->visible_func != NULL);
 
   /* someone added files to trash ... let's just update the trash icon and return */
   if (thunar_file_is_trash (thunar_folder_get_corresponding_file (folder)))
@@ -1329,15 +1280,6 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
       file = THUNAR_FILE (key);
       if (!thunar_file_is_directory (file))
         continue;
-
-      /* if this file should be visible */
-      if (!model->visible_func (model, file, model->visible_data))
-        {
-          /* file is invisible, insert it in the invisible list and continue */
-          item->invisible_children = g_slist_prepend (item->invisible_children,
-                                                      g_object_ref (G_OBJECT (file)));
-          continue;
-        }
 
       /* lookup the node for the item (on-demand) */
       if (G_UNLIKELY (node == NULL))
@@ -1364,7 +1306,6 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   GtkTreeIter      iter;
   GNode           *child_node;
   GNode           *node;
-  GSList          *inv_link;
   GHashTableIter   file_iter;
   gpointer         key;
 
@@ -1382,7 +1323,7 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
       return;
     }
 
-  /* check if the node has any visible children */
+  /* check if the node has any children */
   if (G_LIKELY (node->children != NULL))
     {
       /* process all files */
@@ -1411,27 +1352,6 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
           path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
           gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &iter);
           gtk_tree_path_free (path);
-        }
-    }
-
-  /* we also need to release all the invisible folders */
-  if (item->invisible_children != NULL)
-    {
-      g_hash_table_iter_init (&file_iter, files);
-      while (g_hash_table_iter_next (&file_iter, &key, NULL))
-        {
-          ThunarFile *file = THUNAR_FILE (key);
-
-          /* find the file in the hidden list */
-          inv_link = g_slist_find (item->invisible_children, file);
-          if (inv_link != NULL)
-            {
-              /* release the file */
-              g_object_unref (G_OBJECT (file));
-
-              /* remove from the list */
-              item->invisible_children = g_slist_delete_link (item->invisible_children, inv_link);
-            }
         }
     }
 }
@@ -1501,6 +1421,10 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   /* verify that we have a file */
   if (G_LIKELY (item->file != NULL) && item->folder == NULL)
     {
+      /* do not load `Recent` to avoid slowing down the view */
+      if (thunar_file_is_recent (item->file))
+        return FALSE;
+
       /* open the folder for the item */
       item->folder = thunar_folder_get_for_file (item->file);
       if (G_LIKELY (item->folder != NULL))
@@ -1733,99 +1657,6 @@ thunar_tree_model_node_traverse_free (GNode   *node,
 
 
 
-static gboolean
-thunar_tree_model_node_traverse_visible (GNode   *node,
-                                         gpointer user_data)
-{
-  ThunarTreeModelItem *item = node->data;
-  ThunarTreeModel     *model = THUNAR_TREE_MODEL (user_data);
-  GtkTreePath         *path;
-  GtkTreeIter          iter;
-  GNode               *child_node;
-  GSList              *lp, *lnext;
-  ThunarTreeModelItem *parent, *child;
-  ThunarFile          *file;
-
-  _thunar_return_val_if_fail (model->visible_func != NULL, FALSE);
-  _thunar_return_val_if_fail (item == NULL || item->file == NULL || THUNAR_IS_FILE (item->file), FALSE);
-
-  if (G_LIKELY (item != NULL && item->file != NULL))
-    {
-      /* check if this file should be visibily in the treeview */
-      if (!model->visible_func (model, item->file, model->visible_data))
-        {
-          /* delete all the children of the node */
-          while (node->children)
-            g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1,
-                             thunar_tree_model_node_traverse_remove, model);
-
-          /* generate an iterator for the item */
-          GTK_TREE_ITER_INIT (iter, model->stamp, node);
-
-          /* remove this item from the tree */
-          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-          gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
-          gtk_tree_path_free (path);
-
-          /* insert the file in the invisible list of the parent */
-          parent = node->parent->data;
-          if (G_LIKELY (parent))
-            parent->invisible_children = g_slist_prepend (parent->invisible_children,
-                                                          g_object_ref (G_OBJECT (item->file)));
-
-          /* free the item and destroy the node */
-          thunar_tree_model_item_free (item);
-          g_node_destroy (node);
-        }
-      else if (!G_NODE_HAS_DUMMY (node))
-        {
-          /* this node should be visible. check if the node has invisible
-           * files that should be visible too */
-          for (lp = item->invisible_children, child_node = NULL; lp != NULL; lp = lnext)
-            {
-              lnext = lp->next;
-              file = THUNAR_FILE (lp->data);
-
-              _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-              if (model->visible_func (model, file, model->visible_data))
-                {
-                  /* allocate a new item for the file */
-                  child = thunar_tree_model_item_new_with_file (model, file);
-
-                  /* insert a new node for the child */
-                  child_node = g_node_append_data (node, child);
-
-                  /* determine the tree iter for the child */
-                  GTK_TREE_ITER_INIT (iter, model->stamp, child_node);
-
-                  /* emit a "row-inserted" for the new node */
-                  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-                  gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
-                  gtk_tree_path_free (path);
-
-                  /* release the reference on the file hold by the invisible list */
-                  g_object_unref (G_OBJECT (file));
-
-                  /* delete the file in the list */
-                  item->invisible_children = g_slist_delete_link (item->invisible_children, lp);
-
-                  /* insert dummy */
-                  thunar_tree_model_node_insert_dummy (child_node, model);
-                }
-            }
-
-          /* sort this node if one of new children have been added */
-          if (child_node != NULL)
-            thunar_tree_model_sort (model, node);
-        }
-    }
-
-  return FALSE;
-}
-
-
-
 /**
  * thunar_tree_model_get_case_sensitive:
  * @model : a #ThunarTreeModel.
@@ -1873,50 +1704,6 @@ thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
       /* notify listeners */
       g_object_notify (G_OBJECT (model), "case-sensitive");
     }
-}
-
-
-
-/**
- * thunar_tree_model_set_visible_func:
- * @model : a #ThunarTreeModel.
- * @func  : a #ThunarTreeModelVisibleFunc, the visible function.
- * @data  : User data to pass to the visible function, or %NULL.
- *
- * Sets the visible function used when filtering the #ThunarTreeModel.
- * The function should return %TRUE if the given row should be visible
- * and %FALSE otherwise.
- **/
-void
-thunar_tree_model_set_visible_func (ThunarTreeModel           *model,
-                                    ThunarTreeModelVisibleFunc func,
-                                    gpointer                   data)
-{
-  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
-  _thunar_return_if_fail (func != NULL);
-
-  /* set the new visiblity function and user data */
-  model->visible_func = func;
-  model->visible_data = data;
-}
-
-
-
-/**
- * thunar_tree_model_refilter:
- * @model : a #ThunarTreeModel.
- *
- * Walks all the folders in the #ThunarTreeModel and updates their
- * visibility.
- **/
-void
-thunar_tree_model_refilter (ThunarTreeModel *model)
-{
-  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
-
-  /* traverse all nodes to update their visibility */
-  g_node_traverse (model->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
-                   thunar_tree_model_node_traverse_visible, model);
 }
 
 
@@ -2018,14 +1805,4 @@ thunar_tree_model_add_child (ThunarTreeModel *model,
 
   /* add a dummy to the new child */
   thunar_tree_model_node_insert_dummy (child_node, model);
-}
-
-
-
-static gboolean
-thunar_tree_model_default_visiblity (ThunarTreeModel *model,
-                                     ThunarFile      *file,
-                                     gpointer         data)
-{
-  return TRUE;
 }

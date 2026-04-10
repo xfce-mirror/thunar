@@ -143,8 +143,12 @@ static gboolean
 thunar_path_entry_check_completion_idle (gpointer user_data);
 static void
 thunar_path_entry_check_completion_idle_destroy (gpointer user_data);
-
-
+static void
+thunar_path_entry_start_search (ThunarPathEntry *path_entry);
+static void
+thunar_path_entry_start_searching (ThunarPathEntry *path_entry);
+static void
+thunar_path_entry_stop_searching (ThunarPathEntry *path_entry);
 
 struct _ThunarPathEntryClass
 {
@@ -674,13 +678,8 @@ thunar_path_entry_changed (GtkEditable *editable)
     {
       thunar_window_update_search (THUNAR_WINDOW (path_entry->window));
 
-      if (path_entry->search_mode == FALSE)
-        {
-          path_entry->search_mode = TRUE;
+      thunar_path_entry_start_search (path_entry);
 
-          /* update the path entry whenever there is an ongoing search */
-          path_entry->notify_searching_handler_id = g_signal_connect_swapped (G_OBJECT (path_entry->window), "notify::searching", G_CALLBACK (thunar_path_entry_notify_searching), path_entry);
-        }
 
       update_icon = TRUE;
     }
@@ -688,13 +687,9 @@ thunar_path_entry_changed (GtkEditable *editable)
     {
       /* cancel search when part of 'Search: ' is deleted */
       if (path_entry->search_mode == TRUE)
-        thunar_window_cancel_search (THUNAR_WINDOW (path_entry->window));
-
-      /* disconnect the "notify::searching" signal handler */
-      if (path_entry->notify_searching_handler_id > 0)
         {
-          g_signal_handler_disconnect (G_OBJECT (path_entry->window), path_entry->notify_searching_handler_id);
-          path_entry->notify_searching_handler_id = 0;
+          thunar_window_cancel_search (THUNAR_WINDOW (path_entry->window));
+          thunar_path_entry_cancel_search (path_entry);
         }
 
       /* location/folder-path code */
@@ -884,32 +879,10 @@ thunar_path_entry_notify_searching (ThunarPathEntry *path_entry,
   g_object_get (G_OBJECT (window), "searching", &searching, NULL);
 
   /* setup the path entry to indicate an ongoing search */
-  if (path_entry->search_mode && searching)
-    {
-      ThunarPreferences *preferences;
-      gboolean           use_symbolic_icons;
-
-      preferences = thunar_preferences_get ();
-      g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
-      g_object_unref (G_OBJECT (preferences));
-
-      /* add the cancel button */
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY,
-                                         use_symbolic_icons ? "process-stop-symbolic" : "process-stop");
-      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, _("Stop Search"));
-
-      /* add a tooltip */
-      gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), _("Search is in progress...\nPress the cancel button or the Escape key to stop."));
-    }
+  if (searching)
+    thunar_path_entry_start_searching (path_entry);
   else
-    {
-      /* remove the cancel button */
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
-      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
-
-      /* remove the tooltip */
-      gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), NULL);
-    }
+    thunar_path_entry_stop_searching (path_entry);
 }
 
 
@@ -1503,6 +1476,60 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 
+static void
+thunar_path_entry_start_searching (ThunarPathEntry *path_entry)
+{
+  ThunarPreferences *preferences;
+  gboolean           use_symbolic_icons;
+
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_unref (G_OBJECT (preferences));
+
+  /* add the cancel button */
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY,
+                                     use_symbolic_icons ? "process-stop-symbolic" : "process-stop");
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, _("Stop Search"));
+
+  /* add a tooltip */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), _("Search is in progress...\nPress the cancel button or the Escape key to stop."));
+}
+
+
+
+static void
+thunar_path_entry_stop_searching (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  /* remove the cancel button */
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+
+  /* remove the tooltip */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), NULL);
+}
+
+
+
+static void
+thunar_path_entry_start_search (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  if (path_entry->search_mode == TRUE)
+    return;
+
+  path_entry->search_mode = TRUE;
+
+  /* update the path entry whenever there is an ongoing search */
+  path_entry->notify_searching_handler_id = g_signal_connect_swapped (G_OBJECT (path_entry->window), "notify::searching", G_CALLBACK (thunar_path_entry_notify_searching), path_entry);
+}
+
+
+
 /**
  * thunar_path_entry_cancel_search:
  * @path_entry : a #ThunarPathEntry.
@@ -1514,7 +1541,19 @@ thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
 {
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
 
+  thunar_path_entry_stop_searching (path_entry);
+
+  if (path_entry->search_mode == FALSE)
+    return;
+
   path_entry->search_mode = FALSE;
+
+  /* disconnect the "notify::searching" signal handler */
+  if (path_entry->notify_searching_handler_id > 0)
+    {
+      g_signal_handler_disconnect (G_OBJECT (path_entry->window), path_entry->notify_searching_handler_id);
+      path_entry->notify_searching_handler_id = 0;
+    }
 
   gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
 }

@@ -450,6 +450,10 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin), GTK_SHADOW_ETCHED_IN);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (preferences), "misc-support-overlay-scrolling", G_OBJECT (swin), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+
   gtk_box_pack_start (GTK_BOX (mbox), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
@@ -1667,7 +1671,7 @@ thunar_renamer_dialog_row_activated (GtkTreeView         *tree_view,
 {
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
-  thunar_action_manager_activate_selected_files (renamer_dialog->action_mgr, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, NULL);
+  thunar_action_manager_activate_selected_files (renamer_dialog->action_mgr, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, NULL, TRUE);
 }
 
 

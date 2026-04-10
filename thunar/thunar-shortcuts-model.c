@@ -616,8 +616,6 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   gchar          *tooltip;
   guint32         trash_items;
   gchar          *parse_name;
-  guint64         fs_free;
-  guint64         fs_size;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -673,6 +671,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
           if (file != NULL)
             {
+              ThunarFilesystemSpaceInfo fs_size_info;
+
               if (g_file_has_uri_scheme (file, "file") && thunar_g_file_is_root (file))
                 location = g_strdup (_("Browse the file system"));
               else if (!g_file_has_uri_scheme (file, "file"))
@@ -689,7 +689,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
                 }
 
               file_size_binary = THUNAR_SHORTCUTS_MODEL (tree_model)->file_size_binary;
-              disk_usage = thunar_g_file_get_free_space_string (file, file_size_binary);
+              thunar_g_file_get_fs_space (file, &fs_size_info);
+              disk_usage = thunar_g_file_get_free_space_string (&fs_size_info, file_size_binary);
 
               if (disk_usage != NULL)
                 tooltip = g_strdup_printf ("%s\n%s", location, disk_usage);
@@ -833,9 +834,12 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
           file = thunar_shortcut_get_file (shortcut);
           if (file != NULL)
             {
+              ThunarFilesystemSpaceInfo fs_size_info;
+
               /* If the file system size is 0, assume that it could not be retrieved. */
-              if (thunar_g_file_get_free_space (file, &fs_free, &fs_size) && fs_size > 0)
-                g_value_set_int (value, (gint) ((gdouble) (fs_size - fs_free) / ((gdouble) fs_size / 100.0)));
+              thunar_g_file_get_fs_space (file, &fs_size_info);
+              if (fs_size_info.fs_size_usable_read_ok && fs_size_info.fs_usable_space > 0)
+                g_value_set_int (value, (gint) ((gdouble) (fs_size_info.fs_used_space) / ((gdouble) fs_size_info.fs_usable_space / 100.0)));
 
               g_object_unref (file);
             }
@@ -1681,7 +1685,9 @@ thunar_shortcuts_model_device_removed (ThunarDeviceMonitor  *device_monitor,
   /* something is broken if we don't have a shortcut here */
   if (lp == NULL)
     {
-      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      gchar *device_name = thunar_device_get_name (device);
+      g_warning ("No shortcut found for device '%s'", device_name);
+      g_free (device_name);
       return;
     }
 

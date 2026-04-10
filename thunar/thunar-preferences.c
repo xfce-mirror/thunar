@@ -145,6 +145,7 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
+  PROP_MISC_SUPPORT_OVERLAY_SCROLLING,
   PROP_SMART_SORT,
   PROP_MISC_FILE_DRAG_MODE,
 #ifdef HAVE_VTE
@@ -272,7 +273,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   * 
+   *
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
@@ -710,7 +711,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "menu:0,back:1,forward:1,open-parent:1,open-home:1,"
                        "new-tab:0,new-window:0,toggle-split-view:0,"
                        "undo:0,redo:0,zoom-out:0,zoom-in:0,zoom-reset:0,"
-                       "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,"
+                       "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,show-hidden:0"
                        "location-bar:1,reload:0,search:1",
                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -1486,6 +1487,22 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
+   * ThunarPreferences:misc-support-overlay-scrolling:
+   *
+   * Controls if 'overlay scrolling' should be supported by thunar widgets
+   * (A scroll bar will only be shown when mouse-hovering on widgets)
+   *
+   * False: No overlay scrolling in Thunar
+   * True: Value of global Gtk property "OverlayScrolling" will be used
+   **/
+  preferences_props[PROP_MISC_SUPPORT_OVERLAY_SCROLLING] =
+  g_param_spec_boolean ("misc-support-overlay-scrolling",
+                        "miscSupportOverlayScrolling",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
    * ThunarPreferences:misc-file-drag-mode:
    *
    * Controls what is done for drag and drop actions on files
@@ -1499,7 +1516,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 #ifdef HAVE_VTE
-  /**              
+  /**
    * ThunarPreferences:terminal-height:
    *
    * Height of the terminal widget in pixels.

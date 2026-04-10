@@ -76,7 +76,8 @@ static ThunarFile *
 thunar_location_bar_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_location_bar_set_current_directory (ThunarNavigator *navigator,
-                                           ThunarFile      *current_directory);
+                                           ThunarFile      *current_directory,
+                                           gboolean         grab_focus);
 static GtkWidget *
 thunar_location_bar_install_widget (ThunarLocationBar *bar,
                                     GType              type);
@@ -176,7 +177,7 @@ thunar_location_bar_finalize (GObject *object)
     }
 
   /* release from the current_directory */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (bar), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (bar), NULL, TRUE);
 
   (*G_OBJECT_CLASS (thunar_location_bar_parent_class)->finalize) (object);
 }
@@ -221,7 +222,7 @@ thunar_location_bar_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     default:
@@ -242,7 +243,8 @@ thunar_location_bar_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_location_bar_set_current_directory (ThunarNavigator *navigator,
-                                           ThunarFile      *current_directory)
+                                           ThunarFile      *current_directory,
+                                           gboolean         grab_focus)
 {
   ThunarLocationBar *bar = THUNAR_LOCATION_BAR (navigator);
   GtkWidget         *child;
@@ -255,7 +257,7 @@ thunar_location_bar_set_current_directory (ThunarNavigator *navigator,
     g_object_ref (current_directory);
 
   if ((child = gtk_bin_get_child (GTK_BIN (bar))) && THUNAR_IS_NAVIGATOR (child))
-    thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (child), current_directory);
+    thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (child), current_directory, grab_focus);
 
   g_object_notify (G_OBJECT (bar), "current-directory");
 }
@@ -296,7 +298,7 @@ thunar_location_bar_install_widget (ThunarLocationBar *bar,
       installedWidget = bar->locationButtons;
     }
 
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (installedWidget), bar->current_directory);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (installedWidget), bar->current_directory, TRUE);
 
   if ((child = gtk_bin_get_child (GTK_BIN (bar))))
     gtk_container_remove (GTK_CONTAINER (bar), child);

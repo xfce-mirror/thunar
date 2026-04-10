@@ -86,7 +86,8 @@ static ThunarFile *
 thunar_shortcuts_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_shortcuts_view_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static gboolean
 thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                                           GdkEventButton *event);
@@ -176,7 +177,8 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
                                      GtkTreePath         *dst_path);
 static void
 thunar_shortcuts_view_open (ThunarShortcutsView                *view,
-                            ThunarActionManagerFolderOpenAction open_in);
+                            ThunarActionManagerFolderOpenAction open_in,
+                            gboolean                            grab_focus);
 static void
 thunar_shortcuts_view_eject (ThunarShortcutsView *view);
 static void
@@ -490,6 +492,9 @@ thunar_shortcuts_view_finalize (GObject *object)
   /* Disconnect from the model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (view->model), view);
 
+  /* Disconnect from the action manager */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (view->action_mgr), view);
+
   /* release our reference on the model */
   g_object_unref (view->model);
 
@@ -503,7 +508,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
 
   /* reset the current-directory property */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL, TRUE);
 
   /* release reference on the action manager */
   g_object_unref (view->action_mgr);
@@ -546,7 +551,7 @@ thunar_shortcuts_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     default:
@@ -577,7 +582,8 @@ thunar_shortcuts_view_get_current_directory (ThunarNavigator *navigator)
 
 static void
 thunar_shortcuts_view_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (navigator);
 
@@ -711,7 +717,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
       else if (G_LIKELY (event->button == 1))
         {
           /* button 1 opens in the same window */
-          thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+          thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, TRUE);
         }
       else if (G_UNLIKELY (event->button == 2))
         {
@@ -722,7 +728,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
           if ((event->state & GDK_CONTROL_MASK) != 0)
             in_tab = !in_tab;
 
-          thunar_shortcuts_view_open (view, in_tab ? THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB : THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
+          thunar_shortcuts_view_open (view, in_tab ? THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB : THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, TRUE);
         }
     }
 
@@ -749,10 +755,8 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_Down:
     case GDK_KEY_KP_Up:
     case GDK_KEY_KP_Down:
-      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+      thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, FALSE);
 
-      /* keep focus on us */
-      gtk_widget_grab_focus (widget);
       break;
     }
 
@@ -1128,7 +1132,7 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 
   /* open the selected shortcut */
-  thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY);
+  thunar_shortcuts_view_open (view, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, TRUE);
 }
 
 
@@ -1746,7 +1750,8 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
 
 static void
 thunar_shortcuts_view_open (ThunarShortcutsView                *view,
-                            ThunarActionManagerFolderOpenAction open_in)
+                            ThunarActionManagerFolderOpenAction open_in,
+                            gboolean                            grab_focus)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
@@ -1789,7 +1794,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView                *view,
           g_object_set (G_OBJECT (view->action_mgr), "selected-location", location, NULL);
         }
 
-      thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL);
+      thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL, grab_focus);
 
       /* return the focus to the current folder, unless the folder changed */
       if (open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
@@ -1988,7 +1993,7 @@ thunar_shortcuts_view_new_files_created (ThunarShortcutsView *view,
   if (G_LIKELY (file != NULL))
     {
       if (G_LIKELY (thunar_file_is_directory (file)))
-        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file, TRUE);
       g_object_unref (file);
     }
 }

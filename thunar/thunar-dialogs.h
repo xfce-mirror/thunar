@@ -30,6 +30,7 @@ gchar *
 thunar_dialogs_show_create (gpointer     parent,
                             const gchar *content_type,
                             const gchar *filename,
+                            GFile       *parent_directory,
                             const gchar *title,
                             const gchar *startup_id);
 ThunarJob *

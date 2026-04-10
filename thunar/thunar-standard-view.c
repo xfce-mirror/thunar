@@ -153,7 +153,8 @@ static ThunarFile *
 thunar_standard_view_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
-                                            ThunarFile      *current_directory);
+                                            ThunarFile      *current_directory,
+                                            gboolean         grab_focus);
 static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading);
@@ -1007,6 +1008,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (standard_view), GTK_SHADOW_IN);
 
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-support-overlay-scrolling", G_OBJECT (standard_view), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+
   /* setup the history support */
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
@@ -1446,7 +1450,7 @@ thunar_standard_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_LOADING:
@@ -1822,7 +1826,8 @@ thunar_standard_view_restore_selection_from_history (ThunarStandardView *standar
 
 static void
 thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
-                                            ThunarFile      *current_directory)
+                                            ThunarFile      *current_directory,
+                                            gboolean         grab_focus)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
@@ -1880,7 +1885,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   gtk_adjustment_set_value (gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view)), 0.0);
 
   /* store the directory in the history */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (standard_view->priv->history), current_directory);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (standard_view->priv->history), current_directory, TRUE);
 
   /* if directory specific settings are enabled, apply them */
   if (standard_view->priv->directory_specific_settings)
@@ -4352,7 +4357,7 @@ thunar_standard_view_drag_enter_timer (gpointer user_data)
       thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
       /* open the drag target folder */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target);
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target, TRUE);
     }
 
   return FALSE;
@@ -4944,10 +4949,6 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
 
-
-  /* change the display name in the tab */
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
-
   if (THUNAR_IS_DETAILS_VIEW (standard_view))
     tree_view = GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
 
@@ -4972,6 +4973,9 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCH_MODE_ACTIVE]);
+
+  /* change the display name in the tab */
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
 }
 
 

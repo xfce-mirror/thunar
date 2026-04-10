@@ -174,9 +174,12 @@ thunar_column_model_finalize (GObject *object)
   g_signal_handlers_disconnect_by_data (G_OBJECT (column_model->preferences), column_model);
   g_object_unref (G_OBJECT (column_model->preferences));
 
-  /* drop any running "save width" timer */
+  /* drop any running "save width" timer and just save the most recent column widths */
   if (G_UNLIKELY (column_model->save_width_timer_id != 0))
-    g_source_remove (column_model->save_width_timer_id);
+    {
+      g_source_remove (column_model->save_width_timer_id);
+      thunar_column_model_save_column_widths (column_model);
+    }
 
   (*G_OBJECT_CLASS (thunar_column_model_parent_class)->finalize) (object);
 }

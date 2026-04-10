@@ -18,8 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-dialog.h"
+
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-view.h"
 #include "thunar/thunar-transfer-job.h"
 
@@ -63,6 +65,8 @@ struct _ThunarProgressDialog
 
   gint x;
   gint y;
+
+  ThunarPreferences *preferences;
 };
 
 
@@ -91,6 +95,8 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
   dialog->views = NULL;
   dialog->views_waiting = NULL;
+
+  dialog->preferences = thunar_preferences_get ();
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Operation Progress"));
   gtk_window_set_default_size (GTK_WINDOW (dialog), 450, 10);
@@ -126,6 +132,8 @@ static void
 thunar_progress_dialog_finalize (GObject *object)
 {
   ThunarProgressDialog *dialog = THUNAR_PROGRESS_DIALOG (object);
+
+  g_object_unref (dialog->preferences);
 
   /* free the view list */
   g_list_free (dialog->views);
@@ -392,6 +400,9 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       gtk_widget_set_vexpand (dialog->scrollwin, TRUE);
       gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->scrollwin);
       gtk_widget_show (dialog->scrollwin);
+
+      /* Thunar has it's own preference to control 'overlay-scrolling' */
+      g_object_bind_property (G_OBJECT (dialog->preferences), "misc-support-overlay-scrolling", G_OBJECT (dialog->scrollwin), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 
       /* create a viewport for the content box */
       viewport = gtk_viewport_new (gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (dialog->scrollwin)),

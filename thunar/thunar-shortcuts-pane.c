@@ -17,10 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-shortcuts-pane.h"
+
 #include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-model.h"
-#include "thunar/thunar-shortcuts-pane.h"
 #include "thunar/thunar-shortcuts-view.h"
 #include "thunar/thunar-side-pane.h"
 
@@ -60,7 +62,8 @@ static ThunarFile *
 thunar_shortcuts_pane_get_current_directory (ThunarNavigator *navigator);
 static void
 thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory);
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus);
 static GList *
 thunar_shortcuts_pane_get_selected_files (ThunarComponent *component);
 static void
@@ -91,6 +94,8 @@ struct _ThunarShortcutsPane
   GtkWidget *view;
 
   guint idle_select_directory;
+
+  ThunarPreferences *preferences;
 };
 
 
@@ -158,11 +163,16 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 {
   GtkWidget *vscrollbar;
 
+  shortcuts_pane->preferences = thunar_preferences_get ();
+
   /* configure the GtkScrolledWindow */
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (shortcuts_pane), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (shortcuts_pane), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (shortcuts_pane), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (shortcuts_pane), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  g_object_bind_property (G_OBJECT (shortcuts_pane->preferences), "misc-support-overlay-scrolling", G_OBJECT (shortcuts_pane), "overlay-scrolling", G_BINDING_SYNC_CREATE);
 
   /* allocate the shortcuts view */
   shortcuts_pane->view = thunar_shortcuts_view_new ();
@@ -192,7 +202,7 @@ thunar_shortcuts_pane_dispose (GObject *object)
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
 
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), NULL);
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), NULL, TRUE);
   thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), NULL);
 
   (*G_OBJECT_CLASS (thunar_shortcuts_pane_parent_class)->dispose) (object);
@@ -203,6 +213,10 @@ thunar_shortcuts_pane_dispose (GObject *object)
 static void
 thunar_shortcuts_pane_finalize (GObject *object)
 {
+  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
+
+  g_object_unref (shortcuts_pane->preferences);
+
   (*G_OBJECT_CLASS (thunar_shortcuts_pane_parent_class)->finalize) (object);
 }
 
@@ -245,7 +259,7 @@ thunar_shortcuts_pane_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value), TRUE);
       break;
 
     case PROP_SELECTED_FILES:
@@ -293,7 +307,8 @@ thunar_shortcuts_pane_set_current_directory_idle (gpointer data)
 
 static void
 thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
-                                             ThunarFile      *current_directory)
+                                             ThunarFile      *current_directory,
+                                             gboolean         grab_focus)
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (navigator);
 

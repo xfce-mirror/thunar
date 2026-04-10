@@ -177,6 +177,8 @@ struct _ThunarPropertiesDialog
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
   GtkWidget *deleted_label;
+  GtkWidget *filesystem_vbox;
+  GtkWidget *filesystem_label;
   GtkWidget *capacity_vbox;
   GtkWidget *capacity_label;
   GtkWidget *freespace_vbox;
@@ -334,6 +336,7 @@ thunar_properties_dialog_constructed (GObject *object)
   GtkWidget *button;
   GtkWidget *infobar;
   GtkWidget *frame;
+  GtkWidget *separator;
 
   G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructed (object);
 
@@ -381,7 +384,7 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
-  dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, NULL);
+  dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, "max-text-length", thunar_g_file_get_fs_max_name_length (NULL), NULL);
   gtk_widget_set_hexpand (GTK_WIDGET (dialog->name_entry), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (dialog->name_entry), GTK_ALIGN_CENTER);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)));
@@ -709,6 +712,38 @@ thunar_properties_dialog_constructed (GObject *object)
 
   ++row;
 
+  /* Separate filesystem data from file data */
+  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_widget_set_halign (separator, GTK_ALIGN_FILL);
+  gtk_widget_set_margin_top (separator, 5);
+  gtk_widget_set_margin_bottom (separator, 5);
+  gtk_grid_attach (GTK_GRID (grid), separator, 0, row, 2, 1);
+  gtk_widget_show (separator);
+
+  ++row;
+
+  label = gtk_label_new (_("Filesystem:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_yalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->filesystem_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+  gtk_widget_set_hexpand (dialog->filesystem_vbox, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->filesystem_vbox, 1, row, 1, 1);
+  g_object_bind_property (G_OBJECT (dialog->filesystem_vbox), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_show (dialog->filesystem_vbox);
+
+  dialog->filesystem_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->filesystem_label), TRUE);
+  gtk_box_pack_start (GTK_BOX (dialog->filesystem_vbox), dialog->filesystem_label, TRUE, TRUE, 0);
+  gtk_widget_show (dialog->filesystem_label);
+
+  ++row;
+
   label = gtk_label_new (_("Capacity:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -726,6 +761,8 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->capacity_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->capacity_label), TRUE);
+  gtk_widget_set_tooltip_text (dialog->capacity_label, _("Be aware that a portion of the filesystem’s total capacity is reserved for metadata. "
+    "Consequently, the usable capacity is less than the total capacity."));
   gtk_box_pack_start (GTK_BOX (dialog->capacity_vbox), dialog->capacity_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->capacity_label);
 
@@ -748,6 +785,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
+  gtk_widget_set_tooltip_text (dialog->freespace_label, _("If the filesystem’s usable capacity is unknown, its total capacity is assumed to represent 100%."));
   gtk_box_pack_start (GTK_BOX (dialog->freespace_vbox), dialog->freespace_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->freespace_label);
 
@@ -1309,14 +1347,9 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *volume_name;
   gchar             *volume_id;
   gchar             *volume_label;
-  guint64            capacity = 0;
-  gchar             *capacity_str = NULL;
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
-  guint64            fs_free;
-  guint64            fs_size;
-  gdouble            fs_fraction = 0.0;
   gchar             *background;
   gchar             *foreground;
 
@@ -1522,20 +1555,43 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* update the capacity and the free space (only for folders) */
   if (thunar_file_is_directory (file))
     {
-      /* capacity (space of containing volume) */
-      if (thunar_g_file_get_free_space (thunar_file_get_file (file), NULL, &capacity))
-        capacity_str = g_format_size_full (capacity, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-      gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
-      g_free (capacity_str);
+      ThunarFilesystemSpaceInfo fs_size_info;
+      gdouble                   fs_fraction = 0.0;
+      g_autofree gchar         *size_total_str = NULL;
+      g_autofree gchar         *size_usable_str = NULL;
+      g_autofree gchar         *capacity_str = NULL;
+      g_autofree gchar         *fs_type = NULL;
 
-      /* free space */
-      fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file),
-                                                       dialog->file_size_binary);
-      if (thunar_g_file_get_free_space (thunar_file_get_file (file), &fs_free, &fs_size)
-          && fs_size > 0)
+
+      thunar_g_file_get_fs_space (thunar_file_get_file (file), &fs_size_info);
+
+      fs_type = thunar_g_file_get_fs_type (thunar_file_get_file (file));
+      if (fs_type != NULL)
+        gtk_label_set_text (GTK_LABEL (dialog->filesystem_label), fs_type);
+      else
+        gtk_label_set_text (GTK_LABEL (dialog->filesystem_label), _("Unknown"));
+
+      /* capacity (space of containing volume) */
+      if (fs_size_info.fs_size_total_read_ok)
+        size_total_str = g_format_size_full (fs_size_info.fs_size_total, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+
+      if (fs_size_info.fs_size_usable_read_ok)
+        size_usable_str = g_format_size_full (fs_size_info.fs_usable_space, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+
+      /* show "usable" only, if it differs from total (we cannot tell for some filesystems)*/
+      if (fs_size_info.fs_size_total != fs_size_info.fs_usable_space)
+        capacity_str = g_strconcat (size_total_str, " (", size_usable_str, " ", _("usable"), ")", NULL);
+      else
+        capacity_str = g_strdup (size_total_str);
+
+      gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
+
+      /* free/used space */
+      fs_string = thunar_g_file_get_free_space_string (&fs_size_info, dialog->file_size_binary);
+      if (fs_size_info.fs_size_usable_read_ok && fs_size_info.fs_usable_space > 0)
         {
-          /* free disk space fraction */
-          fs_fraction = ((fs_size - fs_free) * 100 / fs_size);
+          /* usable disk space fraction */
+          fs_fraction = ((fs_size_info.fs_used_space) * 100 / fs_size_info.fs_usable_space);
         }
       if (fs_string != NULL)
         {

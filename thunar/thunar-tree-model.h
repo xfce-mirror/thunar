@@ -61,13 +61,6 @@ GType
 thunar_tree_model_get_type (void) G_GNUC_CONST;
 
 void
-thunar_tree_model_set_visible_func (ThunarTreeModel           *model,
-                                    ThunarTreeModelVisibleFunc func,
-                                    gpointer                   data);
-void
-thunar_tree_model_refilter (ThunarTreeModel *model);
-
-void
 thunar_tree_model_cleanup (ThunarTreeModel *model);
 gboolean
 thunar_tree_model_node_has_dummy (ThunarTreeModel *model,
@@ -76,7 +69,9 @@ void
 thunar_tree_model_add_child (ThunarTreeModel *model,
                              GNode           *node,
                              ThunarFile      *file);
-
+void
+thunar_tree_model_load_node (ThunarTreeModel *model,
+                             GNode           *node);
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_MODEL_H__ */

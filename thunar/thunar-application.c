@@ -319,6 +319,8 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 static void
 thunar_application_init (ThunarApplication *application)
 {
+  g_autofree gchar *argument_help_string;
+
   /* we do most initialization in GApplication::startup since it is only needed
    * in the primary instance anyways */
 
@@ -330,6 +332,13 @@ thunar_application_init (ThunarApplication *application)
 
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
+
+  g_application_set_option_context_parameter_string (G_APPLICATION (application), ("[URL …]"));
+
+  /* Dont have a better idea for indendation formatting the 'Arguments:' section */
+  argument_help_string = g_strconcat(_("Arguments:\n"),
+  "  ", _("URL"), "                        ",("Location to open"), NULL); 
+  g_application_set_option_context_summary (G_APPLICATION (application), argument_help_string);
 }
 
 
@@ -616,7 +625,7 @@ thunar_application_command_line (GApplication            *gapp,
                 {
                   /* replace the first tab if opened by default */
                   if (filenames == 0 && i == 0)
-                    thunar_window_set_current_directory (window, directory);
+                    thunar_window_set_current_directory (window, directory, TRUE);
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
@@ -647,7 +656,7 @@ thunar_application_command_line (GApplication            *gapp,
                 {
                   /* replace the first tab (opened by default via "thunar_window_notebook_toggle_split_view") */
                   if (i == 0)
-                    thunar_window_set_current_directory (window, directory);
+                    thunar_window_set_current_directory (window, directory, TRUE);
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
@@ -1623,7 +1632,7 @@ thunar_application_open_window (ThunarApplication *application,
 
   /* change the directory */
   if (directory != NULL)
-    thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+    thunar_window_set_current_directory (THUNAR_WINDOW (window), directory, TRUE);
 
   /* Migrate old "misc-open-new-windows-in-split-view" preference. Drop for or after 4.22 */
   if (thunar_preferences_has_property (application->preferences, "/misc-open-new-windows-in-split-view")
@@ -2157,7 +2166,7 @@ thunar_application_create_file (ThunarApplication     *application,
     }
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_dialogs_show_create (parent, content_type, dialog_title, title, startup_id);
+  name = thunar_dialogs_show_create (parent, content_type, dialog_title, thunar_file_get_file (parent_directory), title, startup_id);
   if (G_LIKELY (name != NULL))
     {
       path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
@@ -2216,6 +2225,7 @@ thunar_application_create_file_from_template (ThunarApplication     *application
   name = thunar_dialogs_show_create (parent,
                                      thunar_file_get_content_type (template_file),
                                      thunar_file_get_display_name (template_file),
+                                     thunar_file_get_file (parent_directory),
                                      title,
                                      startup_id);
   if (G_LIKELY (name != NULL))
@@ -2570,9 +2580,7 @@ _thunar_application_confirm_file_removal (gpointer parent,
                                           gboolean will_unlink)
 {
   GtkWidget   *dialog;
-  GtkWidget   *message_area;
   GtkWindow   *window;
-  GList       *children;
   const gchar *file_basename;
   const gchar *file_display_name;
   gboolean     file_names_match;
@@ -2646,21 +2654,11 @@ _thunar_application_confirm_file_removal (gpointer parent,
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
   /* include additional disclaimer for permanent deletions */
   if (will_unlink)
-    {
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                                _("If you delete a file, it is permanently lost."));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
 
-      /* additionally wrap long single-word filenames at character boundaries */
-      message_area = gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog));
-      children = gtk_container_get_children (GTK_CONTAINER (message_area));
-      if (children != NULL && GTK_IS_LABEL (children->data))
-        {
-          gtk_label_set_line_wrap_mode (GTK_LABEL (children->data), PANGO_WRAP_WORD_CHAR);
-          thunar_gtk_label_disable_hyphens (GTK_LABEL (children->data));
-        }
-      g_list_free (children);
-    }
 
+  /* Make sure the dialog wont expand for very long filenames */
+  thunar_gtk_dialog_wrap_long_text (GTK_DIALOG (dialog));
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
   g_free (message);
