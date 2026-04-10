@@ -19,6 +19,7 @@
 
 #include "thunar/thunar-order-editor.h"
 
+#include "thunar-preferences.h"
 #include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>
@@ -35,6 +36,7 @@ struct _ThunarOrderEditorPrivate
   GtkWidget         *settings_area;
   GtkWidget         *help_button;
   GSimpleAction     *reset_action;
+  ThunarPreferences *preferences;
 };
 
 enum
@@ -54,6 +56,9 @@ enum
 static gint signals[N_SIGNALS];
 
 
+
+static void
+thunar_order_editor_finalize (GObject *object);
 
 static void
 thunar_order_editor_set_property (GObject      *object,
@@ -76,6 +81,7 @@ thunar_order_editor_class_init (ThunarOrderEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->finalize = thunar_order_editor_finalize;
   object_class->set_property = thunar_order_editor_set_property;
 
   g_object_class_install_property (object_class,
@@ -116,6 +122,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   GtkWidget                *vbox;
   GtkWidget                *hbox;
   GtkWidget                *image;
+  GtkWidget                *swin;
 
   /* create dialog buttons */
   gtk_dialog_add_button (GTK_DIALOG (order_editor), _("_Close"), GTK_RESPONSE_CLOSE);
@@ -162,6 +169,23 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   priv->settings_area = gtk_widget_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), priv->settings_area, FALSE, FALSE, 0);
   gtk_widget_show (priv->settings_area);
+
+  /* Thunar has it's own preference to control 'overlay-scrolling' */
+  priv->preferences = thunar_preferences_get ();
+  swin = gtk_widget_get_parent (xfce_item_list_view_get_tree_view (XFCE_ITEM_LIST_VIEW (priv->item_view)));
+  g_object_bind_property (G_OBJECT (priv->preferences), "misc-support-overlay-scrolling", G_OBJECT (swin), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+}
+
+
+
+static void
+thunar_order_editor_finalize (GObject *object)
+{
+  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (THUNAR_ORDER_EDITOR (object));
+
+  g_object_unref (G_OBJECT (priv->preferences));
+
+  (*G_OBJECT_CLASS (thunar_order_editor_parent_class)->finalize) (object);
 }
 
 
