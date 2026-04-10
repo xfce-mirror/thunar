@@ -1029,7 +1029,12 @@ retry_copy:
 
           /* check whether to retry */
           if (G_UNLIKELY (skip_response == THUNAR_JOB_RESPONSE_RETRY))
-            goto retry_copy;
+            {
+              /* reset progress for that file to prevent counting it twice */
+              job->total_progress -= job->file_progress;
+              job->file_progress = 0;
+              goto retry_copy;
+            }
 
           /* drop the target file, so that it will not be listed as 'new file' */
           g_object_unref (node->target_file);
