@@ -28,8 +28,11 @@
 #include <string.h>
 #endif
 
+#ifdef ENABLE_X11
+#include <gdk/gdkx.h>
 #ifdef ENABLE_LIBSM
 #include <X11/SM/SMlib.h>
+#endif
 #endif
 
 #include "thunar/thunar-application.h"
@@ -38,7 +41,6 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-session-client.h"
 
-#include <gdk/gdkx.h>
 #include <glib/gstdio.h>
 
 
