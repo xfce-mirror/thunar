@@ -31,6 +31,7 @@
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-private.h"
+#include "thunar-util.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -304,9 +305,11 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   ThunarClipboardPasteRequest *request = user_data;
   ThunarClipboardManager      *manager = THUNAR_CLIPBOARD_MANAGER (request->manager);
   ThunarApplication           *application;
-  gboolean                     path_copy = TRUE;
+  gboolean                     path_copy = FALSE;
   GList                       *file_list = NULL;
   gchar                       *data;
+  gchar                       *data_type = NULL;
+  gboolean                    is_image;
 
   /* check whether the retrieval worked */
   if (G_LIKELY (gtk_selection_data_get_length (selection_data) > 0))
@@ -326,7 +329,15 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
           path_copy = FALSE;
           data += 4;
         }
-
+      else
+        {
+          data_type = gdk_atom_name(gtk_selection_data_get_data_type(selection_data));
+           if (g_ascii_strncasecmp("image/",data_type,6) == 0)
+            {
+              is_image = TRUE;
+              data_type +=6;
+            }
+        }
       /* determine the path list stored with the selection */
       file_list = thunar_g_file_list_new_from_string (data);
     }
@@ -340,6 +351,49 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
                                       request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
       else if (G_LIKELY (path_copy))
         thunar_application_copy_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
+      else if (is_image) {
+      
+        GError *error = NULL;
+
+        /* getting cwd for util function, there has to be a better way to do this*/
+        char *cwd_name = g_get_current_dir();
+        GFile *cwd = g_file_new_for_path(cwd_name);
+
+        ThunarFile *current_dir = thunar_file_get(cwd,NULL);
+        
+        /*TODO: should the file name be translatable? should we ask the user? */
+        char* filename_tmp = g_strconcat("Selection.",data_type, NULL);
+        char* filename = thunar_util_next_new_file_name(current_dir,filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
+        GFile *dest = g_file_new_for_path(filename);
+
+        GFileOutputStream *out = g_file_create (dest, G_FILE_CREATE_NONE, NULL, &error);
+
+        if(error != NULL)
+        {
+          /* TODO: do we report this error to the user or do we ignore it?*/
+          printf("ERROR:%d,  %s\n",error->code,error->message);
+          return;
+        }
+
+        if (out)
+          {
+            const gchar *content = (const gchar *) gtk_selection_data_get_data (selection_data);
+            gint length = gtk_selection_data_get_length (selection_data);
+
+            if (g_output_stream_write_all (G_OUTPUT_STREAM (out), content, length, NULL, NULL, NULL)){
+              g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+            }
+
+            g_object_unref (out);
+          }
+
+        g_object_unref (dest);
+        g_free(filename_tmp);
+        
+        g_free(cwd_name);
+        g_object_unref(cwd);
+      }
+
       else
         thunar_application_move_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
@@ -351,7 +405,6 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
        */
       if (G_UNLIKELY (!path_copy))
         gtk_clipboard_clear (manager->clipboard);
-
       /* check the contents of the clipboard again if either the Xserver or
        * our GTK+ version doesn't support the XFixes extension */
       if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
@@ -655,6 +708,7 @@ thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
   _thunar_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
+
   return (manager->files_cutted && g_list_find (manager->files, file) != NULL);
 }
 
@@ -695,8 +749,6 @@ thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   thunar_clipboard_manager_transfer_files (manager, FALSE, files);
 }
-
-
 
 /**
  * thunar_clipboard_manager_paste_files:
