@@ -6,6 +6,7 @@ libthunarx_install_dir = get_option('prefix') / get_option('includedir') / libth
 
 libthunarx_headers = [
   'thunarx-file-info.h',
+  'thunarx-info-provider.h',
   'thunarx-menu-item.h',
   'thunarx-menu-provider.h',
   'thunarx-menu.h',
@@ -34,6 +35,7 @@ libthunarx_headers += configure_file(
 libthunarx_sources = [
   'thunarx-config.c',
   'thunarx-file-info.c',
+  'thunarx-info-provider.c',
   'thunarx-menu-item.c',
   'thunarx-menu-provider.c',
   'thunarx-menu.c',

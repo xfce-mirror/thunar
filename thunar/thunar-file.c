@@ -153,6 +153,8 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 static void
 thunar_file_reset_thumbnail (ThunarFile         *file,
                              ThunarThumbnailSize size);
+static void
+thunar_file_notify_info_providers (ThunarFile *file, gboolean creation);
 
 
 
@@ -167,6 +169,10 @@ static gint thunar_file_watch_total_count = 0;
 #define G_REC_UNLOCK(name) g_rec_mutex_unlock (&G_LOCK_NAME (name))
 
 
+/* plugin notification on file creation/destruction */
+static GHashTable *created_files_notify;
+static GHashTable *destroyed_files_notify;
+static guint notify_info_providers_source_id;
 
 static ThunarUserManager *user_manager;
 static GHashTable        *file_cache;
@@ -454,6 +460,16 @@ thunar_file_class_init (ThunarFileClass *klass)
                 NULL, NULL,
                 g_cclosure_marshal_generic,
                 G_TYPE_NONE, 1, G_TYPE_INT);
+
+  created_files_notify = g_hash_table_new_full (g_file_hash,
+                                                (GEqualFunc) g_file_equal,
+                                                (GDestroyNotify) g_object_unref,
+                                                (GDestroyNotify) g_object_unref);
+
+  destroyed_files_notify = g_hash_table_new_full (g_file_hash,
+                                                (GEqualFunc) g_file_equal,
+                                                (GDestroyNotify) g_object_unref,
+                                                (GDestroyNotify) g_object_unref);
 }
 
 
@@ -1256,6 +1272,9 @@ thunar_file_get_async_finish (GObject      *object,
   /* pass the loaded file and possible errors to the return function */
   (data->func) (location, file, error, data->user_data);
 
+  /* inform plugins about the new file */
+ // thunar_file_notify_info_providers (file, TRUE);
+
   /* release the file, see description in ThunarFileGetFunc */
   g_object_unref (file);
 
@@ -1382,6 +1401,12 @@ thunar_file_get (GFile   *gfile,
 {
   ThunarFile *file;
 
+  // TODO: 'thunar_file_get' nur in separatem job ausführen
+  // Überall thunar_file_get_async verwenden, ausser im Thunarjob
+  // "thunar_file_get_async" sollte erst files sammeln (throttle) und dann einen job starten
+  // callback "thunar_file_get_finished" wird aufgerufen, wenn "get" fertig. Darin wird dann 'thunar_file_notify_info_providers' und user specific callback aufgerufen
+  // CHeck merge request
+  
   _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
 
   /* both lookup and insert must happen in the same critical section
@@ -1403,6 +1428,8 @@ thunar_file_get (GFile   *gfile,
 
       if (thunar_file_load (file, NULL, error))
         {
+          thunar_file_notify_info_providers (file, TRUE);
+
           /* Just check that it's been cached, if appropriate */
           if (file->kind != G_FILE_TYPE_UNKNOWN)
             _thunar_assert (g_hash_table_contains (file_cache, file->gfile) == TRUE);
@@ -1487,6 +1514,9 @@ thunar_file_get_with_info (GFile     *gfile,
       g_hash_table_insert (file_cache,
                            g_object_ref (file->gfile),
                            weak_ref_new (G_OBJECT (file)));
+
+      /* inform plugins about the new file */
+      thunar_file_notify_info_providers (file, TRUE);
     }
 
   /* done reading and writing the cache for this file instance */
@@ -4602,6 +4632,9 @@ thunar_file_signal_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* inform plugins that the file is about to be destroyed */
+  thunar_file_notify_info_providers (file, FALSE);
+
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     g_signal_emit (file, file_signals[DESTROY], 0);
 }
@@ -5619,4 +5652,38 @@ thunar_file_changed (ThunarFile *file)
   /* start a timer to throttle consecutive calls */
   file->signal_changed_source_id = g_timeout_add (FILE_CHANGED_SIGNAL_RATE_LIMIT,
                                                   thunar_file_changed_signal_timeout, file);
+}
+
+static gboolean
+thunar_file_notify_info_providers_timeout (gpointer data)
+{
+  ThunarApplication *application = thunar_application_get ();
+
+  notify_info_providers_source_id = 0;
+
+  thunar_application_notify_info_providers_file_creation (application, created_files_notify);
+  thunar_application_notify_info_providers_file_destruction (application, destroyed_files_notify);
+  g_hash_table_remove_all (created_files_notify);
+  g_hash_table_remove_all (destroyed_files_notify);
+  g_object_unref (application);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+thunar_file_notify_info_providers (ThunarFile *file, gboolean creation)
+{
+  /* Add file to the according hashtable */
+  if (creation)
+      g_hash_table_insert (created_files_notify, g_object_ref (file->gfile), g_object_ref (file));
+  else
+      g_hash_table_insert (destroyed_files_notify, g_object_ref (file->gfile), g_object_ref (file));
+
+  /* in case a timeout is running, the update will be delayed (performance) */
+  if (notify_info_providers_source_id != 0)
+    return;
+
+  /* start a timer to throttle consecutive calls */
+  notify_info_providers_source_id = g_timeout_add (FILE_CHANGED_SIGNAL_RATE_LIMIT,
+                                                         thunar_file_notify_info_providers_timeout, NULL);
 }

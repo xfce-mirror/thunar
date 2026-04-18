@@ -25,6 +25,7 @@
 
 #include "thunarx/thunarx-config.h"
 #include "thunarx/thunarx-file-info.h"
+#include "thunarx/thunarx-info-provider.h"
 #include "thunarx/thunarx-menu-provider.h"
 #include "thunarx/thunarx-menu.h"
 #include "thunarx/thunarx-preferences-provider.h"
