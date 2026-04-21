@@ -1,0 +1,5164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Xfce
+# This file is distributed under the same license as the thunar.xfce-4-20 package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# BoneNI, 2026
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: thunar.xfce-4-20\n"
+"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
+"POT-Creation-Date: 2025-12-12 12:53+0100\n"
+"PO-Revision-Date: 2024-12-30 16:00+0000\n"
+"Last-Translator: BoneNI, 2026\n"
+"Language-Team: Lao (https://app.transifex.com/xfce/teams/16840/lo/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: lo\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. setup application name
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
+msgid "Thunar"
+msgstr "Thunar"
+
+#. change the accept button label text
+#: thunar/thunar-action-manager.c:322 thunar/thunar-chooser-dialog.c:907
+#: thunar/thunar-chooser-dialog.c:1318 thunar/thunar-dialogs.c:1285
+#: thunar/thunar-renamer-dialog.c:1109
+#: plugins/thunar-uca/thunar-uca-editor.c:203
+msgid "_Open"
+msgstr "ເປີດ(_O)"
+
+#: thunar/thunar-action-manager.c:323 thunar/thunar-dialogs.c:1279
+msgid "_Execute"
+msgstr "ປະຕິບັດການ(_E)"
+
+#: thunar/thunar-action-manager.c:324
+msgid "Edit _Launcher"
+msgstr "ແກ້ໄຂຕົວເປີດໂປຣແກຣມ(_L)"
+
+#: thunar/thunar-action-manager.c:324
+msgid "Edit the selected launcher"
+msgstr "ແກ້ໄຂຕົວເປີດໂປຣແກຣມທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:325 thunar/thunar-action-manager.c:1671
+#, c-format
+msgid "Open in new _Tab"
+msgid_plural "Open in %d New _Tabs"
+msgstr[0] "ເປີດໃນ %d ແທັບໃໝ່(_T)"
+
+#: thunar/thunar-action-manager.c:326 thunar/thunar-action-manager.c:1682
+#, c-format
+msgid "Open in new _Window"
+msgid_plural "Open in %d New _Windows"
+msgstr[0] "ເປີດໃນ %d ປ່ອງຢ້ຽມໃໝ່(_W)"
+
+#: thunar/thunar-action-manager.c:327
+msgid "Open Item _Location"
+msgstr "ເປີດສະຖານທີ່ຂອງລາຍການ(_L)"
+
+#: thunar/thunar-action-manager.c:327
+msgid "Navigate to the folder in which the selected file is located"
+msgstr "ໄປທີ່ໂຟນເດີທີ່ໄຟລ໌ທີ່ເລືອກໄວ້ຢູ່"
+
+#: thunar/thunar-action-manager.c:328
+msgid "Ope_n With Other Application..."
+msgstr "ເປີດດ້ວຍແອັບພລິເຄຊັນອື່ນ...(_N)"
+
+#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3443
+msgid "Choose another application with which to open the selected file"
+msgstr "ເລືອກແອັບພລິເຄຊັນອື່ນເພື່ອໃຊ້ເປີດໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:329
+msgid "Set Defa_ult Application..."
+msgstr "ຕັ້ງເປັນແອັບພລິເຄຊັນມາດຕະຖານ...(_U)"
+
+#: thunar/thunar-action-manager.c:329
+msgid ""
+"Choose an application which should be used by default to open the selected "
+"file"
+msgstr "ເລືອກແອັບພລິເຄຊັນທີ່ຈະໃຫ້ໃຊ້ເປັນຄ່າເລີ່ມຕົ້ນເພື່ອເປີດໄຟລ໌ທີ່ເລືອກ"
+
+#. For backward compatibility the old accel paths are re-used. Currently not
+#. possible to automatically migrate to new accel paths.
+#. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
+#. fix that
+#: thunar/thunar-action-manager.c:333
+msgid "_Send To"
+msgstr "ສົ່ງໄປທີ່(_S)"
+
+#: thunar/thunar-action-manager.c:334
+msgid "_Add Bookmark"
+msgstr "ເພີ່ມບຸກມາກ(_A)"
+
+#: thunar/thunar-action-manager.c:334
+msgid ""
+"Create bookmarks for all selected folders. If nothing is selected, the "
+"current folder is bookmarked."
+msgstr ""
+"ສ້າງບຸກມາກໃຫ້ກັບທຸກໂຟນເດີທີ່ເລືອກ. ຖ້າບໍ່ໄດ້ເລືອກອັນໃດ, "
+"ຈະບຸກມາກໂຟນເດີປັດຈຸບັນ."
+
+#: thunar/thunar-action-manager.c:335
+msgid "Send to _Desktop"
+msgstr "ສົ່ງໄປທີ່ເດັສທັອບ(_D)"
+
+#: thunar/thunar-action-manager.c:336
+msgid "_Properties..."
+msgstr "ຄຸນສົມບັດ...(_P)"
+
+#: thunar/thunar-action-manager.c:336
+msgid "View the properties of the selected file"
+msgstr "ເບິ່ງຄຸນສົມບັດຂອງໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:337 thunar/thunar-action-manager.c:1720
+msgid "Ma_ke Link"
+msgid_plural "Ma_ke Links"
+msgstr[0] "ສ້າງລິງກ໌(_K)"
+
+#: thunar/thunar-action-manager.c:338
+msgid "Dup_licate"
+msgstr "ເຮັດສຳເນົາຄືນ(_L)"
+
+#: thunar/thunar-action-manager.c:339
+msgid "_Rename..."
+msgstr "ປ່ຽນຊື່...(_R)"
+
+#. prepare the menu item
+#: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2784
+#: plugins/thunar-tpa/thunar-tpa.c:191
+msgid "_Empty Trash"
+msgstr "ເທຖັງຂີ້ເຫຍື້ອ(_E)"
+
+#: thunar/thunar-action-manager.c:340
+msgid "Delete all files and folders in the Trash"
+msgstr "ລຶບໄຟລ໌ ແລະ ໂຟນເດີທັງໝົດໃນຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-action-manager.c:341
+msgid "_Remove from Recent"
+msgstr "ລຶບອອກຈາກລາຍການທີ່ໃຊ້ຫວ່າງໆນີ້(_R)"
+
+#: thunar/thunar-action-manager.c:341
+msgid "Remove the selected files from Recent"
+msgstr "ລຶບໄຟລ໌ທີ່ເລືອກອອກຈາກລາຍການທີ່ໃຊ້ຫວ່າງໆນີ້"
+
+#: thunar/thunar-action-manager.c:342
+msgid "Create _Folder..."
+msgstr "ສ້າງໂຟນເດີ...(_F)"
+
+#: thunar/thunar-action-manager.c:342
+msgid "Create an empty folder within the current folder"
+msgstr "ສ້າງໂຟນເດີເປົ່າພາຍໃນໂຟນເດີປັດຈຸບັນ"
+
+#: thunar/thunar-action-manager.c:343
+msgid "Create _Document"
+msgstr "ສ້າງເອກະສານ(_D)"
+
+#: thunar/thunar-action-manager.c:343
+msgid "Create a new document from a template"
+msgstr "ສ້າງເອກະສານໃໝ່ຈາກແມ່ແບບ"
+
+#: thunar/thunar-action-manager.c:345
+msgid "_Restore"
+msgstr "ກູ້ຄືນ(_R)"
+
+#: thunar/thunar-action-manager.c:346
+msgid "Restore and S_how"
+msgstr "ກູ້ຄືນ ແລະ ສະແດງ(_H)"
+
+#: thunar/thunar-action-manager.c:347
+msgid "Mo_ve to Trash"
+msgstr "ຖິ້ມລົງຖັງຂີ້ເຫຍື້ອ(_V)"
+
+#: thunar/thunar-action-manager.c:350 thunar/thunar-application.c:2530
+#: plugins/thunar-uca/thunar-uca-chooser.c:383
+msgid "_Delete"
+msgstr "ລຶບ(_D)"
+
+#: thunar/thunar-action-manager.c:353
+msgid "_Paste"
+msgstr "ວາງ(_P)"
+
+#: thunar/thunar-action-manager.c:353
+msgid "Move or copy files previously selected by a Cut or Copy command"
+msgstr "ຍ້າຍ ຫຼື ສຳເນົາໄຟລ໌ທີ່ຖືກເລືອກໄວ້ກ່ອນໜ້ານີ້ດ້ວຍຄຳສັ່ງ ຕັດ ຫຼື ສຳເນົາ"
+
+#: thunar/thunar-action-manager.c:355
+msgid "_Paste Into Folder"
+msgstr "ວາງລົງໃນໂຟນເດີ(_P)"
+
+#: thunar/thunar-action-manager.c:355
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into the "
+"selected folder"
+msgstr ""
+"ຍ້າຍ ຫຼື ສຳເນົາໄຟລ໌ທີ່ຖືກເລືອກໄວ້ກ່ອນໜ້ານີ້ດ້ວຍຄຳສັ່ງ ຕັດ ຫຼື ສຳເນົາ "
+"ລົງໃນໂຟນເດີທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:356
+msgid "_Copy"
+msgstr "ສຳເນົາ(_C)"
+
+#: thunar/thunar-action-manager.c:358
+msgid "Cu_t"
+msgstr "ຕັດ(_T)"
+
+#: thunar/thunar-action-manager.c:361
+msgid "_Mount"
+msgstr "ຕິດຕັ້ງ(_M)"
+
+#: thunar/thunar-action-manager.c:361
+msgid "Mount the selected device"
+msgstr "ຕິດຕັ້ງອຸປະກອນທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:362
+msgid "_Unmount"
+msgstr "ຖອນການຕິດຕັ້ງ(_U)"
+
+#: thunar/thunar-action-manager.c:362
+msgid "Unmount the selected device"
+msgstr "ຖອນການຕິດຕັ້ງອຸປະກອນທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:363 thunar/thunar-device.c:551
+msgid "_Eject"
+msgstr "ດີດອອກ(_E)"
+
+#: thunar/thunar-action-manager.c:363
+msgid "Eject the selected device"
+msgstr "ດີດອຸປະກອນທີ່ເລືອກອອກ"
+
+#: thunar/thunar-action-manager.c:854 thunar/thunar-dnd.c:270
+#, c-format
+msgid "Failed to execute file \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດປະຕິບັດການໄຟລ໌ \"%s\" (%s)"
+
+#: thunar/thunar-action-manager.c:856 thunar/thunar-dnd.c:272
+#, c-format
+msgid "Failed to execute file \"%s\""
+msgstr "ບໍ່ສາມາດປະຕິບັດການໄຟລ໌ \"%s\""
+
+#: thunar/thunar-action-manager.c:998
+#, c-format
+msgid "Failed to open file \"%s\""
+msgstr "ບໍ່ສາມາດເປີດໄຟລ໌ \"%s\""
+
+#. we can just tell that n files failed to open
+#: thunar/thunar-action-manager.c:1004
+#, c-format
+msgid "Failed to open %d file"
+msgid_plural "Failed to open %d files"
+msgstr[0] "ບໍ່ສາມາດເປີດໄດ້ %d ໄຟລ໌"
+
+#: thunar/thunar-action-manager.c:1056
+msgid "Are you sure you want to open all folders?"
+msgstr "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການເປີດທຸກໂຟນເດີ?"
+
+#: thunar/thunar-action-manager.c:1057
+msgid "Open folders"
+msgstr "ເປີດໂຟນເດີ"
+
+#: thunar/thunar-action-manager.c:1059
+#, c-format
+msgid "This will open %d separate file manager window."
+msgid_plural "This will open %d separate file manager windows."
+msgstr[0] "ສິ່ງນີ້ຈະເປີດປ່ອງຢ້ຽມຈັດການໄຟລ໌ແຍກກັນ %d ປ່ອງຢ້ຽມ."
+
+#: thunar/thunar-action-manager.c:1063
+#, c-format
+msgid "Open %d New Window"
+msgid_plural "Open %d New Windows"
+msgstr[0] "ເປີດ %d ປ່ອງຢ້ຽມໃໝ່"
+
+#. add the "Cancel" button
+#. configure the dialog properties
+#: thunar/thunar-action-manager.c:1064 thunar/thunar-application.c:2529
+#: thunar/thunar-application.c:2595 thunar/thunar-application.c:2783
+#: thunar/thunar-chooser-dialog.c:315 thunar/thunar-chooser-dialog.c:781
+#: thunar/thunar-chooser-dialog.c:856 thunar/thunar-chooser-dialog.c:906
+#: thunar/thunar-dialogs.c:114 thunar/thunar-dialogs.c:263
+#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:1099 thunar/thunar-dialogs.c:1193
+#: thunar/thunar-dnd.c:172 thunar/thunar-permissions-chooser.c:580
+#: thunar/thunar-permissions-chooser.c:1194
+#: thunar/thunar-properties-dialog.c:1220 thunar/thunar-renamer-dialog.c:1108
+#: thunar/thunar-renamer-progress.c:188 thunar/thunar-renamer-progress.c:198
+#: plugins/thunar-sendto-email/main.c:220
+#: plugins/thunar-sendto-email/main.c:240
+#: plugins/thunar-sendto-email/main.c:304
+#: plugins/thunar-uca/thunar-uca-chooser.c:383
+#: plugins/thunar-uca/thunar-uca-editor.c:157
+#: plugins/thunar-uca/thunar-uca-editor.c:202
+#: plugins/thunar-uca/thunar-uca-editor.c:455
+msgid "_Cancel"
+msgstr "ຍົກເລີກ(_C)"
+
+#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2057
+#, c-format
+msgid "Failed to mount \"%s\""
+msgstr "ບໍ່ສາມາດຕິດຕັ້ງ \"%s\" ໄດ້"
+
+#. tell the user that we were unable to launch the file specified
+#: thunar/thunar-action-manager.c:1203 thunar/thunar-application.c:1704
+#: thunar/thunar-application.c:1866 thunar/thunar-location-entry.c:354
+#: thunar/thunar-location-entry.c:387
+#, c-format
+msgid "Failed to open \"%s\""
+msgstr "ບໍ່ສາມາດເປີດ \"%s\""
+
+#: thunar/thunar-action-manager.c:1534
+msgid "File does not exist anymore"
+msgstr "ໄຟລ໌ນີ້ບໍ່ມີຢູ່ນຳອີກແລ້ວ"
+
+#: thunar/thunar-action-manager.c:1535
+#, c-format
+msgid "Failed to open location for \"%s\""
+msgstr "ບໍ່ສາມາດເປີດສະຖານທີ່ສຳລັບ \"%s\""
+
+#. aka "activate"
+#: thunar/thunar-action-manager.c:1659
+msgid "Open the selected file"
+msgid_plural "Open the selected files"
+msgstr[0] "ເປີດໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1663
+msgid "Execute the selected file"
+msgid_plural "Execute the selected files"
+msgstr[0] "ປະຕິບັດການໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1672
+#, c-format
+msgid "Open the selected directory in new tab"
+msgid_plural "Open the selected directories in %d new tabs"
+msgstr[0] "ເປີດໄດເຣັກທໍຣີທີ່ເລືອກໃນ %d ແທັບໃໝ່"
+
+#: thunar/thunar-action-manager.c:1683
+#, c-format
+msgid "Open the selected directory in new window"
+msgid_plural "Open the selected directories in %d new windows"
+msgstr[0] "ເປີດໄດເຣັກທໍຣີທີ່ເລືອກໃນ %d ປ່ອງຢ້ຽມໃໝ່"
+
+#: thunar/thunar-action-manager.c:1721
+msgid "Create a symbolic link for the selected file"
+msgid_plural "Create a symbolic link for each selected file"
+msgstr[0] "ສ້າງລິງກ໌ສັນຍະລັກສຳລັບແຕ່ລະໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1747
+msgid "Rename the selected file"
+msgid_plural "Rename the selected files"
+msgstr[0] "ປ່ຽນຊື່ໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1752
+msgid "Bulk _Rename..."
+msgstr "ປ່ຽນຊື່ພ້ອມກັນຫຼາຍໄຟລ໌...(_R)"
+
+#: thunar/thunar-action-manager.c:1762
+msgid "Restore the selected file to its original location"
+msgid_plural "Restore the selected files to its original location"
+msgstr[0] "ກູ້ຄືນໄຟລ໌ທີ່ເລືອກໄປຍັງສະຖານທີ່ເດີມ"
+
+#: thunar/thunar-action-manager.c:1774
+msgid ""
+"Restore the selected file to its original location and open the location in "
+"a new window/tab"
+msgid_plural ""
+"Restore the selected files to their original locations and open the "
+"locations in a new window/tab"
+msgstr[0] ""
+"ກູ້ຄືນໄຟລ໌ທີ່ເລືອກໄປຍັງສະຖານທີ່ເດີມ ແລະ ເປີດສະຖານທີ່ນັ້ນໃນ ປ່ອງຢ້ຽມ/ແທັບ ໃໝ່"
+
+#: thunar/thunar-action-manager.c:1791
+msgid "Move the selected file to the Trash"
+msgid_plural "Move the selected files to the Trash"
+msgstr[0] "ຍ້າຍໄຟລ໌ທີ່ເລືອກໄປທີ່ຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-action-manager.c:1808
+msgid "Permanently delete the selected file"
+msgid_plural "Permanently delete the selected files"
+msgstr[0] "ລຶບໄຟລ໌ທີ່ເລືອກແບບຖາວອນ"
+
+#: thunar/thunar-action-manager.c:1867
+msgid "Cut the selection"
+msgstr "ຕັດລາຍການທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1877
+msgid "Prepare the selected file to be moved with a Paste command"
+msgid_plural "Prepare the selected files to be moved with a Paste command"
+msgstr[0] "ກຽມໄຟລ໌ທີ່ເລືອກເພື່ອຍ້າຍດ້ວຍຄຳສັ່ງວາງ"
+
+#: thunar/thunar-action-manager.c:1891
+msgid "Copy the selection"
+msgstr "ສຳເນົາລາຍການທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:1901
+msgid "Prepare the selected file to be copied with a Paste command"
+msgid_plural "Prepare the selected files to be copied with a Paste command"
+msgstr[0] "ກຽມໄຟລ໌ທີ່ເລືອກເພື່ອສຳເນົາດ້ວຍຄຳສັ່ງວາງ"
+
+#: thunar/thunar-action-manager.c:1924
+msgid "Paste the clipboard"
+msgstr "ວາງຈາກຄລິບສັງລວມ"
+
+#: thunar/thunar-action-manager.c:2168
+msgid "Side Pane (Add Bookmark)"
+msgid_plural "Side Pane (Add Bookmarks)"
+msgstr[0] "ແຖບຂ້າງ (ເພີ່ມບຸກມາກ)"
+
+#: thunar/thunar-action-manager.c:2169
+msgid "Add the selected folder to the shortcuts side pane"
+msgid_plural "Add the selected folders to the shortcuts side pane"
+msgstr[0] "ເພີ່ມໂຟນເດີທີ່ເລືອກເຂົ້າໃນແຖບທາງລັດດ້ານຂ້າງ"
+
+#: thunar/thunar-action-manager.c:2188
+msgid "Desktop (Create Link)"
+msgid_plural "Desktop (Create Links)"
+msgstr[0] "ເດັສທັອບ (ສ້າງລິງກ໌)"
+
+#: thunar/thunar-action-manager.c:2189
+msgid "Create a link to the selected file on the desktop"
+msgid_plural "Create links to the selected files on the desktop"
+msgstr[0] "ສ້າງລິງກ໌ຫາໄຟລ໌ທີ່ເລືອກໄວ້ເທິງເດັສທັອບ"
+
+#: thunar/thunar-action-manager.c:2210 thunar/thunar-action-manager.c:2249
+#, c-format
+msgid "Send the selected file to \"%s\""
+msgid_plural "Send the selected files to \"%s\""
+msgstr[0] "ສົ່ງໄຟລ໌ທີ່ເລືອກໄປທີ່ \"%s\""
+
+#. ask the user to enter a name for the new folder
+#: thunar/thunar-action-manager.c:2747 thunar/thunar-application.c:2058
+msgid "New Folder"
+msgstr "ໂຟນເດີໃໝ່"
+
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2059
+msgid "Create New Folder"
+msgstr "ສ້າງໂຟນເດີໃໝ່"
+
+#. generate a title for the create dialog
+#: thunar/thunar-action-manager.c:2803 thunar/thunar-application.c:2123
+#, c-format
+msgid "Create Document from template \"%s\""
+msgstr "ສ້າງເອກະສານຈາກແມ່ແບບ \"%s\""
+
+#. ask the user to enter a name for the new empty file
+#: thunar/thunar-action-manager.c:2819
+msgid "New Empty File"
+msgstr "ໄຟລ໌ເປົ່າໃໝ່"
+
+#: thunar/thunar-action-manager.c:2823
+msgid "New Empty File..."
+msgstr "ໄຟລ໌ເປົ່າໃໝ່..."
+
+#: thunar/thunar-action-manager.c:3044
+#, c-format
+msgid ""
+"No templates installed in\n"
+"\"%s\""
+msgstr ""
+"ບໍ່ມີແມ່ແບບຖືກຕິດຕັ້ງໄວ້ໃນ\n"
+"\"%s\""
+
+#: thunar/thunar-action-manager.c:3057
+msgid "_Empty File"
+msgstr "ໄຟລ໌ເປົ່າ(_E)"
+
+#: thunar/thunar-action-manager.c:3198
+#, c-format
+msgid "Failed to eject \"%s\""
+msgstr "ບໍ່ສາມາດດີດ \"%s\" ອອກໄດ້"
+
+#: thunar/thunar-action-manager.c:3260
+#, c-format
+msgid "Failed to unmount \"%s\""
+msgstr "ບໍ່ສາມາດຖອນການຕິດຕັ້ງ \"%s\" ໄດ້"
+
+#: thunar/thunar-action-manager.c:3323 thunar/thunar-action-manager.c:3405
+#, c-format
+msgid "Use \"%s\" to open the selected file"
+msgid_plural "Use \"%s\" to open the selected files"
+msgstr[0] "ໃຊ້ \"%s\" ເພື່ອເປີດໄຟລ໌ທີ່ເລືອກ"
+
+#: thunar/thunar-action-manager.c:3404
+#, c-format
+msgid "_Open With \"%s\""
+msgstr "ເປີດດ້ວຍ \"%s\"(_O)"
+
+#. we can only show a generic "Open" action
+#: thunar/thunar-action-manager.c:3425
+msgid "_Open With Default Applications"
+msgstr "ເປີດດ້ວຍແອັບພລິເຄຊັນເລີ່ມຕົ້ນ(_O)"
+
+#: thunar/thunar-action-manager.c:3426
+msgid "Open the selected files with the default applications"
+msgstr "ເປີດໄຟລ໌ທີ່ເລືອກດ້ວຍແອັບພລິເຄຊັນເລີ່ມຕົ້ນ"
+
+#: thunar/thunar-action-manager.c:3442
+msgid "Ope_n With"
+msgstr "ເປີດດ້ວຍ(_N)"
+
+#: thunar/thunar-application.c:84
+msgid "Open the bulk rename dialog"
+msgstr "ເປີດປ່ອງຢ້ຽມປ່ຽນຊື່ພ້ອມກັນຫຼາຍໄຟລ໌"
+
+#: thunar/thunar-application.c:85
+msgid "Force open in a new window"
+msgstr "ບັງຄັບໃຫ້ເປີດໃນປ່ອງຢ້ຽມໃໝ່"
+
+#: thunar/thunar-application.c:86
+msgid "Run in daemon mode"
+msgstr "ເຮັດວຽກໃນໂໝດເດມອນ (Daemon)"
+
+#: thunar/thunar-application.c:88
+msgid "Quit a running Thunar instance"
+msgstr "ອອກຈາກ Thunar ທີ່ກຳລັງເຮັດວຽກຢູ່"
+
+#: thunar/thunar-application.c:89
+msgid "Print version information and exit"
+msgstr "ສະແດງຂໍ້ມູນເວີຊັນແລ້ວອອກ"
+
+#: thunar/thunar-application.c:337
+#, c-format
+msgid "Acquired the session message bus '%s'\n"
+msgstr "ໄດ້ຮັບ session message bus '%s' ແລ້ວ\n"
+
+#: thunar/thunar-application.c:347
+#, c-format
+msgid "Acquired the name '%s' on the session message bus\n"
+msgstr "ໄດ້ຮັບຊື່ '%s' ໃນ session message bus ແລ້ວ\n"
+
+#: thunar/thunar-application.c:357
+#, c-format
+msgid "Name '%s' lost on the message dbus."
+msgstr "ຊື່ '%s' ຫາຍໄປໃນ message dbus."
+
+#: thunar/thunar-application.c:505
+msgid "The Thunar development team. All rights reserved."
+msgstr "ທີມພັດທະນາ Thunar. ສະຫງວນລິຂະສິດ."
+
+#: thunar/thunar-application.c:506
+msgid "Written by Benedikt Meurer <benny@xfce.org>."
+msgstr "ຂຽນໂດຍ Benedikt Meurer <benny@xfce.org>."
+
+#: thunar/thunar-application.c:507
+#, c-format
+msgid "Please report bugs to <%s>."
+msgstr "ກະລຸນາລາຍງານບັນຫາໄປທີ່ <%s>."
+
+#. display an error message to the user
+#: thunar/thunar-application.c:907
+msgid "Failed to launch operation"
+msgstr "ບໍ່ສາມາດເລີ່ມການປະຕິບັດການໄດ້"
+
+#: thunar/thunar-application.c:1700
+#, c-format
+msgid "Failed to open \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດເປີດ \"%s\" (%s)"
+
+#: thunar/thunar-application.c:1870
+#, c-format
+msgid "Failed to open \"%s\": %s"
+msgstr "ບໍ່ສາມາດເປີດ \"%s\": %s"
+
+#: thunar/thunar-application.c:1929 thunar/thunar-properties-dialog.c:1120
+#, c-format
+msgid "Failed to rename \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດປ່ຽນຊື່ \"%s\" (%s)"
+
+#: thunar/thunar-application.c:1933 thunar/thunar-properties-dialog.c:1124
+#, c-format
+msgid "Failed to rename \"%s\""
+msgstr "ບໍ່ສາມາດປ່ຽນຊື່ \"%s\""
+
+#: thunar/thunar-application.c:1982
+msgid "Rename Launcher Options"
+msgstr "ຕົວເລືອກການປ່ຽນຊື່ຕົວເປີດ"
+
+#: thunar/thunar-application.c:1985
+msgid "Do you want to rename the launcher, or the file itself?"
+msgstr "ທ່ານຕ້ອງການປ່ຽນຊື່ຕົວເປີດ, ຫຼື ປ່ຽນຊື່ໄຟລ໌ໂດຍກົງ?"
+
+#: thunar/thunar-application.c:1986
+msgid "Rename _Launcher"
+msgstr "ປ່ຽນຊື່ຕົວເປີດ(_L)"
+
+#: thunar/thunar-application.c:1987
+msgid "Rename _File"
+msgstr "ປ່ຽນຊື່ໄຟລ໌(_F)"
+
+#: thunar/thunar-application.c:2063
+msgid "New File"
+msgstr "ໄຟລ໌ໃໝ່"
+
+#: thunar/thunar-application.c:2064
+msgid "Create New File"
+msgstr "ສ້າງໄຟລ໌ໃໝ່"
+
+#: thunar/thunar-application.c:2189
+msgid "Copying files..."
+msgstr "ກຳລັງສຳເນົາໄຟລ໌..."
+
+#: thunar/thunar-application.c:2249
+#, c-format
+msgid "Copying files to \"%s\"..."
+msgstr "ກຳລັງສຳເນົາໄຟລ໌ໄປທີ່ \"%s\"..."
+
+#: thunar/thunar-application.c:2305
+#, c-format
+msgid "Creating symbolic links in \"%s\"..."
+msgstr "ກຳລັງສ້າງລິງກ໌ສັນຍະລັກໃນ \"%s\"..."
+
+#: thunar/thunar-application.c:2374
+#, c-format
+msgid "Moving files into \"%s\"..."
+msgstr "ກຳລັງຍ້າຍໄຟລ໌ເຂົ້າໃນ \"%s\"..."
+
+#: thunar/thunar-application.c:2419
+msgid "Moving files ..."
+msgstr "ກຳລັງຍ້າຍໄຟລ໌..."
+
+#: thunar/thunar-application.c:2504
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"permanently delete \"%s\" (%s)?"
+msgstr ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ\n"
+"ລຶບ \"%s\" (%s) ແບບຖາວອນ?"
+
+#: thunar/thunar-application.c:2508
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"permanently delete \"%s\"?"
+msgstr ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ\n"
+"ລຶບ \"%s\" ແບບຖາວອນ?"
+
+#: thunar/thunar-application.c:2513
+#, c-format
+msgid ""
+"Are you sure that you want to permanently\n"
+"delete the selected file?"
+msgid_plural ""
+"Are you sure that you want to permanently\n"
+"delete the %u selected files?"
+msgstr[0] ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ %u \n"
+"ໄຟລ໌ທີ່ເລືອກແບບຖາວອນ?"
+
+#: thunar/thunar-application.c:2527 thunar/thunar-application.c:2593
+#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1095
+msgid "Attention"
+msgstr "ຄຳເຕືອນ"
+
+#: thunar/thunar-application.c:2534
+msgid "If you delete a file, it is permanently lost."
+msgstr "ຖ້າທ່ານລຶບໄຟລ໌, ມັນຈະຫາຍໄປແບບຖາວອນ."
+
+#: thunar/thunar-application.c:2555
+msgid "Deleting files..."
+msgstr "ກຳລັງລຶບໄຟລ໌..."
+
+#: thunar/thunar-application.c:2570
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"move \"%s\" (%s) to trash ?"
+msgstr ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ\n"
+"ຍ້າຍ \"%s\" (%s) ໄປທີ່ຖັງຂີ້ເຫຍື້ອ?"
+
+#: thunar/thunar-application.c:2574
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"move \"%s\" to trash ?"
+msgstr ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ\n"
+"ຍ້າຍ \"%s\" ໄປທີ່ຖັງຂີ້ເຫຍື້ອ?"
+
+#: thunar/thunar-application.c:2579
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"move the selected file to trash?"
+msgid_plural ""
+"Are you sure that you want to\n"
+"move the %u selected files to trash?"
+msgstr[0] ""
+"ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ\n"
+"ຍ້າຍ %u ໄຟລ໌ທີ່ເລືອກໄປທີ່ຖັງຂີ້ເຫຍື້ອ?"
+
+#: thunar/thunar-application.c:2596
+msgid "Move to Trash"
+msgstr "ຍ້າຍໄປທີ່ຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-application.c:2649
+msgid "Moving files into the trash..."
+msgstr "ກຳລັງຍ້າຍໄຟລ໌ລົງຖັງຂີ້ເຫຍື້ອ..."
+
+#: thunar/thunar-application.c:2697
+msgid "Creating files..."
+msgstr "ກຳລັງສ້າງໄຟລ໌..."
+
+#: thunar/thunar-application.c:2738
+msgid "Creating directories..."
+msgstr "ກຳລັງສ້າງໄດເຣັກທໍຣີ..."
+
+#: thunar/thunar-application.c:2777
+msgid "Remove all files and folders from the Trash?"
+msgstr "ລຶບໄຟລ໌ ແລະ ໂຟນເດີທັງໝົດອອກຈາກຖັງຂີ້ເຫຍື້ອ?"
+
+#: thunar/thunar-application.c:2781 thunar/thunar-window.c:1260
+msgid "Empty Trash"
+msgstr "ເທຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-application.c:2788
+msgid ""
+"If you choose to empty the Trash, all items in it will be permanently lost. "
+"Please note that you can also delete them separately."
+msgstr ""
+"ຖ້າທ່ານເລືອກເທຖັງຂີ້ເຫຍື້ອ, ລາຍການທັງໝົດໃນນັ້ນຈະຫາຍໄປແບບຖາວອນ. "
+"ກະລຸນາຮັບຊາບວ່າທ່ານຍັງສາມາດລຶບພວກມັນເທື່ອລະອັນໄດ້."
+
+#: thunar/thunar-application.c:2805
+msgid "Emptying the Trash..."
+msgstr "ກຳລັງເທຖັງຂີ້ເຫຍື້ອ..."
+
+#: thunar/thunar-application.c:2852
+#, c-format
+msgid "Failed to determine the original path for \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດກຳນົດເສັ້ນທາງເດີມສຳລັບ \"%s\" (%s)"
+
+#: thunar/thunar-application.c:2857
+#, c-format
+msgid "Failed to determine the original path for \"%s\""
+msgstr "ບໍ່ສາມາດກຳນົດເສັ້ນທາງເດີມສຳລັບ \"%s\""
+
+#: thunar/thunar-application.c:2875
+#, c-format
+msgid "Could not restore \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດກູ້ຄືນ \"%s\" (%s)"
+
+#: thunar/thunar-application.c:2879
+#, c-format
+msgid "Could not restore \"%s\""
+msgstr "ບໍ່ສາມາດກູ້ຄືນ \"%s\""
+
+#: thunar/thunar-application.c:2887
+msgid "Restoring files..."
+msgstr "ກຳລັງກູ້ຄືນໄຟລ໌..."
+
+#: thunar/thunar-chooser-button.c:320 thunar/thunar-chooser-dialog.c:503
+#, c-format
+msgid "Failed to set default application for \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດຕັ້ງແອັບພລິເຄຊັນເລີ່ມຕົ້ນສຳລັບ \"%s\" (%s)"
+
+#: thunar/thunar-chooser-button.c:325 thunar/thunar-chooser-dialog.c:509
+#, c-format
+msgid "Failed to set default application for \"%s\""
+msgstr "ບໍ່ສາມາດຕັ້ງແອັບພລິເຄຊັນເລີ່ມຕົ້ນສຳລັບ \"%s\""
+
+#: thunar/thunar-chooser-button.c:458
+#, c-format
+msgid ""
+"The selected application is used to open this and other files of type "
+"\"%s\"."
+msgstr ""
+"ແອັບພລິເຄຊັນທີ່ເລືອກຈະຖືກໃຊ້ເພື່ອເປີດໄຟລ໌ນີ້ ແລະ ໄຟລ໌ອື່ນໆ ທີ່ມີປະເພດ "
+"\"%s\"."
+
+#: thunar/thunar-chooser-button.c:513
+msgid "No application selected"
+msgstr "ບໍ່ມີແອັບພລິເຄຊັນທີ່ເລືອກ"
+
+#: thunar/thunar-chooser-button.c:526
+msgid "Other Application..."
+msgstr "ແອັບພລິເຄຊັນອື່ນ..."
+
+#: thunar/thunar-chooser-dialog.c:209
+msgid "Open With"
+msgstr "ເປີດດ້ວຍ"
+
+#. create the "Custom command" expand
+#: thunar/thunar-chooser-dialog.c:278
+msgid "Use a _custom command:"
+msgstr "ໃຊ້ຄຳສັ່ງກຳນົດເອງ:(_C)"
+
+#: thunar/thunar-chooser-dialog.c:279
+msgid ""
+"Use a custom command for an application that is not available from the above"
+" application list."
+msgstr "ໃຊ້ຄຳສັ່ງກຳນົດເອງສຳລັບແອັບພລິເຄຊັນທີ່ບໍ່ມີຢູ່ໃນລາຍການຂ້າງເທິງ."
+
+#. create the "Custom command" button
+#: thunar/thunar-chooser-dialog.c:300
+msgid "_Browse..."
+msgstr "ເລືອກເບິ່ງ...(_B)"
+
+#. create the "Use as default for this kind of file" button
+#: thunar/thunar-chooser-dialog.c:306
+msgid "Use as _default for this kind of file"
+msgstr "ໃຊ້ເປັນຄ່າເລີ່ມຕົ້ນສຳລັບໄຟລ໌ປະເພດນີ້(_D)"
+
+#. add the "Ok"/"Open" button
+#: thunar/thunar-chooser-dialog.c:318 thunar/thunar-chooser-dialog.c:1318
+#: thunar/thunar-properties-dialog.c:1221 thunar/thunar-window.c:4701
+#: plugins/thunar-uca/thunar-uca-editor.c:158
+#: plugins/thunar-uca/thunar-uca-editor.c:456
+msgid "_OK"
+msgstr "ຕົກລົງ(_O)"
+
+#. display an error to the user
+#: thunar/thunar-chooser-dialog.c:460
+#, c-format
+msgid "Failed to add new application \"%s\""
+msgstr "ບໍ່ສາມາດເພີ່ມແອັບພລິເຄຊັນໃໝ່ \"%s\""
+
+#: thunar/thunar-chooser-dialog.c:551
+#, c-format
+msgid "Failed to execute application \"%s\""
+msgstr "ບໍ່ສາມາດປະຕິບັດການແອັບພລິເຄຊັນ \"%s\""
+
+#. append the "Remove Launcher" item
+#: thunar/thunar-chooser-dialog.c:625
+msgid "_Remove Launcher"
+msgstr "ລຶບຕົວເປີດອອກ(_R)"
+
+#. append the "Forget Association" item
+#: thunar/thunar-chooser-dialog.c:632
+msgid "_Forget Association"
+msgstr "ຍົກເລີກການເຊື່ອມໂຍງ(_F)"
+
+#: thunar/thunar-chooser-dialog.c:713
+#, c-format
+msgid "Open <i>%s (%s)</i> and other files of type \"%s\" with:"
+msgstr "ເປີດ <i>%s (%s)</i> ແລະ ໄຟລ໌ອື່ນໆ ທີ່ມີປະເພດ \"%s\" ດ້ວຍ:"
+
+#: thunar/thunar-chooser-dialog.c:718
+#, c-format
+msgid "Open <i>%s</i> and other files of type \"%s\" with:"
+msgstr "ເປີດ <i>%s</i> ແລະ ໄຟລ໌ອື່ນໆ ທີ່ມີປະເພດ \"%s\" ດ້ວຍ:"
+
+#: thunar/thunar-chooser-dialog.c:726
+#, c-format
+msgid ""
+"Browse the file system to select an application to open files of type "
+"\"%s\"."
+msgstr "ເລືອກເບິ່ງໃນລະບົບໄຟລ໌ເພື່ອເລືອກແອັບພລິເຄຊັນສຳລັບເປີດໄຟລ໌ປະເພດ \"%s\"."
+
+#: thunar/thunar-chooser-dialog.c:732
+#, c-format
+msgid ""
+"Change the default application for files of type \"%s\" to the selected "
+"application."
+msgstr ""
+"ປ່ຽນແອັບພລິເຄຊັນເລີ່ມຕົ້ນສຳລັບໄຟລ໌ປະເພດ \"%s\" ໃຫ້ເປັນແອັບພລິເຄຊັນທີ່ເລືອກ."
+
+#: thunar/thunar-chooser-dialog.c:778
+#, c-format
+msgid "Are you sure that you want to remove \"%s\"?"
+msgstr "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ \"%s\" ອອກ?"
+
+#: thunar/thunar-chooser-dialog.c:779
+msgid "Remove application launcher"
+msgstr "ລຶບຕົວເປີດແອັບພລິເຄຊັນ"
+
+#: thunar/thunar-chooser-dialog.c:782
+msgid "_Remove"
+msgstr "ລຶບອອກ(_R)"
+
+#: thunar/thunar-chooser-dialog.c:785
+msgid ""
+"This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
+"\n"
+"You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
+msgstr ""
+"ນີ້ຈະເອົາຕົວເປີດໂປຣແກຣມທີ່ປາກົດໃນເມນູຄລິກຂວາອອກ, ແຕ່ຈະບໍ່ໄດ້ຖອນການຕິດຕັ້ງແອັບພລິເຄຊັນນັ້ນ.\n"
+"\n"
+"ທ່ານສາມາດເອົາອອກໄດ້ສະເພາະຕົວເປີດໂປຣແກຣມທີ່ສ້າງຂຶ້ນໂດຍໃຊ້ຄຳສັ່ງກຳນົດເອງໃນໜ້າຕ່າງ \"ເປີດດ້ວຍ\" ຂອງຕົວຈັດການໄຟລ໌ເທົ່ານັ້ນ."
+
+#. display an error to the user
+#: thunar/thunar-chooser-dialog.c:800
+#, c-format
+msgid "Failed to remove \"%s\""
+msgstr "ບໍ່ສາມາດລຶບ \"%s\" ອອກໄດ້"
+
+#: thunar/thunar-chooser-dialog.c:853
+#, c-format
+msgid "Are you sure that you want to forget \"%s\"?"
+msgstr "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍົກເລີກການຈົດຈຳ \"%s\"?"
+
+#: thunar/thunar-chooser-dialog.c:854
+msgid "Forget application launcher"
+msgstr "ຍົກເລີກການຈົດຈຳຕົວເປີດແອັບພລິເຄຊັນ"
+
+#: thunar/thunar-chooser-dialog.c:857
+msgid "_Forget"
+msgstr "ຍົກເລີກການຈົດຈຳ(_F)"
+
+#: thunar/thunar-chooser-dialog.c:860
+msgid ""
+"This will dissociate the application launcher for this file type, but will "
+"not uninstall or remove the application launcher itself."
+msgstr ""
+"ນີ້ຈະຍົກເລີກການເຊື່ອມໂຍງແອັບພລິເຄຊັນສຳລັບໄຟລ໌ປະເພດນີ້, ແຕ່ຈະບໍ່ຖອນການຕິດຕັ້ງ"
+" ຫຼື ລຶບຕົວເປີດໂປຣແກຣມນັ້ນອອກ."
+
+#. display an error to the user
+#: thunar/thunar-chooser-dialog.c:876
+#, c-format
+msgid "Failed to forget \"%s\""
+msgstr "ບໍ່ສາມາດຍົກເລີກການຈົດຈຳ \"%s\""
+
+#: thunar/thunar-chooser-dialog.c:903
+#: plugins/thunar-uca/thunar-uca-editor.c:199
+msgid "Select an Application"
+msgstr "ເລືອກແອັບພລິເຄຊັນ"
+
+#: thunar/thunar-chooser-dialog.c:913 thunar/thunar-renamer-dialog.c:1116
+#: plugins/thunar-uca/thunar-uca-editor.c:210
+msgid "All Files"
+msgstr "ໄຟລ໌ທັງໝົດ"
+
+#: thunar/thunar-chooser-dialog.c:918
+#: plugins/thunar-uca/thunar-uca-editor.c:215
+msgid "Executable Files"
+msgstr "ໄຟລ໌ທີ່ສັ່ງລັນໄດ້"
+
+#: thunar/thunar-chooser-dialog.c:933
+#: plugins/thunar-uca/thunar-uca-editor.c:230
+msgid "Perl Scripts"
+msgstr "ສະຄຣິບ Perl"
+
+#: thunar/thunar-chooser-dialog.c:939
+#: plugins/thunar-uca/thunar-uca-editor.c:236
+msgid "Python Scripts"
+msgstr "ສະຄຣິບ Python"
+
+#: thunar/thunar-chooser-dialog.c:945
+#: plugins/thunar-uca/thunar-uca-editor.c:242
+msgid "Ruby Scripts"
+msgstr "ສະຄຣິບ Ruby"
+
+#: thunar/thunar-chooser-dialog.c:951
+#: plugins/thunar-uca/thunar-uca-editor.c:248
+msgid "Shell Scripts"
+msgstr "ສະຄຣິບ Shell"
+
+#: thunar/thunar-chooser-dialog.c:1386
+msgid "Set Default Application"
+msgstr "ຕັ້ງເປັນແອັບພລິເຄຊັນເລີ່ມຕົ້ນ"
+
+#: thunar/thunar-chooser-model.c:253
+msgid "None available"
+msgstr "ບໍ່ມີ"
+
+#: thunar/thunar-chooser-model.c:302
+msgid "Default Application"
+msgstr "ແອັບພລິເຄຊັນເລີ່ມຕົ້ນ"
+
+#: thunar/thunar-chooser-model.c:313
+msgid "Recommended Applications"
+msgstr "ແອັບພລິເຄຊັນທີ່ແນະນຳ"
+
+#: thunar/thunar-chooser-model.c:332
+msgid "Other Applications"
+msgstr "ແອັບພລິເຄຊັນອື່ນໆ"
+
+#: thunar/thunar-chooser-model.c:427
+#, c-format
+msgid "Failed to remove \"%s\"."
+msgstr "ບໍ່ສາມາດລຶບ \"%s\"."
+
+#. tell the user that we cannot paste
+#: thunar/thunar-clipboard-manager.c:365
+msgid "There is nothing on the clipboard to paste"
+msgstr "ບໍ່ມີຫຍັງໃນຄລິບສັງລວມທີ່ຈະວາງໄດ້"
+
+#. setup the dialog
+#. add the "Close" button
+#. action id
+#. visibility
+#. checkbox visible
+#. icon
+#. label
+#. tooltip
+#. setup the dialog
+#. add a regular close button, the header bar already provides one
+#: thunar/thunar-column-editor.c:130 thunar/thunar-preferences-dialog.c:279
+#: thunar/thunar-properties-dialog.c:348 thunar/thunar-renamer-dialog.c:415
+#: thunar/thunar-renamer-progress.c:205 thunar/thunar-toolbar-editor.c:148
+#: plugins/thunar-uca/thunar-uca-chooser.c:141
+msgid "_Close"
+msgstr "ປິດ(_C)"
+
+#: thunar/thunar-column-editor.c:133
+msgid "Configure Columns in the Detailed List View"
+msgstr "ກຳນົດຄ່າຖັນໃນການສະແດງລາຍການແບບລະອຽດ"
+
+#. add the "Help" button
+#: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:287
+#: thunar/thunar-properties-dialog.c:347 thunar/thunar-toolbar-editor.c:155
+#: thunar/thunar-window.c:707
+msgid "_Help"
+msgstr "ຊ່ວຍເຫຼືອ(_H)"
+
+#: thunar/thunar-column-editor.c:151
+msgid "Visible Columns"
+msgstr "ຖັນທີ່ສະແດງ"
+
+#. create the top label for the column editor dialog
+#: thunar/thunar-column-editor.c:164
+msgid ""
+"Choose the order of information to appear in the\n"
+"detailed list view."
+msgstr ""
+"ເລືອກລຳດັບຂອງຂໍ້ມູນທີ່ຈະສະແດງໃນ\n"
+"ການເບິ່ງລາຍການແບບລະອຽດ."
+
+#. create the "Move Up" button
+#: thunar/thunar-column-editor.c:211 thunar/thunar-toolbar-editor.c:233
+msgid "Move _Up"
+msgstr "ຍ້າຍຂຶ້ນ(_U)"
+
+#. create the "Move Down" button
+#: thunar/thunar-column-editor.c:225 thunar/thunar-toolbar-editor.c:244
+msgid "Move Dow_n"
+msgstr "ຍ້າຍລົງ(_N)"
+
+#. create the "Show" button
+#: thunar/thunar-column-editor.c:239
+msgid "_Show"
+msgstr "ສະແດງ(_S)"
+
+#. create the "Hide" button
+#: thunar/thunar-column-editor.c:248
+msgid "Hi_de"
+msgstr "ເຊື່ອງ(_D)"
+
+#. create the "Use Default" button
+#: thunar/thunar-column-editor.c:265
+msgid "Use De_fault"
+msgstr "ໃຊ້ຄ່າເລີ່ມຕົ້ນ(_F)"
+
+#: thunar/thunar-column-editor.c:274
+msgid "Column Sizing"
+msgstr "ການກຳນົດຂະໜາດຖັນ"
+
+#. create the label that explains the column sizing option
+#: thunar/thunar-column-editor.c:290
+msgid ""
+"By default columns will be automatically expanded if\n"
+"needed to ensure the text is fully visible. If you dis-\n"
+"able this behavior below the file manager will always\n"
+"use the user defined column widths."
+msgstr ""
+"ໂດຍປົກກະຕິ ຖັນຈະຂະຫຍາຍອອກໂດຍອັດຕະໂນມັດ\n"
+"ເພື່ອໃຫ້ເຫັນຂໍ້ຄວາມທັງໝົດ. ຖ້າທ່ານປິດການໃຊ້ງານນີ້\n"
+"ຕົວຈັດການໄຟລ໌ຈະໃຊ້ຄວາມກວ້າງຂອງຖັນຕາມທີ່\n"
+"ຜູ້ໃຊ້ກຳນົດໄວ້ສະເໝີ."
+
+#. create the "Automatically expand columns as needed" button
+#: thunar/thunar-column-editor.c:302
+msgid "Automatically _expand columns as needed"
+msgstr "ຂະຫຍາຍຖັນໂດຍອັດຕະໂນມັດຕາມຄວາມຈຳເປັນ(_E)"
+
+#: thunar/thunar-column-editor.c:316
+msgid "Size Column of Folders"
+msgstr "ຂະໜາດຖັນຂອງໂຟນເດີ"
+
+#. explain what it does
+#: thunar/thunar-column-editor.c:329
+msgid "Show number of containing items"
+msgstr "ສະແດງຈຳນວນຂອງລາຍການທີ່ມີຢູ່"
+
+#: thunar/thunar-column-model.c:368
+msgid "This column is reserved for special locations"
+msgstr "ຖັນນີ້ຖືກສະຫງວນໄວ້ສຳລັບສະຖານທີ່ພິເສດ"
+
+#. reset page title
+#. tell the user that we're unable to determine the file info
+#: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:963
+#: thunar/thunar-list-model.c:999 thunar/thunar-permissions-chooser.c:253
+#: thunar/thunar-size-label.c:392 thunar/thunar-size-label.c:473
+#: thunar/thunar-util.c:431 thunar/thunar-util.c:434
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:729
+#: plugins/thunar-apr/thunar-apr-image-page.c:305
+#: plugins/thunar-apr/thunar-apr-image-page.c:306
+#: plugins/thunar-uca/thunar-uca-editor.c:450
+msgid "Unknown"
+msgstr "ບໍ່ຮູ້ຈັກ"
+
+#: thunar/thunar-compact-view.c:118
+msgid "Compact directory listing"
+msgstr "ການສະແດງລາຍຊື່ໄດເຣັກທໍຣີແບບກະທັດຮັດ"
+
+#: thunar/thunar-compact-view.c:119
+msgid "Compact view"
+msgstr "ມຸມມອງແບບກະທັດຮັດ"
+
+#: thunar/thunar-dbus-service.c:560
+#, c-format
+msgid "Invalid filename \"%s\""
+msgstr "ຊື່ໄຟລ໌ \"%s\" ບໍ່ຖືກຕ້ອງ"
+
+#. LaunchFiles() invoked without a valid working directory
+#: thunar/thunar-dbus-service.c:1011
+msgid "The working directory must be an absolute path"
+msgstr "ໄດເຣັກທໍຣີທີ່ເຮັດວຽກຕ້ອງເປັນເສັ້ນທາງເຕັມ (absolute path)"
+
+#. LaunchFiles() invoked with an empty filename list
+#: thunar/thunar-dbus-service.c:1019 thunar/thunar-dbus-service.c:1459
+msgid "At least one filename must be specified"
+msgstr "ຕ້ອງລະບຸຊື່ໄຟລ໌ຢ່າງໜ້ອຍໜຶ່ງຊື່"
+
+#: thunar/thunar-dbus-service.c:1195
+msgid "At least one source filename must be specified"
+msgstr "ຕ້ອງລະບຸຊື່ໄຟລ໌ຕົ້ນທາງຢ່າງໜ້ອຍໜຶ່ງຊື່"
+
+#: thunar/thunar-dbus-service.c:1205
+msgid "The number of source and target filenames must be the same"
+msgstr "ຈຳນວນຊື່ໄຟລ໌ຕົ້ນທາງ ແລະ ປາຍທາງຕ້ອງເທົ່າກັນ"
+
+#: thunar/thunar-dbus-service.c:1214
+msgid "A destination directory must be specified"
+msgstr "ຕ້ອງລະບຸໄດເຣັກທໍຣີປາຍທາງ"
+
+#: thunar/thunar-details-view.c:207
+msgid "Configure _Columns..."
+msgstr "ກຳນົດຄ່າຖັນ...(_C)"
+
+#: thunar/thunar-details-view.c:207
+msgid "Configure the columns in the detailed list view"
+msgstr "ກຳນົດຄ່າຖັນໃນການສະແດງລາຍການແບບລະອຽດ"
+
+#: thunar/thunar-details-view.c:208
+msgid "E_xpandable Folders"
+msgstr "ໂຟນເດີທີ່ຂະຫຍາຍໄດ້(_X)"
+
+#: thunar/thunar-details-view.c:208
+msgid "Allow tree like expansion of folders"
+msgstr "ອະນຸຍາດໃຫ້ຂະຫຍາຍໂຟນເດີແບບໂຄງສ້າງຕົ້ນໄມ້"
+
+#: thunar/thunar-details-view.c:539
+msgid "Detailed directory listing"
+msgstr "ການສະແດງລາຍຊື່ໄດເຣັກທໍຣີແບບລະອຽດ"
+
+#: thunar/thunar-details-view.c:540
+msgid "Details view"
+msgstr "ມຸມມອງແບບລະອຽດ"
+
+#: thunar/thunar-device.c:542
+msgid "Safely _Remove"
+msgstr "ຖອດອອກຢ່າງປອດໄພ(_R)"
+
+#: thunar/thunar-device.c:544
+msgid "_Disconnect"
+msgstr "ຕັດການເຊື່ອມຕໍ່(_D)"
+
+#: thunar/thunar-device.c:546
+msgid "Stop the _Multi-Disk Drive"
+msgstr "ຢຸດໄດຣຟ໌ມັລຕິດິສກ໌(_M)"
+
+#: thunar/thunar-device.c:548
+msgid "_Lock"
+msgstr "ລັອກ(_L)"
+
+#: thunar/thunar-dialogs.c:115
+msgid "C_reate"
+msgstr "ສ້າງ(_R)"
+
+#: thunar/thunar-dialogs.c:144
+msgid "Enter the name:"
+msgstr "ປ້ອນຊື່:"
+
+#. display an error message
+#: thunar/thunar-dialogs.c:193
+#, c-format
+msgid "Cannot convert filename \"%s\" to the local encoding"
+msgstr "ບໍ່ສາມາດແປງຊື່ໄຟລ໌ \"%s\" ໃຫ້ເປັນລະຫັດທ້ອງຖິ່ນໄດ້"
+
+#. create a new dialog window
+#: thunar/thunar-dialogs.c:258
+#, c-format
+msgid "Rename \"%s\""
+msgstr "ປ່ຽນຊື່ \"%s\""
+
+#. add the "Rename" button
+#: thunar/thunar-dialogs.c:264 thunar/thunar-renamer-dialog.c:419
+msgid "_Rename"
+msgstr "ປ່ຽນຊື່(_R)"
+
+#: thunar/thunar-dialogs.c:302
+msgid "Enter the new name:"
+msgstr "ໃສ່ຊື່ໃໝ່:"
+
+#: thunar/thunar-dialogs.c:455
+msgid "translator-credits"
+msgstr "ລາຍຊື່ຜູ້ແປ"
+
+#: thunar/thunar-dialogs.c:517 thunar/thunar-renamer-progress.c:175
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:844
+#: plugins/thunar-sendto-email/main.c:141
+#: plugins/thunar-uca/thunar-uca-chooser.c:329
+#: plugins/thunar-uca/thunar-uca-provider.c:568
+msgid "Error"
+msgstr "ຂໍ້ຜິດພາດ"
+
+#: thunar/thunar-dialogs.c:631 thunar/thunar-permissions-chooser.c:582
+msgid "_Yes"
+msgstr "ແມ່ນ(_Y)"
+
+#: thunar/thunar-dialogs.c:635
+msgid "Yes to _all"
+msgstr "ແມ່ນທັງໝົດ(_A)"
+
+#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:811
+msgid "_Replace"
+msgstr "ແທນທີ່(_R)"
+
+#: thunar/thunar-dialogs.c:643
+msgid "Replace _All"
+msgstr "ແທນທີ່ທັງໝົດ(_A)"
+
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:809
+msgid "_Skip"
+msgstr "ຂ້າມ(_S)"
+
+#: thunar/thunar-dialogs.c:651
+msgid "S_kip All"
+msgstr "ຂ້າມທັງໝົດ(_K)"
+
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:810
+msgid "Re_name"
+msgstr "ປ່ຽນຊື່(_N)"
+
+#: thunar/thunar-dialogs.c:659
+msgid "Rena_me All"
+msgstr "ປ່ຽນຊື່ທັງໝົດ(_M)"
+
+#: thunar/thunar-dialogs.c:663 thunar/thunar-permissions-chooser.c:581
+msgid "_No"
+msgstr "ບໍ່(_N)"
+
+#: thunar/thunar-dialogs.c:667
+msgid "N_o to all"
+msgstr "ບໍ່ທັງໝົດ(_O)"
+
+#: thunar/thunar-dialogs.c:671
+msgid "_Retry"
+msgstr "ລອງໃໝ່(_R)"
+
+#: thunar/thunar-dialogs.c:675
+msgid "Copy _Anyway"
+msgstr "ສຳເນົາຕໍ່ໄປ(_A)"
+
+#. setup the confirmation dialog
+#: thunar/thunar-dialogs.c:805
+msgid "Confirm to replace files"
+msgstr "ຢືນຢັນການແທນທີ່ໄຟລ໌"
+
+#: thunar/thunar-dialogs.c:852
+#, c-format
+msgid "This folder already contains a symbolic link \"%s\"."
+msgstr "ໂຟນເດີນີ້ມີລິງກ໌ສັນຍະລັກ \"%s\" ຢູ່ແລ້ວ."
+
+#: thunar/thunar-dialogs.c:857
+#, c-format
+msgid "This folder already contains a folder \"%s\"."
+msgstr "ໂຟນເດີນີ້ມີໂຟນເດີ \"%s\" ຢູ່ແລ້ວ."
+
+#: thunar/thunar-dialogs.c:863
+#, c-format
+msgid "This folder already contains a file \"%s\" (%s)."
+msgstr "ໂຟນເດີນີ້ມີໄຟລ໌ \"%s\" (%s) ຢູ່ແລ້ວ."
+
+#: thunar/thunar-dialogs.c:867
+#, c-format
+msgid "This folder already contains a file \"%s\"."
+msgstr "ໂຟນເດີນີ້ມີໄຟລ໌ \"%s\" ຢູ່ແລ້ວ."
+
+#. TRANSLATORS: First part of replace dialog sentence
+#: thunar/thunar-dialogs.c:889
+#, c-format
+msgid "Replace the link in \"%s\""
+msgstr "ແທນທີ່ລິງກ໌ໃນ \"%s\""
+
+#. TRANSLATORS: First part of replace dialog sentence
+#: thunar/thunar-dialogs.c:892
+#, c-format
+msgid "Replace the existing folder in \"%s\""
+msgstr "ແທນທີ່ໂຟນເດີທີ່ມີຢູ່ແລ້ວໃນ \"%s\""
+
+#. TRANSLATORS: First part of replace dialog sentence
+#: thunar/thunar-dialogs.c:895
+#, c-format
+msgid "Replace the existing file in \"%s\""
+msgstr "ແທນທີ່ໄຟລ໌ທີ່ມີຢູ່ແລ້ວໃນ \"%s\""
+
+#. Fourth box (size)
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
+#: thunar/thunar-properties-dialog.c:665
+msgid "Size:"
+msgstr "ຂະໜາດ:"
+
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
+#: thunar/thunar-properties-dialog.c:618
+msgid "Modified:"
+msgstr "ແກ້ໄຂເມື່ອ:"
+
+#. TRANSLATORS: Second part of replace dialog sentence
+#: thunar/thunar-dialogs.c:943
+msgid "with the following link?"
+msgstr "ດ້ວຍລິງກ໌ຕໍ່ໄປນີ້?"
+
+#. TRANSLATORS: Second part of replace dialog sentence
+#: thunar/thunar-dialogs.c:946
+msgid "with the following folder?"
+msgstr "ດ້ວຍໂຟນເດີຕໍ່ໄປນີ້?"
+
+#. TRANSLATORS: Second part of replace dialog sentence
+#: thunar/thunar-dialogs.c:949
+msgid "with the following file?"
+msgstr "ດ້ວຍໄຟລ໌ຕໍ່ໄປນີ້?"
+
+#: thunar/thunar-dialogs.c:997
+msgid "_Apply the action to all files and folders"
+msgstr "ນຳໃຊ້ການກະທຳນີ້ກັບທຸກໄຟລ໌ ແລະ ໂຟນເດີ(_A)"
+
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: thunar/thunar-dialogs.c:1070
+msgid "/executable"
+msgstr "/ທີ່ສັ່ງລັນໄດ້"
+
+#: thunar/thunar-dialogs.c:1076
+#, c-format
+msgid ""
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr ""
+"ໄຟລ໌ເດັສທັອບ %s ຢູ່ໃນບ່ອນທີ່ບໍ່ປອດໄພ ແລະ ບໍ່ໄດ້ຖືກໝາຍວ່າປອດໄພ%s. ຖ້າທ່ານບໍ່ເຊື່ອຖືໂປຣແກຣມນີ້, ໃຫ້ຄລິກຍົກເລີກ.\n"
+"\n"
+
+#: thunar/thunar-dialogs.c:1096
+msgid "_Launch Anyway"
+msgstr "ເລີ່ມເຮັດວຽກຕໍ່ໄປ(_L)"
+
+#: thunar/thunar-dialogs.c:1098
+msgid "Mark As _Secure And Launch"
+msgstr "ໝາຍວ່າປອດໄພແລ້ວເລີ່ມເຮັດວຽກ(_S)"
+
+#: thunar/thunar-dialogs.c:1182
+msgid "Close split pane with multiple tabs?"
+msgstr "ປິດແຖບແບ່ງທີ່ມີຫຼາຍແທັບບໍ່?"
+
+#: thunar/thunar-dialogs.c:1183
+msgid ""
+"The other split pane has multiple open tabs. Closing it will close all these"
+" tabs."
+msgstr ""
+"ແຖບແບ່ງອີກອັນໜຶ່ງມີຫຼາຍແທັບທີ່ເປີດຢູ່. "
+"ການປິດມັນຈະເຮັດໃຫ້ແທັບເຫຼົ່ານີ້ຖືກປິດທັງໝົດ."
+
+#: thunar/thunar-dialogs.c:1189
+msgid "Warning"
+msgstr "ຄຳເຕືອນ"
+
+#: thunar/thunar-dialogs.c:1194
+msgid "Close Pane"
+msgstr "ປິດແຖບ"
+
+#: thunar/thunar-dialogs.c:1197 thunar/thunar-permissions-chooser.c:612
+msgid "Do _not ask me again"
+msgstr "ບໍ່ຕ້ອງຖາມຂ້ອຍອີກ(_N)"
+
+#: thunar/thunar-dialogs.c:1257
+#, c-format
+msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
+msgstr "ໄຟລ໌ \"%s\" ເບິ່ງຄືວ່າຈະສັ່ງລັນໄດ້. ທ່ານຕ້ອງການເຮັດຫຍັງກັບມັນ?"
+
+#: thunar/thunar-dialogs.c:1262
+msgid ""
+"The selected files seem to be executable. What do you want to do with them?"
+msgstr "ໄຟລ໌ທີ່ເລືອກເບິ່ງຄືວ່າຈະສັ່ງລັນໄດ້. ທ່ານຕ້ອງການເຮັດຫຍັງກັບພວກມັນ?"
+
+#: thunar/thunar-dialogs.c:1271
+msgid "Open Shell Script"
+msgstr "ເປີດສະຄຣິບ Shell"
+
+#: thunar/thunar-dialogs.c:1275
+msgid "Run In _Terminal"
+msgstr "ລັນໃນເທີມິນໍ(_T)"
+
+#: thunar/thunar-dialogs.c:1336
+#, c-format
+msgid "Failed to edit launcher via command \"%s\""
+msgstr "ບໍ່ສາມາດແກ້ໄຂຕົວເປີດຜ່ານຄຳສັ່ງ \"%s\""
+
+#: thunar/thunar-dnd.c:71
+msgid "Copy _Here"
+msgstr "ສຳເນົາໄວ້ນີ້(_H)"
+
+#: thunar/thunar-dnd.c:71
+msgid "_Move Here"
+msgstr "ຍ້າຍມານີ້(_M)"
+
+#: thunar/thunar-dnd.c:71
+msgid "_Link Here"
+msgstr "ສ້າງລິງກ໌ໄວ້ນີ້(_L)"
+
+#: thunar/thunar-emblem-chooser.c:367
+#, c-format
+msgid "A maximum of %u emblems is supported per file."
+msgstr "ຮອງຮັບກາສັນຍະລັກສູງສຸດ %u ອັນຕໍ່ໄຟລ໌."
+
+#: thunar/thunar-emblem-chooser.c:368
+msgid "Too many emblems selected"
+msgstr "ເລືອກກາສັນຍະລັກຫຼາຍເກີນໄປ"
+
+#: thunar/thunar-enum-types.c:91
+msgid "Name only"
+msgstr "ຊື່ເທົ່ານັ້ນ"
+
+#: thunar/thunar-enum-types.c:92
+msgid "Extension only"
+msgstr "ນາມສະກຸນເທົ່ານັ້ນ"
+
+#: thunar/thunar-enum-types.c:93
+msgid "Name and Extension"
+msgstr "ຊື່ ແລະ ນາມສະກຸນ"
+
+#: thunar/thunar-enum-types.c:148
+msgid "Date Created"
+msgstr "ວັນທີສ້າງ"
+
+#: thunar/thunar-enum-types.c:149
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:138
+msgid "Date Accessed"
+msgstr "ວັນທີເຂົ້າເຖິງ"
+
+#: thunar/thunar-enum-types.c:150
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:139
+msgid "Date Modified"
+msgstr "ວັນທີແກ້ໄຂ"
+
+#: thunar/thunar-enum-types.c:151
+msgid "Date Deleted"
+msgstr "ວັນທີລຶບ"
+
+#: thunar/thunar-enum-types.c:152
+msgid "Recency"
+msgstr "ຄວາມໃໝ່"
+
+#: thunar/thunar-enum-types.c:153
+msgid "Location"
+msgstr "ສະຖານທີ່"
+
+#: thunar/thunar-enum-types.c:154
+msgid "Group"
+msgstr "ກຸ່ມ"
+
+#: thunar/thunar-enum-types.c:155
+msgid "MIME Type"
+msgstr "ປະເພດ MIME"
+
+#: thunar/thunar-enum-types.c:156 thunar/thunar-renamer-dialog.c:476
+#: thunarx/thunarx-renamer.c:173
+msgid "Name"
+msgstr "ຊື່"
+
+#: thunar/thunar-enum-types.c:157
+msgid "Owner"
+msgstr "ເຈົ້າຂອງ"
+
+#. Permissions chooser
+#: thunar/thunar-enum-types.c:158 thunar/thunar-properties-dialog.c:937
+msgid "Permissions"
+msgstr "ການອະນຸຍາດ"
+
+#: thunar/thunar-enum-types.c:159 thunar/thunar-statusbar.c:95
+msgid "Size"
+msgstr "ຂະໜາດ"
+
+#: thunar/thunar-enum-types.c:160
+msgid "Size in Bytes"
+msgstr "ຂະໜາດເປັນໄບຕ໌"
+
+#: thunar/thunar-enum-types.c:161
+msgid "Type"
+msgstr "ປະເພດ"
+
+#: thunar/thunar-enum-types.c:162
+msgid "File"
+msgstr "ໄຟລ໌"
+
+#: thunar/thunar-enum-types.c:163
+msgid "File Name"
+msgstr "ຊື່ໄຟລ໌"
+
+#: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
+#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:467
+#: thunar/thunar-preferences-dialog.c:1123
+#: thunar/thunar-preferences-dialog.c:1231
+#: thunar/thunar-preferences-dialog.c:1319
+msgid "Never"
+msgstr "ບໍ່ເຄີຍ"
+
+#: thunar/thunar-enum-types.c:701 thunar/thunar-enum-types.c:726
+msgid "Only For Remote Location"
+msgstr "ສະເພາະສະຖານທີ່ທາງໄກເທົ່ານັ້ນ"
+
+#: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
+#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:469
+#: thunar/thunar-preferences-dialog.c:1119
+#: thunar/thunar-preferences-dialog.c:1229
+#: thunar/thunar-preferences-dialog.c:1320
+msgid "Always"
+msgstr "ສະເໝີ"
+
+#: thunar/thunar-enum-types.c:785
+msgid "Copy"
+msgstr "ສຳເນົາ"
+
+#: thunar/thunar-enum-types.c:786
+msgid "Move"
+msgstr "ຍ້າຍ"
+
+#: thunar/thunar-enum-types.c:787
+msgid "Rename"
+msgstr "ປ່ຽນຊື່"
+
+#: thunar/thunar-enum-types.c:788
+msgid "Create File"
+msgstr "ສ້າງໄຟລ໌"
+
+#: thunar/thunar-enum-types.c:789
+msgid "Create Folder"
+msgstr "ສ້າງໂຟນເດີ"
+
+#: thunar/thunar-enum-types.c:790
+msgid "Delete (opposite of create)"
+msgstr "ລຶບ (ກົງກັນຂ້າມກັບການສ້າງ)"
+
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1087
+#: thunar/thunar-gio-extensions.c:572 thunar/thunar-shortcuts-model.c:1157
+#: thunar.desktop.in.in:25
+msgid "Trash"
+msgstr "ຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-enum-types.c:792
+msgid "Restore (opposite of trash)"
+msgstr "ກູ້ຄືນ (ກົງກັນຂ້າມກັບການຖິ້ມລົງຖັງ)"
+
+#: thunar/thunar-enum-types.c:793
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:552
+msgid "Link"
+msgstr "ລິງກ໌"
+
+#: thunar/thunar-enum-types.c:794
+msgid "Unlink"
+msgstr "ຍົກເລີກລິງກ໌"
+
+#: thunar/thunar-enum-types.c:815
+msgid "Log operations"
+msgstr "ບັນທຶກການປະຕິບັດການ"
+
+#: thunar/thunar-enum-types.c:816
+msgid "Log no operations"
+msgstr "ບໍ່ບັນທຶກການປະຕິບັດການ"
+
+#: thunar/thunar-enum-types.c:817
+msgid "Log only timestamps"
+msgstr "ບັນທຶກສະເພາະເວລາກຳກັບ"
+
+#: thunar/thunar-enum-types.c:838
+msgid "Standalone"
+msgstr "ແຍກຕ່າງຫາກ"
+
+#: thunar/thunar-enum-types.c:839
+msgid "Embedded"
+msgstr "ຝັງຕົວ"
+
+#: thunar/thunar-enum-types.c:861
+msgid "Only for local files"
+msgstr "ສະເພາະໄຟລ໌ທ້ອງຖິ່ນເທົ່ານັ້ນ"
+
+#: thunar/thunar-file.c:1094 thunar/thunar-gio-extensions.c:570
+#: thunar/thunar-shortcuts-model.c:1039
+msgid "File System"
+msgstr "ລະບົບໄຟລ໌"
+
+#: thunar/thunar-file.c:1568
+msgid "The root folder has no parent"
+msgstr "ໂຟນເດີຮາກ (Root) ບໍ່ມີໂຟນເດີແມ່"
+
+#: thunar/thunar-file.c:1666
+#, c-format
+msgid "Failed to parse the desktop file: %s"
+msgstr "ບໍ່ສາມາດວິເຄາະໄຟລ໌ເດັສທັອບ: %s"
+
+#. if the .desktop file is not secure, ask user what to do
+#: thunar/thunar-file.c:1679
+msgid "Untrusted application launcher"
+msgstr "ຕົວເປີດແອັບພລິເຄຊັນທີ່ບໍ່ໜ້າເຊື່ອຖື"
+
+#: thunar/thunar-file.c:1710
+msgid "No Exec field specified"
+msgstr "ບໍ່ໄດ້ລະບຸຊ່ອງ Exec"
+
+#. if the .desktop file is not secure, ask user what to do
+#: thunar/thunar-file.c:1719
+msgid "Untrusted link launcher"
+msgstr "ຕົວເປີດລິງກ໌ທີ່ບໍ່ໜ້າເຊື່ອຖື"
+
+#: thunar/thunar-file.c:1735
+msgid "No URL field specified"
+msgstr "ບໍ່ໄດ້ລະບຸຊ່ອງ URL"
+
+#: thunar/thunar-file.c:1740
+msgid "Invalid desktop file"
+msgstr "ໄຟລ໌ເດັສທັອບບໍ່ຖືກຕ້ອງ"
+
+#: thunar/thunar-file.c:2545 thunar/thunar-util.c:1451
+msgid "broken link"
+msgstr "ລິງກ໌ເສຍ"
+
+#: thunar/thunar-file.c:2551
+#, c-format
+msgid "%s (link to %s)"
+msgstr "%s (ລິງກ໌ຫາ %s)"
+
+#: thunar/thunar-file.c:2560
+#, c-format
+msgid "%s (mount point)"
+msgstr "%s (ຈຸດຕິດຕັ້ງ)"
+
+#. Implementation specific
+#: thunar/thunar-gio-extensions.c:89
+msgid "iPod touch"
+msgstr "iPod touch"
+
+#: thunar/thunar-gio-extensions.c:90
+msgid "iPad"
+msgstr "iPad"
+
+#: thunar/thunar-gio-extensions.c:91
+msgid "iPhone"
+msgstr "iPhone"
+
+#: thunar/thunar-gio-extensions.c:92
+msgid "Solid State Drive"
+msgstr "ໂຊລິດສະເຕດໄດຣຟ໌ (SSD)"
+
+#: thunar/thunar-gio-extensions.c:93
+msgid "System Drive"
+msgstr "ໄດຣຟ໌ລະບົບ"
+
+#: thunar/thunar-gio-extensions.c:94 thunar/thunar-gio-extensions.c:95
+msgid "USB Drive"
+msgstr "USB ไດຣຟ໌"
+
+#. Freedesktop icon-naming-spec
+#: thunar/thunar-gio-extensions.c:98
+msgid "Camera"
+msgstr "ກ້ອງ"
+
+#: thunar/thunar-gio-extensions.c:99
+msgid "Harddisk"
+msgstr "ຮາດດິສກ໌"
+
+#: thunar/thunar-gio-extensions.c:100
+msgid "Optical Drive"
+msgstr "ອັອບຕິກໍໄດຣຟ໌"
+
+#: thunar/thunar-gio-extensions.c:101
+msgid "Removable Drive"
+msgstr "ໄດຣຟ໌ທີ່ຖອດອອກໄດ້"
+
+#: thunar/thunar-gio-extensions.c:102
+msgid "Flash Drive"
+msgstr "ແຟລສໄດຣຟ໌"
+
+#: thunar/thunar-gio-extensions.c:103
+msgid "Floppy"
+msgstr "ຟລັອບປີ້ດິສກ໌"
+
+#: thunar/thunar-gio-extensions.c:104
+msgid "Optical Media"
+msgstr "ສື່ອັອບຕິກໍ"
+
+#: thunar/thunar-gio-extensions.c:105
+msgid "Tape"
+msgstr "ເທບ"
+
+#: thunar/thunar-gio-extensions.c:106
+msgid "Multimedia Player"
+msgstr "ເຄື່ອງຫຼິ້ນມັລຕິມີເດຍ"
+
+#: thunar/thunar-gio-extensions.c:107
+msgid "PDA"
+msgstr "PDA"
+
+#: thunar/thunar-gio-extensions.c:108
+msgid "Phone"
+msgstr "ໂທລະສັບ"
+
+#. TRANSLATORS: this will result in "<path> on <hostname>"
+#: thunar/thunar-gio-extensions.c:652
+#, c-format
+msgid "%s on %s"
+msgstr "%s ເທິງ %s"
+
+#: thunar/thunar-gio-extensions.c:763
+#, c-format
+msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
+msgstr "%s ຖືກໃຊ້ (%.0f%%)  |  %s ຫວ່າງ (%.0f%%)"
+
+#: thunar/thunar-history.c:309
+msgid "The item will be removed from the history"
+msgstr "ລາຍການຈະຖືກລຶບອອກຈາກປະຫວັດ"
+
+#: thunar/thunar-history.c:320
+#, c-format
+msgid "Could not find \"%s\""
+msgstr "ບໍ່ພົບ \"%s\""
+
+#: thunar/thunar-icon-view.c:180
+msgid "Icon based directory listing"
+msgstr "ສະແດງລາຍຊື່ໄດເຣັກທໍຣີແບບໄອຄອນ"
+
+#: thunar/thunar-icon-view.c:181
+msgid "Icon view"
+msgstr "ມຸມມອງໄອຄອນ"
+
+#: thunar/thunar-io-jobs.c:114
+#, c-format
+msgid "Error removing file: %s"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການລຶບໄຟລ໌: %s"
+
+#: thunar/thunar-io-jobs.c:224 thunar/thunar-io-jobs.c:402
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr "ໄຟລ໌ \"%s\" ມີຢູ່ແລ້ວ"
+
+#: thunar/thunar-io-jobs.c:247
+#, c-format
+msgid "Failed to create empty file \"%s\": %s"
+msgstr "ບໍ່ສາມາດສ້າງໄຟລ໌ເປົ່າ \"%s\": %s"
+
+#: thunar/thunar-io-jobs.c:425
+#, c-format
+msgid "Failed to create directory \"%s\": %s"
+msgstr "ບໍ່ສາມາດສ້າງໄດເຣັກທໍຣີ \"%s\": %s"
+
+#. tell the user that we're preparing to unlink the files
+#: thunar/thunar-io-jobs.c:509
+msgid "Preparing..."
+msgstr "ກຳລັງກຽມການ..."
+
+#: thunar/thunar-io-jobs.c:587
+#, c-format
+msgid "Could not delete file \"%s\": %s"
+msgstr "ບໍ່ສາມາດລຶບໄຟລ໌ \"%s\": %s"
+
+#. generate a useful error message
+#: thunar/thunar-io-jobs.c:1062
+#, c-format
+msgid "Failed to change the owner of \"%s\": %s"
+msgstr "ບໍ່ສາມາດປ່ຽນເຈົ້າຂອງຂອງ \"%s\": %s"
+
+#: thunar/thunar-io-jobs.c:1063
+#, c-format
+msgid "Failed to change the group of \"%s\": %s"
+msgstr "ບໍ່ສາມາດປ່ຽນກຸ່ມຂອງ \"%s\": %s"
+
+#: thunar/thunar-io-jobs.c:1216
+#, c-format
+msgid "Failed to change the permissions of \"%s\": %s"
+msgstr "ບໍ່ສາມາດປ່ຽນການອະນຸຍາດຂອງ \"%s\": %s"
+
+#: thunar/thunar-io-jobs.c:1980
+#, c-format
+msgid "Selection: %s"
+msgstr "ລາຍການທີ່ເລືອກ: %s"
+
+#: thunar/thunar-io-jobs.c:1993
+#, c-format
+msgid "Free space: %s"
+msgstr "ພື້ນທີ່ຫວ່າງ: %s"
+
+#. I18N: put " (copy #)" between basename and extension
+#: thunar/thunar-io-jobs-util.c:177
+#, c-format
+msgid "%s (copy %u)%s"
+msgstr "%s (ສຳເນົາ %u)%s"
+
+#. I18N: put " (copy #)" after filename (for files without extension)
+#: thunar/thunar-io-jobs-util.c:183
+#, c-format
+msgid "%s (copy %u)"
+msgstr "%s (ສຳເນົາ %u)"
+
+#: thunar/thunar-job.c:293
+#, c-format
+msgid ""
+"The file \"%s\" (%s) already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
+msgstr ""
+"ໄຟລ໌ \"%s\" (%s) ມີຢູ່ແລ້ວ. ທ່ານຕ້ອງການແທນທີ່ມັນບໍ່?\n"
+"\n"
+"ຖ້າທ່ານແທນທີ່ໄຟລ໌ທີ່ມີຢູ່, ເນື້ອໃນຂອງມັນຈະຖືກຂຽນທັບ."
+
+#: thunar/thunar-job.c:298
+#, c-format
+msgid ""
+"The file \"%s\" already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
+msgstr ""
+"ໄຟລ໌ \"%s\" ມີຢູ່ແລ້ວ. ທ່ານຕ້ອງການແທນທີ່ມັນບໍ່?\n"
+"\n"
+"ຖ້າທ່ານແທນທີ່ໄຟລ໌ທີ່ມີຢູ່, ເນື້ອໃນຂອງມັນຈະຖືກຂຽນທັບ."
+
+#: thunar/thunar-job.c:380
+msgid "Do you want to overwrite it?"
+msgstr "ທ່ານຕ້ອງການຂຽນທັບມັນບໍ່?"
+
+#: thunar/thunar-job.c:437
+msgid "Do you want to permanently delete it?"
+msgstr "ທ່ານຕ້ອງການລຶບມັນແບບຖາວອນບໍ່?"
+
+#: thunar/thunar-job.c:491
+msgid "Do you want to create it?"
+msgstr "ທ່ານຕ້ອງການສ້າງມັນບໍ່?"
+
+#: thunar/thunar-job.c:599
+msgid "Do you want to skip it?"
+msgstr "ທ່ານຕ້ອງການຂ້າມມັນບໍ່?"
+
+#: thunar/thunar-job.c:648
+msgid ""
+"There is not enough space on the destination. Try to remove files to make "
+"space."
+msgstr "ພື້ນທີ່ປາຍທາງບໍ່ພຽງພໍ. ລອງລຶບໄຟລ໌ບາງອັນອອກເພື່ອເພີ່ມພື້ນທີ່."
+
+#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:482
+#: thunar/thunar-util.c:1328
+#, c-format
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d ໄຟລ໌"
+
+#: thunar/thunar-job-operation-history.c:323
+msgid ""
+"No operation which can be undone has been performed yet.\n"
+"(For some operations undo is not supported)"
+msgstr ""
+"ຍັງບໍ່ມີການປະຕິບັດການໃດໆທີ່ສາມາດຍົກເລີກໄດ້.\n"
+"(ບາງການປະຕິບັດການບໍ່ຮອງຮັບການຍົກເລີກ)"
+
+#: thunar/thunar-job-operation-history.c:325
+msgid "There is no operation to undo"
+msgstr "ບໍ່ມີການປະຕິບັດການທີ່ຈະຍົກເລີກ"
+
+#: thunar/thunar-job-operation-history.c:341
+msgid ""
+"The operation you are trying to undo does not have any files associated with"
+" it, and thus cannot be undone."
+msgstr ""
+"ການປະຕິບັດການທີ່ທ່ານກຳລັງພະຍາຍາມຍົກເລີກບໍ່ມີໄຟລ໌ໃດທີ່ກ່ຽວຂ້ອງ, "
+"ດັ່ງນັ້ນຈຶ່ງບໍ່ສາມາດຍົກເລີກໄດ້."
+
+#: thunar/thunar-job-operation-history.c:343
+#, c-format
+msgid "%s operation cannot be undone"
+msgstr "ການປະຕິບັດການ %s ບໍ່ສາມາດຍົກເລີກໄດ້"
+
+#. one indexed for the dialog
+#: thunar/thunar-job-operation-history.c:355
+msgid ""
+"The following files were overwritten in the operation you are trying to undo"
+" and cannot be restored:\n"
+msgstr ""
+"ໄຟລ໌ຕໍ່ໄປນີ້ຖືກຂຽນທັບໃນການປະຕິບັດການທີ່ທ່ານພະຍາຍາມຍົກເລີກ ແລະ "
+"ບໍ່ສາມາດກູ້ຄືນໄດ້:\n"
+
+#: thunar/thunar-job-operation-history.c:367
+#, c-format
+msgid "%s operation can only be partially undone"
+msgstr "ການປະຕິບັດການ %s ສາມາດຍົກເລີກໄດ້ບາງສ່ວນເທົ່ານັ້ນ"
+
+#: thunar/thunar-job-operation-history.c:384
+#, c-format
+msgid "Failed to undo operation '%s'"
+msgstr "ບໍ່ສາມາດຍົກເລີກການປະຕິບັດການ '%s' ໄດ້"
+
+#: thunar/thunar-job-operation-history.c:420
+msgid "No operation which can be redone available.\n"
+msgstr "ບໍ່ມີການປະຕິບັດການໃດທີ່ສາມາດເຮັດຄືນໄດ້.\n"
+
+#: thunar/thunar-job-operation-history.c:421
+msgid "There is no operation to redo"
+msgstr "ບໍ່ມີການປະຕິບັດການທີ່ຈະເຮັດຄືນ"
+
+#: thunar/thunar-job-operation-history.c:437
+msgid ""
+"The operation you are trying to redo does not have any files associated with"
+" it, and thus cannot be redone."
+msgstr ""
+"ການປະຕິບັດການທີ່ທ່ານກຳລັງພະຍາຍາມເຮັດຄືນບໍ່ມີໄຟລ໌ໃດທີ່ກ່ຽວຂ້ອງ, "
+"ດັ່ງນັ້ນຈຶ່ງບໍ່ສາມາດເຮັດຄືນໄດ້."
+
+#: thunar/thunar-job-operation-history.c:439
+#, c-format
+msgid "%s operation cannot be redone"
+msgstr "ການປະຕິບັດການ %s ບໍ່ສາມາດເຮັດຄືນໄດ້"
+
+#. one indexed for the dialog
+#: thunar/thunar-job-operation-history.c:451
+msgid ""
+"The following files were overwritten in the operation you are trying to redo"
+" and cannot be restored:\n"
+msgstr ""
+"ໄຟລ໌ຕໍ່ໄປນີ້ຖືກຂຽນທັບໃນການປະຕິບັດການທີ່ທ່ານພະຍາຍາມເຮັດຄືນ ແລະ "
+"ບໍ່ສາມາດກູ້ຄືນໄດ້:\n"
+
+#: thunar/thunar-job-operation-history.c:463
+#, c-format
+msgid "%s operation can only be partially redone"
+msgstr "ການປະຕິບັດການ %s ສາມາດເຮັດຄືນໄດ້ບາງສ່ວນເທົ່ານັ້ນ"
+
+#: thunar/thunar-job-operation-history.c:478
+#, c-format
+msgid "Failed to redo operation '%s'"
+msgstr "ບໍ່ສາມາດເຮັດຄືນການປະຕິບັດການ '%s' ໄດ້"
+
+#. TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files)
+#: thunar/thunar-job-operation-history.c:565
+#, c-format
+msgid "Undo the latest '%s' operation (%s)"
+msgstr "ຍົກເລີກການປະຕິບັດການ '%s' ລ່າສຸດ (%s)"
+
+#: thunar/thunar-job-operation-history.c:570 thunar/thunar-window.c:657
+msgid "Undo the latest operation"
+msgstr "ຍົກເລີກການປະຕິບັດການລ່າສຸດ"
+
+#. TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files)
+#: thunar/thunar-job-operation-history.c:590
+#, c-format
+msgid "Redo the latest '%s' operation (%s)"
+msgstr "ເຮັດຄືນການປະຕິບັດການ '%s' ລ່າສຸດ (%s)"
+
+#: thunar/thunar-job-operation-history.c:595 thunar/thunar-window.c:658
+msgid "Redo the latest operation"
+msgstr "ເຮັດຄືນການປະຕິບັດການລ່າສຸດ"
+
+#: thunar/thunar-list-model.c:1027 thunar/thunar-list-model.c:1040
+#: thunar/thunar-properties-dialog.c:1415 thunar/thunar-tree-view-model.c:1352
+#: thunar/thunar-tree-view-model.c:1365
+msgid "unknown"
+msgstr "ບໍ່ຮູ້ຈັກ"
+
+#: thunar/thunar-list-model.c:1029 thunar/thunar-list-model.c:1042
+#: thunar/thunar-tree-view-model.c:1354 thunar/thunar-tree-view-model.c:1367
+#, c-format
+msgid "%u item"
+msgid_plural "%u items"
+msgstr[0] "%u ລາຍການ"
+
+#: thunar/thunar-location-entry.c:347
+msgid "File does not exist"
+msgstr "ບໍ່ມີໄຟລ໌ນີ້ຢູ່"
+
+#: thunar/thunar-notify.c:193
+msgid "Undo performed"
+msgstr "ຍົກເລີກສຳເລັດແລ້ວ"
+
+#: thunar/thunar-notify.c:194
+#, c-format
+msgid "%s operation was undone"
+msgstr "ການປະຕິບັດການ %s ຖືກຍົກເລີກແລ້ວ"
+
+#: thunar/thunar-notify.c:199
+msgid "Redo performed"
+msgstr "ເຮັດຄືນສຳເລັດແລ້ວ"
+
+#: thunar/thunar-notify.c:200
+#, c-format
+msgid "%s operation was redone"
+msgstr "ການປະຕິບັດການ %s ຖືກເຮັດຄືນແລ້ວ"
+
+#: thunar/thunar-notify.c:284
+msgid "Unmounting device"
+msgstr "ກຳລັງຖອນການຕິດຕັ້ງອຸປະກອນ"
+
+#: thunar/thunar-notify.c:285
+#, c-format
+msgid ""
+"The device \"%s\" is being unmounted by the system. Please do not remove the"
+" media or disconnect the drive"
+msgstr ""
+"ອຸປະກອນ \"%s\" ກຳລັງຖືກຖອນການຕິດຕັ້ງໂດຍລະບົບ. ກະລຸນາຢ່າຖອດສື່ ຫຼື "
+"ຕັດການເຊື່ອມຕໍ່ໄດຣຟ໌"
+
+#: thunar/thunar-notify.c:292 thunar/thunar-notify.c:332
+msgid "Writing data to device"
+msgstr "ກຳລັງຂຽນຂໍ້ມູນລົງໃນອຸປະກອນ"
+
+#: thunar/thunar-notify.c:293 thunar/thunar-notify.c:333
+#, c-format
+msgid ""
+"There is data that needs to be written to the device \"%s\" before it can be"
+" removed. Please do not remove the media or disconnect the drive"
+msgstr ""
+"ມີຂໍ້ມູນທີ່ຈຳເປັນຕ້ອງຂຽນລົງໃນອຸປະກອນ \"%s\" ກ່ອນທີ່ຈະຖອດອອກໄດ້. "
+"ກະລຸນາຢ່າຖອດສື່ ຫຼື ຕັດການເຊື່ອມຕໍ່ໄດຣຟ໌"
+
+#: thunar/thunar-notify.c:325
+msgid "Ejecting device"
+msgstr "ກຳລັງດີດອຸປະກອນອອກ"
+
+#: thunar/thunar-notify.c:326
+#, c-format
+msgid "The device \"%s\" is being ejected. This may take some time"
+msgstr "ອຸປະກອນ \"%s\" ກຳລັງຖືກດີດອອກ. ອາດໃຊ້ເວລາຄາວໜຶ່ງ"
+
+#: thunar/thunar-path-entry.c:232
+msgid "Icon size"
+msgstr "ຂະໜາດໄອຄອນ"
+
+#: thunar/thunar-path-entry.c:233
+msgid "The icon size for the path entry"
+msgstr "ຂະໜາດໄອຄອນສຳລັບຊ່ອງປ້ອນເສັ້ນທາງ"
+
+#: thunar/thunar-permissions-chooser.c:242
+msgid "Owner:"
+msgstr "ເຈົ້າຂອງ:"
+
+#: thunar/thunar-permissions-chooser.c:261
+msgid "_Access:"
+msgstr "ການເຂົ້າເຖິງ:(_A)"
+
+#: thunar/thunar-permissions-chooser.c:289
+msgid "Gro_up:"
+msgstr "ກຸ່ມ:(_U)"
+
+#: thunar/thunar-permissions-chooser.c:311
+msgid "Acc_ess:"
+msgstr "ການເຂົ້າເຖິງ:(_E)"
+
+#: thunar/thunar-permissions-chooser.c:339
+msgid "Others"
+msgstr "ອື່ນໆ"
+
+#: thunar/thunar-permissions-chooser.c:347
+msgid "Acce_ss:"
+msgstr "ການເຂົ້າເຖິງ:(_S)"
+
+#: thunar/thunar-permissions-chooser.c:375
+msgid "Program:"
+msgstr "ໂປຣແກຣມ:"
+
+#: thunar/thunar-permissions-chooser.c:381
+msgid "Allow this file to _run as a program"
+msgstr "ອະນຸຍາດໃຫ້ໄຟລ໌ນີ້ລັນເປັນໂປຣແກຣມ(_R)"
+
+#: thunar/thunar-permissions-chooser.c:409
+#: thunar/thunar-preferences-dialog.c:1334
+msgid ""
+"Allowing untrusted programs to run presents a security risk to your system."
+msgstr ""
+"ການອະນຸຍາດໃຫ້ໂປຣແກຣມທີ່ບໍ່ໜ້າເຊື່ອຖືເຮັດວຽກ "
+"ອາດເປັນອັນຕະລາຍຕໍ່ຄວາມປອດໄພຂອງລະບົບ."
+
+#: thunar/thunar-permissions-chooser.c:427
+msgid ""
+"The folder permissions are inconsistent, you may not be able to work with "
+"files in this folder."
+msgstr ""
+"ການອະນຸຍາດຂອງໂຟນເດີບໍ່ສອດຄ່ອງກັນ, "
+"ທ່ານອາດຈະບໍ່ສາມາດເຮັດວຽກກັບໄຟລ໌ໃນໂຟນເດີນີ້ໄດ້."
+
+#: thunar/thunar-permissions-chooser.c:443
+msgid "Correct _folder permissions..."
+msgstr "ແກ້ໄຂການອະນຸຍາດໂຟນເດີ...(_F)"
+
+#: thunar/thunar-permissions-chooser.c:444
+msgid "Click here to automatically fix the folder permissions."
+msgstr "ຄລິກທີ່ນີ້ເພື່ອແກ້ໄຂການອະນຸຍາດໂຟນເດີໂດຍອັດຕະໂນມັດ."
+
+#: thunar/thunar-permissions-chooser.c:457
+msgid "Please wait..."
+msgstr "ກະລຸນາລໍຖ້າ..."
+
+#: thunar/thunar-permissions-chooser.c:464
+msgid "Stop applying permissions recursively."
+msgstr "ຢຸດການນຳໃຊ້ການອະນຸຍາດແບບຍ້ອນກັບ."
+
+#. allocate the question dialog
+#: thunar/thunar-permissions-chooser.c:577
+msgid "Question"
+msgstr "ຄຳຖາມ"
+
+#: thunar/thunar-permissions-chooser.c:601
+msgid "Apply recursively?"
+msgstr "ນຳໃຊ້ແບບຍ້ອນກັບບໍ່?"
+
+#: thunar/thunar-permissions-chooser.c:607
+msgid ""
+"Do you want to apply your changes recursively to\n"
+"all files and subfolders below the selected folder?"
+msgstr ""
+"ທ່ານຕ້ອງການນຳໃຊ້ການປ່ຽນແປງແບບຍ້ອນກັບໄປຍັງ\n"
+"ທຸກໄຟລ໌ ແລະ ໂຟນເດີຍ່ອຍພາຍໃຕ້ໂຟນເດີທີ່ເລືອກບໍ່?"
+
+#: thunar/thunar-permissions-chooser.c:613
+msgid ""
+"If you select this option your choice will be remembered and you won't be "
+"asked again. You can use the preferences dialog to alter your choice "
+"afterwards."
+msgstr ""
+"ຖ້າທ່ານເລືອກຕົວເລືອກນີ້ ການເລືອກຂອງທ່ານຈະຖືກຈື່ໄວ້ ແລະ ຈະບໍ່ຖືກຖາມອີກ. "
+"ທ່ານສາມາດປ່ຽນແປງມັນໄດ້ໃນພາຍຫຼັງທີ່ໜ້າຕ່າງການຕັ້ງຄ່າ."
+
+#: thunar/thunar-permissions-chooser.c:980
+msgid "Mixed file owners"
+msgstr "ເຈົ້າຂອງໄຟລ໌ປະສົມກັນ"
+
+#: thunar/thunar-permissions-chooser.c:980
+msgid "Unknown file owner"
+msgstr "ບໍ່ຮູ້ຈັກເຈົ້າຂອງໄຟລ໌"
+
+#: thunar/thunar-permissions-chooser.c:1060
+#: plugins/thunar-uca/thunar-uca-editor.c:432
+#: plugins/thunar-uca/thunar-uca-editor.c:644
+msgid "None"
+msgstr "ບໍ່ມີ"
+
+#. 0000
+#: thunar/thunar-permissions-chooser.c:1061
+msgid "Write only"
+msgstr "ຂຽນໄດ້ຢ່າງດຽວ"
+
+#. 0002
+#: thunar/thunar-permissions-chooser.c:1062
+msgid "Read only"
+msgstr "ອ່ານໄດ້ຢ່າງດຽວ"
+
+#. 0004
+#: thunar/thunar-permissions-chooser.c:1063
+msgid "Read & Write"
+msgstr "ອ່ານ ແລະ ຂຽນ"
+
+#: thunar/thunar-permissions-chooser.c:1065
+msgid "Varying (no change)"
+msgstr "ແຕກຕ່າງກັນ (ບໍ່ມີການປ່ຽນແປງ)"
+
+#: thunar/thunar-permissions-chooser.c:1192
+msgid "Correct folder permissions automatically?"
+msgstr "ແກ້ໄຂການອະນຸຍາດໂຟນເດີໂດຍອັດຕະໂນມັດບໍ່?"
+
+#: thunar/thunar-permissions-chooser.c:1193
+msgid "Folder permissions"
+msgstr "ການອະນຸຍາດໂຟນເດີ"
+
+#: thunar/thunar-permissions-chooser.c:1195
+msgid "Correct _folder permissions"
+msgstr "ແກ້ໄຂການອະນຸຍາດໂຟນເດີ(_F)"
+
+#: thunar/thunar-permissions-chooser.c:1197
+msgid ""
+"The folder permissions will be reset to a consistent state. Only users "
+"allowed to read the contents of this folder will be allowed to enter the "
+"folder afterwards."
+msgstr ""
+"ການອະນຸຍາດໂຟນເດີຈະຖືກຕັ້ງຄ່າໃໝ່ໃຫ້ສອດຄ່ອງກັນ. ຫຼັງຈາກນັ້ນ, "
+"ສະເພາະຜູ້ໃຊ້ທີ່ໄດ້ຮັບອະນຸຍາດໃຫ້ອ່ານເນື້ອໃນຂອງໂຟນເດີນີ້ເທົ່ານັ້ນທີ່ຈະສາມາດເຂົ້າໄປໃນໂຟນເດີໄດ້."
+
+#. popup the error message dialog
+#: thunar/thunar-permissions-chooser.c:1312
+msgid "Error while changing file permissions"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການປ່ຽນແປງການອະນຸຍາດໄຟລ໌"
+
+#: thunar/thunar-preferences-dialog.c:272 thunar/thunar-settings.desktop.in:4
+msgid "Thunar Preferences"
+msgstr "ການຕັ້ງຄ່າ Thunar"
+
+#. Display
+#: thunar/thunar-preferences-dialog.c:302
+msgid "Display"
+msgstr "ການສະແດງຜົນ"
+
+#: thunar/thunar-preferences-dialog.c:312
+msgid "Window Settings"
+msgstr "ການຕັ້ງຄ່າປ່ອງຢ້ຽມ"
+
+#: thunar/thunar-preferences-dialog.c:331
+msgid "Use custom window decorations (only applied to new windows)"
+msgstr "ໃຊ້ການຕົບແຕ່ງປ່ອງຢ້ຽມແບບກຳນົດເອງ (ໃຊ້ກັບປ່ອງຢ້ຽມໃໝ່ເທົ່ານັ້ນ)"
+
+#: thunar/thunar-preferences-dialog.c:338
+msgid ""
+"Use custom, client-side window decorations instead of global, server-side "
+"ones. - Only applied to new Thunar windows"
+msgstr ""
+"ໃຊ້ການຕົກແຕ່ງໜ້າຕ່າງແບບ client-side ແທນແບບ server-side ປົກກະຕິ. - "
+"ມີຜົນກັບໜ້າຕ່າງ Thunar ໃໝ່ເທົ່ານັ້ນ"
+
+#: thunar/thunar-preferences-dialog.c:346
+msgid "Use current folder icon as window icon"
+msgstr "ໃຊ້ໄອຄອນຂອງໂຟນເດີປັດຈຸບັນເປັນໄອຄອນປ່ອງຢ້ຽມ"
+
+#: thunar/thunar-preferences-dialog.c:352
+msgid "Select this option to use the current folder icon as window icon"
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອໃຊ້ໄອຄອນຂອງໂຟນເດີປັດຈຸບັນເປັນໄອຄອນປ່ອງຢ້ຽມ"
+
+#: thunar/thunar-preferences-dialog.c:357
+msgid "View Settings"
+msgstr "ການຕັ້ງຄ່າມຸມມອງ"
+
+#: thunar/thunar-preferences-dialog.c:370
+msgid "View _new folders using:"
+msgstr "ເບິ່ງໂຟນເດີໃໝ່ດ້ວຍ:(_N)"
+
+#: thunar/thunar-preferences-dialog.c:376
+#: thunar/thunar-preferences-dialog.c:532
+msgid "Icon View"
+msgstr "ມຸມມອງໄອຄອນ"
+
+#: thunar/thunar-preferences-dialog.c:377
+msgid "List View"
+msgstr "ມຸມມອງລາຍການ"
+
+#: thunar/thunar-preferences-dialog.c:378
+msgid "Compact View"
+msgstr "ມຸມມອງແບບກະທັດຮັດ"
+
+#: thunar/thunar-preferences-dialog.c:379
+msgid "Last Active View"
+msgstr "ມຸມມອງທີ່ໃຊ້ລ່າສຸດ"
+
+#: thunar/thunar-preferences-dialog.c:395
+msgid "_Remember view settings for each folder"
+msgstr "ຈື່ການຕັ້ງຄ່າມຸມມອງສຳລັບແຕ່ລະໂຟນເດີ(_R)"
+
+#: thunar/thunar-preferences-dialog.c:402
+msgid ""
+"Select this option to remember view type, zoom level, sort column, and sort "
+"order individually for each folder"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອຈື່ປະເພດມຸມມອງ, ລະດັບການຊູມ, ຖັນການລຽງລຳດັບ, ແລະ "
+"ລຳດັບການລຽງສຳລັບແຕ່ລະໂຟນເດີແຍກກັນ"
+
+#: thunar/thunar-preferences-dialog.c:410
+msgid "gvfs metadata support is required"
+msgstr "ຕ້ອງການການຮອງຮັບ gvfs metadata"
+
+#: thunar/thunar-preferences-dialog.c:416
+msgid "Sort _folders before files"
+msgstr "ລຽງໂຟນເດີກ່ອນໄຟລ໌(_F)"
+
+#: thunar/thunar-preferences-dialog.c:422
+msgid ""
+"Select this option to list folders before files when you sort a folder."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງລາຍຊື່ໂຟນເດີກ່ອນໄຟລ໌ເມື່ອທ່ານລຽງລຳດັບໃນໂຟນເດີ."
+
+#: thunar/thunar-preferences-dialog.c:430
+msgid "Show file size in binary format"
+msgstr "ສະແດງຂະໜາດໄຟລ໌ໃນຮູບແບບໄບນາຣີ"
+
+#: thunar/thunar-preferences-dialog.c:436
+msgid ""
+"Select this option to show file size in binary format instead of decimal."
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງຂະໜາດໄຟລ໌ໃນຮູບແບບໄບນາຣີແທນຖານສິບ."
+
+#: thunar/thunar-preferences-dialog.c:445
+msgid "Thumbnails"
+msgstr "ຮູບຕົວຢ່າງ (Thumbnails)"
+
+#: thunar/thunar-preferences-dialog.c:461
+msgid "Show thumbnails:"
+msgstr "ສະແດງຮູບຕົວຢ່າງ:"
+
+#: thunar/thunar-preferences-dialog.c:468
+#: thunar/thunar-preferences-dialog.c:1120
+#: thunar/thunar-preferences-dialog.c:1230
+msgid "Local Files Only"
+msgstr "ສະເພາະໄຟລ໌ທ້ອງຖິ່ນເທົ່ານັ້ນ"
+
+#: thunar/thunar-preferences-dialog.c:487
+msgid "Only show thumbnails for files smaller than:"
+msgstr "ສະແດງຮູບຕົວຢ່າງສະເພາະໄຟລ໌ທີ່ມີຂະໜາດນ້ອຍກວ່າ:"
+
+#: thunar/thunar-preferences-dialog.c:493
+msgid "512KiB"
+msgstr "512KiB"
+
+#: thunar/thunar-preferences-dialog.c:494
+msgid "1MiB"
+msgstr "1MiB"
+
+#: thunar/thunar-preferences-dialog.c:495
+msgid "10MiB"
+msgstr "10MiB"
+
+#: thunar/thunar-preferences-dialog.c:496
+msgid "100MiB"
+msgstr "100MiB"
+
+#: thunar/thunar-preferences-dialog.c:497
+msgid "1GiB"
+msgstr "1GiB"
+
+#: thunar/thunar-preferences-dialog.c:498
+msgid "10GiB"
+msgstr "10GiB"
+
+#: thunar/thunar-preferences-dialog.c:499
+msgid "Unlimited"
+msgstr "ບໍ່ຈຳກັດ"
+
+#: thunar/thunar-preferences-dialog.c:517
+msgid "Draw frames around thumbnails"
+msgstr "ແຕ້ມກອບອ້ອມຮູບຕົວຢ່າງ"
+
+#: thunar/thunar-preferences-dialog.c:523
+msgid "Select this option to draw black frames around thumbnails."
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອແຕ້ມກອບສີດຳອ້ອມຮູບຕົວຢ່າງ."
+
+#: thunar/thunar-preferences-dialog.c:548
+msgid "_Text beside icons"
+msgstr "ຂໍ້ຄວາມຂ້າງໄອຄອນ(_T)"
+
+#: thunar/thunar-preferences-dialog.c:554
+msgid ""
+"Select this option to place the icon captions for items beside the icon "
+"rather than below the icon."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອວາງຄຳອະທິບາຍໄອຄອນໄວ້ຂ້າງໄອຄອນແທນທີ່ຈະເປັນທາງລຸ່ມ."
+
+#: thunar/thunar-preferences-dialog.c:564
+msgid "Date"
+msgstr "ວັນທີ"
+
+#: thunar/thunar-preferences-dialog.c:577
+#: plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
+msgid "_Format:"
+msgstr "ຮູບແບບ:(_F)"
+
+#. TRANSLATORS: custom date format
+#: thunar/thunar-preferences-dialog.c:590
+msgid "Custom"
+msgstr "ກຳນົດເອງ"
+
+#: thunar/thunar-preferences-dialog.c:591
+msgid "Today / Custom"
+msgstr "ມື້ນີ້ / ກຳນົດເອງ"
+
+#. TRANSLATORS: Please do not translate the first column (specifiers),
+#. 'strftime' and of course '\n'
+#: thunar/thunar-preferences-dialog.c:608
+msgid ""
+"Custom date format to apply.\n"
+"\n"
+"The most common specifiers are:\n"
+"%d day of month\n"
+"%m month\n"
+"%Y year including century\n"
+"%H hour\n"
+"%M minute\n"
+"%S second\n"
+"\n"
+"For a complete list, search 'Glib.DateTime.format'."
+msgstr ""
+"ກຳນົດຮູບແບບວັນທີເອງ.\n"
+"\n"
+"ລະຫັດທີ່ໃຊ້ເລື້ອຍໆແມ່ນ:\n"
+"%d ວັນທີ\n"
+"%m ເດືອນ\n"
+"%Y ປີ (ຄ.ສ.)\n"
+"%H ຊົ່ວໂມງ\n"
+"%M ນາທີ\n"
+"%S ວິນາທີ\n"
+"\n"
+"ສຳລັບລາຍການທັງໝົດ, ໃຫ້ຄົ້ນຫາ 'Glib.DateTime.format'."
+
+#. Side Pane
+#: thunar/thunar-preferences-dialog.c:630
+msgid "Side Pane"
+msgstr "ແຖບຂ້າງ"
+
+#: thunar/thunar-preferences-dialog.c:640
+msgid "Shortcuts Pane"
+msgstr "ແຖບທາງລັດ"
+
+#: thunar/thunar-preferences-dialog.c:656
+msgid "_Icon Size:"
+msgstr "ຂະໜາດໄອຄອນ:(_I)"
+
+#: thunar/thunar-preferences-dialog.c:661
+#: thunar/thunar-preferences-dialog.c:727
+msgid "16px"
+msgstr "16px"
+
+#: thunar/thunar-preferences-dialog.c:662
+#: thunar/thunar-preferences-dialog.c:728
+msgid "24px"
+msgstr "24px"
+
+#: thunar/thunar-preferences-dialog.c:663
+#: thunar/thunar-preferences-dialog.c:729
+msgid "32px"
+msgstr "32px"
+
+#: thunar/thunar-preferences-dialog.c:664
+#: thunar/thunar-preferences-dialog.c:730
+msgid "48px"
+msgstr "48px"
+
+#: thunar/thunar-preferences-dialog.c:665
+#: thunar/thunar-preferences-dialog.c:731
+msgid "64px"
+msgstr "64px"
+
+#: thunar/thunar-preferences-dialog.c:666
+#: thunar/thunar-preferences-dialog.c:732
+msgid "96px"
+msgstr "96px"
+
+#: thunar/thunar-preferences-dialog.c:667
+#: thunar/thunar-preferences-dialog.c:733
+msgid "128px"
+msgstr "128px"
+
+#: thunar/thunar-preferences-dialog.c:668
+#: thunar/thunar-preferences-dialog.c:734
+msgid "160px"
+msgstr "160px"
+
+#: thunar/thunar-preferences-dialog.c:669
+#: thunar/thunar-preferences-dialog.c:735
+msgid "192px"
+msgstr "192px"
+
+#: thunar/thunar-preferences-dialog.c:670
+#: thunar/thunar-preferences-dialog.c:736
+msgid "256px"
+msgstr "256px"
+
+#: thunar/thunar-preferences-dialog.c:671
+#: thunar/thunar-preferences-dialog.c:737
+msgid "512px"
+msgstr "512px"
+
+#: thunar/thunar-preferences-dialog.c:672
+#: thunar/thunar-preferences-dialog.c:738
+msgid "1024px"
+msgstr "1024px"
+
+#: thunar/thunar-preferences-dialog.c:690
+msgid "Show Icon _Emblems"
+msgstr "ສະແດງກາສັນຍະລັກໄອຄອນ(_E)"
+
+#: thunar/thunar-preferences-dialog.c:696
+msgid ""
+"Select this option to display icon emblems in the shortcuts pane for all "
+"folders for which emblems have been defined in the folders properties "
+"dialog."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງກາໝາຍໄອຄອນໃນແຖບທາງລັດ "
+"ສຳລັບທຸກໂຟນເດີທີ່ໄດ້ກຳນົດກາໝາຍໄວ້ໃນໜ້າຕ່າງຄຸນສົມບັດ."
+
+#: thunar/thunar-preferences-dialog.c:706
+msgid "Tree Pane"
+msgstr "ແຖບໂຄງສ້າງຕົ້ນໄມ້"
+
+#: thunar/thunar-preferences-dialog.c:722
+msgid "Icon _Size:"
+msgstr "ຂະໜາດໄອຄອນ:(_S)"
+
+#: thunar/thunar-preferences-dialog.c:756
+msgid "Show Icon E_mblems"
+msgstr "ສະແດງກາສັນຍະລັກໄອຄອນ(_M)"
+
+#: thunar/thunar-preferences-dialog.c:762
+msgid ""
+"Select this option to display icon emblems in the tree pane for all folders "
+"for which emblems have been defined in the folders properties dialog."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງກາໝາຍໄອຄອນໃນແຖບໂຄງສ້າງຕົ້ນໄມ້ "
+"ສຳລັບທຸກໂຟນເດີທີ່ໄດ້ກຳນົດກາໝາຍໄວ້."
+
+#: thunar/thunar-preferences-dialog.c:772
+msgid "Icon Style"
+msgstr "ຮູບແບບໄອຄອນ"
+
+#: thunar/thunar-preferences-dialog.c:788
+msgid "Use symbolic folder icons"
+msgstr "ໃຊ້ໄອຄອນໂຟນເດີແບບສັນຍະລັກ"
+
+#: thunar/thunar-preferences-dialog.c:794
+msgid ""
+"Select this option to use symbolic folder icons instead of regular ones."
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອໃຊ້ໄອຄອນໂຟນເດີແບບສັນຍະລັກແທນໄອຄອນປົກກະຕິ."
+
+#: thunar/thunar-preferences-dialog.c:803
+msgid "Image Preview"
+msgstr "ສະແດງຕົວຢ່າງຮູບພາບ"
+
+#: thunar/thunar-preferences-dialog.c:819
+msgid "Image Preview Mode:"
+msgstr "ໂໝດການສະແດງຕົວຢ່າງຮູບພາບ:"
+
+#: thunar/thunar-preferences-dialog.c:821
+msgid ""
+"- Standalone: Image Preview uses a separate pane\n"
+"- Embedded: Image Preview is embedded in the left sidepane\n"
+msgstr ""
+"- ແຍກຕ່າງຫາກ: ການເບິ່ງຕົວຢ່າງຮູບພາບຈະໃຊ້ແຖບແຍກຕ່າງຫາກ\n"
+"- ຝັງຕົວ: ການເບິ່ງຕົວຢ່າງຮູບພາບຈະຖືກຝັງຢູ່ໃນແຖບຂ້າງເບື້ອງຊ້າຍ\n"
+
+#. Behavior
+#: thunar/thunar-preferences-dialog.c:851
+msgid "Behavior"
+msgstr "ພຶດຕິກຳ"
+
+#: thunar/thunar-preferences-dialog.c:861
+msgid "Navigation"
+msgstr "ການນຳທາງ"
+
+#: thunar/thunar-preferences-dialog.c:877
+msgid "_Single click to activate items"
+msgstr "ຄລິກຄັ້ງດຽວເພື່ອເປີດໃຊ້ລາຍການ(_S)"
+
+#: thunar/thunar-preferences-dialog.c:902
+msgid ""
+"Specify the d_elay before an item gets selected\n"
+"when the mouse pointer is paused over it:"
+msgstr ""
+"ລະບຸເວລາລໍຖ້າກ່ອນທີ່ລາຍການຈະຖືກເລືອກ\n"
+"ເມື່ອວາງເມີ້າໄວ້ເທິງລາຍການນັ້ນ:"
+
+#: thunar/thunar-preferences-dialog.c:915
+msgid ""
+"When single-click activation is enabled, pausing the mouse pointer over an "
+"item will automatically select that item after the chosen delay. You can "
+"disable this behavior by moving the slider to the left-most position. This "
+"behavior may be useful when single clicks activate items, and you want only "
+"to select the item without activating it."
+msgstr ""
+"ເມື່ອເປີດການໃຊ້ງານ \"ຄລິກບາດດຽວເພື່ອເປີດ\", "
+"ການວາງເມົາສ໌ຄ້າງໄວ້ເທິງລາຍການຈະເປັນການເລືອກລາຍການນັ້ນໂດຍອັດຕະໂນມັດຫຼັງຈາກເວລາທີ່ກຳນົດ."
+" ທ່ານສາມາດປິດການໃຊ້ງານນີ້ໄດ້ໂດຍການເລື່ອນແຖບໄປທາງຊ້າຍສຸດ. "
+"ພຶດຕິກຳນີ້ອາດມີປະໂຫຍດໃນກໍລະນີທີ່ທ່ານຕ້ອງການພຽງແຕ່ເລືອກລາຍການໂດຍບໍ່ຕ້ອງການເປີດມັນ."
+
+#: thunar/thunar-preferences-dialog.c:938
+msgid "Disabled"
+msgstr "ປິດໃຊ້ງານ"
+
+#: thunar/thunar-preferences-dialog.c:944
+msgid "Medium"
+msgstr "ປານກາງ"
+
+#: thunar/thunar-preferences-dialog.c:949
+msgid "Long"
+msgstr "ຍາວ"
+
+#: thunar/thunar-preferences-dialog.c:958
+msgid "_Double click to activate items"
+msgstr "ດັບເບິ້ນຄລິກເພື່ອເປີດໃຊ້ລາຍການ(_D)"
+
+#: thunar/thunar-preferences-dialog.c:973
+msgid "Tabs and Windows"
+msgstr "ແທັບ ແລະ ປ່ອງຢ້ຽມ"
+
+#: thunar/thunar-preferences-dialog.c:989
+msgid "Open folders in new tabs on middle click"
+msgstr "ເປີດໂຟນເດີໃນແທັບໃໝ່ດ້ວຍການຄລິກປຸ່ມກາງ"
+
+#: thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Select this option to open a new tab on middle click instead of a new window"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອເປີດແທັບໃໝ່ດ້ວຍການຄລິກປຸ່ມກາງແທນທີ່ຈະເປີດປ່ອງຢ້ຽມໃໝ່"
+
+#: thunar/thunar-preferences-dialog.c:1002
+msgid "Open new thunar instances as tabs"
+msgstr "ເປີດ Thunar ໃໝ່ເປັນແທັບ"
+
+#: thunar/thunar-preferences-dialog.c:1008
+msgid ""
+"Select this option to open new thunar instances as tabs in an existing "
+"thunar window"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອເປີດ Thunar ໃໝ່ເປັນແທັບໃນໜ້າຕ່າງ Thunar ທີ່ມີຢູ່ແລ້ວ"
+
+#: thunar/thunar-preferences-dialog.c:1016
+msgid "Show full directory paths in tab titles"
+msgstr "ສະແດງເສັ້ນທາງໄດເຣັກທໍຣີແບບເຕັມໃນຫົວຂໍ້ແທັບ"
+
+#: thunar/thunar-preferences-dialog.c:1022
+msgid ""
+"Select this option to show the full directory path in the tab title instead "
+"of only the directory name"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງເສັ້ນທາງໄດເຣັກທໍຣີແບບເຕັມໃນຫົວຂໍ້ແທັບ "
+"ແທນທີ່ຈະສະແດງພຽງແຕ່ຊື່ໄດເຣັກທໍຣີ"
+
+#: thunar/thunar-preferences-dialog.c:1029
+msgid "Restore tabs on startup"
+msgstr "ກູ້ຄືນແທັບຄືນໃໝ່ເມື່ອເລີ່ມລະບົບ"
+
+#: thunar/thunar-preferences-dialog.c:1035
+msgid ""
+"Select this option to restore your tabs as they were last time you used "
+"Thunar"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອໃຫ້ແທັບຕ່າງໆກັບຄືນມາຄືກັນກັບຕອນທີ່ເຈົ້າໃຊ້ Thunar "
+"ຄັ້ງລ້າສຸດ"
+
+#: thunar/thunar-preferences-dialog.c:1046
+msgid "Context Menu"
+msgstr "ເມນູບໍລິບົດ"
+
+#: thunar/thunar-preferences-dialog.c:1062
+msgid "Show action to permanently delete files and folders"
+msgstr "ສະແດງຄຳສັ່ງເພື່ອລຶບໄຟລ໌ ແລະ ໂຟນເດີແບບຖາວອນ"
+
+#: thunar/thunar-preferences-dialog.c:1068
+msgid "Select this option to show the 'Delete' action in the context menu"
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອສະແດງຄຳສັ່ງ 'ລຶບ' ໃນເມນູບໍລິບົດ"
+
+#. Advanced
+#: thunar/thunar-preferences-dialog.c:1078
+msgid "Advanced"
+msgstr "ຂັ້ນສູງ"
+
+#: thunar/thunar-preferences-dialog.c:1088
+msgid "File Transfer"
+msgstr "ການຖ່າຍໂອນໄຟລ໌"
+
+#: thunar/thunar-preferences-dialog.c:1105
+msgid "Transfer files in parallel:"
+msgstr "ຖ່າຍໂອນໄຟລ໌ແບບຂະໜານ:"
+
+#: thunar/thunar-preferences-dialog.c:1107
+msgid ""
+"Indicates the behavior during multiple copies:\n"
+"- Always: all copies are done simultaneously\n"
+"- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
+"- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
+"- Never: all copies are done sequentially"
+msgstr ""
+"ກຳນົດພຶດຕິກຳໃນລະຫວ່າງການສຳເນົາຫຼາຍໄຟລ໌:\n"
+"- ສະເໝີ: ການສຳເນົາທັງໝົດຈະເຮັດພ້ອມກັນ\n"
+"- ສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ: ສຳເນົາພ້ອມກັນສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ (ບໍ່ແມ່ນທາງໄກ, ບໍ່ແມ່ນໄຟລ໌ແນບ)\n"
+"- ສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ (ອຸປະກອນດຽວກັນ): ຖ້າທຸກໄຟລ໌ຢູ່ພາຍໃນເຄື່ອງແຕ່ຢູ່ຄົນລະອຸປະກອນ (ດິສກ໌, ຈຸດເຊື່ອມຕໍ່), ການສຳເນົາຈະເຮັດຕາມລຳດັບ\n"
+"- ສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ (ອຸປະກອນທີ່ວ່າງ): ຖ້າທຸກໄຟລ໌ຢູ່ພາຍໃນເຄື່ອງແຕ່ອຸປະກອນບໍ່ວ່າງ, ການສຳເນົາຈະເຮັດຕາມລຳດັບ\n"
+"- ບໍ່ເລີຍ: ການສຳເນົາທັງໝົດຈະເຮັດຕາມລຳດັບ"
+
+#: thunar/thunar-preferences-dialog.c:1121
+msgid "Local Files Only (Same Devices)"
+msgstr "ສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ (ອຸປະກອນດຽວກັນ)"
+
+#: thunar/thunar-preferences-dialog.c:1122
+msgid "Local Files Only (Idle Devices)"
+msgstr "ສະເພາະໄຟລ໌ພາຍໃນເຄື່ອງ (ອຸປະກອນທີ່ວ່າງ)"
+
+#: thunar/thunar-preferences-dialog.c:1141
+msgid "Use intermediate file on copy:"
+msgstr "ໃຊ້ໄຟລ໌ຊົ່ວຄາວໃນການສຳເນົາ:"
+
+#: thunar/thunar-preferences-dialog.c:1145
+msgid ""
+"Use intermediate file '*.partial~' to copy files. This will prevent "
+"fragmented files. The new file will only be shown after the copy was "
+"successfully finished."
+msgstr ""
+"ໃຊ້ໄຟລ໌ຊົ່ວຄາວ '*.partial~' ເພື່ອສຳເນົາໄຟລ໌. ນີ້ຈະຊ່ວຍປ້ອງກັນໄຟລ໌ທີ່ແຍກສ່ວນ."
+" ໄຟລ໌ໃໝ່ຈະສະແດງຂຶ້ນຫຼັງຈາກການສຳເນົາສຳເລັດແລ້ວເທົ່ານັ້ນ."
+
+#: thunar/thunar-preferences-dialog.c:1172
+msgid "Verify file contents on copy:"
+msgstr "ກວດສອບເນື້ອໃນໄຟລ໌ເມື່ອສຳເນົາ:"
+
+#: thunar/thunar-preferences-dialog.c:1176
+msgid ""
+"Compare contents of original file and copy in order to detect corruption. "
+"While this will attempt to compare the actual contents that are on the "
+"destination media, Thunar may be unable to bypass filesystem caches, so this"
+" comparison may not detect all instances of corruption. Enabling this option"
+" will increase copy time."
+msgstr ""
+"ປຽບທຽບເນື້ອໃນຂອງໄຟລ໌ຕົ້ນສະບັບ ແລະ ໄຟລ໌ທີ່ສຳເນົາເພື່ອຊອກຫາການເສຍຫາຍຂອງຂໍ້ມູນ."
+" ເຖິງແມ່ນວ່ານີ້ຈະພະຍາຍາມປຽບທຽບເນື້ອໃນຕົວຈິງຢູ່ປາຍທາງ, ແຕ່ Thunar "
+"ອາດຈະບໍ່ສາມາດຂ້າມການເກັບຂໍ້ມູນຊົ່ວຄາວ (cache) ຂອງລະບົບໄຟລ໌ໄດ້, "
+"ດັ່ງນັ້ນການປຽບທຽບນີ້ອາດຈະບໍ່ພົບການເສຍຫາຍທຸກຢ່າງ. "
+"ການເປີດໃຊ້ຕົວເລືອກນີ້ຈະເຮັດໃຫ້ໃຊ້ເວລາສຳເນົາດົນຂຶ້ນ."
+
+#: thunar/thunar-preferences-dialog.c:1206
+msgid "Search"
+msgstr "ຄົ້ນຫາ"
+
+#: thunar/thunar-preferences-dialog.c:1223
+msgid "Include subfolders:"
+msgstr "ລວມເອົາໂຟນເດີຍ່ອຍ:"
+
+#: thunar/thunar-preferences-dialog.c:1247
+msgid "Folder Permissions"
+msgstr "ສິດການເຂົ້າເຖິງໂຟນເດີ"
+
+#: thunar/thunar-preferences-dialog.c:1263
+msgid ""
+"When changing the permissions of a folder, you\n"
+"can also apply the changes to the contents of the\n"
+"folder. Select the default behavior below:"
+msgstr ""
+"ເມື່ອປ່ຽນສິດການເຂົ້າເຖິງຂອງໂຟນເດີ, ເຈົ້າ\n"
+"ຍັງສາມາດນຳໃຊ້ການປ່ຽນແປງນັ້ນກັບເນື້ອໃນພາຍໃນ\n"
+"ໂຟນເດີໄດ້ອີກດ້ວຍ. ເລືອກພຶດຕິກຳມາດຕະຖານລຸ່ມນີ້:"
+
+#: thunar/thunar-preferences-dialog.c:1275
+#: thunar/thunar-preferences-dialog.c:1321
+msgid "Ask every time"
+msgstr "ຖາມທຸກຄັ້ງ"
+
+#: thunar/thunar-preferences-dialog.c:1276
+msgid "Apply to Folder and Contents"
+msgstr "ນຳໃຊ້ກັບໂຟນເດີ ແລະ ເນື້ອໃນພາຍໃນ"
+
+#: thunar/thunar-preferences-dialog.c:1277
+msgid "Apply to Folder Only"
+msgstr "ນຳໃຊ້ກັບໂຟນເດີເທົ່ານັ້ນ"
+
+#: thunar/thunar-preferences-dialog.c:1292
+msgid "Security"
+msgstr "ຄວາມປອດໄພ"
+
+#: thunar/thunar-preferences-dialog.c:1309
+msgid "Execute shell scripts:"
+msgstr "ປະຕິບັດການ shell script:"
+
+#: thunar/thunar-preferences-dialog.c:1344
+msgid "Volume Management"
+msgstr "ການຈັດການພາກສ່ວນຈັດເກັບຂໍ້ມູນ"
+
+#. add check button to enable/disable auto mounting
+#: thunar/thunar-preferences-dialog.c:1361
+msgid "Enable _Volume Management"
+msgstr "ເປີດໃຊ້ການຈັດການພາກສ່ວນຈັດເກັບຂໍ້ມູນ(_V)"
+
+#: thunar/thunar-preferences-dialog.c:1380
+msgid ""
+"<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
+"devices and media."
+msgstr ""
+"<a href=\"volman-config:\">ຕັ້ງຄ່າ</a> ການຈັດການໄດຣຟ໌ຖອດໄດ້, ອຸປະກອນ ແລະ "
+"ສື່ຕ່າງໆ."
+
+#: thunar/thunar-preferences-dialog.c:1394
+#: thunar/thunar-properties-dialog.c:831
+msgid "Missing dependencies"
+msgstr "ສ່ວນປະກອບທີ່ຈຳເປັນຫາຍໄປ"
+
+#: thunar/thunar-preferences-dialog.c:1402
+msgid ""
+"It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
+"Important features including trash support,\n"
+"removable media and remote location browsing\n"
+"will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
+msgstr ""
+"ເບິ່ງຄືວ່າ <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ບໍ່ພ້ອມໃຊ້ງານ.\n"
+"ຄຸນສົມບັດທີ່ສຳຄັນ ເຊັ່ນ ການຮອງຮັບຖັງຂີ້ເຫຍື້ອ,\n"
+"ສື່ທີ່ຖອດໄດ້ ແລະ ການທ່ອງເບິ່ງຕຳແໜ່ງທາງໄກ\n"
+"ຈະບໍ່ສາມາດເຮັດວຽກໄດ້. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[ອ່ານເພີ່ມເຕີມ]</a>"
+
+#. Shortcuts
+#: thunar/thunar-preferences-dialog.c:1417
+msgid "Shortcuts"
+msgstr "ທາງລັດ"
+
+#: thunar/thunar-preferences-dialog.c:1432
+msgid "Window"
+msgstr "ໜ້າຕ່າງ"
+
+#: thunar/thunar-preferences-dialog.c:1433
+msgid "View"
+msgstr "ມຸມມອງ"
+
+#: thunar/thunar-preferences-dialog.c:1434
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:550
+msgid "Launcher"
+msgstr "ຕົວເລີ່ມຕົ້ນ"
+
+#: thunar/thunar-preferences-dialog.c:1435
+msgid "Status Bar"
+msgstr "ແຖບສະຖານະ"
+
+#: thunar/thunar-preferences-dialog.c:1443
+msgid "The Shortcuts Editor requires a Thunar window to be present."
+msgstr "ຕົວແກ້ໄຂທາງລັດຕ້ອງການໃຫ້ມີໜ້າຕ່າງ Thunar ເປີດຢູ່."
+
+#. tell the user that we failed to come up with the thunar-volman
+#. configuration dialog
+#: thunar/thunar-preferences-dialog.c:1507
+msgid "Failed to display the volume management settings"
+msgstr "ບໍ່ສາມາດສະແດງການຕັ້ງຄ່າການຈັດການພາກສ່ວນຈັດເກັບຂໍ້ມູນ"
+
+#: thunar/thunar-progress-dialog.c:99
+msgid "File Operation Progress"
+msgstr "ຄວາມຄືບໜ້າການຈັດການໄຟລ໌"
+
+#: thunar/thunar-progress-view.c:404
+msgid "Paused"
+msgstr "ຢຸດຊົ່ວຄາວ"
+
+#: thunar/thunar-progress-view.c:426
+msgid "Starting... (User request)"
+msgstr "ກຳລັງເລີ່ມ... (ຕາມຄຳຂໍຂອງຜູ້ໃຊ້)"
+
+#: thunar/thunar-progress-view.c:429
+msgid "Resuming..."
+msgstr "ກຳລັງເຮັດວຽກຕໍ່..."
+
+#. update the status text
+#: thunar/thunar-progress-view.c:464
+msgid "Cancelling..."
+msgstr "ກຳລັງຍົກເລີກ..."
+
+#. display the error message
+#: thunar/thunar-progress-view.c:546
+msgid "Error while processing file operation"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນລະຫວ່າງການຈັດການໄຟລ໌"
+
+#: thunar/thunar-progress-view.c:620
+msgid "Job queued"
+msgstr "ວຽກຖືກຈັດລຽງໄວ້ແລ້ວ"
+
+#: thunar/thunar-progress-view.c:639
+msgid "Resuming job..."
+msgstr "ກຳລັງເລີ່ມວຽກຕໍ່..."
+
+#: thunar/thunar-properties-dialog.c:358
+msgid "General"
+msgstr "ທົ່ວໄປ"
+
+#: thunar/thunar-properties-dialog.c:383
+#: plugins/thunar-uca/thunar-uca-editor.ui:46
+msgid "_Name:"
+msgstr "ຊື່(_N):"
+
+#: thunar/thunar-properties-dialog.c:422
+msgid "Names:"
+msgstr "ຊື່:"
+
+#. Second box (kind, open with, link target, original path, location, volume)
+#: thunar/thunar-properties-dialog.c:445
+msgid "Kind:"
+msgstr "ປະເພດ:"
+
+#: thunar/thunar-properties-dialog.c:469
+msgid "_Open With:"
+msgstr "ເປີດດ້ວຍ(_O):"
+
+#: thunar/thunar-properties-dialog.c:486
+msgid "Link Target:"
+msgstr "ເປົ້າໝາຍການເຊື່ອມຕໍ່:"
+
+#. TRANSLATORS: Try to come up with a short translation of "Original Path"
+#. (which is the path
+#. * where the trashed file/folder was located before it was moved to the
+#. trash), otherwise the
+#. * properties dialog width will be messed up.
+#: thunar/thunar-properties-dialog.c:508 thunar/thunar-util.c:1475
+msgid "Original Path:"
+msgstr "ເສັ້ນທາງເດີມ:"
+
+#: thunar/thunar-properties-dialog.c:525
+msgid "Location:"
+msgstr "ຕຳແໜ່ງ:"
+
+#: thunar/thunar-properties-dialog.c:542
+msgid "Volume:"
+msgstr "ພາກສ່ວນຈັດເກັບຂໍ້ມູນ:"
+
+#. Third box (deleted, modified, accessed)
+#: thunar/thunar-properties-dialog.c:584
+msgid "Deleted:"
+msgstr "ຖືກລຶບເມື່ອ:"
+
+#: thunar/thunar-properties-dialog.c:601
+msgid "Created:"
+msgstr "ຖືກສ້າງເມື່ອ:"
+
+#: thunar/thunar-properties-dialog.c:635
+msgid "Accessed:"
+msgstr "ເຂົ້າເຖິງເມື່ອ:"
+
+#: thunar/thunar-properties-dialog.c:681
+msgid "Size on Disk:"
+msgstr "ຂະໜາດໃນດິສກ໌:"
+
+#. Fifth box (content, capacity, free space)
+#: thunar/thunar-properties-dialog.c:708
+msgid "Content:"
+msgstr "ເນື້ອໃນ:"
+
+#: thunar/thunar-properties-dialog.c:726
+msgid "Capacity:"
+msgstr "ຄວາມຈຸ:"
+
+#: thunar/thunar-properties-dialog.c:748
+msgid "Usage:"
+msgstr "ການນຳໃຊ້:"
+
+#. Emblem chooser
+#: thunar/thunar-properties-dialog.c:785
+msgid "Emblems"
+msgstr "ສັນຍາລັກເສີມ"
+
+#: thunar/thunar-properties-dialog.c:800
+msgid "Highlight"
+msgstr "ເນັ້ນ"
+
+#: thunar/thunar-properties-dialog.c:839
+msgid ""
+"It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
+"This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
+msgstr ""
+"ເບິ່ງຄືວ່າ <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ບໍ່ພ້ອມໃຊ້ງານ.\n"
+"ຄຸນສົມບັດນີ້ຈະບໍ່ເຮັດວຽກ. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[ອ່ານເພີ່ມເຕີມ]</a>"
+
+#: thunar/thunar-properties-dialog.c:867
+msgid "Example.txt"
+msgstr "ຕົວຢ່າງ.txt"
+
+#: thunar/thunar-properties-dialog.c:884
+msgid "_Apply"
+msgstr "ນຳໃຊ້(_A)"
+
+#: thunar/thunar-properties-dialog.c:896
+msgid "_Reset"
+msgstr "ຄືນຄ່າ(_R)"
+
+#: thunar/thunar-properties-dialog.c:907
+msgid "Set _Foreground"
+msgstr "ກຳນົດພື້ນໜ້າ(_F)"
+
+#: thunar/thunar-properties-dialog.c:915
+msgid "Set _Background"
+msgstr "ກຳນົດພື້ນຫຼັງ(_B)"
+
+#: thunar/thunar-properties-dialog.c:1216
+#, c-format
+msgid "Select an Icon for \"%s\" (%s)"
+msgstr "ເລືອກໄອຄອນສຳລັບ \"%s\" (%s)"
+
+#. allocate the chooser dialog
+#: thunar/thunar-properties-dialog.c:1218
+#: plugins/thunar-uca/thunar-uca-editor.c:453
+#, c-format
+msgid "Select an Icon for \"%s\""
+msgstr "ເລືອກໄອຄອນສຳລັບ \"%s\""
+
+#: thunar/thunar-properties-dialog.c:1244
+#, c-format
+msgid "Failed to change icon of \"%s\" (%s)"
+msgstr "ບໍ່ສາມາດປ່ຽນໄອຄອນຂອງ \"%s\" (%s)"
+
+#: thunar/thunar-properties-dialog.c:1248
+#, c-format
+msgid "Failed to change icon of \"%s\""
+msgstr "ບໍ່ສາມາດປ່ຽນໄອຄອນຂອງ \"%s\""
+
+#: thunar/thunar-properties-dialog.c:1356
+#, c-format
+msgid "%s (%s) - Properties"
+msgstr "%s (%s) - ຄຸນສົມບັດ"
+
+#: thunar/thunar-properties-dialog.c:1358
+#, c-format
+msgid "%s - Properties"
+msgstr "%s - ຄຸນສົມບັດ"
+
+#. update the properties dialog title
+#: thunar/thunar-properties-dialog.c:1625
+msgid "Properties"
+msgstr "ຄຸນສົມບັດ"
+
+#: thunar/thunar-properties-dialog.c:1652
+msgid "Link Targets:"
+msgstr "ເປົ້າໝາຍການເຊື່ອມຕໍ່:"
+
+#: thunar/thunar-properties-dialog.c:1746
+msgid "mixed"
+msgstr "ປະສົມ"
+
+#: thunar/thunar-renamer-dialog.c:233
+msgid "_Add Files..."
+msgstr "ເພີ່ມໄຟລ໌...(_A)"
+
+#: thunar/thunar-renamer-dialog.c:233
+msgid "Include additional files in the list of files to be renamed"
+msgstr "ລວມເອົາໄຟລ໌ເພີ່ມເຕີມໃນລາຍການໄຟລ໌ທີ່ຈະປ່ຽນຊື່"
+
+#: thunar/thunar-renamer-dialog.c:235
+msgid "Clear"
+msgstr "ລ້າງຄ່າ"
+
+#: thunar/thunar-renamer-dialog.c:235
+msgid "Clear the file list below"
+msgstr "ລ້າງລາຍການໄຟລ໌ລຸ່ມນີ້"
+
+#: thunar/thunar-renamer-dialog.c:236 thunar/thunar-window.c:709
+msgid "_About"
+msgstr "ກ່ຽວກັບ(_A)"
+
+#: thunar/thunar-renamer-dialog.c:236
+msgid "Display information about Thunar Bulk Rename"
+msgstr "ສະແດງຂໍ້ມູນກ່ຽວກັບການປ່ຽນຊື່ເປັນກຸ່ມຂອງ Thunar"
+
+#: thunar/thunar-renamer-dialog.c:412 thunar/thunar-renamer-dialog.c:1841
+#: thunar-bulk-rename.desktop.in.in:4
+msgid "Rename Multiple Files"
+msgstr "ປ່ຽນຊື່ຫຼາຍໄຟລ໌ພ້ອມກັນ"
+
+#: thunar/thunar-renamer-dialog.c:416
+msgid "Close this window, cancel further changes."
+msgstr "ປິດໜ້າຕ່າງນີ້, ຍົກເລີກການປ່ຽນແປງຕໍ່ໄປ."
+
+#: thunar/thunar-renamer-dialog.c:424
+msgid "Rename items listed above, keep this window open."
+msgstr "ປ່ຽນຊື່ລາຍການທີ່ສະແດງທາງເທິງ, ໃຫ້ເປີດໜ້າຕ່າງນີ້ໄວ້."
+
+#: thunar/thunar-renamer-dialog.c:494
+msgid "New Name"
+msgstr "ຊື່ໃໝ່"
+
+#: thunar/thunar-renamer-dialog.c:559
+msgid ""
+"Click here to view the documentation for the selected rename operation."
+msgstr "ຄລິກບ່ອນນີ້ເພື່ອເບິ່ງເອກະສານສຳລັບການຈັດການປ່ຽນຊື່ທີ່ເລືອກ."
+
+#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
+#. from $libdir/thunarx-2/,
+#. *              and opening the multi rename dialog by selecting multiple
+#. files and pressing F2.
+#: thunar/thunar-renamer-dialog.c:670
+msgid ""
+"No renamer modules were found on your system. Please check your\n"
+"installation or contact your system administrator. If you install Thunar\n"
+"from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
+msgstr ""
+"ບໍ່ພົບໂມດູນສຳລັບການປ່ຽນຊື່ໃນລະບົບຂອງເຈົ້າ. ກະລຸນາກວດສອບການ\n"
+"ຕິດຕັ້ງ ຫຼື ຕິດຕໍ່ຜູ້ດູແລລະບົບ. ຖ້າເຈົ້າຕິດຕັ້ງ Thunar ຈາກຊອດໂຄ້ດ,\n"
+"ໃຫ້ແນ່ໃຈວ່າໄດ້ເປີດໃຊ້ປລັກອິນ \"Simple Builtin Renamers\"."
+
+#: thunar/thunar-renamer-dialog.c:907
+msgid "Remove File"
+msgid_plural "Remove Files"
+msgstr[0] "ເອົາໄຟລ໌ອອກ"
+
+#: thunar/thunar-renamer-dialog.c:908
+msgid "Remove the selected file from the list of files to be renamed"
+msgid_plural "Remove the selected files from the list of files to be renamed"
+msgstr[0] "ເອົາໄຟລ໌ທີ່ເລືອກອອກຈາກລາຍການທີ່ຈະປ່ຽນຊື່"
+
+#. tell the user that we failed
+#: thunar/thunar-renamer-dialog.c:1004
+msgid "Failed to open the documentation browser"
+msgstr "ບໍ່ສາມາດເປີດຕົວທ່ອງເບິ່ງເອກະສານ"
+
+#. allocate the file chooser
+#: thunar/thunar-renamer-dialog.c:1105
+msgid "Select files to rename"
+msgstr "ເລືອກໄຟລ໌ທີ່ຈະປ່ຽນຊື່"
+
+#: thunar/thunar-renamer-dialog.c:1121
+msgid "Audio Files"
+msgstr "ໄຟລ໌ສຽງ"
+
+#: thunar/thunar-renamer-dialog.c:1126
+msgid "Image Files"
+msgstr "ໄຟລ໌ຮູບພາບ"
+
+#: thunar/thunar-renamer-dialog.c:1131
+msgid "Video Files"
+msgstr "ໄຟລ໌ວິດີໂອ"
+
+#. just popup the about dialog
+#: thunar/thunar-renamer-dialog.c:1267 thunar-bulk-rename.desktop.in.in:3
+#: thunar-bulk-rename.desktop.in.in:5
+msgid "Bulk Rename"
+msgstr "ປ່ຽນຊື່ເປັນກຸ່ມ"
+
+#: thunar/thunar-renamer-dialog.c:1267
+msgid ""
+"Thunar Bulk Rename is a powerful and extensible\n"
+"tool to rename multiple files at once."
+msgstr ""
+"ການປ່ຽນຊື່ເປັນກຸ່ມຂອງ Thunar ແມ່ນເຄື່ອງມືທີ່ມີປະສິດທິພາບ\n"
+"ແລະ ສາມາດຂະຫຍາຍໄດ້ ເພື່ອປ່ຽນຊື່ຫຼາຍໄຟລ໌ພ້ອມກັນ."
+
+#. change title to reflect the standalone status
+#: thunar/thunar-renamer-dialog.c:1841
+msgid "Bulk Rename - Rename Multiple Files"
+msgstr "ປ່ຽນຊື່ເປັນກຸ່ມ - ປ່ຽນຊື່ຫຼາຍໄຟລ໌ພ້ອມກັນ"
+
+#: thunar/thunar-renamer-progress.c:172
+#, c-format
+msgid "Failed to rename \"%s\" to \"%s\"."
+msgstr "ບໍ່ສາມາດປ່ຽນຊື່ \"%s\" ເປັນ \"%s\"."
+
+#: thunar/thunar-renamer-progress.c:184
+msgid ""
+"You can either choose to skip this file and continue to rename the remaining"
+" files, or revert the previously renamed files to their previous names, or "
+"cancel the operation without reverting previous changes."
+msgstr ""
+"ເຈົ້າສາມາດເລືອກທີ່ຈະຂ້າມໄຟລ໌ນີ້ ແລະ ປ່ຽນຊື່ໄຟລ໌ທີ່ເຫຼືອຕໍ່ໄປ, ຫຼື "
+"ປ່ຽນຊື່ໄຟລ໌ທີ່ປ່ຽນໄປແລ້ວກັບຄືນເປັນຊື່ເດີມ, ຫຼື "
+"ຍົກເລີກການປະຕິບັດການໂດຍບໍ່ປ່ຽນຊື່ກັບຄືນ."
+
+#: thunar/thunar-renamer-progress.c:189
+msgid "_Revert Changes"
+msgstr "ປ່ຽນກັບຄືນ(_R)"
+
+#: thunar/thunar-renamer-progress.c:190 thunar/thunar-renamer-progress.c:199
+msgid "_Skip This File"
+msgstr "ຂ້າມໄຟລ໌ນີ້(_S)"
+
+#: thunar/thunar-renamer-progress.c:196
+msgid ""
+"Do you want to skip this file and continue to rename the remaining files?"
+msgstr "ເຈົ້າຕ້ອງການຂ້າມໄຟລ໌ນີ້ ແລະ ປ່ຽນຊື່ໄຟລ໌ທີ່ເຫຼືອຕໍ່ໄປບໍ່?"
+
+#: thunar/thunar-shortcuts-model.c:675 thunar/thunar-shortcuts-model.c:1040
+#: thunar/thunar-window.c:693
+msgid "Browse the file system"
+msgstr "ເລືອກເບິ່ງລະບົບໄຟລ໌"
+
+#: thunar/thunar-shortcuts-model.c:709
+#, c-format
+msgid "Mount and open %s (%s)"
+msgstr "ເຊື່ອມຕໍ່ ແລະ ເປີດ %s (%s)"
+
+#: thunar/thunar-shortcuts-model.c:722 plugins/thunar-tpa/thunar-tpa.c:312
+msgid "Trash is empty"
+msgstr "ຖັງຂີ້ເຫຍື້ອເປົ່າ"
+
+#: thunar/thunar-shortcuts-model.c:726
+#, c-format
+msgid "Trash contains %d file"
+msgid_plural "Trash contains %d files"
+msgstr[0] "ຖັງຂີ້ເຫຍື້ອມີ %d ໄຟລ໌"
+
+#: thunar/thunar-shortcuts-model.c:1033
+msgid "Devices"
+msgstr "ອຸປະກອນ"
+
+#: thunar/thunar-shortcuts-model.c:1076
+msgid "Network"
+msgstr "ເຄືອຂ່າຍ"
+
+#: thunar/thunar-shortcuts-model.c:1084
+msgid "Browse Network"
+msgstr "ທ່ອງເບິ່ງເຄືອຂ່າຍ"
+
+#: thunar/thunar-shortcuts-model.c:1085 thunar/thunar-window.c:703
+msgid "Browse local network connections"
+msgstr "ທ່ອງເບິ່ງການເຊື່ອມຕໍ່ເຄືອຂ່າຍພາຍໃນ"
+
+#: thunar/thunar-shortcuts-model.c:1107
+msgid "Places"
+msgstr "ສະຖານທີ່"
+
+#: thunar/thunar-shortcuts-model.c:1119
+msgid "Open the home folder"
+msgstr "ເປີດໂຟນເດີຫຼັກ"
+
+#: thunar/thunar-shortcuts-model.c:1136
+msgid "Open the desktop folder"
+msgstr "ເປີດໂຟນເດີເດັສທັອບ"
+
+#: thunar/thunar-shortcuts-model.c:1184 thunar.desktop.in.in:21
+msgid "Computer"
+msgstr "ຄອມພິວເຕີ"
+
+#: thunar/thunar-shortcuts-model.c:1185
+msgid "Browse the computer"
+msgstr "ທ່ອງເບິ່ງໃນຄອມພິວເຕີ"
+
+#: thunar/thunar-shortcuts-model.c:1197
+msgid "Recent"
+msgstr "ຫວ່າງໆນີ້"
+
+#: thunar/thunar-shortcuts-model.c:1198
+msgid "Browse recently used files"
+msgstr "ທ່ອງເບິ່ງໄຟລ໌ທີ່ໃຊ້ຫວ່າງໆນີ້"
+
+#: thunar/thunar-shortcuts-view.c:265
+msgid "Re_name Shortcut"
+msgstr "ປ່ຽນຊື່ທາງລັດ(_N)"
+
+#: thunar/thunar-shortcuts-view.c:266
+msgid "_Remove Shortcut"
+msgstr "ເອົາທາງລັດອອກ(_R)"
+
+#: thunar/thunar-shortcuts-view.c:1693
+#, c-format
+msgid "The path \"%s\" does not refer to a directory"
+msgstr "ເສັ້ນທາງ \"%s\" ບໍ່ໄດ້ອ້າງອີງເຖິງໄດເຣັກທໍຣີ"
+
+#. display an error message to the user
+#: thunar/thunar-shortcuts-view.c:1713
+msgid "Failed to add new shortcut"
+msgstr "ບໍ່ສາມາດເພີ່ມທາງລັດໃໝ່"
+
+#: thunar/thunar-size-label.c:197
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "ຄລິກບ່ອນນີ້ເພື່ອຢຸດການຄຳນວນຂະໜາດທັງໝົດຂອງໂຟນເດີ."
+
+#. add the label widget
+#. tell the user that we started calculation
+#: thunar/thunar-size-label.c:207 thunar/thunar-size-label.c:364
+msgid "Calculating..."
+msgstr "ກຳລັງຄຳນວນ..."
+
+#. tell the user that the operation was canceled
+#: thunar/thunar-size-label.c:323
+msgid "Calculation aborted"
+msgstr "ການຄຳນວນຖືກຍົກເລີກ"
+
+#: thunar/thunar-size-label.c:481 thunar/thunar-util.c:1358
+#, c-format
+msgid "%d folder"
+msgid_plural "%d folders"
+msgstr[0] "%d ໂຟນເດີ"
+
+#: thunar/thunar-size-label.c:483
+#, c-format
+msgid "%u item (%s, %s)"
+msgid_plural "%u items (%s, %s)"
+msgstr[0] "%u ລາຍການ (%s, %s)"
+
+#. TRANSLATORS: this is shows if during the deep count size
+#. * directories were not accessible
+#: thunar/thunar-size-label.c:493
+msgid "(some contents unreadable)"
+msgstr "(ບາງເນື້ອໃນບໍ່ສາມາດອ່ານໄດ້)"
+
+#. nothing was readable, so permission was denied
+#: thunar/thunar-size-label.c:504
+msgid "Permission denied"
+msgstr "ບໍ່ໄດ້ຮັບອະນຸຍາດ"
+
+#: thunar/thunar-standard-view.c:485
+msgid "Select _all Files"
+msgstr "ເລືອກໄຟລ໌ທັງໝົດ(_A)"
+
+#: thunar/thunar-standard-view.c:485
+msgid "Select all files in this window"
+msgstr "ເລືອກໄຟລ໌ທັງໝົດໃນໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-standard-view.c:486
+msgid "Select _by Pattern..."
+msgstr "ເລືອກຕາມຮູບແບບ...(_B)"
+
+#: thunar/thunar-standard-view.c:486
+msgid "Select all files that match a certain pattern"
+msgstr "ເລືອກທຸກໄຟລ໌ທີ່ກົງກັບຮູບແບບໃດໜຶ່ງ"
+
+#: thunar/thunar-standard-view.c:487
+msgid "_Invert Selection"
+msgstr "ກັບການເລືອກ(_I)"
+
+#: thunar/thunar-standard-view.c:487
+msgid "Select all files but not those currently selected"
+msgstr "ເລືອກທຸກໄຟລ໌ ຍົກເວັ້ນໄຟລ໌ທີ່ເລືອກໄວ້ໃນຕອນນີ້"
+
+#: thunar/thunar-standard-view.c:488
+msgid "U_nselect all Files"
+msgstr "ຍົກເລີກການເລືອກທັງໝົດ(_N)"
+
+#: thunar/thunar-standard-view.c:488
+msgid "Unselect all files in this window"
+msgstr "ຍົກເລີກການເລືອກທຸກໄຟລ໌ໃນໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-standard-view.c:489
+msgid "Arran_ge Items"
+msgstr "ຈັດລຽງລາຍການ(_G)"
+
+#: thunar/thunar-standard-view.c:490
+msgid "_Reversed Order"
+msgstr "ລຽງລຳດັບກັບຄືນ(_R)"
+
+#: thunar/thunar-standard-view.c:490
+msgid "Reverse the sort order"
+msgstr "ກັບຄືນລຳດັບການຈັດລຽງ"
+
+#: thunar/thunar-standard-view.c:491
+msgid "By _Name"
+msgstr "ຕາມຊື່(_N)"
+
+#: thunar/thunar-standard-view.c:491
+msgid "Keep items sorted by their name"
+msgstr "ຈັດລຽງລາຍການຕາມຊື່"
+
+#: thunar/thunar-standard-view.c:492
+msgid "By _Size"
+msgstr "ຕາມຂະໜາດ(_S)"
+
+#: thunar/thunar-standard-view.c:492
+msgid "Keep items sorted by their size"
+msgstr "ຈັດລຽງລາຍການຕາມຂະໜາດ"
+
+#: thunar/thunar-standard-view.c:493
+msgid "By _Type"
+msgstr "ຕາມປະເພດ(_T)"
+
+#: thunar/thunar-standard-view.c:493
+msgid "Keep items sorted by their type"
+msgstr "ຈັດລຽງລາຍການຕາມປະເພດ"
+
+#: thunar/thunar-standard-view.c:494
+msgid "By _Modification Date"
+msgstr "ຕາມວັນທີແກ້ໄຂ(_M)"
+
+#: thunar/thunar-standard-view.c:494
+msgid "Keep items sorted by their modification date"
+msgstr "ຈັດລຽງລາຍການຕາມວັນທີແກ້ໄຂ"
+
+#: thunar/thunar-standard-view.c:495
+msgid "By D_eletion Date"
+msgstr "ຕາມວັນທີລຶບ(_E)"
+
+#: thunar/thunar-standard-view.c:495
+msgid "Keep items sorted by their deletion date"
+msgstr "ຈັດລຽງລາຍການຕາມວັນທີລຶບ"
+
+#: thunar/thunar-standard-view.c:496
+msgid "_Ascending"
+msgstr "ຈາກໜ້ອຍໄປຫາຫຼາຍ(_A)"
+
+#: thunar/thunar-standard-view.c:496
+msgid "Sort items in ascending order"
+msgstr "ຈັດລຽງລາຍການຈາກໜ້ອຍໄປຫາຫຼາຍ"
+
+#: thunar/thunar-standard-view.c:497
+msgid "_Descending"
+msgstr "ຈາກຫຼາຍໄປຫາໜ້ອຍ(_D)"
+
+#: thunar/thunar-standard-view.c:497
+msgid "Sort items in descending order"
+msgstr "ຈັດລຽງລາຍການຈາກຫຼາຍໄປຫາໜ້ອຍ"
+
+#: thunar/thunar-standard-view.c:1847
+msgid "Loading folder contents..."
+msgstr "ກຳລັງໂຫຼດເນື້ອໃນໂຟນເດີ..."
+
+#: thunar/thunar-standard-view.c:2493
+#, c-format
+msgid "%d file found"
+msgid_plural "%d files found"
+msgstr[0] "ພົບ %d ໄຟລ໌"
+
+#. display an error to the user
+#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4514
+msgid "Failed to open the home folder"
+msgstr "ບໍ່ສາມາດເປີດໂຟນເດີຫຼັກ"
+
+#: thunar/thunar-standard-view.c:2739
+msgctxt "Select by Pattern dialog: title"
+msgid "Select by Pattern"
+msgstr "ເລືອກຕາມຮູບແບບ"
+
+#: thunar/thunar-standard-view.c:2744
+msgctxt "Select by Pattern dialog: buttons"
+msgid "_Cancel"
+msgstr "ຍົກເລີກ(_C)"
+
+#: thunar/thunar-standard-view.c:2747
+msgctxt "Select by Pattern dialog: buttons"
+msgid "_Select"
+msgstr "ເລືອກ(_S)"
+
+#: thunar/thunar-standard-view.c:2761
+msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
+msgid "_Pattern:"
+msgstr "ຮູບແບບ(_P):"
+
+#: thunar/thunar-standard-view.c:2762
+msgctxt ""
+"Select by Pattern dialog: tooltips on label for pattern entry textbox"
+msgid ""
+"Files whose name matches the wildcard pattern you enter will be selected in "
+"the main window."
+msgstr "ໄຟລ໌ທີ່ມີຊື່ກົງກັບຮູບແບບທີ່ເຈົ້າປ້ອນຈະຖືກເລືອກໃນໜ້າຕ່າງຫຼັກ."
+
+#. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
+#. and they must not be localized.
+#: thunar/thunar-standard-view.c:2776
+msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
+msgid ""
+"? matches exactly one character,\n"
+"* matches any number of characters, including zero.\n"
+"\n"
+"For example: *.txt, file??.png, pict\n"
+"\n"
+"Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
+msgstr ""
+"? ແທນຕົວອັກສອນໜຶ່ງຕົວ,\n"
+"* ແທນຕົວອັກສອນຈຳນວນໃດກໍໄດ້, ລວມທັງສູນຕົວ.\n"
+"\n"
+"ຕົວຢ່າງ: *.txt, file??.png, pict\n"
+"\n"
+"ຖ້າບໍ່ມີເຄື່ອງໝາຍ * ຫຼື ?, ຮູບແບບຈະກົງກັບສ່ວນໃດກໍໄດ້ໃນຊື່. ຖ້າໃຊ້ເຄື່ອງໝາຍເຫຼົ່ານີ້, ຮູບແບບຕ້ອງກົງທັງຈຸດເລີ່ມຕົ້ນ ແລະ ຈຸດສິ້ນສຸດຂອງຊື່."
+
+#: thunar/thunar-standard-view.c:2780
+msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
+msgid "C_ase sensitive"
+msgstr "ຕົວອັກສອນໃຫຍ່-ນ້ອຍຕ່າງກັນ(_A)"
+
+#: thunar/thunar-standard-view.c:2781
+msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
+msgid ""
+"If enabled, letter case must match the pattern.\n"
+"Examp* would match Example.txt and not example.txt"
+msgstr ""
+"ຖ້າເປີດໃຊ້, ຕົວອັກສອນໃຫຍ່ ແລະ ນ້ອຍຕ້ອງກົງກັບຮູບແບບ.\n"
+"Examp* ຈະກົງກັບ Example.txt ແຕ່ບໍ່ກົງກັບ example.txt"
+
+#: thunar/thunar-standard-view.c:2786
+msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
+msgid "_Match diacritics"
+msgstr "ໃຫ້ກົງກັບເຄື່ອງໝາຍກຳກັບສຽງ(_M)"
+
+#: thunar/thunar-standard-view.c:2787
+msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
+msgid ""
+"If enabled, require accents to match the pattern.\n"
+"Rés* would match Résumé.txt and not Resume.txt"
+msgstr ""
+"ຖ້າເປີດໃຊ້, ຕ້ອງການເຄື່ອງໝາຍກຳກັບສຽງໃຫ້ກົງກັບຮູບແບບ.\n"
+"Rés* ຈະກົງກັບ Résumé.txt ແຕ່ບໍ່ກົງກັບ Resume.txt"
+
+#. tell the user that the file name provided by the X Direct Save source is
+#. invalid
+#: thunar/thunar-standard-view.c:3174
+msgid "Invalid filename provided by XDS drag site"
+msgstr "ຊື່ໄຟລ໌ຈາກເວັບໄຊທ໌ທີ່ລາກມານັ້ນບໍ່ຖືກຕ້ອງ"
+
+#. display an error dialog to the user
+#: thunar/thunar-standard-view.c:3368
+#, c-format
+msgid "Failed to create a link for the URL \"%s\""
+msgstr "ບໍ່ສາມາດສ້າງການເຊື່ອມຕໍ່ສຳລັບ URL \"%s\""
+
+#: thunar/thunar-standard-view.c:3415
+msgid "Untitled document"
+msgstr "ເອກະສານບໍ່ມີຊື່"
+
+#: thunar/thunar-standard-view.c:3899 thunar/thunar-window.c:4611
+#, c-format
+msgid "Failed to open directory \"%s\""
+msgstr "ບໍ່ສາມາດເປີດໄດເຣັກທໍຣີ \"%s\""
+
+#: thunar/thunar-statusbar.c:95
+msgid "Show size"
+msgstr "ສະແດງຂະໜາດ"
+
+#: thunar/thunar-statusbar.c:96
+msgid "Size in bytes"
+msgstr "ຂະໜາດເປັນໄບຕ໌"
+
+#: thunar/thunar-statusbar.c:96
+msgid "Show size in bytes"
+msgstr "ສະແດງຂະໜາດເປັນໄບຕ໌"
+
+#: thunar/thunar-statusbar.c:97
+msgid "Filetype"
+msgstr "ປະເພດໄຟລ໌"
+
+#: thunar/thunar-statusbar.c:97
+msgid "Show filetype"
+msgstr "ສະແດງປະເພດໄຟລ໌"
+
+#: thunar/thunar-statusbar.c:98
+msgid "Display Name"
+msgstr "ຊື່ທີ່ສະແດງ"
+
+#: thunar/thunar-statusbar.c:98
+msgid "Show display name"
+msgstr "ສະແດງຊື່ທີ່ໃຊ້ສະແດງ"
+
+#: thunar/thunar-statusbar.c:99
+msgid "Last Modified"
+msgstr "ແກ້ໄຂລ້າສຸດ"
+
+#: thunar/thunar-statusbar.c:99
+msgid "Show last modified"
+msgstr "ສະແດງວັນທີແກ້ໄຂລ້າສຸດ"
+
+#: thunar/thunar-statusbar.c:100
+msgid "Hidden Files Count"
+msgstr "ຈຳນວນໄຟລ໌ທີ່ຊ່ອນຢູ່"
+
+#: thunar/thunar-statusbar.c:100
+msgid "Show hidden files count"
+msgstr "ສະແດງຈຳນວນໄຟລ໌ທີ່ຊ່ອນຢູ່"
+
+#: thunar/thunar-toolbar-editor.c:152
+msgid "Configure the Toolbar"
+msgstr "ຕັ້ງຄ່າແຖບເຄື່ອງມື"
+
+#. create the top label for the toolbar editor dialog
+#: thunar/thunar-toolbar-editor.c:167
+msgid ""
+"Configure the order and visibility of toolbar items.\n"
+"Note that toolbar items are always executed for the current directory."
+msgstr ""
+"ຕັ້ງຄ່າລຳດັບ ແລະ ການສະແດງຜົນຂອງລາຍການໃນແຖບເຄື່ອງມື.\n"
+"ໝາຍເຫດ: ລາຍການໃນແຖບເຄື່ອງມືຈະຖືກປະຕິບັດການສຳລັບໄດເຣັກທໍຣີປັດຈຸບັນສະເໝີ."
+
+#. create the "Use Default" button
+#: thunar/thunar-toolbar-editor.c:260
+msgid "De_fault Order"
+msgstr "ລຳດັບມາດຕະຖານ(_F)"
+
+#. create the "Symbolic Icons" checkbox
+#: thunar/thunar-toolbar-editor.c:266
+msgid "_Symbolic Icons"
+msgstr "ໄອຄອນແບບສັນຍາລັກ(_S)"
+
+#: thunar/thunar-toolbar-editor.c:272
+msgid "Use symbolic icons instead of regular ones (if available)."
+msgstr "ໃຊ້ໄອຄອນແບບສັນຍາລັກແທນໄອຄອນປົກກະຕິ (ຖ້າມີ)."
+
+#: thunar/thunar-toolbar-editor.c:630
+msgid "Only visible when the menubar is hidden"
+msgstr "ສະແດງສະເພາະຕອນທີ່ແຖບເມນູຖືກຊ່ອນຢູ່ເທົ່ານັ້ນ"
+
+#: thunar/thunar-transfer-job.c:552
+msgid "Verifying file contents..."
+msgstr "ກຳລັງກວດສອບເນື້ອໃນໄຟລ໌..."
+
+#: thunar/thunar-transfer-job.c:1140
+#, c-format
+msgid ""
+"Error while copying to \"%s\": %s more space is required to copy to the "
+"destination"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນລະຫວ່າງສຳເນົາໄປທີ່ \"%s\": ຕ້ອງການພື້ນທີ່ເພີ່ມອີກ %s "
+"ເພື່ອສຳເນົາໄປຍັງປາຍທາງ"
+
+#. update progress information
+#: thunar/thunar-transfer-job.c:1174
+#, c-format
+msgid "Trying to restore \"%s\""
+msgstr "ກຳລັງພະຍາຍາມກູ້ຄືນ \"%s\""
+
+#: thunar/thunar-transfer-job.c:1203
+#, c-format
+msgid ""
+"The folder \"%s\" does not exist anymore but is required to restore the file"
+" \"%s\" from the trash"
+msgstr ""
+"ໂຟນເດີ \"%s\" ບໍ່ມີຢູ່ແລ້ວ ແຕ່ຈຳເປັນຕ້ອງໃຊ້ເພື່ອພະຍາຍາມກູ້ຄືນໄຟລ໌ \"%s\" "
+"ຈາກຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-transfer-job.c:1230
+#, c-format
+msgid "Failed to restore the folder \"%s\""
+msgstr "ບໍ່ສາມາດກູ້ຄືນໂຟນເດີ \"%s\""
+
+#. update progress information
+#: thunar/thunar-transfer-job.c:1315
+#, c-format
+msgid "Trying to move \"%s\""
+msgstr "ກຳລັງພະຍາຍາມຍ້າຍ \"%s\""
+
+#. update progress information
+#: thunar/thunar-transfer-job.c:1398
+#, c-format
+msgid "Could not move \"%s\" directly. Collecting files for copying..."
+msgstr "ບໍ່ສາມາດຍ້າຍ \"%s\" ໄດ້ໂດຍກົງ. ກຳລັງຮວບຮວມໄຟລ໌ເພື່ອສຳເນົາ..."
+
+#: thunar/thunar-transfer-job.c:1635
+msgid "Collecting files..."
+msgstr "ກຳລັງຮວບຮວມໄຟລ໌..."
+
+#: thunar/thunar-transfer-job.c:1860
+#, c-format
+msgid "%s of %s"
+msgstr "%s ຈາກ %s"
+
+#: thunar/thunar-transfer-job.c:1880
+#, c-format
+msgid "%lu hour remaining (%s/sec)"
+msgid_plural "%lu hours remaining (%s/sec)"
+msgstr[0] "ເຫຼືອອີກ %lu ຊົ່ວໂມງ (%s/ວິນາທີ)"
+
+#: thunar/thunar-transfer-job.c:1886
+#, c-format
+msgid "%lu minute remaining (%s/sec)"
+msgid_plural "%lu minutes remaining (%s/sec)"
+msgstr[0] "ເຫຼືອອີກ %lu ນາທີ (%s/ວິນາທີ)"
+
+#: thunar/thunar-transfer-job.c:1891
+#, c-format
+msgid "%lu second remaining (%s/sec)"
+msgid_plural "%lu seconds remaining (%s/sec)"
+msgstr[0] "ເຫຼືອອີກ %lu ວິນາທີ (%s/ວິນາທີ)"
+
+#: thunar/thunar-tree-model.c:664 thunar/thunar-tree-view-model.c:1287
+#: thunar/thunar-tree-view-model.c:1416
+msgid "Loading..."
+msgstr "ກຳລັງໂຫຼດ..."
+
+#: thunar/thunar-util.c:305
+msgid "Invalid path"
+msgstr "ເສັ້ນທາງບໍ່ຖືກຕ້ອງ"
+
+#: thunar/thunar-util.c:340
+#, c-format
+msgid "Unknown user \"%s\""
+msgstr "ບໍ່ຮູ້ຈັກຜູ້ໃຊ້ \"%s\""
+
+#. TRANSLATORS: file was modified less than one day ago
+#: thunar/thunar-util.c:452
+msgid "Today"
+msgstr "ມື້ນີ້"
+
+#. TRANSLATORS: file was modified less than one day ago
+#: thunar/thunar-util.c:457
+#, c-format
+msgid "Today at %X"
+msgstr "ມື້ນີ້ເວລາ %X"
+
+#. TRANSLATORS: file was modified less than two days ago
+#: thunar/thunar-util.c:465
+msgid "Yesterday"
+msgstr "ມື້ວານນີ້"
+
+#. TRANSLATORS: file was modified less than two days ago
+#: thunar/thunar-util.c:470
+#, c-format
+msgid "Yesterday at %X"
+msgstr "ມື້ວານນີ້ເວລາ %X"
+
+#. Days from last week
+#: thunar/thunar-util.c:488
+#, c-format
+msgid "%A at %X"
+msgstr "%A ເວລາ %X"
+
+#. Any other date
+#: thunar/thunar-util.c:493
+#, c-format
+msgid "%x at %X"
+msgstr "%x ເວລາ %X"
+
+#: thunar/thunar-util.c:804
+#, c-format
+msgid "%.*s %u%s"
+msgstr "%.*s %u%s"
+
+#: thunar/thunar-util.c:806
+#, c-format
+msgid "%.*s (copy %u)%s"
+msgstr "%.*s (ສຳເນົາ %u)%s"
+
+#: thunar/thunar-util.c:811
+#, c-format
+msgid "link to %.*s%s"
+msgstr "ເຊື່ອມຕໍ່ໄປຫາ %.*s%s"
+
+#: thunar/thunar-util.c:816
+#, c-format
+msgid "link %u to %.*s%s"
+msgstr "ເຊື່ອມຕໍ່ %u ໄປຫາ %.*s%s"
+
+#: thunar/thunar-util.c:836
+msgid "Search: "
+msgstr "ຄົ້ນຫາ: "
+
+#: thunar/thunar-util.c:1332 thunar/thunar-util.c:1365
+#, c-format
+msgid "%s (%d hidden)"
+msgstr "%s (%d ທີ່ຊ່ອນຢູ່)"
+
+#: thunar/thunar-util.c:1349
+#, c-format
+msgid "%s: %s"
+msgstr "%s: %s"
+
+#: thunar/thunar-util.c:1372
+msgid "0 items"
+msgstr "0 ລາຍການ"
+
+#: thunar/thunar-util.c:1381 thunar/thunar-util.c:1503
+#, c-format
+msgid "Last Modified: %s"
+msgstr "ແກ້ໄຂລ້າສຸດ: %s"
+
+#: thunar/thunar-util.c:1430
+#, c-format
+msgid "\"%s\" (%s)"
+msgstr "\"%s\" (%s)"
+
+#: thunar/thunar-util.c:1432
+#, c-format
+msgid "\"%s\""
+msgstr "\"%s\""
+
+#: thunar/thunar-util.c:1453
+#, c-format
+msgid "link to %s"
+msgstr "ເຊື່ອມຕໍ່ໄປຫາ %s"
+
+#: thunar/thunar-util.c:1455
+msgid "shortcut"
+msgstr "ທາງລັດ"
+
+#: thunar/thunar-util.c:1457
+msgid "mountable"
+msgstr "ສາມາດເຊື່ອມຕໍ່ໄດ້"
+
+#: thunar/thunar-util.c:1459
+msgid "mount point"
+msgstr "ຈຸດເຊື່ອມຕໍ່"
+
+#. append the image dimensions to the statusbar text
+#: thunar/thunar-util.c:1493 plugins/thunar-apr/thunar-apr-image-page.c:158
+msgid "Image Size:"
+msgstr "ຂະໜາດຮູບພາບ:"
+
+#: thunar/thunar-window.c:648
+msgid "_File"
+msgstr "ໄຟລ໌(_F)"
+
+#: thunar/thunar-window.c:649
+msgid "New _Tab"
+msgstr "ແທັບໃໝ່(_T)"
+
+#: thunar/thunar-window.c:649
+msgid "Open a new tab for the displayed location"
+msgstr "ເປີດແທັບໃໝ່ສຳລັບຕຳແໜ່ງທີ່ສະແດງຢູ່"
+
+#: thunar/thunar-window.c:650
+msgid "New _Window"
+msgstr "ໜ້າຕ່າງໃໝ່(_W)"
+
+#: thunar/thunar-window.c:650
+msgid "Open a new Thunar window for the displayed location"
+msgstr "ເປີດໜ້າຕ່າງ Thunar ໃໝ່ສຳລັບຕຳແໜ່ງທີ່ສະແດງຢູ່"
+
+#: thunar/thunar-window.c:651
+msgid "Detac_h Tab"
+msgstr "ແຍກແທັບອອກ(_H)"
+
+#: thunar/thunar-window.c:651
+msgid "Open current folder in a new window"
+msgstr "ເປີດໂຟນເດີປັດຈຸບັນໃນໜ້າຕ່າງໃໝ່"
+
+#: thunar/thunar-window.c:652
+msgid "Close Ta_b"
+msgstr "ປິດແທັບ(_B)"
+
+#: thunar/thunar-window.c:652
+msgid "Close this folder"
+msgstr "ປິດໂຟນເດີນີ້"
+
+#: thunar/thunar-window.c:653
+msgid "_Close Window"
+msgstr "ປິດໜ້າຕ່າງ(_C)"
+
+#: thunar/thunar-window.c:653
+msgid "Close this window"
+msgstr "ປິດໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-window.c:654
+msgid "Close _All Windows"
+msgstr "ປິດທຸກໜ້າຕ່າງ(_A)"
+
+#: thunar/thunar-window.c:654
+msgid "Close all Thunar windows"
+msgstr "ປິດໜ້າຕ່າງ Thunar ທັງໝົດ"
+
+#: thunar/thunar-window.c:656
+msgid "_Edit"
+msgstr "ແກ້ໄຂ(_E)"
+
+#: thunar/thunar-window.c:657
+msgid "_Undo"
+msgstr "ກັບຄືນ(_U)"
+
+#: thunar/thunar-window.c:658
+msgid "Red_o"
+msgstr "ເຮັດຊ້ຳ(_O)"
+
+#: thunar/thunar-window.c:659
+msgid "Pr_eferences..."
+msgstr "ການຕັ້ງຄ່າ...(_E)"
+
+#: thunar/thunar-window.c:659
+msgid "Edit Thunar's Preferences"
+msgstr "ແກ້ໄຂການຕັ້ງຄ່າຂອງ Thunar"
+
+#: thunar/thunar-window.c:661
+msgid "_View"
+msgstr "ມຸມມອງ(_V)"
+
+#: thunar/thunar-window.c:662
+msgid "_Reload"
+msgstr "ໂຫຼດຄືນໃໝ່(_R)"
+
+#: thunar/thunar-window.c:662
+msgid "Reload the current folder"
+msgstr "ໂຫຼດໂຟນເດີປັດຈຸບັນຄືນໃໝ່"
+
+#: thunar/thunar-window.c:665
+msgid "S_plit View"
+msgstr "ມຸມມອງແບ່ງສ່ວນ(_P)"
+
+#: thunar/thunar-window.c:665
+msgid "Open/Close Split View"
+msgstr "ເປີດ/ປິດ ມຸມມອງແບ່ງສ່ວນ"
+
+#: thunar/thunar-window.c:666
+msgid "Switch Focused Split View Pane"
+msgstr "ປ່ຽນຈຸດໂຟກັສລະຫວ່າງຊ່ອງມຸມມອງແບ່ງສ່ວນ"
+
+#: thunar/thunar-window.c:667
+msgid "Locatio_n Selector"
+msgstr "ຕົວເລືອກຕຳແໜ່ງ(_N)"
+
+#: thunar/thunar-window.c:668
+msgid "_Text Style"
+msgstr "ຮູບແບບຂໍ້ຄວາມ(_T)"
+
+#: thunar/thunar-window.c:668
+msgid "Traditional text box showing the current path"
+msgstr "ກ່ອງຂໍ້ຄວາມແບບດັ້ງເດີມທີ່ສະແດງເສັ້ນທາງປັດຈຸບັນ"
+
+#: thunar/thunar-window.c:669
+msgid "_Buttons Style"
+msgstr "ຮູບແບບປຸ່ມ(_B)"
+
+#: thunar/thunar-window.c:669
+msgid "Modern approach with buttons that correspond to folders"
+msgstr "ຮູບແບບທັນສະໄໝດ້ວຍປຸ່ມທີ່ກົງກັບໂຟນເດີຕ່າງໆ"
+
+#: thunar/thunar-window.c:670
+msgid "_Side Pane"
+msgstr "ຊ່ອງດ້ານຂ້າງ(_S)"
+
+#: thunar/thunar-window.c:671
+msgid "_Shortcuts"
+msgstr "ທາງລັດ(_S)"
+
+#: thunar/thunar-window.c:671
+msgid "Toggles the visibility of the shortcuts pane"
+msgstr "ເປີດ/ປິດ ການສະແດງຜົນຂອງຊ່ອງທາງລັດ"
+
+#: thunar/thunar-window.c:672
+msgid "_Tree"
+msgstr "ແບບຕົ້ນໄມ້(_T)"
+
+#: thunar/thunar-window.c:672
+msgid "Toggles the visibility of the tree pane"
+msgstr "ເປີດ/ປິດ ການສະແດງຜົນຂອງຊ່ອງແບບຕົ້ນໄມ້"
+
+#: thunar/thunar-window.c:674
+msgid "_Image Preview"
+msgstr "ເບິ່ງຕົວຢ່າງຮູບພາບ(_I)"
+
+#: thunar/thunar-window.c:674
+msgid "Change the visibility of this window's image preview"
+msgstr "ປ່ຽນການສະແດງຜົນຂອງຕົວຢ່າງຮູບພາບໃນໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-window.c:675
+msgid "St_atusbar"
+msgstr "ແຖບສະຖານະ(_A)"
+
+#: thunar/thunar-window.c:675
+msgid "Change the visibility of this window's statusbar"
+msgstr "ປ່ຽນການສະແດງຜົນຂອງແຖບສະຖານະໃນໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-window.c:676
+msgid "_Menubar"
+msgstr "ແຖບເມນູ(_M)"
+
+#: thunar/thunar-window.c:676
+msgid "Change the visibility of this window's menubar"
+msgstr "ປ່ຽນການສະແດງຜົນຂອງແຖບເມນູໃນໜ້າຕ່າງນີ້"
+
+#: thunar/thunar-window.c:677
+msgid "Configure _Toolbar..."
+msgstr "ຕັ້ງຄ່າແຖບເຄື່ອງມື...(_T)"
+
+#: thunar/thunar-window.c:677
+msgid "Configure the toolbar"
+msgstr "ຕັ້ງຄ່າແຖບເຄື່ອງມື"
+
+#: thunar/thunar-window.c:678
+msgid "Cl_ear Saved Folder View Settings"
+msgstr "ລ້າງຄ່າການຕັ້ງຄ່າມຸມມອງໂຟນເດີທີ່ບັນທຶກໄວ້(_E)"
+
+#: thunar/thunar-window.c:678
+msgid "Delete saved view settings for this folder"
+msgstr "ລຶບການຕັ້ງຄ່າມຸມມອງທີ່ບັນທຶກໄວ້ສຳລັບໂຟນເດີນີ້"
+
+#: thunar/thunar-window.c:679
+msgid "Show _Hidden Files"
+msgstr "ສະແດງໄຟລ໌ທີ່ຊ່ອນຢູ່(_H)"
+
+#: thunar/thunar-window.c:679
+msgid "Toggles the display of hidden files in the current window"
+msgstr "ເປີດ/ປິດ ການສະແດງໄຟລ໌ທີ່ຊ່ອນຢູ່ໃນໜ້າຕ່າງປັດຈຸບັນ"
+
+#: thunar/thunar-window.c:680
+msgid "Show _File Highlight"
+msgstr "ສະແດງການເນັ້ນໄຟລ໌(_F)"
+
+#: thunar/thunar-window.c:680
+msgid ""
+"Toggles the display of file highlight which can be configured in the file "
+"specific property dialog"
+msgstr ""
+"ເປີດ/ປິດ ການສະແດງການເນັ້ນໄຟລ໌ "
+"ເຊິ່ງສາມາດຕັ້ງຄ່າໄດ້ໃນໜ້າຕ່າງຄຸນສົມບັດຂອງແຕ່ລະໄຟລ໌"
+
+#: thunar/thunar-window.c:681
+msgid "Zoom I_n"
+msgstr "ຂະຫຍາຍເຂົ້າ(_N)"
+
+#: thunar/thunar-window.c:681
+msgid "Show the contents in more detail"
+msgstr "ສະແດງເນື້ອໃນແບບລະອຽດຂຶ້ນ"
+
+#: thunar/thunar-window.c:684
+msgid "Zoom _Out"
+msgstr "ຂະຫຍາຍອອກ(_O)"
+
+#: thunar/thunar-window.c:684
+msgid "Show the contents in less detail"
+msgstr "ສະແດງເນື້ອໃນແບບລະອຽດໜ້ອຍລົງ"
+
+#: thunar/thunar-window.c:686
+msgid "Normal Si_ze"
+msgstr "ຂະໜາດປົກກະຕິ(_Z)"
+
+#: thunar/thunar-window.c:686
+msgid "Show the contents at the normal size"
+msgstr "ສະແດງເນື້ອໃນໃນຂະໜາດປົກກະຕິ"
+
+#: thunar/thunar-window.c:688
+msgid "_Icon View"
+msgstr "ມຸມມອງໄອຄອນ(_I)"
+
+#: thunar/thunar-window.c:688
+msgid "Display folder content in an icon view"
+msgstr "ສະແດງເນື້ອໃນໂຟນເດີແບບໄອຄອນ"
+
+#: thunar/thunar-window.c:689
+msgid "_List View"
+msgstr "ມຸມມອງລາຍການ(_L)"
+
+#: thunar/thunar-window.c:689
+msgid "Display folder content in a detailed list view"
+msgstr "ສະແດງເນື້ອໃນໂຟນເດີແບບລາຍການລະອຽດ"
+
+#: thunar/thunar-window.c:690
+msgid "_Compact View"
+msgstr "ມຸມມອງແບບກະທັດຮັດ(_C)"
+
+#: thunar/thunar-window.c:690
+msgid "Display folder content in a compact list view"
+msgstr "ສະແດງເນື້ອໃນໂຟນເດີແບບລາຍການກະທັດຮັດ"
+
+#: thunar/thunar-window.c:692
+msgid "_Go"
+msgstr "ໄປ(_G)"
+
+#: thunar/thunar-window.c:693
+msgid "F_ile System"
+msgstr "ລະບົບໄຟລ໌(_I)"
+
+#: thunar/thunar-window.c:694
+msgid "_Home"
+msgstr "ໂຟນເດີຫຼັກ(_H)"
+
+#: thunar/thunar-window.c:694
+msgid "Go to the home folder"
+msgstr "ໄປທີ່ໂຟນເດີຫຼັກ"
+
+#: thunar/thunar-window.c:695
+msgid "_Desktop"
+msgstr "ເດັສທັອບ(_D)"
+
+#: thunar/thunar-window.c:695
+msgid "Go to the desktop folder"
+msgstr "ໄປທີ່ໂຟນເດີເດັສທັອບ"
+
+#: thunar/thunar-window.c:696
+msgid "_Computer"
+msgstr "ຄອມພິວເຕີ(_C)"
+
+#: thunar/thunar-window.c:696
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr ""
+"ທ່ອງເບິ່ງດິສກ໌ ແລະ ໂຟນເດີທັງໝົດທັງພາຍໃນ ແລະ ທາງໄກ "
+"ທີ່ສາມາດເຂົ້າເຖິງໄດ້ຈາກຄອມພິວເຕີນີ້"
+
+#: thunar/thunar-window.c:697
+msgid "_Recent"
+msgstr "ຫວ່າງໆນີ້(_R)"
+
+#: thunar/thunar-window.c:697
+msgid "Display recently used files"
+msgstr "ສະແດງໄຟລ໌ທີ່ໃຊ້ຫວ່າງໆນີ້"
+
+#: thunar/thunar-window.c:698
+msgid "_Trash"
+msgstr "ຖັງຂີ້ເຫຍື້ອ(_T)"
+
+#: thunar/thunar-window.c:698
+msgid "Display the contents of the trash can"
+msgstr "ສະແດງເນື້ອໃນໃນຖັງຂີ້ເຫຍື້ອ"
+
+#: thunar/thunar-window.c:699
+msgid "Open _Parent"
+msgstr "ເປີດໂຟນເດີຂັ້ນເທິງ(_P)"
+
+#: thunar/thunar-window.c:699
+msgid "Open the parent folder"
+msgstr "ເປີດໂຟນເດີທີ່ຢູ່ຂັ້ນເທິງຂຶ້ນໄປ"
+
+#: thunar/thunar-window.c:700
+msgid "_Open Location..."
+msgstr "ເປີດຕຳແໜ່ງ...(_O)"
+
+#: thunar/thunar-window.c:700
+msgid "Specify a location to open"
+msgstr "ລະບຸຕຳແໜ່ງທີ່ຈະເປີດ"
+
+#: thunar/thunar-window.c:702
+msgid "T_emplates"
+msgstr "ແມ່ແບບ(_E)"
+
+#: thunar/thunar-window.c:702
+msgid "Go to the templates folder"
+msgstr "ໄປທີ່ໂຟນເດີແມ່ແບບ"
+
+#: thunar/thunar-window.c:703
+msgid "Browse _Network"
+msgstr "ທ່ອງເບິ່ງເຄືອຂ່າຍ(_N)"
+
+#: thunar/thunar-window.c:705
+msgid "_Bookmarks"
+msgstr "ບຸກມາກ(_B)"
+
+#: thunar/thunar-window.c:708
+msgid "_Contents"
+msgstr "ເນື້ອໃນ(_C)"
+
+#: thunar/thunar-window.c:708
+msgid "Display Thunar user manual"
+msgstr "ສະແດງຄູ່ມືຜູ້ໃຊ້ Thunar"
+
+#: thunar/thunar-window.c:709
+msgid "Display information about Thunar"
+msgstr "ສະແດງຂໍ້ມູນກ່ຽວກັບ Thunar"
+
+#: thunar/thunar-window.c:711
+msgid "_Back"
+msgstr "ກັບຄືນ(_B)"
+
+#: thunar/thunar-window.c:711
+msgid "Go to the previous visited folder"
+msgstr "ໄປທີ່ໂຟນເດີກ່ອນໜ້ານີ້ທີ່ໄດ້ເຂົ້າເບິ່ງ"
+
+#: thunar/thunar-window.c:714
+msgid "_Forward"
+msgstr "ໄປໜ້າ(_F)"
+
+#: thunar/thunar-window.c:714
+msgid "Go to the next visited folder"
+msgstr "ໄປທີ່ໂຟນເດີຖັດໄປທີ່ໄດ້ເຂົ້າເບິ່ງ"
+
+#: thunar/thunar-window.c:716
+msgid "_Previous Tab"
+msgstr "ແທັບກ່ອນໜ້າ(_P)"
+
+#: thunar/thunar-window.c:716
+msgid "Switch to Previous Tab"
+msgstr "ປ່ຽນໄປແທັບກ່ອນໜ້າ"
+
+#: thunar/thunar-window.c:718
+msgid "_Next Tab"
+msgstr "ແທັບຖັດໄປ(_N)"
+
+#: thunar/thunar-window.c:718
+msgid "Switch to Next Tab"
+msgstr "ປ່ຽນໄປແທັບຖັດໄປ"
+
+#: thunar/thunar-window.c:721
+msgid "_Search for Files..."
+msgstr "ຄົ້ນຫາໄຟລ໌...(_S)"
+
+#: thunar/thunar-window.c:721
+msgid "Search for a specific file in the current folder and Recent"
+msgstr "ຄົ້ນຫາໄຟລ໌ທີ່ເຈາະຈົງໃນໂຟນເດີປັດຈຸບັນ ແລະ ໃນລາຍການທີ່ໃຊ້ຫວ່າງໆນີ້"
+
+#: thunar/thunar-window.c:723
+msgid "Cancel search for files"
+msgstr "ຍົກເລີກການຄົ້ນຫາໄຟລ໌"
+
+#: thunar/thunar-window.c:725
+msgid "Menu"
+msgstr "ເມນູ"
+
+#: thunar/thunar-window.c:725
+msgid "Show the menu"
+msgstr "ສະແດງເມນູ"
+
+#. add the label with the root warning
+#: thunar/thunar-window.c:1066
+msgid "Warning: you are using the root account. You may harm your system."
+msgstr "ຄຳເຕືອນ: ເຈົ້າກຳລັງໃຊ້ບັນຊີ root. ເຈົ້າອາດເຮັດໃຫ້ລະບົບເສຍຫາຍໄດ້."
+
+#: thunar/thunar-window.c:1139
+msgid "Size: "
+msgstr "ຂະໜາດ: "
+
+#. TRANSLATORS: `Catfish' is a software package, please don't translate it.
+#: thunar/thunar-window.c:1246
+msgid "Search with Catfish..."
+msgstr "ຄົ້ນຫາດ້ວຍ Catfish..."
+
+#: thunar/thunar-window.c:1258
+msgid "Restore Selected Items"
+msgstr "ກູ້ຄືນລາຍການທີ່ເລືອກ"
+
+#: thunar/thunar-window.c:2959
+msgid "Close tab"
+msgstr "ປິດແທັບ"
+
+#: thunar/thunar-window.c:3418
+#, c-format
+msgid "Open the location \"%s\""
+msgstr "ເປີດຕຳແໜ່ງ \"%s\""
+
+#: thunar/thunar-window.c:4454
+msgid "Failed to open parent folder"
+msgstr "ບໍ່ສາມາດເປີດໂຟນເດີຂັ້ນເທິງ"
+
+#: thunar/thunar-window.c:4585
+#, c-format
+msgid "The directory \"%s\" does not exist. Do you want to create it?"
+msgstr "ໄດເຣັກທໍຣີ \"%s\" ບໍ່ມີຢູ່. ເຈົ້າຕ້ອງການສ້າງມັນບໍ່?"
+
+#: thunar/thunar-window.c:4587
+msgid "Create directory"
+msgstr "ສ້າງໄດເຣັກທໍຣີ"
+
+#. display an error to the user
+#: thunar/thunar-window.c:4656
+msgid "Failed to browse the computer"
+msgstr "ບໍ່ສາມາດທ່ອງເບິ່ງໃນຄອມພິວເຕີ"
+
+#. display the "About Templates" dialog
+#: thunar/thunar-window.c:4699
+msgid "About Templates"
+msgstr "ກ່ຽວກັບແມ່ແບບ"
+
+#: thunar/thunar-window.c:4721
+msgid "All files in this folder will appear in the \"Create Document\" menu."
+msgstr "ທຸກໄຟລ໌ໃນໂຟນເດີນີ້ຈະປາກົດໃນເມນູ \"ສ້າງເອກະສານ\"."
+
+#: thunar/thunar-window.c:4728
+msgid ""
+"If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
+"\n"
+"You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
+msgstr ""
+"ຖ້າເຈົ້າສ້າງເອກະສານບາງປະເພດເລື້ອຍໆ, ໃຫ້ສຳເນົາໄຟລ໌ນັ້ນໄວ້ໃນໂຟນເດີນີ້. Thunar ຈະເພີ່ມລາຍການເອກະສານນີ້ເຂົ້າໃນເມນູ \"ສ້າງເອກະສານ\".\n"
+"\n"
+"ຈາກນັ້ນເຈົ້າສາມາດເລືອກລາຍການຈາກເມນູ \"ສ້າງເອກະສານ\" ແລະ ສຳເນົາຂອງເອກະສານນັ້ນຈະຖືກສ້າງຂຶ້ນໃນໄດເຣັກທໍຣີທີ່ເຈົ້າກຳລັງເບິ່ງຢູ່."
+
+#: thunar/thunar-window.c:4740
+msgid "Do _not display this message again"
+msgstr "ບໍ່ຕ້ອງສະແດງຂໍ້ຄວາມນີ້ອີກ(_N)"
+
+#. display an error to the user
+#: thunar/thunar-window.c:4774
+msgid "Failed to open the file system root folder"
+msgstr "ບໍ່ສາມາດເປີດໂຟນເດີ root ຂອງລະບົບໄຟລ໌"
+
+#. display an error to the user
+#: thunar/thunar-window.c:4810
+msgid "Failed to display `Recent`"
+msgstr "ບໍ່ສາມາດສະແດງ `ຫວ່າງໆນີ້`"
+
+#. display an error to the user
+#: thunar/thunar-window.c:4846
+msgid "Failed to display the contents of the trash can"
+msgstr "ບໍ່ສາມາດສະແດງເນື້ອໃນຂອງຖັງຂີ້ເຫຍື້ອ"
+
+#. display an error to the user
+#: thunar/thunar-window.c:4882
+msgid "Failed to browse the network"
+msgstr "ບໍ່ສາມາດທ່ອງເບິ່ງເຄືອຂ່າຍ"
+
+#: thunar/thunar-window.c:5025
+msgid ""
+"Thunar is a fast and easy to use file manager\n"
+"for the Xfce Desktop Environment."
+msgstr ""
+"Thunar ແມ່ນຕົວຈັດການໄຟລ໌ທີ່ໄວ ແລະ ໃຊ້ງ່າຍ\n"
+"ສຳລັບສະພາບແວດລ້ອມເດັສທັອບ Xfce."
+
+#: thunar/thunar-window.c:6099
+msgid "Select an image to preview"
+msgstr "ເລືອກຮູບພາບເພື່ອເບິ່ງຕົວຢ່າງ"
+
+#: thunar/thunar-window.c:6246
+msgid "Failed to launch search with Catfish"
+msgstr "ບໍ່ສາມາດເລີ່ມການຄົ້ນຫາດ້ວຍ Catfish"
+
+#: thunar/thunar-window.c:6577
+msgid "Change the active view type"
+msgstr "ປ່ຽນປະເພດມຸມມອງທີ່ໃຊ້ງານຢູ່"
+
+#. add a proxy menu item for the view switcher to be represent in the overflow
+#. menu
+#: thunar/thunar-window.c:6580 thunar/thunar-window.c:6605
+msgid "View Switcher"
+msgstr "ຕົວສະຫຼັບມຸມມອງ"
+
+#. add a proxy menu item for the location bar to represent the bar in the
+#. overflow menu
+#: thunar/thunar-window.c:6770 thunar/thunar-window.c:6775
+msgid "Location Bar"
+msgstr "ແຖບຕຳແໜ່ງ"
+
+#: thunarx/thunarx-property-page.c:114
+msgid "Label"
+msgstr "ປ້າຍຊື່"
+
+#: thunarx/thunarx-property-page.c:115
+msgid "Text of the page's label"
+msgstr "ຂໍ້ຄວາມຂອງປ້າຍຊື່ໜ້າ"
+
+#: thunarx/thunarx-property-page.c:127
+msgid "Label widget"
+msgstr "ວິດເຈັດປ້າຍຊື່"
+
+#: thunarx/thunarx-property-page.c:128
+msgid "A widget to display in place of the usual page label"
+msgstr "ວິດເຈັດທີ່ຈະສະແດງແທນປ້າຍຊື່ໜ້າປົກກະຕິ"
+
+#: thunarx/thunarx-provider-plugin.c:83
+msgid "Resident"
+msgstr "ຢູ່ຖາວອນ"
+
+#: thunarx/thunarx-provider-plugin.c:84
+msgid "Don't unload the plugin from memory"
+msgstr "ບໍ່ຕ້ອງເອົາປລັກອິນອອກຈາກໜ່ວຍຄວາມຈຳ"
+
+#: thunarx/thunarx-renamer.c:158
+msgid "Help URL"
+msgstr "URL ຊ່ວຍເຫຼືອ"
+
+#: thunarx/thunarx-renamer.c:159
+msgid "The URL to the documentation of the renamer"
+msgstr "URL ໄປຫາເອກະສານຂອງຕົວປ່ຽນຊື່"
+
+#: thunarx/thunarx-renamer.c:174
+msgid "The user visible name of the renamer"
+msgstr "ຊື່ຂອງຕົວປ່ຽນຊື່ທີ່ຜູ້ໃຊ້ເບິ່ງເຫັນ"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:258
+#: plugins/thunar-apr/thunar-apr-image-page.c:62
+msgid "Description:"
+msgstr "ຄຳອະທິບາຍ:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:265
+msgid ""
+"The generic name of the entry, for example \"Web Browser\" in case of "
+"Firefox."
+msgstr "ຊື່ທົ່ວໄປຂອງລາຍການ, ຕົວຢ່າງ \"ເວັບບຣາວເຊີ\" ໃນກໍລະນີຂອງ Firefox."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:285
+msgid "Command:"
+msgstr "ຄຳສັ່ງ:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:292
+msgid "The program to execute, possibly with arguments."
+msgstr "ໂປຣແກຣມທີ່ຈະປະຕິບັດການ, ອາດຈະລວມເຖິງອາຣ໌ກິວເມນຕ໌."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:311
+msgid "Working Directory:"
+msgstr "ໄດເຣັກທໍຣີເຮັດວຽກ:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:318
+msgid "The working directory for the program."
+msgstr "ໄດເຣັກທໍຣີທີ່ໃຊ້ເຮັດວຽກສຳລັບໂປຣແກຣມ."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:337
+msgid "URL:"
+msgstr "URL:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:344
+msgid "The URL to access."
+msgstr "URL ທີ່ຈະເຂົ້າເຖິງ."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:363
+#: plugins/thunar-apr/thunar-apr-image-page.c:63
+msgid "Comment:"
+msgstr "ໝາຍເຫດ:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:370
+msgid ""
+"Tooltip for the entry, for example \"View sites on the Internet\" in case of"
+" Firefox. Should not be redundant with the name or the description."
+msgstr ""
+"ຄຳອະທິບາຍສັ້ນ (Tooltip) ສຳລັບລາຍການ, ຕົວຢ່າງ \"ເບິ່ງເວັບໄຊທ໌ເທິງອິນເຕີເນັດ\""
+" ໃນກໍລະນີຂອງ Firefox. ບໍ່ຄວນຊ້ຳຊ້ອນກັບຊື່ ຫຼື ຄຳອະທິບາຍ."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:402
+msgid "Options:"
+msgstr "ຕົວເລືອກ:"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:408
+msgid "Use _startup notification"
+msgstr "ໃຊ້ການແຈ້ງເຕືອນເມື່ອເລີ່ມເຮັດວຽກ(_S)"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:409
+msgid ""
+"Select this option to enable startup notification when the command is run "
+"from the file manager or the menu. Not every application supports startup "
+"notification."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອເປີດໃຊ້ການແຈ້ງເຕືອນເມື່ອເລີ່ມເຮັດວຽກ "
+"ເມື່ອຄຳສັ່ງຖືກຣັນຈາກຕົວຈັດການໄຟລ໌ ຫຼື ເມນູ. "
+"ບໍ່ແມ່ນທຸກແອັບພລິເຄຊັນທີ່ຈະຮອງຮັບການແຈ້ງເຕືອນນີ້."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:429
+msgid "Run in _terminal"
+msgstr "ຣັນໃນເທີມິນໍ(_T)"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:430
+msgid "Select this option to run the command in a terminal window."
+msgstr "ເລືອກຕົວເລືອກນີ້ເພື່ອຣັນຄຳສັ່ງໃນໜ້າຕ່າງເທີມິນໍ."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:448
+msgid "Security:"
+msgstr "ຄວາມປອດໄພ:"
+
+#. same function as in thunar-permission-chooser.c
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:455
+msgid "Allow this file to _run as a .desktop file"
+msgstr "ອະນຸຍາດໃຫ້ໄຟລ໌ນີ້ຣັນເປັນໄຟລ໌ .desktop(_R)"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:456
+msgid ""
+"Select this to enable executable permission bit(+x). Thunar will not launch "
+"the .desktop file if not set."
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອເປີດໃຊ້ສິດການປະຕິບັດການ (+x). Thunar ຈະບໍ່ເລີ່ມໄຟລ໌ "
+".desktop ຖ້າບໍ່ໄດ້ຕັ້ງຄ່ານີ້."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:473
+msgid "Set this file as trusted"
+msgstr "ຕັ້ງຄ່າໃຫ້ໄຟລ໌ນີ້ເປັນທີ່ເຊື່ອຖື"
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:474
+msgid ""
+"Select this option to trust this .desktop file. This will generate a "
+"checksum of the file and store it via gvfs. The additional check will "
+"protect from malicious launchers which e.g. pretend to be a picture, having "
+"the executable flag pre-set"
+msgstr ""
+"ເລືອກຕົວເລືອກນີ້ເພື່ອເຊື່ອຖືໄຟລ໌ .desktop ນີ້. ນີ້ຈະສ້າງ checksum ຂອງໄຟລ໌ "
+"ແລະ ເກັບໄວ້ຜ່ານ gvfs. "
+"ການກວດສອບເພີ່ມເຕີມນີ້ຈະຊ່ວຍປ້ອງກັນຈາກຕົວເລີ່ມຕົ້ນທີ່ເປັນອັນຕະລາຍ ເຊັ່ນ "
+"ຕົວທີ່ປອມເປັນຮູບພາບແຕ່ມີການຕັ້ງຄ່າໃຫ້ຣັນເປັນໂປຣແກຣມໄວ້."
+
+#: plugins/thunar-apr/thunar-apr-desktop-page.c:843
+#, c-format
+msgid "Failed to save \"%s\"."
+msgstr "ບໍ່ສາມາດບັນທຶກ \"%s\"."
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:50
+msgid "Date Taken:"
+msgstr "ວັນທີຖ່າຍຮູບ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:51
+msgid "Camera Brand:"
+msgstr "ຍີ່ຫໍ້ກ້ອງ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:52
+msgid "Camera Model:"
+msgstr "ລຸ້ນກ້ອງ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:53
+msgid "Exposure Time:"
+msgstr "ເວລາເປີດໜ້າກ້ອງ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:54
+msgid "Exposure Program:"
+msgstr "ໂປຣແກຣມການຖ່າຍຮູບ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:55
+msgid "Aperture Value:"
+msgstr "ຄ່າຮູຮັບແສງ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:56
+msgid "Metering Mode:"
+msgstr "ໂໝດວັດແທກແສງ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:57
+msgid "Flash Fired:"
+msgstr "ການໃຊ້ແຟລຊ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:58
+msgid "Focal Length:"
+msgstr "ໄລຍະໂຟກັສ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:59
+msgid "Shutter Speed:"
+msgstr "ຄວາມໄວຊັດເຕີ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:60
+msgid "ISO Speed Ratings:"
+msgstr "ຄ່າຄວາມໄວແສງ ISO:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:61
+msgid "Software:"
+msgstr "ຊອບແວ:"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:121
+msgid "Image"
+msgstr "ຮູບພາບ"
+
+#: plugins/thunar-apr/thunar-apr-image-page.c:136
+msgid "Image Type:"
+msgstr "ປະເພດຮູບພາບ:"
+
+#. update the "Image Size" label
+#: plugins/thunar-apr/thunar-apr-image-page.c:263
+#, c-format
+msgid "%dx%d pixel"
+msgid_plural "%dx%d pixels"
+msgstr[0] "%dx%d ພິກເຊລ"
+
+#: plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
+msgid "Con_vert to:"
+msgstr "ປ່ຽນເປັນ(_V):"
+
+#: plugins/thunar-sbr/thunar-sbr-case-renamer.c:269
+msgid "Uppercase / Lowercase"
+msgstr "ຕົວອັກສອນໃຫຍ່ / ຕົວອັກສອນນ້ອຍ"
+
+#: plugins/thunar-sbr/thunar-sbr-date-renamer.c:201
+msgid "Insert _time:"
+msgstr "ແທຣກເວລາ(_T):"
+
+#: plugins/thunar-sbr/thunar-sbr-date-renamer.c:232
+msgid ""
+"The format describes the date and time parts to insert into the file name. "
+"For example, %Y will be substituted with the year, %m with the month and %d "
+"with the day. See the documentation of the date utility for additional "
+"information."
+msgstr ""
+"ຮູບແບບທີ່ອະທິບາຍສ່ວນຂອງວັນທີ ແລະ ເວລາທີ່ຈະແທຣກໃສ່ໃນຊື່ໄຟລ໌. ຕົວຢ່າງ, %Y "
+"ຈະຖືກແທນທີ່ດ້ວຍປີ, %m ແທນດ້ວຍເດືອນ ແລະ %d ແທນດ້ວຍວັນ. ເບິ່ງເອກະສານຂອງຄຳສັ່ງ "
+"date ສຳລັບຂໍ້ມູນເພີ່ມເຕີມ."
+
+#: plugins/thunar-sbr/thunar-sbr-date-renamer.c:248
+#: plugins/thunar-sbr/thunar-sbr-insert-renamer.c:202
+msgid "_At position:"
+msgstr "ທີ່ຕຳແໜ່ງ(_A):"
+
+#: plugins/thunar-sbr/thunar-sbr-date-renamer.c:600
+msgid "Insert Date / Time"
+msgstr "ແທຣກວັນທີ / ເວລາ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:94
+msgid "lowercase"
+msgstr "ຕົວພິມນ້ອຍ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:95
+msgid "UPPERCASE"
+msgstr "ຕົວພິມໃຫຍ່"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:96
+msgid "Title Case"
+msgstr "ຕົວໃຫຍ່ສະເພາະໜ້າ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:97
+msgid "First character uppercase"
+msgstr "ຕົວອັກສອນທຳອິດເປັນຕົວໃຫຍ່"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:103
+msgid "Insert"
+msgstr "ແທຣກ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:104
+msgid "Overwrite"
+msgstr "ຂຽນທັບ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:110
+msgid "1, 2, 3, ..."
+msgstr "1, 2, 3, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:111
+msgid "01, 02, 03, ..."
+msgstr "01, 02, 03, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:112
+msgid "001, 002, 003, ..."
+msgstr "001, 002, 003, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:113
+msgid "0001, 0002, 0003, ..."
+msgstr "0001, 0002, 0003, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:114
+msgid "00001, 00002, 00003, ..."
+msgstr "00001, 00002, 00003, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:115
+msgid "a, b, c, d, ..."
+msgstr "a, b, c, d, ..."
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:121
+msgid "From the front (left)"
+msgstr "ຈາກດ້ານໜ້າ (ຊ້າຍ)"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:122
+msgid "From the back (right)"
+msgstr "ຈາກດ້ານຫຼັງ (ຂວາ)"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:128
+msgid "Old Name - Text - Number"
+msgstr "ຊື່ເດີມ - ຂໍ້ຄວາມ - ຕົວເລກ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:129
+msgid "Number - Text - Old Name"
+msgstr "ຕົວເລກ - ຂໍ້ຄວາມ - ຊື່ເດີມ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:130
+msgid "Text - Number"
+msgstr "ຂໍ້ຄວາມ - ຕົວເລກ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:131
+msgid "Number - Text"
+msgstr "ຕົວເລກ - ຂໍ້ຄວາມ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:137
+msgid "Current"
+msgstr "ປັດຈຸບັນ"
+
+#: plugins/thunar-sbr/thunar-sbr-enum-types.c:141
+msgid "Date Picture Taken"
+msgstr "ວັນທີຖ່າຍຮູບ"
+
+#: plugins/thunar-sbr/thunar-sbr-insert-renamer.c:182
+#: plugins/thunar-sbr/thunar-sbr-number-renamer.c:265
+msgid "_Text:"
+msgstr "ຂໍ້ຄວາມ(_T):"
+
+#: plugins/thunar-sbr/thunar-sbr-insert-renamer.c:391
+msgid "Insert / Overwrite"
+msgstr "ແທຣກ / ຂຽນທັບ"
+
+#: plugins/thunar-sbr/thunar-sbr-number-renamer.c:191
+msgid "_Number Format:"
+msgstr "ຮູບແບບຕົວເລກ(_N):"
+
+#: plugins/thunar-sbr/thunar-sbr-number-renamer.c:223
+msgid "_Start With:"
+msgstr "ເລີ່ມດ້ວຍ(_S):"
+
+#: plugins/thunar-sbr/thunar-sbr-number-renamer.c:236
+msgid "Text _Format:"
+msgstr "ຮູບແບບຂໍ້ຄວາມ(_F):"
+
+#: plugins/thunar-sbr/thunar-sbr-number-renamer.c:527
+msgid "Numbering"
+msgstr "ການໃສ່ເລກລຳດັບ"
+
+#: plugins/thunar-sbr/thunar-sbr-remove-renamer.c:179
+msgid "Remove _From Position:"
+msgstr "ເອົາອອກຈາກຕຳແໜ່ງ(_F):"
+
+#: plugins/thunar-sbr/thunar-sbr-remove-renamer.c:215
+msgid "_To Position:"
+msgstr "ໄປຍັງຕຳແໜ່ງ(_T):"
+
+#: plugins/thunar-sbr/thunar-sbr-remove-renamer.c:423
+msgid "Remove Characters"
+msgstr "ເອົາຕົວອັກສອນອອກ"
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:216
+msgid "_Search For:"
+msgstr "ຄົ້ນຫາ(_S):"
+
+#. reset to default tooltip
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:224
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:581
+msgid "Enter the text to search for in the file names."
+msgstr "ປ້ອນຂໍ້ຄວາມທີ່ຈະຄົ້ນຫາໃນຊື່ໄຟລ໌."
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
+msgid "Regular _Expression"
+msgstr "Regular Expression(_E)"
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:240
+msgid ""
+"If you enable this option, the pattern will be treated as a regular "
+"expression and matched using the Perl-compatible regular expressions (PCRE)."
+" Check the documentation for details about the regular expression syntax."
+msgstr ""
+"ຖ້າເປີດໃຊ້ຕົວເລືອກນີ້, ຮູບແບບຈະຖືກປະຕິບັດເປັນ regular expression ແລະ "
+"ກວດສອບໂດຍໃຊ້ Perl-compatible regular expressions (PCRE). "
+"ກະລຸນາກວດສອບເອກະສານສຳລັບລາຍລະອຽດກ່ຽວກັບໄວຍາກອນ."
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:247
+msgid "Replace _With:"
+msgstr "ແທນທີ່ດ້ວຍ(_W):"
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:255
+msgid ""
+"Enter the text that should be used as replacement for the pattern above."
+msgstr "ປ້ອນຂໍ້ຄວາມທີ່ຈະໃຊ້ແທນທີ່ຮູບແບບທາງເທິງ."
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:269
+msgid "C_ase Sensitive Search"
+msgstr "ຄົ້ນຫາແບບແຍກຕົວອັກສອນໃຫຍ່-ນ້ອຍ(_A)"
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:271
+msgid ""
+"If you enable this option, the pattern will be searched in a case-sensitive "
+"manner. The default is to use a case-insensitive search."
+msgstr ""
+"ຖ້າເປີດໃຊ້ຕົວເລືອກນີ້, ການຄົ້ນຫາຮູບແບບຈະແຍກຕົວອັກສອນໃຫຍ່ ແລະ ນ້ອຍ. "
+"ຄ່າມາດຕະຖານແມ່ນບໍ່ແຍກ."
+
+#. setup a tooltip with the error message
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:558
+#, c-format
+msgid "Invalid regular expression, at character position %ld: %s"
+msgstr "Regular expression ບໍ່ຖືກຕ້ອງ ທີ່ຕຳແໜ່ງຕົວອັກສອນ %ld: %s"
+
+#: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:599
+msgid "Search & Replace"
+msgstr "ຄົ້ນຫາ ແລະ ແທນທີ່"
+
+#: plugins/thunar-sendto-email/main.c:217
+#, c-format
+msgid "Send \"%s\" as compressed archive?"
+msgstr "ສົ່ງ \"%s\" ເປັນໄຟລ໌ບີບອັດບໍ່?"
+
+#: plugins/thunar-sendto-email/main.c:219
+#: plugins/thunar-sendto-email/main.c:239
+msgid "Send email"
+msgstr "ສົ່ງອີເມລ"
+
+#: plugins/thunar-sendto-email/main.c:221
+#: plugins/thunar-sendto-email/main.c:241
+msgid "Send _directly"
+msgstr "ສົ່ງໂດຍກົງ(_D)"
+
+#: plugins/thunar-sendto-email/main.c:222
+msgid "Send com_pressed"
+msgstr "ສົ່ງແບບບີບອັດ(_P)"
+
+#: plugins/thunar-sendto-email/main.c:224
+msgid ""
+"When sending a file via email, you can either choose to send the file "
+"directly, as is, or compress the file before attaching it to an email. It is"
+" highly recommended to compress large files before sending them."
+msgstr ""
+"ເມື່ອສົ່ງໄຟລ໌ຜ່ານອີເມລ, ເຈົ້າສາມາດເລືອກທີ່ຈະສົ່ງໄຟລ໌ໂດຍກົງຕາມທີ່ມັນເປັນ, ຫຼື"
+" ບີບອັດໄຟລ໌ກ່ອນທີ່ຈະແນບໃສ່ອີເມລ. "
+"ແນະນຳຢ່າງຍິ່ງໃຫ້ບີບອັດໄຟລ໌ທີ່ມີຂະໜາດໃຫຍ່ກ່ອນສົ່ງ."
+
+#: plugins/thunar-sendto-email/main.c:235
+#, c-format
+msgid "Send %d file as compressed archive?"
+msgid_plural "Send %d files as compressed archive?"
+msgstr[0] "ສົ່ງ %d ໄຟລ໌ ເປັນໄຟລ໌ບີບອັດບໍ່?"
+
+#: plugins/thunar-sendto-email/main.c:242
+msgid "Send as _archive"
+msgstr "ສົ່ງເປັນໄຟລ໌ຈັດເກັບ (archive)(_A)"
+
+#: plugins/thunar-sendto-email/main.c:244
+msgid ""
+"When sending multiple files via email, you can either choose to send the "
+"files directly, attaching multiple files to an email, or send all files "
+"compressed into a single archive file and attach the archive. It is highly "
+"recommended to send multiple large files as archive."
+msgstr ""
+"ເມື່ອສົ່ງຫຼາຍໄຟລ໌ຜ່ານອີເມລ, ເຈົ້າສາມາດເລືອກສົ່ງໂດຍກົງໂດຍການແນບຫຼາຍໄຟລ໌, ຫຼື "
+"ສົ່ງທຸກໄຟລ໌ທີ່ບີບອັດລວມກັນເປັນໄຟລ໌ດຽວແລ້ວແນບໄປ. "
+"ແນະນຳຢ່າງຍິ່ງໃຫ້ສົ່ງຫຼາຍໄຟລ໌ໃຫຍ່ໆໃນຮູບແບບໄຟລ໌ຈັດເກັບ (archive)."
+
+#. allocate the progress dialog
+#. setup the label
+#: plugins/thunar-sendto-email/main.c:302
+#: plugins/thunar-sendto-email/main.c:328
+msgid "Compressing files..."
+msgstr "ກຳລັງບີບອັດໄຟລ໌..."
+
+#. tell the user that the command failed
+#: plugins/thunar-sendto-email/main.c:353
+#, c-format
+msgid "ZIP command terminated with error %d"
+msgstr "ຄຳສັ່ງ ZIP ຢຸດເຮັດວຽກດ້ວຍຂໍ້ຜິດພາດ %d"
+
+#: plugins/thunar-sendto-email/main.c:442
+msgid "Failed to create temporary directory"
+msgstr "ບໍ່ສາມາດສ້າງໄດເຣັກທໍຣີຊົ່ວຄາວ"
+
+#: plugins/thunar-sendto-email/main.c:504
+#: plugins/thunar-sendto-email/main.c:515
+#, c-format
+msgid "Failed to create symbolic link for \"%s\""
+msgstr "ບໍ່ສາມາດສ້າງ symbolic link ສຳລັບ \"%s\""
+
+#. tell the user that we failed to compress the file(s)
+#: plugins/thunar-sendto-email/main.c:539
+#, c-format
+msgid "Failed to compress %d file"
+msgid_plural "Failed to compress %d files"
+msgstr[0] "ບໍ່ສາມາດບີບອັດ %d ໄຟລ໌"
+
+#. tell the user that we failed
+#: plugins/thunar-sendto-email/main.c:686
+msgid "Failed to compose new email"
+msgstr "ບໍ່ສາມາດສ້າງອີເມລໃໝ່"
+
+#: plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in:5
+msgid "Mail Recipient"
+msgstr "ຜູ້ຮັບອີເມລ"
+
+#. tell the user that we failed to connect to the trash
+#: plugins/thunar-tpa/thunar-tpa.c:297 plugins/thunar-tpa/thunar-tpa.c:337
+#: plugins/thunar-tpa/thunar-tpa.c:364 plugins/thunar-tpa/thunar-tpa.c:391
+msgid "Failed to connect to the Trash"
+msgstr "ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບຖັງຂີ້ເຫຍື້ອ"
+
+#. tell the user whether the trash is full or empty
+#: plugins/thunar-tpa/thunar-tpa.c:312
+msgid "Trash contains files"
+msgstr "ຖັງຂີ້ເຫຍື້ອມີໄຟລ໌ຢູ່"
+
+#: plugins/thunar-tpa/thunar-tpa.desktop.in:4
+msgid "Trash Applet"
+msgstr "ແອັບເປລັດຖັງຂີ້ເຫຍື້ອ"
+
+#: plugins/thunar-tpa/thunar-tpa.desktop.in:5
+msgid "Display the trash can"
+msgstr "ສະແດງຖັງຂີ້ເຫຍື້ອ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:279
+#: plugins/thunar-uca/thunar-uca-editor.ui:11
+msgid "Edit Action"
+msgstr "ແກ້ໄຂການປະຕິບັດການ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:279
+msgid "Create Action"
+msgstr "ສ້າງການປະຕິບັດການ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:328
+msgid "Failed to save actions to disk."
+msgstr "ບໍ່ສາມາດບັນທຶກການປະຕິບັດການລົງໃນດິສກ໌."
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:380
+#, c-format
+msgid ""
+"Are you sure that you want to delete\n"
+"action \"%s\"?"
+msgstr ""
+"ເຈົ້າແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ\n"
+"ການປະຕິບັດການ \"%s\"?"
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:381
+msgid "Delete action"
+msgstr "ລຶບການປະຕິບັດການ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.c:382
+msgid "If you delete a custom action, it is permanently lost."
+msgstr "ຖ້າເຈົ້າລຶບການປະຕິບັດການທີ່ກຳນົດເອງ, ມັນຈະຫາຍໄປຖາວອນ."
+
+#. skip leading slash
+#: plugins/thunar-uca/thunar-uca-editor.c:374
+#, c-format
+msgid "This keyboard shortcut is currently used by: '%s'"
+msgstr "ທາງລັດຄີບອດນີ້ຖືກໃຊ້ໂດຍ: '%s' ແລ້ວ"
+
+#: plugins/thunar-uca/thunar-uca-editor.c:377
+msgid "Keyboard shortcut already in use"
+msgstr "ທາງລັດຄີບອດນີ້ຖືກໃຊ້ຢູ່ແລ້ວ"
+
+#. setup a label to tell that no icon was selected
+#: plugins/thunar-uca/thunar-uca-editor.c:528
+#: plugins/thunar-uca/thunar-uca-editor.ui:279
+msgid "No icon"
+msgstr "ບໍ່ມີໄອຄອນ"
+
+#: plugins/thunar-uca/thunar-uca-model.c:867
+msgid "End element handler called while in root context"
+msgstr "ຕົວຈັດການ End element ຖືກຮຽກໃຊ້ໃນຂະນະທີ່ຢູ່ໃນ root context"
+
+#: plugins/thunar-uca/thunar-uca-model.c:988
+#, c-format
+msgid "Unknown closing element <%s>"
+msgstr "ບໍ່ຮູ້ຈັກ Element ປິດ <%s>"
+
+#: plugins/thunar-uca/thunar-uca-model.c:1518
+msgid "Failed to determine save location for uca.xml"
+msgstr "ບໍ່ສາມາດກຳນົດຕຳແໜ່ງບັນທຶກສຳລັບ uca.xml"
+
+#: plugins/thunar-uca/thunar-uca-model.c:1642
+msgid "Command not configured"
+msgstr "ຄຳສັ່ງຍັງບໍ່ໄດ້ຕັ້ງຄ່າ"
+
+#: plugins/thunar-uca/thunar-uca-provider.c:188
+msgid "Confi_gure custom actions..."
+msgstr "ຕັ້ງຄ່າການປະຕິບັດການທີ່ກຳນົດເອງ...(_G)"
+
+#: plugins/thunar-uca/thunar-uca-provider.c:188
+msgid ""
+"Setup custom actions that will appear in the file managers context menus"
+msgstr "ຕັ້ງຄ່າການປະຕິບັດການທີ່ຈະປາກົດໃນເມນູບໍລິບົດຂອງຕົວຈັດການໄຟລ໌"
+
+#: plugins/thunar-uca/thunar-uca-provider.c:567
+#, c-format
+msgid "Failed to launch action \"%s\"."
+msgstr "ບໍ່ສາມາດເລີ່ມການປະຕິບັດການ \"%s\"."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:63
+msgid "The name of the action that will be displayed in the context menu."
+msgstr "ຊື່ຂອງການປະຕິບັດການທີ່ຈະສະແດງໃນເມນູບໍລິບົດ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:76
+msgid "_Description:"
+msgstr "ຄຳອະທິບາຍ(_D):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:93
+msgid ""
+"The description of the action that will be displayed as tooltip in the "
+"statusbar when selecting the item from the context menu."
+msgstr ""
+"ຄຳອະທິບາຍຂອງການປະຕິບັດການທີ່ຈະສະແດງເປັນ Tooltip ໃນແຖບສະຖານະ "
+"ເມື່ອເລືອກລາຍການຈາກເມນູບໍລິບົດ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:106
+msgid "_Submenu:"
+msgstr "ເມນູຍ່ອຍ(_S):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:123
+msgid ""
+"The submenu in which the action will be displayed. Leave empty for no menu. "
+"Use '/' for nested menus."
+msgstr ""
+"ເມນູຍ່ອຍທີ່ຈະສະແດງການປະຕິບັດການ. ປ່ອຍຫວ່າງໄວ້ຖ້າບໍ່ຕ້ອງການເມນູ. ໃຊ້ '/' "
+"ສຳລັບເມນູທີ່ຊ້ອນກັນ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:136
+msgid "_Command:"
+msgstr "ຄຳສັ່ງ(_C):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:157
+msgid ""
+"The command (including the necessary parameters) to perform the action. See "
+"the command parameter legend below for a list of supported parameter "
+"variables, which will be substituted when launching the command. When upper-"
+"case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
+"if more than one item is selected. Else the action will only be applicable "
+"if exactly one item is selected."
+msgstr ""
+"ຄຳສັ່ງ (ລວມເຖິງພາລາມີເຕີທີ່ຈຳເປັນ) ເພື່ອປະຕິບັດການ. "
+"ເບິ່ງຄຳອະທິບາຍພາລາມີເຕີລຸ່ມນີ້ສຳລັບລາຍການຕົວແປທີ່ຮອງຮັບ "
+"ເຊິ່ງຈະຖືກແທນທີ່ເມື່ອເລີ່ມຄຳສັ່ງ. ເມື່ອໃຊ້ຕົວອັກສອນໃຫຍ່ (ເຊັ່ນ %F, %D, %N), "
+"ການປະຕິບັດການຈະໃຊ້ໄດ້ເຖິງແມ່ນວ່າຈະເລືອກຫຼາຍກວ່າໜຶ່ງລາຍການ. ຖ້າບໍ່ດັ່ງນັ້ນ, "
+"ມັນຈະໃຊ້ໄດ້ກໍຕໍ່ເມື່ອເລືອກພຽງລາຍການດຽວເທົ່ານັ້ນ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:172
+msgid ""
+"Browse the file system to select an application to use for this action."
+msgstr ""
+"ທ່ອງເບິ່ງລະບົບໄຟລ໌ເພື່ອເລືອກແອັບພລິເຄຊັນທີ່ຈະໃຊ້ສຳລັບການປະຕິບັດການນີ້."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:201
+msgid "Keyboard _Shortcut:"
+msgstr "ທາງລັດຄີບອດ(_S):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:219
+msgid "The keyboard shortcut for the action."
+msgstr "ທາງລັດຄີບອດສຳລັບການປະຕິບັດການ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:234
+msgid "Clear the keyboard shortcut for this action."
+msgstr "ລ້າງຄ່າທາງລັດຄີບອດສຳລັບການປະຕິບັດການນີ້."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:263
+msgid "_Icon:"
+msgstr "ໄອຄອນ(_I):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:283
+msgid ""
+"Click this button to select an icon file that will be displayed in the "
+"context menu in addition to the action name chosen above."
+msgstr ""
+"ຄລິກປຸ່ມນີ້ເພື່ອເລືອກໄຟລ໌ໄອຄອນທີ່ຈະສະແດງໃນເມນູບໍລິບົດ "
+"ຄຽງຄູ່ກັບຊື່ການປະຕິບັດການທີ່ເລືອກໄວ້ຂ້າງເທິງ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:294
+msgid "Use Startup Notification"
+msgstr "ໃຊ້ການແຈ້ງເຕືອນເມື່ອເລີ່ມເຮັດວຽກ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:298
+msgid ""
+"Enable this option if you want a waiting cursor to be shown while the action"
+" is launched. This is also highly recommended if you have focus stealing "
+"prevention enabled in your window manager."
+msgstr ""
+"ເປີດໃຊ້ຕົວເລືອກນີ້ຖ້າເຈົ້າຕ້ອງການໃຫ້ສະແດງເຄີເຊີການລໍຖ້າໃນຂະນະທີ່ເລີ່ມການປະຕິບັດການ."
+" ແນະນຳຢ່າງຍິ່ງຖ້າເຈົ້າເປີດໃຊ້ການປ້ອງກັນການຍາດຈຸດໂຟກັສ (focus stealing "
+"prevention) ໃນຕົວຈັດການໜ້າຕ່າງ."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:351
+msgid ""
+"The following command parameters will be substituted when launching the "
+"action:"
+msgstr "ພາລາມີເຕີຄຳສັ່ງຕໍ່ໄປນີ້ຈະຖືກແທນທີ່ເມື່ອເລີ່ມການປະຕິບັດການ:"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:461
+msgid "file name of the selected file"
+msgstr "ຊື່ໄຟລ໌ຂອງໄຟລ໌ທີ່ເລືອກ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:477
+msgid "file names of all selected files"
+msgstr "ຊື່ໄຟລ໌ຂອງທຸກໄຟລ໌ທີ່ເລືອກ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:492
+msgid "path of the selected file's directory"
+msgstr "ເສັ້ນທາງຂອງໄດເຣັກທໍຣີຂອງໄຟລ໌ທີ່ເລືອກ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:507
+msgid "paths of all selected files' directories"
+msgstr "ເສັ້ນທາງຂອງໄດເຣັກທໍຣີຂອງທຸກໄຟລ໌ທີ່ເລືອກ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:522
+msgid "path of the selected file including the file name"
+msgstr "ເສັ້ນທາງຂອງໄຟລ໌ທີ່ເລືອກ ລວມເຖິງຊື່ໄຟລ໌"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:537
+msgid "paths of all selected files including the file names"
+msgstr "ເສັ້ນທາງຂອງທຸກໄຟລ໌ທີ່ເລືອກ ລວມເຖິງຊື່ໄຟລ໌"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:609
+msgid "Basic"
+msgstr "ພື້ນຖານ"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:627
+msgid "_File Pattern:"
+msgstr "ຮູບແບບໄຟລ໌(_F):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:644
+msgid ""
+"Enter a list of patterns that will be used to determine whether this action "
+"should be displayed for a selected file. If you specify more than one "
+"pattern here, the list items must be separated with semicolons (e.g. "
+"*.txt;*.doc)."
+msgstr ""
+"ປ້ອນລາຍການຮູບແບບທີ່ຈະໃຊ້ກຳນົດວ່າຄວນສະແດງການປະຕິບັດການນີ້ສຳລັບໄຟລ໌ທີ່ເລືອກບໍ່."
+" ຖ້າເຈົ້າລະບຸຫຼາຍກວ່າໜຶ່ງຮູບແບບ, ໃຫ້ຂັ້ນດ້ວຍຈ້ຳຈຸດ (ເຊັ່ນ *.txt;*.doc)."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:647
+#: plugins/thunar-uca/thunar-uca-editor.ui:678
+msgid "*"
+msgstr "*"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:658
+msgid "_Range (min-max):"
+msgstr "ຊ່ວງ (ຕ່ຳສຸດ-ສູງສຸດ)(_R):"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:675
+msgid ""
+"If the command should operate on say two or three files, enter the numerical"
+" range 2-3. If there are no limits, this string should be empty."
+msgstr ""
+"ຖ້າຄຳສັ່ງຄວນເຮັດວຽກກັບສອງ ຫຼື ສາມໄຟລ໌, ໃຫ້ປ້ອນຕົວເລກເປັນ 2-3. "
+"ຖ້າບໍ່ມີການຈຳກັດ, ໃຫ້ປ່ອຍຫວ່າງໄວ້."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:689
+msgid "Appears if selection contains:"
+msgstr "ປາກົດຂຶ້ນຖ້າສິ່ງທີ່ເລືອກປະກອບດ້ວຍ:"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:709
+msgid "_Directories **"
+msgstr "ໄດເຣັກທໍຣີ **(_D)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:724
+msgid "_Audio Files"
+msgstr "ໄຟລ໌ສຽງ(_A)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:738
+msgid "_Image Files"
+msgstr "ໄຟລ໌ຮູບພາບ(_I)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:753
+msgid "_Text Files"
+msgstr "ໄຟລ໌ຂໍ້ຄວາມ(_T)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:767
+msgid "_Video Files"
+msgstr "ໄຟລ໌ວິດີໂອ(_V)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:781
+msgid "_Other Files"
+msgstr "ໄຟລ໌ອື່ນໆ(_O)"
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:834
+msgid ""
+"This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.\n"
+"\n"
+"** The custom action will be eligible to appear in the toolbar."
+msgstr ""
+"ໜ້ານີ້ສະແດງເງື່ອນໄຂທີ່ການປະຕິບັດການຈະປາກົດໃນເມນູບໍລິບົດຂອງຕົວຈັດການໄຟລ໌. ຮູບແບບໄຟລ໌ຖືກລະບຸເປັນລາຍການຮູບແບບງ່າຍໆ ຂັ້ນດ້ວຍຈ້ຳຈຸດ (ເຊັ່ນ *.txt;*.doc). ເພື່ອໃຫ້ການປະຕິບັດການປາກົດໃນເມນູບໍລິບົດຂອງໄຟລ໌ ຫຼື ໂຟນເດີ, ຢ່າງໜ້ອຍໜຶ່ງຮູບແບບຕ້ອງກົງກັບຊື່. ນອກຈາກນັ້ນ, ເຈົ້າຍັງສາມາດລະບຸໃຫ້ການປະຕິບັດການປາກົດສະເພາະກັບໄຟລ໌ບາງປະເພດ.\n"
+"\n"
+"** ການປະຕິບັດການທີ່ກຳນົດເອງຈະມີສິດປາກົດໃນແຖບເຄື່ອງມື."
+
+#: plugins/thunar-uca/thunar-uca-editor.ui:899
+msgid "Appearance Conditions"
+msgstr "ເງື່ອນໄຂການປາກົດຜົນ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:12
+msgid "Custom Actions"
+msgstr "ການປະຕິບັດການທີ່ກຳນົດເອງ"
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:32
+msgid ""
+"Configure custom actions that will appear in the file manager's context menus and/or toolbar.\n"
+"These actions are applicable to folders or certain kinds of files.\n"
+"\n"
+"Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
+msgstr ""
+"ຕັ້ງຄ່າການປະຕິບັດການທີ່ກຳນົດເອງທີ່ຈະປາກົດໃນເມນູບໍລິບົດ ແລະ/ຫຼື ແຖບເຄື່ອງມືຂອງຕົວຈັດການໄຟລ໌.\n"
+"ການປະຕິບັດການເຫຼົ່ານີ້ສາມາດໃຊ້ໄດ້ກັບໂຟນເດີ ຫຼື ໄຟລ໌ບາງປະເພດ.\n"
+"\n"
+"ກວດສອບ <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">ເອກະສານ</a> ສຳລັບຕົວຢ່າງການປະຕິບັດການທີ່ກຳນົດເອງ."
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:88
+msgid "Add a new custom action."
+msgstr "ເພີ່ມການປະຕິບັດການທີ່ກຳນົດເອງໃໝ່."
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:97
+msgid "Edit the currently selected action."
+msgstr "ແກ້ໄຂການປະຕິບັດການທີ່ເລືອກຢູ່."
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:106
+msgid "Delete the currently selected action."
+msgstr "ລຶບການປະຕິບັດການທີ່ເລືອກຢູ່."
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:115
+msgid "Move the currently selected action up by one row."
+msgstr "ຍ້າຍການປະຕິບັດການທີ່ເລືອກຂຶ້ນໜຶ່ງແຖວ."
+
+#: plugins/thunar-uca/thunar-uca-chooser.ui:124
+msgid "Move the currently selected action down by one row."
+msgstr "ຍ້າຍການປະຕິບັດການທີ່ເລືອກລົງໜຶ່ງແຖວ."
+
+#: plugins/thunar-wallpaper/twp-provider.c:154
+msgid "Set as wallpaper"
+msgstr "ຕັ້ງເປັນຮູບພື້ນຫຼັງ"
+
+#: thunar.desktop.in.in:3
+msgid "Thunar File Manager"
+msgstr "ຕົວຈັດການໄຟລ໌ Thunar"
+
+#: thunar.desktop.in.in:4
+msgid "Browse the filesystem with the file manager"
+msgstr "ທ່ອງເບິ່ງລະບົບໄຟລ໌ດ້ວຍຕົວຈັດການໄຟລ໌"
+
+#: thunar.desktop.in.in:5
+msgid "File Manager"
+msgstr "ຕົວຈັດການໄຟລ໌"
+
+#: thunar.desktop.in.in:6
+msgid ""
+"file "
+"manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
+msgstr ""
+"ຕົວຈັດການໄຟລ໌;ການສຳຫຼວດ;ການຄົ້ນຫາ;ຕົວທ່ອງເບິ່ງ;ໂຟນເດີ;ໄດເຣັກທໍຣີ;ພາກສ່ວນ;ໄດຣຟ໌;ເຄືອຂ່າຍ;ອຸປະກອນ;ປ່ຽນຊື່;ຍ້າຍ;ສຳເນົາ;ລຶບ;ສິດການເຂົ້າເຖິງ;ບ້ານ;ຖັງຂີ້ເຫຍື້ອ;"
+
+#: thunar.desktop.in.in:17
+msgid "Home"
+msgstr "ໂຟນເດີຫຼັກ"
+
+#: thunar-bulk-rename.desktop.in.in:6
+msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
+msgstr "ກຸ່ມ;ປ່ຽນຊື່;ໄຟລ໌;ໂຟນເດີ;ໄດເຣັກທໍຣີ;"
+
+#: thunar/thunar-settings.desktop.in:5
+msgid "Configure the Thunar file manager"
+msgstr "ຕັ້ງຄ່າຕົວຈັດການໄຟລ໌ Thunar"
+
+#: thunar/thunar-settings.desktop.in:6
+msgid ""
+"thunar;settings;preferences;configure;thumbnails;file size;date "
+"format;shortcuts pane;tree view;tabs;"
+msgstr ""
+"ການຕັ້ງຄ່າ;ຄວາມມັກ;ຮູບຕົວຢ່າງ;ຂະໜາດໄຟລ໌;ຮູບແບບວັນທີ;ຊ່ອງທາງລັດ;ມຸມມອງແບບຕົ້ນໄມ້;ແທັບ;"
+
+#: org.xfce.thunar.appdata.xml.in:10
+msgid "File Browser"
+msgstr "ຕົວທ່ອງໄຟລ໌"
+
+#: org.xfce.thunar.appdata.xml.in:12
+msgid ""
+"Thunar is a file browser specifically designed for the Xfce Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr ""
+"Thunar ແມ່ນຕົວທ່ອງໄຟລ໌ທີ່ຖືກອອກແບບມາສຳລັບ Xfce Desktop ໂດຍສະເພາະ, "
+"ແຕ່ຍັງສາມາດໃຊ້ເປັນຕົວທ່ອງໄຟລ໌ທາງເລືອກສຳລັບສະພາບແວດລ້ອມເດັສທັອບອື່ນໆ. "
+"ມັນມີການອອກແບບທີ່ລຽບງ່າຍ, ສະອາດ "
+"ດ້ວຍສອງຊ່ອງມຸມມອງສຳລັບທ່ອງເບິ່ງທຸກໄຟລ໌ຂອງເຈົ້າ."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "ພາບໜ້າຈໍຂອງສ່ວນຕິດຕໍ່ຜູ້ໃຊ້ຕົວທ່ອງໄຟລ໌ XFCE Thunar"
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: org.xfce.thunar.policy.in.in:26
+msgid "Run Thunar as root"
+msgstr "ຣັນ Thunar ໃນຖານະ root"
+
+#: org.xfce.thunar.policy.in.in:27
+msgid "Authentication is required to run Thunar as root."
+msgstr "ຕ້ອງມີການຢືນຢັນຕົວຕົນເພື່ອຣັນ Thunar ໃນຖານະ root."
