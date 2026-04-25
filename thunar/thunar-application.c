@@ -65,6 +65,10 @@
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-view.h"
 
+#ifdef HAVE_LIBCANBERRA
+#include <canberra.h>
+#endif
+
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
@@ -159,10 +163,14 @@ thunar_application_accel_map_changed (ThunarApplication *application);
 static gboolean
 thunar_application_accel_map_save (gpointer user_data);
 static void
-thunar_application_collect_and_launch (ThunarApplication     *application,
-                                       gpointer               parent,
-                                       const gchar           *icon_name,
-                                       const gchar           *title,
+thunar_application_collect_and_launch (ThunarApplication *application,
+                                       gpointer           parent,
+                                       const gchar       *icon_name,
+                                       const gchar       *title,
+#ifdef HAVE_LIBCANBERRA
+                                       const char *freedesktop_sound,
+                                       const char *event_description,
+#endif
                                        Launcher               launcher,
                                        GList                 *source_file_list,
                                        GFile                 *target_file,
@@ -174,10 +182,14 @@ static void
 thunar_application_launch_finished (ThunarJob *job,
                                     GList     *containing_folders);
 static void
-thunar_application_launch (ThunarApplication     *application,
-                           gpointer               parent,
-                           const gchar           *icon_name,
-                           const gchar           *title,
+thunar_application_launch (ThunarApplication *application,
+                           gpointer           parent,
+                           const gchar       *icon_name,
+                           const gchar       *title,
+#ifdef HAVE_LIBCANBERRA
+                           const char *freedesktop_sound,
+                           const char *event_description,
+#endif
                            Launcher               launcher,
                            GList                 *source_path_list,
                            GList                 *target_path_list,
@@ -257,8 +269,19 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+#ifdef HAVE_LIBCANBERRA
+  ca_context *canberra;
+#endif
 };
 
+#ifdef HAVE_LIBCANBERRA
+struct sounddata
+{
+  ca_context *canberra;
+  const char *freedesktop_sound;
+  const char *event_description;
+};
+#endif
 
 
 static GQuark thunar_application_parent_quark;
@@ -423,6 +446,11 @@ thunar_application_startup (GApplication *gapp)
   thunar_application_initialize_media_fs_uuids (application);
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+  application->canberra = NULL;
+  ca_context_create (&application->canberra);
+#endif
+
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
@@ -485,6 +513,11 @@ thunar_application_shutdown (GApplication *gapp)
   /* release the thumbnail cache */
   if (application->thumbnail_cache != NULL)
     g_object_unref (G_OBJECT (application->thumbnail_cache));
+
+#ifdef HAVE_LIBCANBERRA
+  if (application->canberra != NULL)
+    ca_context_destroy (application->canberra);
+#endif
 
   /* disconnect from the preferences */
   g_object_unref (G_OBJECT (application->preferences));
@@ -912,10 +945,14 @@ thunar_application_drop_descendant_files_from_list (GList *list)
 }
 
 static void
-thunar_application_collect_and_launch (ThunarApplication     *application,
-                                       gpointer               parent,
-                                       const gchar           *icon_name,
-                                       const gchar           *title,
+thunar_application_collect_and_launch (ThunarApplication *application,
+                                       gpointer           parent,
+                                       const gchar       *icon_name,
+                                       const gchar       *title,
+#ifdef HAVE_LIBCANBERRA
+                                       const char *freedesktop_sound,
+                                       const char *event_description,
+#endif
                                        Launcher               launcher,
                                        GList                 *source_file_list,
                                        GFile                 *target_file,
@@ -967,14 +1004,31 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
   else
     {
       /* launch the operation */
-      thunar_application_launch (application, parent, icon_name, title, launcher,
-                                 source_file_list, target_file_list, update_source_folders, update_target_folders, log_mode, new_files_closure);
+      thunar_application_launch (application, parent, icon_name, title,
+#ifdef HAVE_LIBCANBERRA
+                                 freedesktop_sound, event_description,
+#endif
+                                 launcher, source_file_list, target_file_list, update_source_folders, update_target_folders, log_mode, new_files_closure);
     }
 
   /* release the target path list */
   thunar_g_list_free_full (target_file_list);
 }
 
+
+#ifdef HAVE_LIBCANBERRA
+static void
+play_sound_when_job_finished (ThunarJob        *job,
+                              struct sounddata *data)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+  if (data->freedesktop_sound != NULL)
+    ca_context_play (data->canberra, 0, CA_PROP_EVENT_ID, data->freedesktop_sound, CA_PROP_EVENT_DESCRIPTION, data->event_description, NULL);
+
+  free (data);
+}
+#endif
 
 
 static void
@@ -1018,10 +1072,14 @@ thunar_application_launch_finished (ThunarJob *job,
 
 
 static void
-thunar_application_launch (ThunarApplication     *application,
-                           gpointer               parent,
-                           const gchar           *icon_name,
-                           const gchar           *title,
+thunar_application_launch (ThunarApplication *application,
+                           gpointer           parent,
+                           const gchar       *icon_name,
+                           const gchar       *title,
+#ifdef HAVE_LIBCANBERRA
+                           const char *freedesktop_sound,
+                           const char *event_description,
+#endif
                            Launcher               launcher,
                            GList                 *source_file_list,
                            GList                 *target_file_list,
@@ -1077,6 +1135,21 @@ thunar_application_launch (ThunarApplication     *application,
       gdk_threads_add_timeout_full (G_PRIORITY_DEFAULT, 500, thunar_application_show_progress_dialog_timeout,
                                     application, thunar_application_show_progress_dialog_timeout_destroy);
     }
+
+#ifdef HAVE_LIBCANBERRA
+  if (freedesktop_sound != NULL)
+    {
+      struct sounddata *data = malloc (sizeof (struct sounddata));
+
+      data->canberra = application->canberra;
+      data->freedesktop_sound = freedesktop_sound;
+      data->event_description = event_description;
+
+      g_signal_connect (G_OBJECT (job), "finished",
+                        G_CALLBACK (play_sound_when_job_finished),
+                        data);
+    }
+#endif
 
   /* drop our reference on the job */
   g_object_unref (job);
@@ -2284,7 +2357,11 @@ thunar_application_copy_to (ThunarApplication     *application,
 
   /* launch the operation */
   thunar_application_launch (application, parent, "edit-copy",
-                             _("Copying files..."), thunar_io_jobs_copy_files,
+                             _("Copying files..."),
+#ifdef HAVE_LIBCANBERRA
+                             "complete-copy", "file(s) copied",
+#endif
+                             thunar_io_jobs_copy_files,
                              source_file_list, target_file_list, FALSE, TRUE, log_mode, new_files_closure);
 }
 
@@ -2352,7 +2429,11 @@ thunar_application_copy_into (ThunarApplication     *application,
 
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "edit-copy",
-                                         title, thunar_io_jobs_copy_files,
+                                         title,
+#ifdef HAVE_LIBCANBERRA
+                                         "complete-copy", "file(s) copied",
+#endif
+                                         thunar_io_jobs_copy_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
                                          log_mode,
@@ -2411,7 +2492,11 @@ thunar_application_link_into (ThunarApplication     *application,
 
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "insert-link",
-                                         title, thunar_io_jobs_link_files,
+                                         title,
+#ifdef HAVE_LIBCANBERRA
+                                         NULL, NULL,
+#endif
+                                         thunar_io_jobs_link_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
                                          log_mode,
@@ -2499,6 +2584,9 @@ thunar_application_move_into (ThunarApplication     *application,
       /* collect the target files and launch the job */
       thunar_application_collect_and_launch (application, parent,
                                              "stock_folder-move", title,
+#ifdef HAVE_LIBCANBERRA
+                                             NULL, NULL,
+#endif
                                              thunar_io_jobs_move_files,
                                              source_file_list, target_file,
                                              TRUE, TRUE,
@@ -2541,6 +2629,9 @@ thunar_application_move_files (ThunarApplication     *application,
 
   thunar_application_launch (application, parent,
                              "stock_folder-move", _("Moving files ..."),
+#ifdef HAVE_LIBCANBERRA
+                             "complete-copy", "file(s) copied",
+#endif
                              thunar_io_jobs_move_files,
                              source_file_list, target_file_list,
                              TRUE, TRUE,
@@ -2707,7 +2798,11 @@ thunar_application_unlink_files (ThunarApplication     *application,
   if (G_LIKELY (!operation_canceled))
     /* launch the "unlink" operation */
     thunar_application_launch (application, parent, "edit-delete",
-                               _("Deleting files..."), unlink_stub,
+                               _("Deleting files..."),
+#ifdef HAVE_LIBCANBERRA
+                               NULL, NULL,
+#endif
+                               unlink_stub,
                                path_list, path_list, TRUE, FALSE, log_mode, NULL);
   thunar_g_list_free_full (path_list);
   return operation_canceled;
@@ -2765,7 +2860,11 @@ thunar_application_trash_files (ThunarApplication     *application,
 
   if (G_LIKELY (!operation_canceled))
     thunar_application_launch (application, parent, "user-trash-full",
-                               _("Moving files into the trash..."), trash_stub,
+                               _("Moving files into the trash..."),
+#ifdef HAVE_LIBCANBERRA
+                               "file-trash", "item(s) moved into trash",
+#endif
+                               trash_stub,
                                path_list, NULL, TRUE, FALSE, log_mode, NULL);
   thunar_g_list_free_full (path_list);
   return operation_canceled;
@@ -2815,7 +2914,11 @@ thunar_application_creat (ThunarApplication     *application,
 
   /* launch the operation */
   thunar_application_launch (application, parent, "document-new",
-                             _("Creating files..."), creat_stub,
+                             _("Creating files..."),
+#ifdef HAVE_LIBCANBERRA
+                             NULL, NULL,
+#endif
+                             creat_stub,
                              &template_list, file_list, FALSE, TRUE, log_mode, new_files_closure);
 }
 
@@ -2856,7 +2959,11 @@ thunar_application_mkdir (ThunarApplication     *application,
 
   /* launch the operation */
   thunar_application_launch (application, parent, "folder-new",
-                             _("Creating directories..."), mkdir_stub,
+                             _("Creating directories..."),
+#ifdef HAVE_LIBCANBERRA
+                             NULL, NULL,
+#endif
+                             mkdir_stub,
                              file_list, file_list, TRUE, FALSE, log_mode, new_files_closure);
 }
 
@@ -2926,6 +3033,9 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* launch the operation */
       thunar_application_launch (application, parent, "user-trash",
                                  _("Emptying the Trash..."),
+#ifdef HAVE_LIBCANBERRA
+                                 "trash-empty", "trash has been emptied",
+#endif
                                  unlink_stub, &file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
 
       /* cleanup */
@@ -3007,7 +3117,11 @@ thunar_application_restore_files (ThunarApplication *application,
     {
       /* launch the operation */
       thunar_application_launch (application, parent, "stock_folder-move",
-                                 _("Restoring files..."), thunar_io_jobs_restore_files,
+                                 _("Restoring files..."),
+#ifdef HAVE_LIBCANBERRA
+                                 NULL, NULL,
+#endif
+                                 thunar_io_jobs_restore_files,
                                  source_path_list, target_path_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
     }
 
