@@ -382,16 +382,16 @@ void thunar_clipboard_manager_image_received(GtkClipboard     *clipboard,
 						                                 GtkSelectionData *selection_data,
 						                                 gpointer          data){
 
-  GdkAtom target = data;
-  char* data_type = gdk_atom_name(target);
+  ThunarClipboardPasteRequest *request = data;
+
+  char* data_type = gdk_atom_name(request->manager->image_target);
 
   if (g_ascii_strncasecmp ("image/", data_type, 6) == 0)
     {
       data_type += 6;
       GError *error = NULL;
 
-      /* getting cwd for util function, there has to be a better way to do this*/
-      char  *cwd_name = g_get_current_dir ();
+      char  *cwd_name = g_file_get_path(request->target_file);
       GFile *cwd = g_file_new_for_path (cwd_name);
 
       ThunarFile *current_dir = thunar_file_get (cwd, NULL);
@@ -399,7 +399,7 @@ void thunar_clipboard_manager_image_received(GtkClipboard     *clipboard,
       /*TODO: should the file name be translatable? should we ask the user? */
       char  *filename_tmp = g_strconcat ("Selection.", data_type, NULL);
       char  *filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
-      GFile *dest = g_file_new_for_path (filename);
+      GFile *dest = g_file_new_for_path (g_strconcat(cwd_name,"/",filename, NULL));
 
       GFileOutputStream *out = g_file_create (dest, G_FILE_CREATE_NONE, NULL, &error);
 
@@ -817,7 +817,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
 
   if(manager->image_target != NULL) {
     /* not using request_image because we want to save the image as-is, not do anything to it with pixbuf */
-    gtk_clipboard_request_contents(manager->clipboard, manager->image_target,thunar_clipboard_manager_image_received, manager->image_target);
+    gtk_clipboard_request_contents(manager->clipboard, manager->image_target,thunar_clipboard_manager_image_received, request);
   }else{
     gtk_clipboard_request_contents (manager->clipboard, manager->x_special_gnome_copied_files,
                                    thunar_clipboard_manager_contents_received, request);
