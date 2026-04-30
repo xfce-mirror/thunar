@@ -382,16 +382,16 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
                                          GtkSelectionData *selection_data,
                                          gpointer          data)
 {
-  ThunarClipboardPasteRequest  *request = data;
-  g_autofree char              *data_type = gdk_atom_name (request->manager->image_target);
-  g_autoptr(GError)            error = NULL;
-  g_autofree char              *cwd_name = g_file_get_path (request->target_file);
-  g_autoptr(GFile)             cwd = g_file_new_for_path (cwd_name);
-  g_autoptr(ThunarFile)        current_dir = thunar_file_get (cwd, NULL);
-  g_autofree char              *filename_tmp = g_strconcat (_("Selection."), data_type, NULL);
-  g_autofree char              *filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
-  g_autoptr(GFile)             dest = g_file_new_for_path (g_strconcat (cwd_name, "/", filename, NULL));
-  g_autoptr(GFileOutputStream) output_stream = NULL;
+  ThunarClipboardPasteRequest *request = data;
+  g_autofree char             *data_type = gdk_atom_name (request->manager->image_target);
+  g_autoptr (GError) error = NULL;
+  g_autofree char *cwd_name = g_file_get_path (request->target_file);
+  g_autoptr (GFile) cwd = g_file_new_for_path (cwd_name);
+  g_autoptr (ThunarFile) current_dir = thunar_file_get (cwd, NULL);
+  g_autofree char *filename_tmp = g_strconcat (_("Selection."), data_type, NULL);
+  g_autofree char *filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
+  g_autoptr (GFile) dest = g_file_new_for_path (g_strconcat (cwd_name, "/", filename, NULL));
+  g_autoptr (GFileOutputStream) output_stream = NULL;
 
 
   if (g_ascii_strncasecmp ("image/", data_type, 6) == 0)
@@ -402,7 +402,7 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
 
       if (error != NULL)
         {
-          g_warning ("%s\n",error->message);
+          g_warning ("%s\n", error->message);
           g_clear_error (&error);
           return;
         }
