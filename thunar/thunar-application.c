@@ -54,6 +54,7 @@
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-job-operation-history.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-dialog.h"
@@ -253,6 +254,9 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+
+  /* reference to the global job operation history */
+  ThunarJobOperationHistory *job_operation_history;
 };
 
 
@@ -326,6 +330,9 @@ thunar_application_init (ThunarApplication *application)
 
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
+
+  /* keep a reference of the global job operation history */
+  application->job_operation_history = thunar_job_operation_history_get_default ();
 }
 
 
@@ -476,6 +483,9 @@ thunar_application_shutdown (GApplication *gapp)
 
   /* remove the dbus service */
   g_clear_pointer (&application->dbus_service, g_object_unref);
+
+  /* release job operation history */
+  g_object_unref (application->job_operation_history);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->shutdown (gapp);
 }
