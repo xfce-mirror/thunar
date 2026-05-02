@@ -81,6 +81,7 @@ enum
   PROP_SORT_ORDER,
   PROP_SORT_ORDER_DEFAULT,
   PROP_SORT_FOLDERS_FIRST_DEFAULT,
+  PROP_SORT_HIDDEN_LAST_DEFAULT,
   PROP_ACCEL_GROUP,
   PROP_MODEL_TYPE,
   PROP_PRELOAD_PREVIEW_IMAGES,
@@ -349,6 +350,8 @@ static gboolean
 thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view);
 static gboolean
 thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_view);
+static gboolean
+thunar_standard_view_action_sort_hidden_last (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_set_sort_column (ThunarStandardView *standard_view,
                                       ThunarColumn        column);
@@ -461,9 +464,10 @@ struct _ThunarStandardViewPrivate
   GtkSortType sort_order;
   GtkSortType sort_order_default;
 
-  /* default value for the 'folders-first' setting of the model */
+  /* default value for some sorting settings of the model */
   /* required for directory specific settings */
   gboolean sort_folders_first_default;
+  gboolean sort_hidden_last_default;
 
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar *search_query;
@@ -507,6 +511,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),       },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending),      },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST, "<Actions>/ThunarStandardView/sort-folders-first", "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Folders First"),        N_ ("Sort folders before files"),                         NULL, G_CALLBACK (thunar_standard_view_action_sort_folders_first),   },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_HIDDEN_LAST,   "<Actions>/ThunarStandardView/sort-hidden-last",   "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Hidden Files Last"),    N_ ("Sort hidden files after other files"),               NULL, G_CALLBACK (thunar_standard_view_action_sort_hidden_last),   },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -654,6 +659,31 @@ thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_vie
     {
       /* store the new global value in the preferences */
       g_object_set (standard_view->preferences, "misc-folders-first", !folders_first, NULL);
+    }
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_action_sort_hidden_last (ThunarStandardView *standard_view)
+{
+  gboolean hidden_last;
+
+  g_object_get (standard_view->model, "hidden-last", &hidden_last, NULL);
+  g_object_set (standard_view->model, "hidden-last", !hidden_last, NULL);
+
+  if (standard_view->priv->directory_specific_settings)
+    {
+      if (hidden_last)
+        thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-hidden-last", "FALSE", TRUE);
+      else
+        thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-hidden-last", "TRUE", TRUE);
+    }
+  else
+    {
+      /* store the new global value in the preferences */
+      g_object_set (standard_view->preferences, "misc-hidden-last", !hidden_last, NULL);
     }
   return TRUE;
 }
@@ -854,6 +884,19 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                         "sort-folders-first-default",
                         "sort-folders-first-default",
                         TRUE,
+                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarStandardView::sort-hidden-last-default:
+   *
+   * Only relevant for directory specific settings
+   * The setting to use if no directory specific settings are found for a directory
+   **/
+  standard_view_props[PROP_SORT_HIDDEN_LAST_DEFAULT] =
+  g_param_spec_boolean ("sort-hidden-last-default",
+                        "sort-hidden-last-default",
+                        "sort-hidden-last-default",
+                        FALSE,
                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -1104,8 +1147,9 @@ thunar_standard_view_constructor (GType                  type,
   /* apply the default sort column and sort order */
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), standard_view->priv->sort_column_default, standard_view->priv->sort_order_default);
 
-  /* sync with global default for 'sort-folder-first' setting */
+  /* sync with global default for 'sort-folder-first' and 'sort-hidden-last' setting */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view), "sort-folders-first-default", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-hidden-last", G_OBJECT (standard_view), "sort-hidden-last-default", G_BINDING_SYNC_CREATE);
 
   /* stay informed about changes to the sort column/order */
   g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
@@ -1497,6 +1541,12 @@ thunar_standard_view_set_property (GObject      *object,
       standard_view->priv->sort_folders_first_default = g_value_get_boolean (value);
       if (!standard_view->priv->directory_specific_settings)
         g_object_set (G_OBJECT (standard_view->model), "folders-first", g_value_get_boolean (value), NULL);
+      break;
+
+    case PROP_SORT_HIDDEN_LAST_DEFAULT:
+      standard_view->priv->sort_hidden_last_default = g_value_get_boolean (value);
+      if (!standard_view->priv->directory_specific_settings)
+        g_object_set (G_OBJECT (standard_view->model), "hidden-last", g_value_get_boolean (value), NULL);
       break;
 
     case PROP_ACCEL_GROUP:
@@ -2194,6 +2244,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   gchar          *sort_column_name;
   gchar          *sort_order_name;
   gchar          *sort_folders_first_name;
+  gchar          *sort_hidden_last_name;
   gchar          *zoom_level_name;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
@@ -2207,6 +2258,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   sort_column_name = thunar_file_get_metadata_setting (directory, "thunar-sort-column");
   sort_order_name = thunar_file_get_metadata_setting (directory, "thunar-sort-order");
   sort_folders_first_name = thunar_file_get_metadata_setting (directory, "thunar-sort-folders-first");
+  sort_hidden_last_name = thunar_file_get_metadata_setting (directory, "thunar-sort-hidden-last");
 
   zoom_level_attribute_name = g_strdup_printf ("thunar-zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
   zoom_level_name = thunar_file_get_metadata_setting (directory, zoom_level_attribute_name);
@@ -2215,6 +2267,22 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* View specific zoom level was added later on .. fall back to shared zoom-level if not found */
   if (zoom_level_name == NULL)
     zoom_level_name = thunar_file_get_metadata_setting (directory, "thunar-zoom-level");
+
+  if (sort_hidden_last_name != NULL)
+    {
+      /* apply the directory specific "sort-folders-first" setting, if found */
+      if (g_strcmp0 (sort_hidden_last_name, "TRUE") == 0)
+        g_object_set (G_OBJECT (standard_view->model), "hidden-last", TRUE, NULL);
+      else
+        g_object_set (G_OBJECT (standard_view->model), "hidden-last", FALSE, NULL);
+
+      g_free (sort_hidden_last_name);
+    }
+  else
+    {
+      /* not found? --> apply the default */
+      g_object_set (G_OBJECT (standard_view->model), "hidden-last", standard_view->priv->sort_hidden_last_default, NULL);
+    }
 
   if (sort_folders_first_name != NULL)
     {
@@ -2326,6 +2394,7 @@ thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standa
       standard_view->priv->sort_column = sort_column;
       standard_view->priv->sort_order = sort_order;
       g_object_set (G_OBJECT (standard_view->model), "folders-first", standard_view->priv->sort_folders_first_default, NULL);
+      g_object_set (G_OBJECT (standard_view->model), "hidden-last", standard_view->priv->sort_hidden_last_default, NULL);
 
       /* use view specific default zoom level otherwise */
       g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
@@ -4726,10 +4795,11 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   GtkWidget *item;
   GtkWidget *submenu;
   gboolean   folders_first;
+  gboolean   hidden_last;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
+  g_object_get (standard_view->model, "folders-first", &folders_first, "hidden-last", &hidden_last, NULL);
 
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu = gtk_menu_new ();
@@ -4754,6 +4824,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST), G_OBJECT (standard_view),
                                                    folders_first, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_HIDDEN_LAST), G_OBJECT (standard_view),
+                                                   hidden_last, GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 
