@@ -494,6 +494,21 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
           /* query file info */
           child_info = thunar_transfer_job_query_default_info (job, lp->data, &err);
 
+          if (child_info == NULL)
+            {
+              if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                {
+                  g_clear_error (&err);
+                  break;
+                }
+              else
+                {
+                  g_warning ("Failed to query file info from file: %s. Error: %s", g_file_get_uri (lp->data), err->message);
+                  g_clear_error (&err);
+                  continue;
+                }
+            }
+
           /* guess the target file for this node */
           if (should_use_copy_name)
             {
