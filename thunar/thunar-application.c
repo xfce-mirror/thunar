@@ -257,6 +257,8 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+
+  ThunarxProviderFactory *provider_factory;
 };
 
 
@@ -339,6 +341,8 @@ thunar_application_init (ThunarApplication *application)
   argument_help_string = g_strconcat(_("Arguments:\n"),
   "  ", _("URL"), "                        ",("Location to open"), NULL); 
   g_application_set_option_context_summary (G_APPLICATION (application), argument_help_string);
+
+  application->provider_factory = thunarx_provider_factory_get_default ();
 }
 
 
@@ -442,6 +446,9 @@ static void
 thunar_application_shutdown (GApplication *gapp)
 {
   ThunarApplication *application = THUNAR_APPLICATION (gapp);
+
+  /* drop the reference on the provider factory */
+  g_object_unref (application->provider_factory);
 
   /* unqueue all files waiting to be processed */
   thunar_g_list_free_full (application->files_to_launch);
@@ -3093,5 +3100,39 @@ thunar_application_posix_signal_init (ThunarApplication *application)
           g_clear_error (&error);
           return;
         }
+    }
+}
+
+void
+thunar_application_notify_info_providers_file_creation (ThunarApplication *application, GHashTable *files)
+{
+  GList *info_providers, *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  info_providers = thunarx_provider_factory_list_providers (application->provider_factory, THUNARX_TYPE_INFO_PROVIDER);
+  if (G_LIKELY (info_providers != NULL))
+    {
+      /* notify each info provider */
+      for (lp = info_providers; lp != NULL; lp = lp->next)
+          thunarx_info_provider_notify_file_creation (lp->data, files);
+      g_list_free_full (info_providers, g_object_unref);
+    }
+}
+
+void
+thunar_application_notify_info_providers_file_destruction (ThunarApplication *application, GHashTable *files)
+{
+  GList *info_providers, *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  info_providers = thunarx_provider_factory_list_providers (application->provider_factory, THUNARX_TYPE_INFO_PROVIDER);
+  if (G_LIKELY (info_providers != NULL))
+    {
+      /* notify each info provider */
+      for (lp = info_providers; lp != NULL; lp = lp->next)
+          thunarx_info_provider_notify_file_destruction (lp->data, files);
+      g_list_free_full (info_providers, g_object_unref);
     }
 }

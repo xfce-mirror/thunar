@@ -114,6 +114,12 @@ static GFileInfo *
 thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info);
 static GFile *
 thunar_file_info_get_location (ThunarxFileInfo *file_info);
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name);
+void
+thunar_file_info_remove_emblem (ThunarxFileInfo *file_info,
+                                const gchar     *emblem_name);
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info);
 static gboolean
@@ -147,6 +153,8 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 static void
 thunar_file_reset_thumbnail (ThunarFile         *file,
                              ThunarThumbnailSize size);
+static void
+thunar_file_notify_info_providers (ThunarFile *file, gboolean creation);
 
 
 
@@ -161,6 +169,10 @@ static gint thunar_file_watch_total_count = 0;
 #define G_REC_UNLOCK(name) g_rec_mutex_unlock (&G_LOCK_NAME (name))
 
 
+/* plugin notification on file creation/destruction */
+static GHashTable *created_files_notify;
+static GHashTable *destroyed_files_notify;
+static guint notify_info_providers_source_id;
 
 static ThunarUserManager *user_manager;
 static GHashTable        *file_cache;
@@ -240,6 +252,9 @@ struct _ThunarFile
    * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
   guint   file_count;
   guint64 file_count_timestamp;
+
+  /* list of emblem names added via thunarx */
+  GList *plugin_emblems;
 };
 
 typedef struct
@@ -445,6 +460,16 @@ thunar_file_class_init (ThunarFileClass *klass)
                 NULL, NULL,
                 g_cclosure_marshal_generic,
                 G_TYPE_NONE, 1, G_TYPE_INT);
+
+  created_files_notify = g_hash_table_new_full (g_file_hash,
+                                                (GEqualFunc) g_file_equal,
+                                                (GDestroyNotify) g_object_unref,
+                                                (GDestroyNotify) g_object_unref);
+
+  destroyed_files_notify = g_hash_table_new_full (g_file_hash,
+                                                (GEqualFunc) g_file_equal,
+                                                (GDestroyNotify) g_object_unref,
+                                                (GDestroyNotify) g_object_unref);
 }
 
 
@@ -462,6 +487,7 @@ thunar_file_init (ThunarFile *file)
   file->thumbnailer = thunar_thumbnailer_get ();
 
   file->thumbnail_finished_handler_id = g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
+  file->plugin_emblems = NULL;
 }
 
 
@@ -479,6 +505,8 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->get_file_info = thunar_file_info_get_file_info;
   iface->get_filesystem_info = thunar_file_info_get_filesystem_info;
   iface->get_location = thunar_file_info_get_location;
+  iface->add_emblem = thunar_file_info_add_emblem;
+  iface->remove_emblem = thunar_file_info_remove_emblem;
   iface->changed = thunar_file_info_changed;
 }
 
@@ -566,6 +594,8 @@ thunar_file_finalize (GObject *object)
 
   /* release file */
   g_object_unref (file->gfile);
+
+  g_list_free_full (file->plugin_emblems, g_free);
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
 }
@@ -687,6 +717,55 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
    * changed once */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     thunar_file_reset_thumbnail (file, i);
+}
+
+
+
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name)
+{
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  if (!xfce_str_is_empty (emblem_name))
+    {
+      file->plugin_emblems = g_list_append (file->plugin_emblems, g_strdup (emblem_name));
+      thunar_file_changed (file);
+    }
+}
+
+
+
+void
+thunar_file_info_remove_emblem (ThunarxFileInfo *file_info,
+                                const gchar     *emblem_name)
+{
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  if (xfce_str_is_empty (emblem_name))
+    {
+      /* passing an empty string will clear the whole list */
+      g_list_free_full (file->plugin_emblems, g_free);
+      file->plugin_emblems = NULL;
+    }
+  else
+    {
+      for (GList *lp = file->plugin_emblems; lp != NULL; lp = lp->next)
+        {
+          if (g_strcmp0 (lp->data, emblem_name) == 0)
+            {
+              file->plugin_emblems = g_list_remove_link (file->plugin_emblems, lp);
+              g_list_free_full (lp, g_free);
+              break;
+            }
+        }
+    }
+
+  thunar_file_changed (file);
 }
 
 
@@ -1193,6 +1272,9 @@ thunar_file_get_async_finish (GObject      *object,
   /* pass the loaded file and possible errors to the return function */
   (data->func) (location, file, error, data->user_data);
 
+  /* inform plugins about the new file */
+ // thunar_file_notify_info_providers (file, TRUE);
+
   /* release the file, see description in ThunarFileGetFunc */
   g_object_unref (file);
 
@@ -1319,6 +1401,12 @@ thunar_file_get (GFile   *gfile,
 {
   ThunarFile *file;
 
+  // TODO: 'thunar_file_get' nur in separatem job ausführen
+  // Überall thunar_file_get_async verwenden, ausser im Thunarjob
+  // "thunar_file_get_async" sollte erst files sammeln (throttle) und dann einen job starten
+  // callback "thunar_file_get_finished" wird aufgerufen, wenn "get" fertig. Darin wird dann 'thunar_file_notify_info_providers' und user specific callback aufgerufen
+  // CHeck merge request
+  
   _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
 
   /* both lookup and insert must happen in the same critical section
@@ -1340,6 +1428,8 @@ thunar_file_get (GFile   *gfile,
 
       if (thunar_file_load (file, NULL, error))
         {
+          thunar_file_notify_info_providers (file, TRUE);
+
           /* Just check that it's been cached, if appropriate */
           if (file->kind != G_FILE_TYPE_UNKNOWN)
             _thunar_assert (g_hash_table_contains (file_cache, file->gfile) == TRUE);
@@ -1424,6 +1514,9 @@ thunar_file_get_with_info (GFile     *gfile,
       g_hash_table_insert (file_cache,
                            g_object_ref (file->gfile),
                            weak_ref_new (G_OBJECT (file)));
+
+      /* inform plugins about the new file */
+      thunar_file_notify_info_providers (file, TRUE);
     }
 
   /* done reading and writing the cache for this file instance */
@@ -3778,17 +3871,20 @@ thunar_file_set_file_count (ThunarFile *file,
  * @file : a #ThunarFile instance.
  *
  * Determines the names of the emblems that should be displayed for
- * @file. Sfter usage the returned list must released with g_list_free_full (list,g_free)
+ * @file. After usage, the returned hashtable must released with 'g_hash_table_destroy'
  *
- * Return value: the names of the emblems for @file.
+ * Return value: A hashtable with the names of the emblems for @file.
  **/
-GList *
+GHashTable *
 thunar_file_get_emblem_names (ThunarFile *file)
 {
   guint32 uid;
   gchar  *emblem_names_joined;
   gchar **emblem_names;
-  GList  *emblems = NULL;
+  GHashTable *emblems;
+
+  /* use a hashtable as set to prevent duplicate emblem names */
+  emblems = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -3806,13 +3902,26 @@ thunar_file_get_emblem_names (ThunarFile *file)
       if (G_LIKELY (emblem_names != NULL))
         {
           for (gchar **lp = emblem_names; *lp != NULL; ++lp)
-            emblems = g_list_append (emblems, g_strdup (*lp));
+            {
+              if (!g_hash_table_contains (emblems, *lp))
+                g_hash_table_add (emblems, g_strdup (*lp));
+            }
         }
       g_strfreev (emblem_names);
     }
 
+  /* Prepend emblems added via thunarx API */
+  for (GList *lp = file->plugin_emblems; lp != NULL; lp = lp->next)
+    {
+      if (!g_hash_table_contains (emblems, lp->data))
+        g_hash_table_add (emblems, g_strdup (lp->data));
+    }
+
   if (thunar_file_is_symlink (file))
-    emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
+    {
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
+    }
 
   /* determine the user ID of the file owner */
   /* TODO what are we going to do here on non-UNIX systems? */
@@ -3829,14 +3938,16 @@ thunar_file_get_emblem_names (ThunarFile *file)
                                                    THUNAR_FILE_MODE_GRP_EXEC,
                                                    THUNAR_FILE_MODE_OTH_EXEC)))
     {
-      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_READ));
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_READ));
     }
   else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
        */
-      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_WRITE))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
     }
 
   /* add mount icon as emblem to mount points */
@@ -3851,8 +3962,8 @@ thunar_file_get_emblem_names (ThunarFile *file)
               if (G_IS_THEMED_ICON (icon))
                 {
                   const gchar *icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
-                  if (icon_name != NULL)
-                    emblems = g_list_prepend (emblems, g_strdup (icon_name));
+                  if (icon_name != NULL && !g_hash_table_contains (emblems, icon_name))
+                    g_hash_table_add (emblems, g_strdup (icon_name));
                 }
               g_object_unref (icon);
             }
@@ -4520,6 +4631,9 @@ void
 thunar_file_signal_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* inform plugins that the file is about to be destroyed */
+  thunar_file_notify_info_providers (file, FALSE);
 
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     g_signal_emit (file, file_signals[DESTROY], 0);
@@ -5538,4 +5652,38 @@ thunar_file_changed (ThunarFile *file)
   /* start a timer to throttle consecutive calls */
   file->signal_changed_source_id = g_timeout_add (FILE_CHANGED_SIGNAL_RATE_LIMIT,
                                                   thunar_file_changed_signal_timeout, file);
+}
+
+static gboolean
+thunar_file_notify_info_providers_timeout (gpointer data)
+{
+  ThunarApplication *application = thunar_application_get ();
+
+  notify_info_providers_source_id = 0;
+
+  thunar_application_notify_info_providers_file_creation (application, created_files_notify);
+  thunar_application_notify_info_providers_file_destruction (application, destroyed_files_notify);
+  g_hash_table_remove_all (created_files_notify);
+  g_hash_table_remove_all (destroyed_files_notify);
+  g_object_unref (application);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+thunar_file_notify_info_providers (ThunarFile *file, gboolean creation)
+{
+  /* Add file to the according hashtable */
+  if (creation)
+      g_hash_table_insert (created_files_notify, g_object_ref (file->gfile), g_object_ref (file));
+  else
+      g_hash_table_insert (destroyed_files_notify, g_object_ref (file->gfile), g_object_ref (file));
+
+  /* in case a timeout is running, the update will be delayed (performance) */
+  if (notify_info_providers_source_id != 0)
+    return;
+
+  /* start a timer to throttle consecutive calls */
+  notify_info_providers_source_id = g_timeout_add (FILE_CHANGED_SIGNAL_RATE_LIMIT,
+                                                         thunar_file_notify_info_providers_timeout, NULL);
 }
