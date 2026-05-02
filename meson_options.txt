@@ -48,6 +48,13 @@ option(
 )
 
 option(
+  'libcanberra',
+  type: 'feature',
+  value: 'auto',
+  description: 'Libcanberra support (required for sound output)',
+)
+
+option(
   'libnotify',
   type: 'feature',
   value: 'auto',
