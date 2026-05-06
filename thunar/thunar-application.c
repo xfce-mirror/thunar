@@ -2489,8 +2489,6 @@ thunar_application_move_into (ThunarApplication     *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (target_file != NULL);
 
-  printf ("thunar_application_move_into\n");
-
   /* Check move validity and get ThunarFile objects */
   for (GList *lp = source_file_list; lp != NULL; lp = lp->next)
     {
@@ -2573,7 +2571,6 @@ thunar_application_move_files (ThunarApplication     *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  printf ("thunar_application_move_files\n");
   thunar_application_launch (application, parent,
                              "stock_folder-move", _("Moving files ..."),
                              thunar_io_jobs_move_files,
@@ -2999,11 +2996,8 @@ thunar_application_restore_files (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  printf ("thunar_application_restore_files\n");
-
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
-      printf ("lp->data: %s\n", g_file_get_uri (thunar_file_get_file (lp->data)));
       original_uri = thunar_file_get_original_path (lp->data);
 
       if (G_UNLIKELY (original_uri == NULL))
@@ -3023,9 +3017,6 @@ thunar_application_restore_files (ThunarApplication *application,
 
       /* TODO we might have to distinguish between URIs and paths here */
       target_path = g_file_new_for_commandline_arg (original_uri);
-
-      printf ("original path: %s\n", original_uri);
-      printf ("target_path: %s\n", g_file_get_uri (target_path));
 
       source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
       target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
