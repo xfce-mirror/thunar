@@ -3758,6 +3758,12 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
+  if (!gtk_widget_get_visible (gtk_widget_get_parent (window->location_bar)))
+    {
+      g_warning ("search and open location are not supported when the location bar is hidden");
+      return;
+    }
+
   /* setup a search if required */
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
