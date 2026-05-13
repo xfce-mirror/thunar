@@ -503,7 +503,9 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
                 }
               else
                 {
-                  g_warning ("Failed to query file info from file: %s. Error: %s", g_file_get_uri (lp->data), err->message);
+                  gchar *uri = g_file_get_uri (lp->data);
+                  g_warning ("Failed to query file info from file: %s. Error: %s", uri, err->message);
+                  g_free (uri);
                   g_clear_error (&err);
                   continue;
                 }
