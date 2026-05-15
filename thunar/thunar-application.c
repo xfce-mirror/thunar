@@ -1715,7 +1715,9 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
                                        thunar_file_get_display_name (file));
         }
 
-      /* stop processing files */
+      /* unset the startup ids and stop processing any files */
+      for (GList *lp = application->files_to_launch; lp != NULL; lp = lp->next)
+        g_object_set_qdata (G_OBJECT (lp->data), thunar_application_startup_id_quark, NULL);
       thunar_g_list_free_full (application->files_to_launch);
       application->files_to_launch = NULL;
     }
@@ -1762,14 +1764,14 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
         }
 
       application->force_new_window = FALSE;
+
+      /* unset the startup id */
+      if (startup_id != NULL)
+        g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
+
+      /* release the file */
+      g_object_unref (file);
     }
-
-  /* unset the startup id */
-  if (startup_id != NULL)
-    g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
-
-  /* release the file */
-  g_object_unref (file);
 
   /* release the application */
   g_application_release (G_APPLICATION (application));
