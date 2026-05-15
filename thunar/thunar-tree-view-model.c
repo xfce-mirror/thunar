@@ -2221,7 +2221,8 @@ thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel  *model,
 static gboolean
 thunar_tree_view_model_node_update_expand_arrow (Node *node)
 {
-  if (node->model->expandable_folders
+  if (node->model != NULL
+      && node->model->expandable_folders
       && thunar_file_is_directory (node->file)
       && !thunar_file_is_empty_directory (node->file)
       && !thunar_tree_view_model_node_has_dummy_child (node))
