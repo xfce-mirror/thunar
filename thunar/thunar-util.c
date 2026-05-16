@@ -1331,7 +1331,8 @@ thunar_util_get_statusbar_text_for_files (GHashTable     *files,
 
       if (show_hidden_count == TRUE && show_hidden == FALSE && hidden_file_count > 0)
         {
-          temp_string = g_strdup_printf (_ ("%s (%d hidden)"), file_text, hidden_file_count);
+          /* TRANSLATORS: Using ngettext here, since some languages do require a different plural form here */
+          temp_string = g_strdup_printf (ngettext ("%s (%d hidden)", "%s (%d hidden)", hidden_file_count), file_text, hidden_file_count);
           g_free (file_text);
           file_text = temp_string;
         }
@@ -1364,7 +1365,8 @@ thunar_util_get_statusbar_text_for_files (GHashTable     *files,
 
       if (show_hidden_count == TRUE && show_hidden == FALSE && hidden_folder_count > 0)
         {
-          temp_string = g_strdup_printf (_ ("%s (%d hidden)"), folder_text, hidden_folder_count);
+          /* TRANSLATORS: Using ngettext here, since some languages do require a different plural form here */
+          temp_string = g_strdup_printf (ngettext ("%s (%d hidden)", "%s (%d hidden)", hidden_folder_count), folder_text, hidden_folder_count);
           g_free (folder_text);
           folder_text = temp_string;
         }
