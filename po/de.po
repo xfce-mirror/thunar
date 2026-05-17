@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-05-03 00:48+0200\n"
+"POT-Creation-Date: 2026-05-17 00:48+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Andreas Eitel <github-aneitel@online.de>, 2018-2026\n"
 "Language-Team: German (http://app.transifex.com/xfce/thunar/language/de/)\n"
@@ -139,7 +139,7 @@ msgid "_Rename..."
 msgstr "_Umbenennen …"
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:342 thunar/thunar-application.c:2917
+#: thunar/thunar-action-manager.c:342 thunar/thunar-application.c:2941
 #: plugins/thunar-tpa/thunar-tpa.c:187
 msgid "_Empty Trash"
 msgstr "_Papierkorb leeren"
@@ -184,7 +184,7 @@ msgstr "Wieder_herstellen und Anzeigen"
 msgid "Mo_ve to Trash"
 msgstr "In den Papierkorb _verschieben"
 
-#: thunar/thunar-action-manager.c:352 thunar/thunar-application.c:2662
+#: thunar/thunar-action-manager.c:352 thunar/thunar-application.c:2686
 #: plugins/thunar-uca/thunar-uca-chooser.c:379
 msgid "_Delete"
 msgstr "_Löschen"
@@ -294,8 +294,8 @@ msgstr[1] "%d neue Fenster öffnen"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1070 thunar/thunar-application.c:2661
-#: thunar/thunar-application.c:2916 thunar/thunar-chooser-dialog.c:311
+#: thunar/thunar-action-manager.c:1070 thunar/thunar-application.c:2685
+#: thunar/thunar-application.c:2940 thunar/thunar-chooser-dialog.c:311
 #: thunar/thunar-chooser-dialog.c:777 thunar/thunar-chooser-dialog.c:852
 #: thunar/thunar-chooser-dialog.c:902 thunar/thunar-dialogs.c:104
 #: thunar/thunar-dialogs.c:256 thunar/thunar-dialogs.c:714
@@ -321,8 +321,8 @@ msgid "Failed to mount \"%s\""
 msgstr "Der Datenträger »%s« konnte nicht eingehängt werden"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1211 thunar/thunar-application.c:1820
-#: thunar/thunar-application.c:1981 thunar/thunar-location-entry.c:371
+#: thunar/thunar-action-manager.c:1211 thunar/thunar-application.c:1842
+#: thunar/thunar-application.c:2005 thunar/thunar-location-entry.c:371
 #: thunar/thunar-location-entry.c:404
 #, c-format
 msgid "Failed to open \"%s\""
@@ -478,16 +478,16 @@ msgstr[0] "Die ausgewählte Datei an »%s« senden"
 msgstr[1] "Die ausgewählten Dateien an »%s« senden"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2746 thunar/thunar-application.c:2169
+#: thunar/thunar-action-manager.c:2746 thunar/thunar-application.c:2193
 msgid "New Folder"
 msgstr "Neuer Ordner"
 
-#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2170
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2194
 msgid "Create New Folder"
 msgstr "Neuen Ordner erstellen"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2804 thunar/thunar-application.c:2231
+#: thunar/thunar-action-manager.c:2804 thunar/thunar-application.c:2255
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Dokument aus Vorlage »%s« erstellen"
@@ -605,106 +605,106 @@ msgid "Please report bugs to <%s>."
 msgstr "Bitte melden Sie Probleme unter <%s>."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:972
+#: thunar/thunar-application.c:994
 msgid "Failed to launch operation"
 msgstr "Der Vorgang konnte nicht gestartet werden"
 
-#: thunar/thunar-application.c:1816
+#: thunar/thunar-application.c:1838
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "Die Datei \"%s\" (%s) konnte nicht geöffnet werden"
 
-#: thunar/thunar-application.c:1985
+#: thunar/thunar-application.c:2009
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "»%s« konnte nicht geöffnet werden: %s"
 
-#: thunar/thunar-application.c:2044 thunar/thunar-properties-dialog.c:1144
+#: thunar/thunar-application.c:2068 thunar/thunar-properties-dialog.c:1144
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "Die Datei \"%s\" (%s) konnte nicht umbenannt werden"
 
-#: thunar/thunar-application.c:2048 thunar/thunar-properties-dialog.c:1148
+#: thunar/thunar-application.c:2072 thunar/thunar-properties-dialog.c:1148
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Die Datei »%s« konnte nicht umbenannt werden"
 
-#: thunar/thunar-application.c:2094
+#: thunar/thunar-application.c:2118
 msgid "Rename Launcher Options"
 msgstr "Programmstarterumbenennung - Optionen"
 
-#: thunar/thunar-application.c:2097
+#: thunar/thunar-application.c:2121
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Möchten Sie den Programmstarter oder die Datei selbst umbenennen?"
 
-#: thunar/thunar-application.c:2098
+#: thunar/thunar-application.c:2122
 msgid "Rename _Launcher"
 msgstr "Programmstarter _umbenennen"
 
-#: thunar/thunar-application.c:2099
+#: thunar/thunar-application.c:2123
 msgid "Rename _File"
 msgstr "Datei _umbenennen"
 
-#: thunar/thunar-application.c:2174
+#: thunar/thunar-application.c:2198
 msgid "New File"
 msgstr "Neue Datei"
 
-#: thunar/thunar-application.c:2175
+#: thunar/thunar-application.c:2199
 msgid "Create New File"
 msgstr "Neue Datei erstellen"
 
-#: thunar/thunar-application.c:2297
+#: thunar/thunar-application.c:2321
 msgid "Copying files..."
 msgstr "Dateien werden kopiert …"
 
-#: thunar/thunar-application.c:2357
+#: thunar/thunar-application.c:2381
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Dateien werden nach »%s« kopiert …"
 
-#: thunar/thunar-application.c:2416
+#: thunar/thunar-application.c:2440
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Symbolische Verknüpfungen werden in »%s« erstellt …"
 
-#: thunar/thunar-application.c:2506
+#: thunar/thunar-application.c:2530
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Dateien werden in »%s« verschoben …"
 
-#: thunar/thunar-application.c:2553
+#: thunar/thunar-application.c:2577
 msgid "Moving files ..."
 msgstr "Dateien verschieben …"
 
-#: thunar/thunar-application.c:2615
+#: thunar/thunar-application.c:2639
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Sind Sie sicher, dass Sie »%s«\ndauerhaft löschen wollen?"
 
-#: thunar/thunar-application.c:2618
+#: thunar/thunar-application.c:2642
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr "Sind Sie sicher, dass Sie \"%s\" (%s)\ndauerhaft löschen wollen?"
 
-#: thunar/thunar-application.c:2622
+#: thunar/thunar-application.c:2646
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr "Sind Sie sicher, dass Sie\n\"%s\" in den Papierkorb verschieben möchten?"
 
-#: thunar/thunar-application.c:2625
+#: thunar/thunar-application.c:2649
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr "Sind Sie sicher, dass Sie\n\"%s\" (%s) in den Papierkorb verschieben möchten?"
 
-#: thunar/thunar-application.c:2634
+#: thunar/thunar-application.c:2658
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -715,7 +715,7 @@ msgid_plural ""
 msgstr[0] "Soll die ausgewählte Datei wirklich\ndauerhaft gelöscht werden?"
 msgstr[1] "Sollen diese %u ausgewählten Dateien\nwirklich\ndauerhaft gelöscht werden?"
 
-#: thunar/thunar-application.c:2641
+#: thunar/thunar-application.c:2665
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -726,70 +726,70 @@ msgid_plural ""
 msgstr[0] "Sind Sie sicher, dass Sie\ndie ausgewählte Datei in den Papierkorb verschieben wollen?"
 msgstr[1] "Sind Sie sicher, dass Sie\ndie %u ausgewählten Dateien in den Papierkorb verschieben wollen?"
 
-#: thunar/thunar-application.c:2659 thunar/thunar-dialogs.c:621
+#: thunar/thunar-application.c:2683 thunar/thunar-dialogs.c:621
 #: thunar/thunar-dialogs.c:1134
 msgid "Attention"
 msgstr "Achtung"
 
-#: thunar/thunar-application.c:2667
+#: thunar/thunar-application.c:2691
 msgid "If you delete a file, it is permanently lost."
 msgstr "Wenn Sie eine Datei oder einen Ordner löschen, gehen die Daten dauerhaft verloren."
 
-#: thunar/thunar-application.c:2720
+#: thunar/thunar-application.c:2744
 msgid "Deleting files..."
 msgstr "Dateien werden gelöscht …"
 
-#: thunar/thunar-application.c:2778
+#: thunar/thunar-application.c:2802
 msgid "Moving files into the trash..."
 msgstr "Dateien werden in den Papierkorb verschoben …"
 
-#: thunar/thunar-application.c:2828
+#: thunar/thunar-application.c:2852
 msgid "Creating files..."
 msgstr "Dateien werden erstellt …"
 
-#: thunar/thunar-application.c:2869
+#: thunar/thunar-application.c:2893
 msgid "Creating directories..."
 msgstr "Ordner werden erstellt …"
 
-#: thunar/thunar-application.c:2907
+#: thunar/thunar-application.c:2931
 msgid "Remove all files and folders from the Trash?"
 msgstr "Alle Dateien und Ordner aus dem Papierkorb entfernen?"
 
-#: thunar/thunar-application.c:2914 thunar/thunar-window.c:1291
+#: thunar/thunar-application.c:2938 thunar/thunar-window.c:1291
 msgid "Empty Trash"
 msgstr "Papierkorb leeren"
 
-#: thunar/thunar-application.c:2921
+#: thunar/thunar-application.c:2945
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Wenn Sie den Papierkorb leeren, werden darin enthaltene Objekte dauerhaft gelöscht. Bitte beachten Sie, dass Sie auch einzelne Objekte löschen können."
 
-#: thunar/thunar-application.c:2938
+#: thunar/thunar-application.c:2962
 msgid "Emptying the Trash..."
 msgstr "Papierkorb wird geleert …"
 
-#: thunar/thunar-application.c:2985
+#: thunar/thunar-application.c:3010
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr "Der Herkunftsort von \"%s\" (%s) konnte nicht ermittelt werden"
 
-#: thunar/thunar-application.c:2990
+#: thunar/thunar-application.c:3015
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Der Herkunftsort von »%s« konnte nicht ermittelt werden"
 
-#: thunar/thunar-application.c:3008
+#: thunar/thunar-application.c:3033
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr "Die Datei \"%s\" (%s) konnte nicht wiederhergestellt werden"
 
-#: thunar/thunar-application.c:3012
+#: thunar/thunar-application.c:3037
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Die Datei »%s« konnte nicht wiederhergestellt werden"
 
-#: thunar/thunar-application.c:3020
+#: thunar/thunar-application.c:3045
 msgid "Restoring files..."
 msgstr "Dateien werden wiederhergestellt …"
 
@@ -845,7 +845,7 @@ msgstr "Stan_dardmäßig für Dateien dieses Typs benutzen"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:314 thunar/thunar-chooser-dialog.c:1314
-#: thunar/thunar-properties-dialog.c:1245 thunar/thunar-window.c:4970
+#: thunar/thunar-properties-dialog.c:1245 thunar/thunar-window.c:4976
 #: plugins/thunar-uca/thunar-uca-editor.c:153
 #: plugins/thunar-uca/thunar-uca-editor.c:451
 msgid "_OK"
@@ -1169,11 +1169,11 @@ msgstr "_Erweiterbare Ordner"
 msgid "Allow tree like expansion of folders"
 msgstr "Erlaubt baumartige Erweiterung von Ordnern"
 
-#: thunar/thunar-details-view.c:557
+#: thunar/thunar-details-view.c:560
 msgid "Detailed directory listing"
 msgstr "Detaillierte Ordneransicht"
 
-#: thunar/thunar-details-view.c:558
+#: thunar/thunar-details-view.c:561
 msgid "Details view"
 msgstr "Detailansicht"
 
@@ -1677,7 +1677,7 @@ msgstr "Das Adressfeld fehlt oder ist leer"
 msgid "Invalid desktop file"
 msgstr "Ungültige Schreibtischdatei"
 
-#: thunar/thunar-file.c:2594 thunar/thunar-util.c:1453
+#: thunar/thunar-file.c:2594 thunar/thunar-util.c:1455
 msgid "broken link"
 msgstr "Verknüpfung (fehlerhaft)"
 
@@ -2889,7 +2889,7 @@ msgstr "Verknüpfungsziel:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:496 thunar/thunar-util.c:1477
+#: thunar/thunar-properties-dialog.c:496 thunar/thunar-util.c:1479
 msgid "Original Path:"
 msgstr "Herkunftsort:"
 
@@ -3015,8 +3015,8 @@ msgid "%s - Properties"
 msgstr "%s - Eigenschaften"
 
 #: thunar/thunar-properties-dialog.c:1423 thunar/thunar-size-label.c:390
-#: thunar/thunar-size-label.c:475 thunar/thunar-tree-view-model.c:1417
-#: thunar/thunar-tree-view-model.c:1430
+#: thunar/thunar-size-label.c:475 thunar/thunar-tree-view-model.c:1446
+#: thunar/thunar-tree-view-model.c:1459
 msgid "unknown"
 msgstr "Unbekannt"
 
@@ -3274,7 +3274,7 @@ msgstr "Berechnung abgebrochen"
 msgid "unreadable"
 msgstr "unleserlich"
 
-#: thunar/thunar-size-label.c:483 thunar/thunar-util.c:1360
+#: thunar/thunar-size-label.c:483 thunar/thunar-util.c:1361
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3442,7 +3442,7 @@ msgid "Loading selection information..."
 msgstr "Informationen zur Auswahl werden geladen..."
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2929 thunar/thunar-window.c:4783
+#: thunar/thunar-standard-view.c:2929 thunar/thunar-window.c:4789
 msgid "Failed to open the home folder"
 msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
 
@@ -3527,7 +3527,7 @@ msgstr "Eine Verknüpfung für die Adresse »%s« konnte nicht erzeugt werden"
 msgid "Untitled document"
 msgstr "Unbenanntes Dokument"
 
-#: thunar/thunar-standard-view.c:4246 thunar/thunar-window.c:4880
+#: thunar/thunar-standard-view.c:4246 thunar/thunar-window.c:4886
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Der Ordner »%s« konnte nicht geöffnet werden"
@@ -3605,23 +3605,23 @@ msgstr "Verwenden Sie symbolische Icons anstelle von normalen Icons (falls vorha
 msgid "Only visible when the menubar is hidden"
 msgstr " Nur sichtbar, wenn die Menüleiste ausgeblendet ist"
 
-#: thunar/thunar-transfer-job.c:645
+#: thunar/thunar-transfer-job.c:647
 msgid "Verifying file contents..."
 msgstr "Überprüfen von Dateiinhalten …"
 
 #. ask the user to retry
-#: thunar/thunar-transfer-job.c:941
+#: thunar/thunar-transfer-job.c:943
 #, c-format
 msgid "Failed to move file \"%s\": %s"
 msgstr "Die Datei \"%s\" konnte nicht verschoben werden: %s"
 
 #. ask the user to skip this node and all subnodes
-#: thunar/thunar-transfer-job.c:1039
+#: thunar/thunar-transfer-job.c:1041
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
 msgstr "Die Datei \"%s\" konnte nicht kopiert werden: %s"
 
-#: thunar/thunar-transfer-job.c:1127
+#: thunar/thunar-transfer-job.c:1129
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3629,71 +3629,71 @@ msgid ""
 msgstr "Fehler beim Kopieren nach »%s«: %s mehr Platz wird benötigt, um an den Zielort zu kopieren"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1160
+#: thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Versuche, die Datei »%s« wiederherzustellen…"
 
-#: thunar/thunar-transfer-job.c:1188
+#: thunar/thunar-transfer-job.c:1190
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Der Ordner »%s« ist nicht mehr vorhanden, wird aber benötigt, um die Datei »%s« aus dem Papierkorb wiederherzustellen"
 
-#: thunar/thunar-transfer-job.c:1214
+#: thunar/thunar-transfer-job.c:1216
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Ordner »%s« konnte nicht wiederhergestellt werden"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1291
+#: thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Datei »%s« wird versucht zu verschieben"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1375
+#: thunar/thunar-transfer-job.c:1377
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Die Datei »%s« konnte nicht direkt verschoben werden. Dateien zum Kopieren werden gesammelt …"
 
-#: thunar/thunar-transfer-job.c:1641
+#: thunar/thunar-transfer-job.c:1643
 msgid "Collecting files..."
 msgstr "Dateien werden gesammelt …"
 
-#: thunar/thunar-transfer-job.c:1816
+#: thunar/thunar-transfer-job.c:1818
 #, c-format
 msgid "%s of %s"
 msgstr "%s von %s"
 
-#: thunar/thunar-transfer-job.c:1836
+#: thunar/thunar-transfer-job.c:1838
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu Stunde verbleibend (%s/s)"
 msgstr[1] "%lu Stunden verbleibend (%s/s)"
 
-#: thunar/thunar-transfer-job.c:1842
+#: thunar/thunar-transfer-job.c:1844
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu Minute verbleibend (%s/s)"
 msgstr[1] "%lu Minuten verbleibend (%s/s)"
 
-#: thunar/thunar-transfer-job.c:1847
+#: thunar/thunar-transfer-job.c:1849
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "%lu Sekunde verbleibend (%s/s)"
 msgstr[1] "%lu Sekunden verbleibend (%s/s)"
 
-#: thunar/thunar-tree-model.c:643 thunar/thunar-tree-view-model.c:1346
-#: thunar/thunar-tree-view-model.c:1481
+#: thunar/thunar-tree-model.c:643 thunar/thunar-tree-view-model.c:1375
+#: thunar/thunar-tree-view-model.c:1510
 msgid "Loading..."
 msgstr "Wird geladen …"
 
-#: thunar/thunar-tree-view-model.c:1419 thunar/thunar-tree-view-model.c:1432
+#: thunar/thunar-tree-view-model.c:1448 thunar/thunar-tree-view-model.c:1461
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
@@ -3767,54 +3767,58 @@ msgstr "Verknüpfung %u mit %.*s%s"
 msgid "Search:"
 msgstr "Suche:"
 
-#: thunar/thunar-util.c:1334 thunar/thunar-util.c:1367
+#. TRANSLATORS: Using ngettext here, since some languages do require a
+#. different plural form here
+#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1369
 #, c-format
 msgid "%s (%d hidden)"
-msgstr "%s (%d versteckt)"
+msgid_plural "%s (%d hidden)"
+msgstr[0] ""
+msgstr[1] ""
 
-#: thunar/thunar-util.c:1351
+#: thunar/thunar-util.c:1352
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1374
+#: thunar/thunar-util.c:1376
 msgid "0 items"
 msgstr "0 Objekte"
 
-#: thunar/thunar-util.c:1383 thunar/thunar-util.c:1505
+#: thunar/thunar-util.c:1385 thunar/thunar-util.c:1507
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Zuletzt geändert: %s"
 
-#: thunar/thunar-util.c:1432
+#: thunar/thunar-util.c:1434
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1434
+#: thunar/thunar-util.c:1436
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1457
 #, c-format
 msgid "link to %s"
 msgstr "Verknüpfung mit %s"
 
-#: thunar/thunar-util.c:1457
+#: thunar/thunar-util.c:1459
 msgid "shortcut"
 msgstr "Kürzel"
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1461
 msgid "mountable"
 msgstr "einhängbar"
 
-#: thunar/thunar-util.c:1461
+#: thunar/thunar-util.c:1463
 msgid "mount point"
 msgstr " Einhängepunkt"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1495 plugins/thunar-apr/thunar-apr-image-page.c:154
+#: thunar/thunar-util.c:1497 plugins/thunar-apr/thunar-apr-image-page.c:154
 msgid "Image Size:"
 msgstr "Bildgröße:"
 
@@ -4240,91 +4244,91 @@ msgstr "Reiter schließen"
 msgid "Open the location \"%s\""
 msgstr "Ort »%s« öffnen"
 
-#: thunar/thunar-window.c:4711
+#: thunar/thunar-window.c:4717
 msgid "Failed to open parent folder"
 msgstr "Der Elternordner konnte nicht geöffnet werden"
 
-#: thunar/thunar-window.c:4854
+#: thunar/thunar-window.c:4860
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Das Verzeichnis »%s« ist nicht vorhanden. Soll es erstellt werden?"
 
-#: thunar/thunar-window.c:4856
+#: thunar/thunar-window.c:4862
 msgid "Create directory"
 msgstr "Neuen Ordner anlegen"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4925
+#: thunar/thunar-window.c:4931
 msgid "Failed to browse the computer"
 msgstr "Der Computer konnte nicht durchsucht werden"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4968
+#: thunar/thunar-window.c:4974
 msgid "About Templates"
 msgstr "Über Vorlagen"
 
-#: thunar/thunar-window.c:4990
+#: thunar/thunar-window.c:4996
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle Dateien in diesem Ordner erscheinen im Menü »Neues Dokument erstellen«."
 
-#: thunar/thunar-window.c:4997
+#: thunar/thunar-window.c:5003
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Falls Sie häufig eine bestimmte Art von Dokument erstellen, legen Sie eine Kopie davon in diesem Ordner ab. Thunar erstellt einen Eintrag für dieses Dokument in dem Menü »Neues Dokument erstellen«.\n\nSie können diesen Eintrag in dem Menü »Neues Dokument erstellen« wählen, und eine Kopie dieses Dokuments wird im gerade angezeigten Ordner angelegt."
 
-#: thunar/thunar-window.c:5009
+#: thunar/thunar-window.c:5015
 msgid "Do _not display this message again"
 msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5043
+#: thunar/thunar-window.c:5049
 msgid "Failed to open the file system root folder"
 msgstr "Das Basisverzeichnis konnte nicht geöffnet werden"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5079
+#: thunar/thunar-window.c:5085
 msgid "Failed to display `Recent`"
 msgstr "Fehler bei der Anzeige von `Zuletzt verwendet`"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5115
+#: thunar/thunar-window.c:5121
 msgid "Failed to display the contents of the trash can"
 msgstr "Inhalt des Papierkorbs konnte nicht angezeigt werden"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5151
+#: thunar/thunar-window.c:5157
 msgid "Failed to browse the network"
 msgstr "Das Netzwerk konnte nicht durchsucht werden"
 
-#: thunar/thunar-window.c:5310
+#: thunar/thunar-window.c:5316
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar ist eine schnelle und einfach zu bedienende\nDateiverwaltung, für die Xfce-Arbeitsumgebung."
 
-#: thunar/thunar-window.c:6468
+#: thunar/thunar-window.c:6474
 msgid "Select an image to preview"
 msgstr "Wählen Sie ein Bild für die Vorschau aus"
 
-#: thunar/thunar-window.c:6612
+#: thunar/thunar-window.c:6618
 msgid "Failed to launch search with Catfish"
 msgstr "Suche mit Catfish konnte nicht gestartet werden"
 
-#: thunar/thunar-window.c:6943
+#: thunar/thunar-window.c:6949
 msgid "Change the active view type"
 msgstr " Ändern des aktiven Ansichtstyps"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6946 thunar/thunar-window.c:6971
+#: thunar/thunar-window.c:6952 thunar/thunar-window.c:6977
 msgid "View Switcher"
 msgstr "Ansichtsschalter"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7140 thunar/thunar-window.c:7145
+#: thunar/thunar-window.c:7146 thunar/thunar-window.c:7151
 msgid "Location Bar"
 msgstr "Pfadleiste"
 
