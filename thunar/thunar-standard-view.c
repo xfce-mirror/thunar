@@ -2160,15 +2160,20 @@ thunar_standard_view_reload (ThunarView *view,
       file = thunar_folder_get_corresponding_file (folder);
 
       if (thunar_file_exists (file))
-        thunar_folder_reload (folder, reload_info);
-      else
-        thunar_standard_view_current_directory_destroy (file, standard_view);
-    }
+        {
+          thunar_folder_reload (folder, reload_info);
 
-  /* if directory specific settings are enabled, apply them. the reload might have been triggered */
-  /* specifically to ensure that any change in these settings is applied */
-  if (standard_view->priv->directory_specific_settings)
-    thunar_standard_view_apply_directory_specific_settings (standard_view, standard_view->priv->current_directory);
+          /* if directory specific settings are enabled, apply them. the reload might have been triggered */
+          /* specifically to ensure that any change in these settings is applied */
+          if (standard_view->priv->directory_specific_settings)
+            thunar_standard_view_apply_directory_specific_settings (standard_view, standard_view->priv->current_directory);
+        }
+      else
+        {
+          /* This will just load the parent or home directory instead */
+          thunar_standard_view_current_directory_destroy (file, standard_view);
+        }
+    }
 }
 
 
