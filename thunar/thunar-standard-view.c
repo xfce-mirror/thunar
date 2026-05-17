@@ -208,8 +208,8 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
                                     gint                y,
                                     GtkTreePath       **path_return);
 static void
-thunar_standard_view_current_directory_destroy (ThunarFile         *current_directory,
-                                                ThunarStandardView *standard_view);
+thunar_standard_view_load_parent_directory (ThunarStandardView *standard_view,
+                                            ThunarFile         *current_directory);
 static void
 thunar_standard_view_current_directory_changed (ThunarFile         *current_directory,
                                                 ThunarStandardView *standard_view);
@@ -1927,7 +1927,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* take ref on new directory */
   standard_view->priv->current_directory = g_object_ref (current_directory);
-  g_signal_connect (G_OBJECT (current_directory), "destroy", G_CALLBACK (thunar_standard_view_current_directory_destroy), standard_view);
+  g_signal_connect_swapped (G_OBJECT (current_directory), "destroy", G_CALLBACK (thunar_standard_view_load_parent_directory), standard_view);
   g_signal_connect (G_OBJECT (current_directory), "changed", G_CALLBACK (thunar_standard_view_current_directory_changed), standard_view);
 
   /* scroll to top-left when changing folder */
@@ -2432,8 +2432,7 @@ thunar_standard_view_reload (ThunarView *view,
         }
       else
         {
-          /* This will just load the parent or home directory instead */
-          thunar_standard_view_current_directory_destroy (file, standard_view);
+          thunar_standard_view_load_parent_directory (standard_view, file);
         }
     }
 }
@@ -2915,10 +2914,9 @@ thunar_standard_view_get_fallback_directory (ThunarFile *directory,
 
 
 static void
-thunar_standard_view_current_directory_destroy (ThunarFile         *current_directory,
-                                                ThunarStandardView *standard_view)
+thunar_standard_view_load_parent_directory (ThunarStandardView *standard_view,
+                                            ThunarFile         *current_directory)
 {
-  GtkWidget  *window;
   ThunarFile *new_directory = NULL;
   GError     *error = NULL;
 
@@ -2936,11 +2934,8 @@ thunar_standard_view_current_directory_destroy (ThunarFile         *current_dire
       return;
     }
 
-  /* let the parent window update all active and inactive views (tabs) */
-  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-  thunar_window_update_directories (THUNAR_WINDOW (window),
-                                    current_directory,
-                                    new_directory);
+  /* load the new directory */
+  thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), new_directory, FALSE);
 
   /* release the reference to the new directory */
   g_object_unref (new_directory);
