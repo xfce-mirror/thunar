@@ -4995,7 +4995,8 @@ void
 thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar              *search_query)
 {
-  GtkTreeView *tree_view = NULL;
+  GtkTreeView  *tree_view = NULL;
+  ThunarFolder *model_folder;
 
   /* can be called from a change in the path entry when the tab switches and a new directory is set
    * which in turn sets a new location (see thunar_window_notebook_switch_page) */
@@ -5018,9 +5019,12 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
    */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);
 
-  g_object_ref (G_OBJECT (thunar_tree_view_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
-  thunar_tree_view_model_set_folder (standard_view->model, thunar_tree_view_model_get_folder (standard_view->model), search_query);
-  g_object_unref (G_OBJECT (thunar_tree_view_model_get_folder (standard_view->model))); /* reference no longer needed */
+  model_folder = thunar_tree_view_model_get_folder (standard_view->model);
+  if (model_folder != NULL)
+    g_object_ref (G_OBJECT (model_folder)); /* temporarily hold a reference so the folder doesn't get deleted */
+  thunar_tree_view_model_set_folder (standard_view->model, model_folder, search_query);
+  if (model_folder != NULL)
+    g_object_unref (G_OBJECT (model_folder)); /* reference no longer needed */
 
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
