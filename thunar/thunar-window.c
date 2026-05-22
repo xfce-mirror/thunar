@@ -3951,6 +3951,14 @@ thunar_window_action_reload (ThunarWindow *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
+  if (window->directory_specific_settings)
+    {
+      /* If required, swap the view-type (e.g. directory specific settings changed in other window) */
+      GType view_type = thunar_window_view_type_for_directory (window, window->current_directory);
+      if (window->view_type != view_type)
+        thunar_window_replace_view (window, window->view, view_type);
+    }
+
   /* force the view to reload */
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 
