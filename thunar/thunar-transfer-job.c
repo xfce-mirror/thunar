@@ -494,6 +494,23 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
           /* query file info */
           child_info = thunar_transfer_job_query_default_info (job, lp->data, &err);
 
+          if (child_info == NULL)
+            {
+              if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                {
+                  g_clear_error (&err);
+                  break;
+                }
+              else
+                {
+                  gchar *uri = g_file_get_uri (lp->data);
+                  g_warning ("Failed to query file info from file: %s. Error: %s", uri, err->message);
+                  g_free (uri);
+                  g_clear_error (&err);
+                  continue;
+                }
+            }
+
           /* guess the target file for this node */
           if (should_use_copy_name)
             {
@@ -1029,7 +1046,12 @@ retry_copy:
 
           /* check whether to retry */
           if (G_UNLIKELY (skip_response == THUNAR_JOB_RESPONSE_RETRY))
-            goto retry_copy;
+            {
+              /* reset progress for that file to prevent counting it twice */
+              job->total_progress -= job->file_progress;
+              job->file_progress = 0;
+              goto retry_copy;
+            }
 
           /* drop the target file, so that it will not be listed as 'new file' */
           g_object_unref (node->target_file);

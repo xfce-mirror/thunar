@@ -30,6 +30,7 @@
 
 #ifdef ENABLE_LIBSM
 #include <X11/SM/SMlib.h>
+#include <gdk/gdkx.h>
 #endif
 
 #include "thunar/thunar-application.h"
@@ -38,7 +39,6 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-session-client.h"
 
-#include <gdk/gdkx.h>
 #include <glib/gstdio.h>
 
 
@@ -310,12 +310,14 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
           /* no tabs were opened */
           gtk_widget_destroy (window);
         }
-
-      /* The accel map will be loaded after the first window is created */
-      /* For some reason it is important to do so only AFTER creation of the window! */
-      /* When loaded, the accelerators of the first window need to be reconnected */
-      if (thunar_application_accel_map_init (application))
-        thunar_window_reconnect_accelerators (THUNAR_WINDOW (window));
+      else
+        {
+          /* The accel map will be loaded after the first window is created */
+          /* For some reason it is important to do so only AFTER creation of the window! */
+          /* When loaded, the accelerators of the first window need to be reconnected */
+          if (thunar_application_accel_map_init (application))
+            thunar_window_reconnect_accelerators (THUNAR_WINDOW (window));
+        }
 
       /* cleanup */
       g_strfreev (uris);

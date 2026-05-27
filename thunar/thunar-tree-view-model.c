@@ -89,6 +89,7 @@ enum
   PROP_FOLDER_ITEM_COUNT,
   PROP_FILE_SIZE_BINARY,
   PROP_LOADING,
+  PROP_EXPANDABLE_FOLDERS,
   N_PROPERTIES
 };
 
@@ -243,6 +244,9 @@ thunar_tree_view_model_set_date_custom_style (ThunarTreeViewModel *model,
 static void
 thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel  *model,
                                               ThunarFolderItemCount count_as_dir_size);
+static void
+thunar_tree_view_model_set_expandable_folders (ThunarTreeViewModel *model,
+                                               gboolean             expandable_folders);
 
 /* Internal helper funcs */
 static Node *
@@ -338,6 +342,7 @@ struct _ThunarTreeViewModel
   ThunarDateStyle       date_style;
   char                 *date_custom_style;
   gboolean              show_hidden;
+  gboolean              expandable_folders;
 
   gint n_visible_files;
   gint loading;
@@ -484,6 +489,13 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
                                                          FALSE,
                                                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
+  tree_model_props[PROP_EXPANDABLE_FOLDERS] = g_param_spec_boolean ("expandable-folders",
+                                                                    "expandable-folders",
+                                                                    "expandable-folders",
+                                                                    FALSE,
+                                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+
   /**
    * ThunarTreeViewModel:case-sensitive:
    *
@@ -571,6 +583,15 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LOADING,
                                    tree_model_props[PROP_LOADING]);
+
+  /**
+   * ThunarTreeViewModel:expandable-folders
+   *
+   * %TRUE to enable expandable folders
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_EXPANDABLE_FOLDERS,
+                                   tree_model_props[PROP_EXPANDABLE_FOLDERS]);
 
   /**
    * ThunarTreeViewModel::error:
@@ -760,6 +781,10 @@ thunar_tree_view_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_tree_view_model_get_loading (model));
       break;
 
+    case PROP_EXPANDABLE_FOLDERS:
+      g_value_set_boolean (value, model->expandable_folders);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -812,6 +837,10 @@ thunar_tree_view_model_set_property (GObject      *object,
 
     case PROP_FOLDER_ITEM_COUNT:
       thunar_tree_view_model_set_folder_item_count (model, g_value_get_enum (value));
+      break;
+
+    case PROP_EXPANDABLE_FOLDERS:
+      thunar_tree_view_model_set_expandable_folders (THUNAR_TREE_VIEW_MODEL (model), g_value_get_boolean (value));
       break;
 
     default:
@@ -1194,9 +1223,17 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
   _thunar_return_if_fail (iter->stamp == (THUNAR_TREE_VIEW_MODEL (model))->stamp);
 
   node = g_sequence_get (iter->user_data);
-  file = node->file;
-  if (file != NULL)
-    g_object_ref (file);
+  if (node != NULL)
+    {
+      file = node->file;
+      if (file != NULL)
+        g_object_ref (file);
+    }
+  else
+    {
+      /* should not happen, but already caused unreproducible segfault */
+      g_warn_if_reached ();
+    }
 
   switch (column)
     {
@@ -2181,6 +2218,54 @@ thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel  *model,
 
 
 
+static gboolean
+thunar_tree_view_model_node_update_expand_arrow (Node *node)
+{
+  if (node == NULL || node->model == NULL)
+    return FALSE;
+
+  if (node->model->expandable_folders
+      && thunar_file_is_directory (node->file)
+      && !thunar_tree_view_model_node_has_dummy_child (node)
+      && !thunar_file_is_empty_directory (node->file))
+    {
+      thunar_tree_view_model_node_add_dummy_child (node);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+_thunar_tree_view_model_node_update_expand_arrow (Node    *node,
+                                                  gpointer data)
+{
+  thunar_tree_view_model_node_update_expand_arrow (node);
+}
+
+
+
+static void
+thunar_tree_view_model_set_expandable_folders (ThunarTreeViewModel *model,
+                                               gboolean             expandable_folders)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  /* check if the new setting differs */
+  if (model->expandable_folders == expandable_folders)
+    return;
+
+  model->expandable_folders = expandable_folders;
+
+  /* update all base-directories to show the expand-arrow when required */
+  if (expandable_folders && model->root != NULL)
+    g_sequence_foreach (model->root->children, (GFunc) _thunar_tree_view_model_node_update_expand_arrow, NULL);
+}
+
+
+
 static Node *
 thunar_tree_view_model_new_node (ThunarFile *file)
 {
@@ -2396,9 +2481,7 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
 
-  if (thunar_file_is_directory (file)
-      && !thunar_file_is_empty_directory (file))
-    thunar_tree_view_model_node_add_dummy_child (child);
+  thunar_tree_view_model_node_update_expand_arrow (child);
 
   /* notify the model if a child has been added to previously empty folder */
   if (node->ptr != NULL && node->n_children == 1)
@@ -3008,14 +3091,8 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
           g_free (new_order);
         }
 
-      if (thunar_file_is_directory (file)
-          && !thunar_file_is_empty_directory (file)
-          && !node->loaded
-          && !thunar_tree_view_model_node_has_dummy_child (node))
-        {
-          dummy_added = TRUE;
-          thunar_tree_view_model_node_add_dummy_child (node);
-        }
+      if (!node->loaded && thunar_tree_view_model_node_update_expand_arrow (node))
+        dummy_added = TRUE;
 
       GTK_TREE_ITER_INIT (tree_iter, model->stamp, iter);
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &tree_iter);

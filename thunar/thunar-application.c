@@ -54,6 +54,7 @@
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-job-operation-history.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-dialog.h"
@@ -257,6 +258,9 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+
+  /* reference to the global job operation history */
+  ThunarJobOperationHistory *job_operation_history;
 };
 
 
@@ -339,6 +343,9 @@ thunar_application_init (ThunarApplication *application)
   argument_help_string = g_strconcat(_("Arguments:\n"),
   "  ", _("URL"), "                        ",("Location to open"), NULL); 
   g_application_set_option_context_summary (G_APPLICATION (application), argument_help_string);
+
+  /* keep a reference of the global job operation history */
+  application->job_operation_history = thunar_job_operation_history_get_default ();
 }
 
 
@@ -494,6 +501,9 @@ thunar_application_shutdown (GApplication *gapp)
 
   /* remove the dbus service */
   g_clear_pointer (&application->dbus_service, g_object_unref);
+
+  /* release job operation history */
+  g_object_unref (application->job_operation_history);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->shutdown (gapp);
 }
@@ -945,7 +955,29 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
         }
       else
         {
-          base_name = g_file_get_basename (lp->data);
+          if (thunar_g_file_is_trashed (lp->data))
+            {
+              g_autoptr (GFileInfo) info = NULL;
+
+              /* files in trash location from outside $HOME can have backslashes and doublke-escaping */
+              /* So let's use the original path to obtain a valid basename */
+              info = g_file_query_info (lp->data, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+              if (info != NULL)
+                {
+                  const gchar *original_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+                  base_name = g_path_get_basename (original_path);
+                }
+              else
+                {
+                  base_name = g_file_get_basename (lp->data);
+                  g_warning ("Failed to read basename of trashed file .. falling back to trashed name");
+                }
+            }
+          else
+            {
+              base_name = g_file_get_basename (lp->data);
+            }
+
           file = g_file_resolve_relative_path (target_file, base_name);
           g_free (base_name);
 
@@ -1811,7 +1843,9 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
                                        thunar_file_get_display_name (file));
         }
 
-      /* stop processing files */
+      /* unset the startup ids and stop processing any files */
+      for (GList *lp = application->files_to_launch; lp != NULL; lp = lp->next)
+        g_object_set_qdata (G_OBJECT (lp->data), thunar_application_startup_id_quark, NULL);
       thunar_g_list_free_full (application->files_to_launch);
       application->files_to_launch = NULL;
     }
@@ -1858,14 +1892,14 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
         }
 
       application->force_new_window = FALSE;
+
+      /* unset the startup id */
+      if (startup_id != NULL)
+        g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
+
+      /* release the file */
+      g_object_unref (file);
     }
-
-  /* unset the startup id */
-  if (startup_id != NULL)
-    g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
-
-  /* release the file */
-  g_object_unref (file);
 
   /* release the application */
   g_application_release (G_APPLICATION (application));
@@ -2967,6 +3001,7 @@ thunar_application_restore_files (ThunarApplication *application,
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
       original_uri = thunar_file_get_original_path (lp->data);
+
       if (G_UNLIKELY (original_uri == NULL))
         {
           /* no OriginalPath, impossible to continue */

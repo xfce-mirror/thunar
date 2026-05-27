@@ -3754,6 +3754,12 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
+  if (!gtk_widget_get_visible (gtk_widget_get_parent (window->location_bar)))
+    {
+      g_warning ("search and open location are not supported when the location bar is hidden");
+      return;
+    }
+
   /* setup a search if required */
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
@@ -4198,6 +4204,14 @@ thunar_window_action_reload (ThunarWindow *window,
   gboolean result;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (window->directory_specific_settings)
+    {
+      /* If required, swap the view-type (e.g. directory specific settings changed in other window) */
+      GType view_type = thunar_window_view_type_for_directory (window, window->current_directory);
+      if (window->view_type != view_type)
+        thunar_window_replace_view (window, window->view, view_type, TRUE);
+    }
 
   /* force the view to reload */
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
@@ -5872,9 +5886,22 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (current_directory == NULL)
     return;
 
+  /* try to resolve possible symlinks */
+  if (thunar_file_is_symlink (current_directory))
+    {
+      gboolean resolve_links;
+      g_object_get (G_OBJECT (window->preferences), "misc-resolve-links", &resolve_links, NULL);
+      if (resolve_links == TRUE)
+        {
+          g_autoptr (GFile) link_target = thunar_g_file_resolve_symlink (thunar_file_get_file (current_directory));
+          if (link_target != NULL)
+            window->current_directory = thunar_file_get (link_target, NULL);
+        }
+    }
+
   /* take a reference on the file */
-  g_object_ref (G_OBJECT (current_directory));
-  window->current_directory = current_directory;
+  if (window->current_directory == NULL)
+    window->current_directory = g_object_ref (current_directory);
 
   num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
 
@@ -5892,12 +5919,12 @@ thunar_window_set_current_directory (ThunarWindow *window,
         g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
     }
 
-  type = thunar_window_view_type_for_directory (window, current_directory);
+  type = thunar_window_view_type_for_directory (window, window->current_directory);
 
   if (num_pages == 0) /* create a new view if the window is new */
     {
       GtkWidget *new_view;
-      new_view = thunar_window_create_view (window, current_directory, type);
+      new_view = thunar_window_create_view (window, window->current_directory, type);
       thunar_window_notebook_insert_page (window, 0, new_view);
     }
 
@@ -5905,7 +5932,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   thunar_window_update_window_icon (window);
 
   thunar_window_history_changed (window);
-  gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
+  gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (window->current_directory)));
 
   /*
    * tell everybody that we have a new "current-directory",
@@ -5922,8 +5949,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (grab_focus && window->view != NULL)
     gtk_widget_grab_focus (window->view);
 
-  is_trashed = thunar_file_is_trashed (current_directory);
-  is_recent = thunar_file_is_recent (current_directory);
+  is_trashed = thunar_file_is_trashed (window->current_directory);
+  is_recent = thunar_file_is_recent (window->current_directory);
 
   /* show/hide trash infobar */
   gtk_widget_set_visible (window->trash_infobar, is_trashed);

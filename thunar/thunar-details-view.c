@@ -349,6 +349,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-expandable-folders",
                           G_OBJECT (details_view), "expandable-folders",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-expandable-folders",
+                          THUNAR_STANDARD_VIEW (details_view)->model, "expandable-folders",
+                          G_BINDING_SYNC_CREATE);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();

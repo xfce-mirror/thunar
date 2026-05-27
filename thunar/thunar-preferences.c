@@ -104,6 +104,7 @@ enum
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_RECURSIVE_SEARCH,
   PROP_MISC_REMEMBER_GEOMETRY,
+  PROP_MISC_RESOLVE_LINKS,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_DELETE_ACTION,
   PROP_MISC_SINGLE_CLICK,
@@ -951,6 +952,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_REMEMBER_GEOMETRY] =
   g_param_spec_boolean ("misc-remember-geometry",
                         "MiscRememberGeometry",
+                        NULL,
+                        TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-remember-geometry:
+   *
+   * Whether Thunar should resolve symbolic links when they are opened
+   **/
+  preferences_props[PROP_MISC_RESOLVE_LINKS] =
+  g_param_spec_boolean ("misc-resolve-links",
+                        "MiscResolveLinks",
                         NULL,
                         TRUE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);

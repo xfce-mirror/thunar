@@ -2246,7 +2246,9 @@ thunar_g_file_fs_uses_fat_name_scheme (GFile *gfile)
   parent = g_file_get_parent (gfile);
   if (parent == NULL)
     {
-      g_warning ("Failed to get parent of %s", g_file_get_uri (gfile));
+      gchar *uri = g_file_get_uri (gfile);
+      g_warning ("Failed to get parent of %s", uri);
+      g_free (uri);
       return FALSE;
     }
 

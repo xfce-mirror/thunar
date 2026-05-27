@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-03-17 13:01+0100\n"
+"POT-Creation-Date: 2026-05-17 00:48+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2025\n"
 "Language-Team: Georgian (http://app.transifex.com/xfce/thunar/language/ka/)\n"
@@ -27,13 +27,13 @@ msgstr "თუნარი"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:324 thunar/thunar-chooser-dialog.c:903
-#: thunar/thunar-chooser-dialog.c:1314 thunar/thunar-dialogs.c:1316
-#: thunar/thunar-renamer-dialog.c:1105
+#: thunar/thunar-chooser-dialog.c:1314 thunar/thunar-dialogs.c:1325
+#: thunar/thunar-renamer-dialog.c:1109
 #: plugins/thunar-uca/thunar-uca-editor.c:198
 msgid "_Open"
 msgstr "გახსნა"
 
-#: thunar/thunar-action-manager.c:325 thunar/thunar-dialogs.c:1310
+#: thunar/thunar-action-manager.c:325 thunar/thunar-dialogs.c:1319
 msgid "_Execute"
 msgstr "გაშვება"
 
@@ -65,7 +65,7 @@ msgstr "გადასვლა საქაღალდეზე, სადა
 msgid "Ope_n With Other Application..."
 msgstr "გახს_ნა სხვა აპლიკაციით..."
 
-#: thunar/thunar-action-manager.c:330 thunar/thunar-action-manager.c:3469
+#: thunar/thunar-action-manager.c:330 thunar/thunar-action-manager.c:3472
 msgid "Choose another application with which to open the selected file"
 msgstr "აირჩიეთ აპლიკაცია, რომლითაც გნებავთ მონიშნული ფაილის გახსნა"
 
@@ -124,7 +124,7 @@ msgid "_Rename..."
 msgstr "_სახელის შეცვლა..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:342 thunar/thunar-application.c:2918
+#: thunar/thunar-action-manager.c:342 thunar/thunar-application.c:2941
 #: plugins/thunar-tpa/thunar-tpa.c:187
 msgid "_Empty Trash"
 msgstr "ურნის დაცლა"
@@ -169,7 +169,7 @@ msgstr "აღდგენა და _ჩვენება"
 msgid "Mo_ve to Trash"
 msgstr "ურნაში გადატანა"
 
-#: thunar/thunar-action-manager.c:352 thunar/thunar-application.c:2653
+#: thunar/thunar-action-manager.c:352 thunar/thunar-application.c:2686
 #: plugins/thunar-uca/thunar-uca-chooser.c:379
 msgid "_Delete"
 msgstr "წაშლა"
@@ -279,16 +279,16 @@ msgstr[1] "%d ახალი ფანჯრის გახსნა"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1070 thunar/thunar-application.c:2652
-#: thunar/thunar-application.c:2917 thunar/thunar-chooser-dialog.c:311
+#: thunar/thunar-action-manager.c:1070 thunar/thunar-application.c:2685
+#: thunar/thunar-application.c:2940 thunar/thunar-chooser-dialog.c:311
 #: thunar/thunar-chooser-dialog.c:777 thunar/thunar-chooser-dialog.c:852
-#: thunar/thunar-chooser-dialog.c:902 thunar/thunar-dialogs.c:101
-#: thunar/thunar-dialogs.c:251 thunar/thunar-dialogs.c:705
-#: thunar/thunar-dialogs.c:816 thunar/thunar-dialogs.c:827
-#: thunar/thunar-dialogs.c:1129 thunar/thunar-dialogs.c:1221
+#: thunar/thunar-chooser-dialog.c:902 thunar/thunar-dialogs.c:104
+#: thunar/thunar-dialogs.c:256 thunar/thunar-dialogs.c:714
+#: thunar/thunar-dialogs.c:825 thunar/thunar-dialogs.c:836
+#: thunar/thunar-dialogs.c:1138 thunar/thunar-dialogs.c:1230
 #: thunar/thunar-dnd.c:168 thunar/thunar-permissions-chooser.c:568
 #: thunar/thunar-permissions-chooser.c:1183
-#: thunar/thunar-properties-dialog.c:1244 thunar/thunar-renamer-dialog.c:1104
+#: thunar/thunar-properties-dialog.c:1244 thunar/thunar-renamer-dialog.c:1108
 #: thunar/thunar-renamer-progress.c:186 thunar/thunar-renamer-progress.c:196
 #: plugins/thunar-sendto-email/main.c:216
 #: plugins/thunar-sendto-email/main.c:236
@@ -306,8 +306,8 @@ msgid "Failed to mount \"%s\""
 msgstr "\"%s\"-ის დამაგრება ვერ მოხერხდა"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1211 thunar/thunar-application.c:1810
-#: thunar/thunar-application.c:1971 thunar/thunar-location-entry.c:371
+#: thunar/thunar-action-manager.c:1211 thunar/thunar-application.c:1842
+#: thunar/thunar-application.c:2005 thunar/thunar-location-entry.c:371
 #: thunar/thunar-location-entry.c:404
 #, c-format
 msgid "Failed to open \"%s\""
@@ -463,233 +463,233 @@ msgstr[0] "მონიშნული ფაილის გაგზავნ�
 msgstr[1] "მონიშნული ფაილების გაგზავნა \"%s\"-სთვის"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2746 thunar/thunar-application.c:2159
+#: thunar/thunar-action-manager.c:2746 thunar/thunar-application.c:2193
 msgid "New Folder"
 msgstr "ახალი საქაღალდე"
 
-#: thunar/thunar-action-manager.c:2750 thunar/thunar-application.c:2160
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2194
 msgid "Create New Folder"
 msgstr "შექმენი ახალი საქაღალდე"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2803 thunar/thunar-application.c:2221
+#: thunar/thunar-action-manager.c:2804 thunar/thunar-application.c:2255
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "დოკუმენტის შექმნა შაბლონიდან: \"%s\""
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2820
+#: thunar/thunar-action-manager.c:2822
 msgid "New Empty File"
 msgstr "ახალი ცარიელი ფაილი"
 
-#: thunar/thunar-action-manager.c:2824
+#: thunar/thunar-action-manager.c:2827
 msgid "New Empty File..."
 msgstr "ახალი ცარიელი ფაილი..."
 
-#: thunar/thunar-action-manager.c:3046
+#: thunar/thunar-action-manager.c:3049
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "შაბლონები დაყენებული არაა\n\"%s\"-ში"
 
-#: thunar/thunar-action-manager.c:3059
+#: thunar/thunar-action-manager.c:3062
 msgid "_Empty File"
 msgstr "ცარიელი ფაილი"
 
-#: thunar/thunar-action-manager.c:3224
+#: thunar/thunar-action-manager.c:3227
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\"-ის გამოღება ვერ მოხერხდა"
 
-#: thunar/thunar-action-manager.c:3286
+#: thunar/thunar-action-manager.c:3289
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\"-ის მოხსნა ჩავარდა"
 
-#: thunar/thunar-action-manager.c:3349 thunar/thunar-action-manager.c:3431
+#: thunar/thunar-action-manager.c:3352 thunar/thunar-action-manager.c:3434
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "\"%s\"-ის გამოყენება მონიშნული ფაილის გასახსნელად"
 msgstr[1] "\"%s\"-ის გამოყენება მონიშნული ფაილების გასახსნელად"
 
-#: thunar/thunar-action-manager.c:3430
+#: thunar/thunar-action-manager.c:3433
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "\"%s\"-ით გახსნა"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3451
+#: thunar/thunar-action-manager.c:3454
 msgid "_Open With Default Applications"
 msgstr "გახსნა ნაგულისხმევი აპლი_კაციებით"
 
-#: thunar/thunar-action-manager.c:3452
+#: thunar/thunar-action-manager.c:3455
 msgid "Open the selected files with the default applications"
 msgstr "მონიშნული ფაილების გახსნა ნაგულისხმევი პროგრამებით"
 
-#: thunar/thunar-action-manager.c:3468
+#: thunar/thunar-action-manager.c:3471
 msgid "Ope_n With"
 msgstr "გახს_ნა პროგრამით"
 
-#: thunar/thunar-application.c:85
+#: thunar/thunar-application.c:86
 msgid "Open the bulk rename dialog"
 msgstr "ერთზე მეტი ფაილის სახელის გადარქმევის დიალოგის გახსნა"
 
-#: thunar/thunar-application.c:86
+#: thunar/thunar-application.c:87
 msgid "Force open in a new window"
 msgstr "ნაძალადევი გახსნა ახალ ფანჯარაში"
 
-#: thunar/thunar-application.c:87
+#: thunar/thunar-application.c:88
 msgid "Run in daemon mode"
 msgstr "დემონის რეჟიმში გაშვება"
 
-#: thunar/thunar-application.c:89
+#: thunar/thunar-application.c:90
 msgid "Quit a running Thunar instance"
 msgstr "Thunar-ის გაშვებული ასლიდან გასვლა"
 
-#: thunar/thunar-application.c:90
+#: thunar/thunar-application.c:91
 msgid "Print version information and exit"
 msgstr "ვერსიის ინფორმაციის დაბეჭდვა და გასვლა"
 
 #. Dont have a better idea for indendation formatting the 'Arguments:' section
-#: thunar/thunar-application.c:339
+#: thunar/thunar-application.c:343
 msgid "Arguments:\n"
 msgstr ""
 
-#: thunar/thunar-application.c:340
+#: thunar/thunar-application.c:344
 msgid "URL"
 msgstr ""
 
-#: thunar/thunar-application.c:350
+#: thunar/thunar-application.c:357
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "მიღებულია სესიის შეტყობინების მატარებელი '%s'\n"
 
-#: thunar/thunar-application.c:360
+#: thunar/thunar-application.c:367
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr ""
 
-#: thunar/thunar-application.c:370
+#: thunar/thunar-application.c:377
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr ""
 
-#: thunar/thunar-application.c:523
+#: thunar/thunar-application.c:533
 msgid "The Thunar development team. All rights reserved."
 msgstr ""
 
-#: thunar/thunar-application.c:524
+#: thunar/thunar-application.c:534
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "ავტორი: Benedikt Meurer <benny@xfce.org>."
 
-#: thunar/thunar-application.c:525
+#: thunar/thunar-application.c:535
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "გთხოვთ, შეცდომების შესახებ გვაცნობეთ აქ <%s>."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:962
+#: thunar/thunar-application.c:994
 msgid "Failed to launch operation"
 msgstr "ოპერაციის გაშვება ჩავარდა"
 
-#: thunar/thunar-application.c:1806
+#: thunar/thunar-application.c:1838
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "\"%s\"-ის გახსნა ჩავარდა (%s)"
 
-#: thunar/thunar-application.c:1975
+#: thunar/thunar-application.c:2009
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\":%s-ის გახსნა ვერ განხორციელდა"
 
-#: thunar/thunar-application.c:2034 thunar/thunar-properties-dialog.c:1144
+#: thunar/thunar-application.c:2068 thunar/thunar-properties-dialog.c:1144
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "\"%s\"-ის სახელის გადარქმევა ჩავარდა (%s)"
 
-#: thunar/thunar-application.c:2038 thunar/thunar-properties-dialog.c:1148
+#: thunar/thunar-application.c:2072 thunar/thunar-properties-dialog.c:1148
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" სახელის შეცვლა ვერ განხორციელდა"
 
-#: thunar/thunar-application.c:2084
+#: thunar/thunar-application.c:2118
 msgid "Rename Launcher Options"
 msgstr "გამშვების პარამეტრების სახელის გადარქმევა"
 
-#: thunar/thunar-application.c:2087
+#: thunar/thunar-application.c:2121
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr ""
 
-#: thunar/thunar-application.c:2088
+#: thunar/thunar-application.c:2122
 msgid "Rename _Launcher"
 msgstr "გამშვების სახე_ლის გადარქმევა"
 
-#: thunar/thunar-application.c:2089
+#: thunar/thunar-application.c:2123
 msgid "Rename _File"
 msgstr "_ფაილის სახელის გადარქმევა"
 
-#: thunar/thunar-application.c:2164
+#: thunar/thunar-application.c:2198
 msgid "New File"
 msgstr "ახალი ფაილი"
 
-#: thunar/thunar-application.c:2165
+#: thunar/thunar-application.c:2199
 msgid "Create New File"
 msgstr "შექმენი ახალი ფაილი"
 
-#: thunar/thunar-application.c:2286
+#: thunar/thunar-application.c:2321
 msgid "Copying files..."
 msgstr "მიმდინარეობს ფაილების ასლის გაკეთება..."
 
-#: thunar/thunar-application.c:2346
+#: thunar/thunar-application.c:2381
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "მიმდინარეობს ფაილების ასლის გაკეთება \"%s\"..."
 
-#: thunar/thunar-application.c:2405
+#: thunar/thunar-application.c:2440
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr ""
 
-#: thunar/thunar-application.c:2495
+#: thunar/thunar-application.c:2530
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "მიმდინარეობს ფაილების გადაადგილება \"%s\"-ში..."
 
-#: thunar/thunar-application.c:2542
+#: thunar/thunar-application.c:2577
 msgid "Moving files ..."
 msgstr "მიმდინარეობს ფაილების გადატანა ..."
 
-#: thunar/thunar-application.c:2606
+#: thunar/thunar-application.c:2639
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "დარწმუნებული ხართ, რომ გსურთ\nსამუდამოდ წაშალოთ \"%s\"?"
 
-#: thunar/thunar-application.c:2609
+#: thunar/thunar-application.c:2642
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr ""
 
-#: thunar/thunar-application.c:2613
+#: thunar/thunar-application.c:2646
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr ""
 
-#: thunar/thunar-application.c:2616
+#: thunar/thunar-application.c:2649
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr ""
 
-#: thunar/thunar-application.c:2625
+#: thunar/thunar-application.c:2658
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -700,7 +700,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-application.c:2632
+#: thunar/thunar-application.c:2665
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -711,70 +711,70 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-application.c:2650 thunar/thunar-dialogs.c:615
-#: thunar/thunar-dialogs.c:1125
+#: thunar/thunar-application.c:2683 thunar/thunar-dialogs.c:621
+#: thunar/thunar-dialogs.c:1134
 msgid "Attention"
 msgstr "ყურადღება"
 
-#: thunar/thunar-application.c:2660
+#: thunar/thunar-application.c:2691
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: thunar/thunar-application.c:2721
+#: thunar/thunar-application.c:2744
 msgid "Deleting files..."
 msgstr "მიმდინარეობს ფაილების წაშლა..."
 
-#: thunar/thunar-application.c:2779
+#: thunar/thunar-application.c:2802
 msgid "Moving files into the trash..."
 msgstr "მიმდინარეობს ფაილების გადაადგილება ნაგვის ურნაში..."
 
-#: thunar/thunar-application.c:2829
+#: thunar/thunar-application.c:2852
 msgid "Creating files..."
 msgstr "ფაილების შექმნა..."
 
-#: thunar/thunar-application.c:2870
+#: thunar/thunar-application.c:2893
 msgid "Creating directories..."
 msgstr "ცნობარების შექმნა..."
 
-#: thunar/thunar-application.c:2908
+#: thunar/thunar-application.c:2931
 msgid "Remove all files and folders from the Trash?"
 msgstr ""
 
-#: thunar/thunar-application.c:2915 thunar/thunar-window.c:1286
+#: thunar/thunar-application.c:2938 thunar/thunar-window.c:1291
 msgid "Empty Trash"
 msgstr "ნაგვის დაცარიელება"
 
-#: thunar/thunar-application.c:2922
+#: thunar/thunar-application.c:2945
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
 
-#: thunar/thunar-application.c:2939
+#: thunar/thunar-application.c:2962
 msgid "Emptying the Trash..."
 msgstr "მიმდინარეობს ნაგვის ურნის დაცლა..."
 
-#: thunar/thunar-application.c:2986
+#: thunar/thunar-application.c:3010
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:2991
+#: thunar/thunar-application.c:3015
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr ""
 
-#: thunar/thunar-application.c:3009
+#: thunar/thunar-application.c:3033
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:3013
+#: thunar/thunar-application.c:3037
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "აღდგენა ვერ მოხერხდა \"%s\""
 
-#: thunar/thunar-application.c:3021
+#: thunar/thunar-application.c:3045
 msgid "Restoring files..."
 msgstr "მიმდინარეობს ფაილების აღდგენა..."
 
@@ -830,7 +830,7 @@ msgstr ""
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:314 thunar/thunar-chooser-dialog.c:1314
-#: thunar/thunar-properties-dialog.c:1245 thunar/thunar-window.c:4956
+#: thunar/thunar-properties-dialog.c:1245 thunar/thunar-window.c:4976
 #: plugins/thunar-uca/thunar-uca-editor.c:153
 #: plugins/thunar-uca/thunar-uca-editor.c:451
 msgid "_OK"
@@ -937,7 +937,7 @@ msgstr "\"%s\"-ის დავიწყება ჩავარდა"
 msgid "Select an Application"
 msgstr "შეარჩიეთ პროგრამა"
 
-#: thunar/thunar-chooser-dialog.c:909 thunar/thunar-renamer-dialog.c:1112
+#: thunar/thunar-chooser-dialog.c:909 thunar/thunar-renamer-dialog.c:1116
 #: plugins/thunar-uca/thunar-uca-editor.c:205
 msgid "All Files"
 msgstr "ყველა ფაილი"
@@ -1021,7 +1021,7 @@ msgstr ""
 #. add the "Help" button
 #: thunar/thunar-column-editor.c:131 thunar/thunar-preferences-dialog.c:279
 #: thunar/thunar-properties-dialog.c:344 thunar/thunar-toolbar-editor.c:150
-#: thunar/thunar-window.c:722
+#: thunar/thunar-window.c:729
 msgid "_Help"
 msgstr "_დახმარება"
 
@@ -1037,36 +1037,36 @@ msgid ""
 msgstr ""
 
 #. create the "Move Up" button
-#: thunar/thunar-column-editor.c:206 thunar/thunar-toolbar-editor.c:228
+#: thunar/thunar-column-editor.c:210 thunar/thunar-toolbar-editor.c:232
 msgid "Move _Up"
 msgstr "_აწევა"
 
 #. create the "Move Down" button
-#: thunar/thunar-column-editor.c:220 thunar/thunar-toolbar-editor.c:239
+#: thunar/thunar-column-editor.c:224 thunar/thunar-toolbar-editor.c:243
 msgid "Move Dow_n"
 msgstr "ქვემ_ოთ ჩამოწევა"
 
 #. create the "Show" button
-#: thunar/thunar-column-editor.c:234
+#: thunar/thunar-column-editor.c:238
 msgid "_Show"
 msgstr "_ჩვენება"
 
 #. create the "Hide" button
-#: thunar/thunar-column-editor.c:243
+#: thunar/thunar-column-editor.c:247
 msgid "Hi_de"
 msgstr "დამალვა"
 
 #. create the "Use Default" button
-#: thunar/thunar-column-editor.c:260
+#: thunar/thunar-column-editor.c:264
 msgid "Use De_fault"
 msgstr "ნა_გულისხმევის მოხმარება"
 
-#: thunar/thunar-column-editor.c:269
+#: thunar/thunar-column-editor.c:273
 msgid "Column Sizing"
 msgstr "სვეტის ზომა"
 
 #. create the label that explains the column sizing option
-#: thunar/thunar-column-editor.c:285
+#: thunar/thunar-column-editor.c:289
 msgid ""
 "By default columns will be automatically expanded if\n"
 "needed to ensure the text is fully visible. If you dis-\n"
@@ -1075,16 +1075,16 @@ msgid ""
 msgstr ""
 
 #. create the "Automatically expand columns as needed" button
-#: thunar/thunar-column-editor.c:297
+#: thunar/thunar-column-editor.c:301
 msgid "Automatically _expand columns as needed"
 msgstr "სვეტების ავტომატური გაშლა საჭირო_ებისამებრ"
 
-#: thunar/thunar-column-editor.c:311
+#: thunar/thunar-column-editor.c:315
 msgid "Size Column of Folders"
 msgstr "ზომის სვეტი საქაღალდეებისთვის"
 
 #. explain what it does
-#: thunar/thunar-column-editor.c:324
+#: thunar/thunar-column-editor.c:328
 msgid "Show number of contained items:"
 msgstr ""
 
@@ -1154,11 +1154,11 @@ msgstr "გაშლადი სა_ქაღალდეები"
 msgid "Allow tree like expansion of folders"
 msgstr ""
 
-#: thunar/thunar-details-view.c:557
+#: thunar/thunar-details-view.c:560
 msgid "Detailed directory listing"
 msgstr "დეტალური საქაღალდეების ჩამონათვალი"
 
-#: thunar/thunar-details-view.c:558
+#: thunar/thunar-details-view.c:561
 msgid "Details view"
 msgstr "დეტალური ხედი"
 
@@ -1178,40 +1178,40 @@ msgstr "_მრავალდისკოიანი მასივის გ
 msgid "_Lock"
 msgstr "_ჩაკეტვა"
 
-#: thunar/thunar-dialogs.c:102
+#: thunar/thunar-dialogs.c:105
 msgid "C_reate"
 msgstr "შექმნა"
 
-#: thunar/thunar-dialogs.c:139
+#: thunar/thunar-dialogs.c:142
 msgid "Enter the name:"
 msgstr "შეიყვანეთ სახელი:"
 
 #. display an error message
-#: thunar/thunar-dialogs.c:179
+#: thunar/thunar-dialogs.c:183
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "ფაილის სახელის \"%s\" გადაყვანა ლოკალურ კოდირებაში შეუძლებელია"
 
 #. create a new dialog window
-#: thunar/thunar-dialogs.c:246
+#: thunar/thunar-dialogs.c:251
 #, c-format
 msgid "Rename \"%s\""
 msgstr "%s-თვის სახელის გადარქმევა"
 
 #. add the "Rename" button
-#: thunar/thunar-dialogs.c:252 thunar/thunar-renamer-dialog.c:415
+#: thunar/thunar-dialogs.c:257 thunar/thunar-renamer-dialog.c:415
 msgid "_Rename"
 msgstr "_სახელის გადარქმევა"
 
-#: thunar/thunar-dialogs.c:294
+#: thunar/thunar-dialogs.c:299
 msgid "Enter the new name:"
 msgstr "შეიყვანეთ ახალი სახელი:"
 
-#: thunar/thunar-dialogs.c:446
+#: thunar/thunar-dialogs.c:452
 msgid "translator-credits"
 msgstr "ინფორმაცია მთარგმნელზე"
 
-#: thunar/thunar-dialogs.c:507 thunar/thunar-renamer-progress.c:173
+#: thunar/thunar-dialogs.c:513 thunar/thunar-renamer-progress.c:173
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:840
 #: plugins/thunar-sendto-email/main.c:137
 #: plugins/thunar-uca/thunar-uca-chooser.c:325
@@ -1219,137 +1219,137 @@ msgstr "ინფორმაცია მთარგმნელზე"
 msgid "Error"
 msgstr "შეცდომა"
 
-#: thunar/thunar-dialogs.c:630 thunar/thunar-permissions-chooser.c:570
+#: thunar/thunar-dialogs.c:639 thunar/thunar-permissions-chooser.c:570
 msgid "_Yes"
 msgstr "დიახ"
 
-#: thunar/thunar-dialogs.c:634
+#: thunar/thunar-dialogs.c:643
 msgid "Yes to _all"
 msgstr "_დიახ ყველაფერზე"
 
-#: thunar/thunar-dialogs.c:638 thunar/thunar-dialogs.c:830
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:839
 msgid "_Replace"
 msgstr "შეცვლა"
 
-#: thunar/thunar-dialogs.c:642
+#: thunar/thunar-dialogs.c:651
 msgid "Replace _All"
 msgstr "ყველ_აფრის ჩანაცვლება"
 
-#: thunar/thunar-dialogs.c:646 thunar/thunar-dialogs.c:817
-#: thunar/thunar-dialogs.c:828
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:826
+#: thunar/thunar-dialogs.c:837
 msgid "_Skip"
 msgstr "გამოტოვება"
 
-#: thunar/thunar-dialogs.c:650
+#: thunar/thunar-dialogs.c:659
 msgid "S_kip All"
 msgstr "ყველა_ს გამოტოვება"
 
-#: thunar/thunar-dialogs.c:654 thunar/thunar-dialogs.c:818
-#: thunar/thunar-dialogs.c:829
+#: thunar/thunar-dialogs.c:663 thunar/thunar-dialogs.c:827
+#: thunar/thunar-dialogs.c:838
 msgid "Re_name"
 msgstr "გადარქმევა"
 
-#: thunar/thunar-dialogs.c:658
+#: thunar/thunar-dialogs.c:667
 msgid "Rena_me All"
 msgstr "ყველას სახელის გადარქ_მევა"
 
-#: thunar/thunar-dialogs.c:662 thunar/thunar-dialogs.c:819
+#: thunar/thunar-dialogs.c:671 thunar/thunar-dialogs.c:828
 msgid "_Merge"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:666
+#: thunar/thunar-dialogs.c:675
 msgid "_Merge All"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:670 thunar/thunar-permissions-chooser.c:569
+#: thunar/thunar-dialogs.c:679 thunar/thunar-permissions-chooser.c:569
 msgid "_No"
 msgstr "არა"
 
-#: thunar/thunar-dialogs.c:674
+#: thunar/thunar-dialogs.c:683
 msgid "N_o to all"
 msgstr "არა _ყველასთვის"
 
-#: thunar/thunar-dialogs.c:678
+#: thunar/thunar-dialogs.c:687
 msgid "_Retry"
 msgstr "_თავიდან ცდა"
 
-#: thunar/thunar-dialogs.c:682
+#: thunar/thunar-dialogs.c:691
 msgid "Copy _Anyway"
 msgstr "მაინც _კოპირება"
 
-#: thunar/thunar-dialogs.c:813 thunar/thunar-dialogs.c:824
+#: thunar/thunar-dialogs.c:822 thunar/thunar-dialogs.c:833
 msgid "Confirm to replace files"
 msgstr "დაადასტურეთ ფაილების ჩანაცვლება"
 
-#: thunar/thunar-dialogs.c:873
+#: thunar/thunar-dialogs.c:882
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "ეს საქაღალდე უკვე შეიცავს სიმბოლურ ბმულს \"%s\"."
 
-#: thunar/thunar-dialogs.c:878
+#: thunar/thunar-dialogs.c:887
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "ეს საქაღალდე უკვე შეიცავს საქაღალდეს \"%s\"."
 
-#: thunar/thunar-dialogs.c:884
+#: thunar/thunar-dialogs.c:893
 #, c-format
 msgid "This folder already contains a file \"%s\" (%s)."
 msgstr "ეს საქაღალდე უკვე შეიცავს ფაილს \"%s\" (%s)."
 
-#: thunar/thunar-dialogs.c:888
+#: thunar/thunar-dialogs.c:897
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "ეს საქაღალდე უკვე შეიცავს ფაილს \"%s\"."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:910
+#: thunar/thunar-dialogs.c:919
 #, c-format
 msgid "Replace the link in \"%s\""
 msgstr "ჩავანაცვლო ბმული \"%s\"-ში"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:913
+#: thunar/thunar-dialogs.c:922
 #, c-format
 msgid "Merge the existing folder in \"%s\""
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:916
+#: thunar/thunar-dialogs.c:925
 #, c-format
 msgid "Replace the existing file in \"%s\""
 msgstr "ჩავანაცვლო არსებული საქაღალდე \"%s\"-ში"
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:952 thunar/thunar-dialogs.c:1002
+#: thunar/thunar-dialogs.c:961 thunar/thunar-dialogs.c:1011
 #: thunar/thunar-properties-dialog.c:654
 msgid "Size:"
 msgstr "ზომა:"
 
-#: thunar/thunar-dialogs.c:952 thunar/thunar-dialogs.c:1002
+#: thunar/thunar-dialogs.c:961 thunar/thunar-dialogs.c:1011
 #: thunar/thunar-properties-dialog.c:590
 msgid "Modified:"
 msgstr "შეცვლილია:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:964
+#: thunar/thunar-dialogs.c:973
 msgid "with the following link?"
 msgstr "შემდეგი ბმულით?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:967
+#: thunar/thunar-dialogs.c:976
 msgid "with the following folder?"
 msgstr "შემდეგი საქაღალდით?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:970
+#: thunar/thunar-dialogs.c:979
 msgid "with the following file?"
 msgstr "შემდეგი ფაილით?"
 
-#: thunar/thunar-dialogs.c:1019
+#: thunar/thunar-dialogs.c:1028
 msgid "_Apply the action to all folders"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1021
+#: thunar/thunar-dialogs.c:1030
 msgid "_Apply the action to all files"
 msgstr ""
 
@@ -1357,66 +1357,66 @@ msgstr ""
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1095
+#: thunar/thunar-dialogs.c:1104
 msgid "/executable"
 msgstr "/executable"
 
-#: thunar/thunar-dialogs.c:1101
+#: thunar/thunar-dialogs.c:1110
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1126
+#: thunar/thunar-dialogs.c:1135
 msgid "_Launch Anyway"
 msgstr "მაინც გაშვე_ბა"
 
-#: thunar/thunar-dialogs.c:1128
+#: thunar/thunar-dialogs.c:1137
 msgid "Mark As _Secure And Launch"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1210
+#: thunar/thunar-dialogs.c:1219
 msgid "Close split pane with multiple tabs?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1211
+#: thunar/thunar-dialogs.c:1220
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1217
+#: thunar/thunar-dialogs.c:1226
 msgid "Warning"
 msgstr "გაფრთხილება"
 
-#: thunar/thunar-dialogs.c:1222
+#: thunar/thunar-dialogs.c:1231
 msgid "Close Pane"
 msgstr "პანელის დახურვა"
 
-#: thunar/thunar-dialogs.c:1225 thunar/thunar-permissions-chooser.c:600
+#: thunar/thunar-dialogs.c:1234 thunar/thunar-permissions-chooser.c:600
 msgid "Do _not ask me again"
 msgstr "აღარ მკითხო"
 
-#: thunar/thunar-dialogs.c:1284
+#: thunar/thunar-dialogs.c:1293
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1289
+#: thunar/thunar-dialogs.c:1298
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1302
+#: thunar/thunar-dialogs.c:1311
 msgid "Open Shell Script"
 msgstr "გარსის სკრიპტის გახსნა"
 
-#: thunar/thunar-dialogs.c:1306
+#: thunar/thunar-dialogs.c:1315
 msgid "Run In _Terminal"
 msgstr "_ტერმინალში გაშვება"
 
-#: thunar/thunar-dialogs.c:1364
+#: thunar/thunar-dialogs.c:1373
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr ""
@@ -1433,12 +1433,12 @@ msgstr "აქ გადმოტანა"
 msgid "_Link Here"
 msgstr "ბმულის გაკეთება"
 
-#: thunar/thunar-emblem-chooser.c:363
+#: thunar/thunar-emblem-chooser.c:372
 #, c-format
 msgid "A maximum of %u emblems is supported per file."
 msgstr ""
 
-#: thunar/thunar-emblem-chooser.c:364
+#: thunar/thunar-emblem-chooser.c:373
 msgid "Too many emblems selected"
 msgstr "არჩეულია მეტისმეტად ბევრი ემბლემა"
 
@@ -1488,7 +1488,7 @@ msgstr "ჯგუფი"
 msgid "MIME Type"
 msgstr "MIME ტიპი"
 
-#: thunar/thunar-enum-types.c:152 thunar/thunar-renamer-dialog.c:472
+#: thunar/thunar-enum-types.c:152 thunar/thunar-renamer-dialog.c:476
 #: thunarx/thunarx-renamer.c:170
 msgid "Name"
 msgstr "სახელი"
@@ -1662,7 +1662,7 @@ msgstr "URL-ის ველი მითითებული არაა"
 msgid "Invalid desktop file"
 msgstr "არასწორი სამუშაო მაგიდის ფაილი"
 
-#: thunar/thunar-file.c:2594 thunar/thunar-util.c:1453
+#: thunar/thunar-file.c:2594 thunar/thunar-util.c:1455
 msgid "broken link"
 msgstr "გაფუჭებული ბმული"
 
@@ -1757,7 +1757,7 @@ msgstr "ტელეფონი"
 msgid "%s on %s"
 msgstr "%s %s-ზე"
 
-#: thunar/thunar-gio-extensions.c:820
+#: thunar/thunar-gio-extensions.c:846
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr "%s გამოყენებულია (%.0f%%)  |  %s თავისუფალია (%.0f%%)"
@@ -1852,7 +1852,7 @@ msgstr "%s (დაკოპირდა %u)%s"
 msgid "%s (copy %u)"
 msgstr "%s (დაკოპირდა %u)"
 
-#: thunar/thunar-job.c:853
+#: thunar/thunar-job.c:841
 #, c-format
 msgid ""
 "The file \"%s\" (%s) already exists. Would you like to replace it?\n"
@@ -1860,7 +1860,7 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
 
-#: thunar/thunar-job.c:858
+#: thunar/thunar-job.c:846
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1868,23 +1868,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
 
-#: thunar/thunar-job.c:944
+#: thunar/thunar-job.c:932
 msgid "Do you want to overwrite it?"
 msgstr "გნებავთ, თავზე გადააწეროთ?"
 
-#: thunar/thunar-job.c:1001
+#: thunar/thunar-job.c:989
 msgid "Do you want to permanently delete it?"
 msgstr "გნებავთ, სამუდამოდ წაშალოთ?"
 
-#: thunar/thunar-job.c:1055
+#: thunar/thunar-job.c:1043
 msgid "Do you want to create it?"
 msgstr "გნებავთ, შექმნათ?"
 
-#: thunar/thunar-job.c:1174
+#: thunar/thunar-job.c:1162
 msgid "Do you want to skip it?"
 msgstr "გნებავთ, გამოტოვოთ?"
 
-#: thunar/thunar-job.c:1223
+#: thunar/thunar-job.c:1211
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1978,7 +1978,7 @@ msgstr ""
 msgid "Undo the latest '%s' operation (%s)"
 msgstr ""
 
-#: thunar/thunar-job-operation-history.c:570 thunar/thunar-window.c:669
+#: thunar/thunar-job-operation-history.c:570 thunar/thunar-window.c:676
 msgid "Undo the latest operation"
 msgstr "ბოლო ცვლილების დაბრუნება"
 
@@ -1988,7 +1988,7 @@ msgstr "ბოლო ცვლილების დაბრუნება"
 msgid "Redo the latest '%s' operation (%s)"
 msgstr ""
 
-#: thunar/thunar-job-operation-history.c:595 thunar/thunar-window.c:670
+#: thunar/thunar-job-operation-history.c:595 thunar/thunar-window.c:677
 msgid "Redo the latest operation"
 msgstr "უკანასკნელი ოპერაციის თავიდან შესრულება"
 
@@ -2045,20 +2045,20 @@ msgstr "მიმდინარეობს მოწყობილობი�
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "მიმდინარეობს მოწყობილობა \"%s\"-ს გამოღება. ამას შეიძლება გარკვეული დრო დასჭირდეს"
 
-#: thunar/thunar-path-entry.c:238
+#: thunar/thunar-path-entry.c:242
 msgid "Icon size"
 msgstr "ხატულების ზომა"
 
-#: thunar/thunar-path-entry.c:239
+#: thunar/thunar-path-entry.c:243
 msgid "The icon size for the path entry"
 msgstr "ხატულას ზომა ბილიკის ჩანაწერისთვის"
 
-#: thunar/thunar-path-entry.c:899
+#: thunar/thunar-path-entry.c:1494
 msgid "Stop Search"
 msgstr ""
 
 #. add a tooltip
-#: thunar/thunar-path-entry.c:902
+#: thunar/thunar-path-entry.c:1497
 msgid ""
 "Search is in progress...\n"
 "Press the cancel button or the Escape key to stop."
@@ -2809,7 +2809,7 @@ msgstr ""
 msgid "Failed to display the volume management settings"
 msgstr ""
 
-#: thunar/thunar-progress-dialog.c:95
+#: thunar/thunar-progress-dialog.c:101
 msgid "File Operation Progress"
 msgstr "ფაილის ოპერაციის პროგრესი"
 
@@ -2874,7 +2874,7 @@ msgstr "ბმულის სამიზნე:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:496 thunar/thunar-util.c:1477
+#: thunar/thunar-properties-dialog.c:496 thunar/thunar-util.c:1479
 msgid "Original Path:"
 msgstr "ორიგინალი ბილიკი:"
 
@@ -3000,8 +3000,8 @@ msgid "%s - Properties"
 msgstr "%s-ის თვისებები"
 
 #: thunar/thunar-properties-dialog.c:1423 thunar/thunar-size-label.c:390
-#: thunar/thunar-size-label.c:475 thunar/thunar-tree-view-model.c:1409
-#: thunar/thunar-tree-view-model.c:1422
+#: thunar/thunar-size-label.c:475 thunar/thunar-tree-view-model.c:1446
+#: thunar/thunar-tree-view-model.c:1459
 msgid "unknown"
 msgstr "უცნობი"
 
@@ -3038,7 +3038,7 @@ msgstr "გაწმენდა"
 msgid "Clear the file list below"
 msgstr "ქვემო ფაილის სიის გასუფთავება"
 
-#: thunar/thunar-renamer-dialog.c:232 thunar/thunar-window.c:724
+#: thunar/thunar-renamer-dialog.c:232 thunar/thunar-window.c:731
 msgid "_About"
 msgstr "შესახებ"
 
@@ -3046,7 +3046,7 @@ msgstr "შესახებ"
 msgid "Display information about Thunar Bulk Rename"
 msgstr ""
 
-#: thunar/thunar-renamer-dialog.c:408 thunar/thunar-renamer-dialog.c:1837
+#: thunar/thunar-renamer-dialog.c:408 thunar/thunar-renamer-dialog.c:1841
 #: thunar-bulk-rename.desktop.in:4
 msgid "Rename Multiple Files"
 msgstr "ერთზე მეტი ფაილის სახელის გადარქმევა"
@@ -3059,11 +3059,11 @@ msgstr ""
 msgid "Rename items listed above, keep this window open."
 msgstr ""
 
-#: thunar/thunar-renamer-dialog.c:490
+#: thunar/thunar-renamer-dialog.c:494
 msgid "New Name"
 msgstr "ახალი სახელი"
 
-#: thunar/thunar-renamer-dialog.c:555
+#: thunar/thunar-renamer-dialog.c:559
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr ""
@@ -3072,61 +3072,61 @@ msgstr ""
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: thunar/thunar-renamer-dialog.c:666
+#: thunar/thunar-renamer-dialog.c:670
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
 
-#: thunar/thunar-renamer-dialog.c:903
+#: thunar/thunar-renamer-dialog.c:907
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "ფაილის წაშლა"
 msgstr[1] "ფაილების წაშლა"
 
-#: thunar/thunar-renamer-dialog.c:904
+#: thunar/thunar-renamer-dialog.c:908
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
 msgstr[1] ""
 
 #. tell the user that we failed
-#: thunar/thunar-renamer-dialog.c:1000
+#: thunar/thunar-renamer-dialog.c:1004
 msgid "Failed to open the documentation browser"
 msgstr ""
 
 #. allocate the file chooser
-#: thunar/thunar-renamer-dialog.c:1101
+#: thunar/thunar-renamer-dialog.c:1105
 msgid "Select files to rename"
 msgstr "აირჩიეთ ფაილი სახელის გადასარქმევად"
 
-#: thunar/thunar-renamer-dialog.c:1117
+#: thunar/thunar-renamer-dialog.c:1121
 msgid "Audio Files"
 msgstr "აუდიო ფაილები"
 
-#: thunar/thunar-renamer-dialog.c:1122
+#: thunar/thunar-renamer-dialog.c:1126
 msgid "Image Files"
 msgstr "გამოსახულების ფაილები"
 
-#: thunar/thunar-renamer-dialog.c:1127
+#: thunar/thunar-renamer-dialog.c:1131
 msgid "Video Files"
 msgstr "ვიდეო ფაილები"
 
 #. just popup the about dialog
-#: thunar/thunar-renamer-dialog.c:1263 thunar-bulk-rename.desktop.in:3
+#: thunar/thunar-renamer-dialog.c:1267 thunar-bulk-rename.desktop.in:3
 #: thunar-bulk-rename.desktop.in:5
 msgid "Bulk Rename"
 msgstr "ერთზე მეტი ფაილის სახელის გადარქმევა"
 
-#: thunar/thunar-renamer-dialog.c:1263
+#: thunar/thunar-renamer-dialog.c:1267
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
 
 #. change title to reflect the standalone status
-#: thunar/thunar-renamer-dialog.c:1837
+#: thunar/thunar-renamer-dialog.c:1841
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr ""
 
@@ -3156,7 +3156,7 @@ msgid ""
 msgstr ""
 
 #: thunar/thunar-shortcuts-model.c:677 thunar/thunar-shortcuts-model.c:1064
-#: thunar/thunar-window.c:708
+#: thunar/thunar-window.c:715
 msgid "Browse the file system"
 msgstr "ფაილურ სისტემაში ძებნა"
 
@@ -3188,7 +3188,7 @@ msgstr "ქსელი"
 msgid "Browse Network"
 msgstr "ქსელის დათვალიერება"
 
-#: thunar/thunar-shortcuts-model.c:1109 thunar/thunar-window.c:718
+#: thunar/thunar-shortcuts-model.c:1109 thunar/thunar-window.c:725
 msgid "Browse local network connections"
 msgstr "ლოკალური ქსელის დათვალიერება"
 
@@ -3228,13 +3228,13 @@ msgstr "მალსახმობის სა_ხელის გადარ
 msgid "_Remove Shortcut"
 msgstr "_მალსახმობის წაშლა"
 
-#: thunar/thunar-shortcuts-view.c:1719
+#: thunar/thunar-shortcuts-view.c:1722
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "ბილიკი \"%s\" საქაღალდეზე არ მიუთითებს"
 
 #. display an error message to the user
-#: thunar/thunar-shortcuts-view.c:1739
+#: thunar/thunar-shortcuts-view.c:1742
 msgid "Failed to add new shortcut"
 msgstr "ახალი მალსახმობის დაყენება ჩავარდა"
 
@@ -3259,7 +3259,7 @@ msgstr "გამოთვლა შეწყდა"
 msgid "unreadable"
 msgstr "წაუკითხვადი"
 
-#: thunar/thunar-size-label.c:483 thunar/thunar-util.c:1360
+#: thunar/thunar-size-label.c:483 thunar/thunar-util.c:1361
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3279,134 +3279,142 @@ msgstr[1] "%u ელემენტი (%s, %s)"
 msgid "(some contents unreadable)"
 msgstr "(წაუკითხვადი შინაარსის ფაილები)"
 
-#: thunar/thunar-standard-view.c:496
+#: thunar/thunar-standard-view.c:500
 msgid "Select _all Files"
 msgstr "ყველ_ა ფაილის მონიშვნა"
 
-#: thunar/thunar-standard-view.c:496
+#: thunar/thunar-standard-view.c:500
 msgid "Select all files in this window"
 msgstr "ამ ფანჯარაში ყველა ფაილის მონიშვნა"
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:501
 msgid "Select _by Pattern..."
 msgstr "მონიშვ_ნა ნიმუშით..."
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:501
 msgid "Select all files that match a certain pattern"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:498
+#: thunar/thunar-standard-view.c:502
 msgid "_Invert Selection"
 msgstr "_მონიშვნის ინვერსია"
 
-#: thunar/thunar-standard-view.c:498
+#: thunar/thunar-standard-view.c:502
 msgid "Select all files but not those currently selected"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:499
+#: thunar/thunar-standard-view.c:503
 msgid "U_nselect all Files"
 msgstr "ყველა ფაილის მო_ნიშვნის მოხსნა"
 
-#: thunar/thunar-standard-view.c:499
+#: thunar/thunar-standard-view.c:503
 msgid "Unselect all files in this window"
 msgstr "ყველა ფაილის მონიშვნის მოხსნა ამ ფანჯარაში"
 
-#: thunar/thunar-standard-view.c:500
+#: thunar/thunar-standard-view.c:504
 msgid "Arran_ge Items"
 msgstr "ნივთების განლაგება"
 
-#: thunar/thunar-standard-view.c:501
+#: thunar/thunar-standard-view.c:505
 msgid "_Reversed Order"
 msgstr "შებ_რუნებული წყობით"
 
-#: thunar/thunar-standard-view.c:501
+#: thunar/thunar-standard-view.c:505
 msgid "Reverse the sort order"
 msgstr "დალაგების მიმდევრობის რევერსი"
 
-#: thunar/thunar-standard-view.c:502
+#: thunar/thunar-standard-view.c:506
 msgid "By _Name"
 msgstr "სახელწოდების მიხედვით"
 
-#: thunar/thunar-standard-view.c:502
+#: thunar/thunar-standard-view.c:506
 msgid "Keep items sorted by their name"
 msgstr "ელემენტების სახელით დალაგების შენარჩუნება"
 
-#: thunar/thunar-standard-view.c:503
+#: thunar/thunar-standard-view.c:507
 msgid "By _Size"
 msgstr "ზომ_ის მიხედვით"
 
-#: thunar/thunar-standard-view.c:503
+#: thunar/thunar-standard-view.c:507
 msgid "Keep items sorted by their size"
 msgstr "ელემენტების ზომით დალაგების შენარჩუნება"
 
-#: thunar/thunar-standard-view.c:504
+#: thunar/thunar-standard-view.c:508
 msgid "By _Type"
 msgstr "_ტიპის მიხედვით"
 
-#: thunar/thunar-standard-view.c:504
+#: thunar/thunar-standard-view.c:508
 msgid "Keep items sorted by their type"
 msgstr "ელემენტების ტიპით დალაგების შენარჩუნება"
 
-#: thunar/thunar-standard-view.c:505
+#: thunar/thunar-standard-view.c:509
 msgid "By _Modification Date"
 msgstr "ცვლილების თარიღის )მიხედვით"
 
-#: thunar/thunar-standard-view.c:505
+#: thunar/thunar-standard-view.c:509
 msgid "Keep items sorted by their modification date"
 msgstr "ელემენტების ცვლილების თარიღით დალაგების შენარჩუნება"
 
-#: thunar/thunar-standard-view.c:506
+#: thunar/thunar-standard-view.c:510
 msgid "By D_eletion Date"
 msgstr "_წაშლის თარიღით"
 
-#: thunar/thunar-standard-view.c:506
+#: thunar/thunar-standard-view.c:510
 msgid "Keep items sorted by their deletion date"
 msgstr "ელემენტების წაშლის თარიღის მიხედვით დალაგების შენარჩუნება"
 
-#: thunar/thunar-standard-view.c:507
+#: thunar/thunar-standard-view.c:511
 msgid "_Ascending"
 msgstr "აღმავალი"
 
-#: thunar/thunar-standard-view.c:507
+#: thunar/thunar-standard-view.c:511
 msgid "Sort items in ascending order"
 msgstr "საგნების დალაგება აღმავალი წყობით"
 
-#: thunar/thunar-standard-view.c:508
+#: thunar/thunar-standard-view.c:512
 msgid "_Descending"
 msgstr "დაღმავალი"
 
-#: thunar/thunar-standard-view.c:508
+#: thunar/thunar-standard-view.c:512
 msgid "Sort items in descending order"
 msgstr "საგნების დალაგება დაღმავალი წყობით"
 
-#: thunar/thunar-standard-view.c:509
+#: thunar/thunar-standard-view.c:513
 msgid "_Folders First"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:509
+#: thunar/thunar-standard-view.c:513
 msgid "Sort folders before files"
 msgstr ""
 
+#: thunar/thunar-standard-view.c:514
+msgid "_Hidden Files Last"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:514
+msgid "Sort hidden files after other files"
+msgstr ""
+
 #. TRANSLATORS: You can swap the order of the arguments if required.
-#: thunar/thunar-standard-view.c:1378
+#: thunar/thunar-standard-view.c:1425
 #, c-format
 msgid "Search for '%1$s' in %2$s"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:1380
+#: thunar/thunar-standard-view.c:1427
 #, c-format
 msgid "Search in %s"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:1995
+#: thunar/thunar-standard-view.c:2048
 msgid "Loading folder content..."
 msgstr ""
 
-#: thunar/thunar-standard-view.c:2001
+#: thunar/thunar-standard-view.c:2054
 msgid "Loading statusbar information..."
 msgstr ""
 
-#: thunar/thunar-standard-view.c:2683
+#: thunar/thunar-standard-view.c:2755
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3414,36 +3422,36 @@ msgstr[0] "ნაპოვნია %d ფაილი"
 msgstr[1] "ნაპოვნია %d ფაილი"
 
 #. clear information from the statusbar
-#: thunar/thunar-standard-view.c:2725
+#: thunar/thunar-standard-view.c:2797
 msgid "Loading selection information..."
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2857 thunar/thunar-window.c:4769
+#: thunar/thunar-standard-view.c:2929 thunar/thunar-window.c:4789
 msgid "Failed to open the home folder"
 msgstr "საწყისი საქაღალდის გახსნა ჩავარდა"
 
-#: thunar/thunar-standard-view.c:2935
+#: thunar/thunar-standard-view.c:3007
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "მონიშვნა ნიმუშით"
 
-#: thunar/thunar-standard-view.c:2940
+#: thunar/thunar-standard-view.c:3012
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "გაუქმება"
 
-#: thunar/thunar-standard-view.c:2943
+#: thunar/thunar-standard-view.c:3015
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_მონიშვნა"
 
-#: thunar/thunar-standard-view.c:2957
+#: thunar/thunar-standard-view.c:3029
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_შაბლონი:"
 
-#: thunar/thunar-standard-view.c:2958
+#: thunar/thunar-standard-view.c:3030
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3453,7 +3461,7 @@ msgstr ""
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2972
+#: thunar/thunar-standard-view.c:3044
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3464,24 +3472,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
 
-#: thunar/thunar-standard-view.c:2976
+#: thunar/thunar-standard-view.c:3048
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "_რეგისტრის გათვალისწინება"
 
-#: thunar/thunar-standard-view.c:2977
+#: thunar/thunar-standard-view.c:3049
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:2982
+#: thunar/thunar-standard-view.c:3054
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "და_მთხვეული დიაკრიტიკები"
 
-#: thunar/thunar-standard-view.c:2983
+#: thunar/thunar-standard-view.c:3055
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3490,21 +3498,21 @@ msgstr ""
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3431
+#: thunar/thunar-standard-view.c:3503
 msgid "Invalid filename provided by XDS drag site"
 msgstr ""
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3627
+#: thunar/thunar-standard-view.c:3699
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr ""
 
-#: thunar/thunar-standard-view.c:3674
+#: thunar/thunar-standard-view.c:3746
 msgid "Untitled document"
 msgstr "უსახელო დოკუმენტი"
 
-#: thunar/thunar-standard-view.c:4174 thunar/thunar-window.c:4866
+#: thunar/thunar-standard-view.c:4246 thunar/thunar-window.c:4886
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "ვერ მოხერხდა ცნობარის გახსნა \"%s\""
@@ -3565,40 +3573,40 @@ msgid ""
 msgstr ""
 
 #. create the "Use Default" button
-#: thunar/thunar-toolbar-editor.c:255
+#: thunar/thunar-toolbar-editor.c:259
 msgid "De_fault Order"
 msgstr "_ნაგულისხმევი მიმდევრობა"
 
 #. create the "Symbolic Icons" checkbox
-#: thunar/thunar-toolbar-editor.c:261
+#: thunar/thunar-toolbar-editor.c:265
 msgid "_Symbolic Icons"
 msgstr "_სიმბოლური ხატულები"
 
-#: thunar/thunar-toolbar-editor.c:267
+#: thunar/thunar-toolbar-editor.c:271
 msgid "Use symbolic icons instead of regular ones (if available)."
 msgstr ""
 
-#: thunar/thunar-toolbar-editor.c:622
+#: thunar/thunar-toolbar-editor.c:626
 msgid "Only visible when the menubar is hidden"
 msgstr ""
 
-#: thunar/thunar-transfer-job.c:630
+#: thunar/thunar-transfer-job.c:647
 msgid "Verifying file contents..."
 msgstr "ფაილის შინაარსის გადამოწმება..."
 
 #. ask the user to retry
-#: thunar/thunar-transfer-job.c:926
+#: thunar/thunar-transfer-job.c:943
 #, c-format
 msgid "Failed to move file \"%s\": %s"
 msgstr ""
 
 #. ask the user to skip this node and all subnodes
-#: thunar/thunar-transfer-job.c:1024
+#: thunar/thunar-transfer-job.c:1041
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
 msgstr ""
 
-#: thunar/thunar-transfer-job.c:1107
+#: thunar/thunar-transfer-job.c:1129
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3606,71 +3614,71 @@ msgid ""
 msgstr ""
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1140
+#: thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr ""
 
-#: thunar/thunar-transfer-job.c:1168
+#: thunar/thunar-transfer-job.c:1190
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr ""
 
-#: thunar/thunar-transfer-job.c:1194
+#: thunar/thunar-transfer-job.c:1216
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "ვერ მოხერხდა საქაღალდის აღდგენა \"%s\""
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1271
+#: thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr ""
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1355
+#: thunar/thunar-transfer-job.c:1377
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
 
-#: thunar/thunar-transfer-job.c:1621
+#: thunar/thunar-transfer-job.c:1643
 msgid "Collecting files..."
 msgstr "ფაილების შეგროვება..."
 
-#: thunar/thunar-transfer-job.c:1796
+#: thunar/thunar-transfer-job.c:1818
 #, c-format
 msgid "%s of %s"
 msgstr "%s %s-დან"
 
-#: thunar/thunar-transfer-job.c:1816
+#: thunar/thunar-transfer-job.c:1838
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-transfer-job.c:1822
+#: thunar/thunar-transfer-job.c:1844
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-transfer-job.c:1827
+#: thunar/thunar-transfer-job.c:1849
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-tree-model.c:644 thunar/thunar-tree-view-model.c:1338
-#: thunar/thunar-tree-view-model.c:1473
+#: thunar/thunar-tree-model.c:643 thunar/thunar-tree-view-model.c:1375
+#: thunar/thunar-tree-view-model.c:1510
 msgid "Loading..."
 msgstr "ჩატვირთვა..."
 
-#: thunar/thunar-tree-view-model.c:1411 thunar/thunar-tree-view-model.c:1424
+#: thunar/thunar-tree-view-model.c:1448 thunar/thunar-tree-view-model.c:1461
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
@@ -3744,564 +3752,568 @@ msgstr ""
 msgid "Search:"
 msgstr "ძებნა: "
 
-#: thunar/thunar-util.c:1334 thunar/thunar-util.c:1367
+#. TRANSLATORS: Using ngettext here, since some languages do require a
+#. different plural form here
+#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1369
 #, c-format
 msgid "%s (%d hidden)"
-msgstr "%s (%d ფამალული)"
+msgid_plural "%s (%d hidden)"
+msgstr[0] ""
+msgstr[1] ""
 
-#: thunar/thunar-util.c:1351
+#: thunar/thunar-util.c:1352
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1374
+#: thunar/thunar-util.c:1376
 msgid "0 items"
 msgstr "0 ელემენტი"
 
-#: thunar/thunar-util.c:1383 thunar/thunar-util.c:1505
+#: thunar/thunar-util.c:1385 thunar/thunar-util.c:1507
 #, c-format
 msgid "Last Modified: %s"
 msgstr "ბოლო ცვლილება: %s"
 
-#: thunar/thunar-util.c:1432
+#: thunar/thunar-util.c:1434
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1434
+#: thunar/thunar-util.c:1436
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1457
 #, c-format
 msgid "link to %s"
 msgstr "ბმული %s -ზე"
 
-#: thunar/thunar-util.c:1457
+#: thunar/thunar-util.c:1459
 msgid "shortcut"
 msgstr "მალსახმობი"
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1461
 msgid "mountable"
 msgstr "მიმაგრებადი"
 
-#: thunar/thunar-util.c:1461
+#: thunar/thunar-util.c:1463
 msgid "mount point"
 msgstr "მიმაგრების წერტილი"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1495 plugins/thunar-apr/thunar-apr-image-page.c:154
+#: thunar/thunar-util.c:1497 plugins/thunar-apr/thunar-apr-image-page.c:154
 msgid "Image Size:"
 msgstr "გამოსახულების ზომა:"
 
-#: thunar/thunar-window.c:660
+#: thunar/thunar-window.c:667
 msgid "_File"
 msgstr "ფაილი"
 
-#: thunar/thunar-window.c:661
+#: thunar/thunar-window.c:668
 msgid "New _Tab"
 msgstr "ახალი _ჩანართი"
 
-#: thunar/thunar-window.c:661
+#: thunar/thunar-window.c:668
 msgid "Open a new tab for the displayed location"
 msgstr ""
 
-#: thunar/thunar-window.c:662
+#: thunar/thunar-window.c:669
 msgid "New _Window"
 msgstr "ახალი ფანჯარა"
 
-#: thunar/thunar-window.c:662
+#: thunar/thunar-window.c:669
 msgid "Open a new Thunar window for the displayed location"
 msgstr ""
 
-#: thunar/thunar-window.c:663
+#: thunar/thunar-window.c:670
 msgid "Detac_h Tab"
 msgstr "ჩანარ_თის მოხსნა"
 
-#: thunar/thunar-window.c:663
+#: thunar/thunar-window.c:670
 msgid "Open current folder in a new window"
 msgstr "მიმდინარე საქაღალდის გახსნა ახალ ფანჯარაში"
 
-#: thunar/thunar-window.c:664
+#: thunar/thunar-window.c:671
 msgid "Close Ta_b"
 msgstr "ჩანარ_თის დახურვა"
 
-#: thunar/thunar-window.c:664
+#: thunar/thunar-window.c:671
 msgid "Close this folder"
 msgstr "მოცემული დასტის დახურვა"
 
-#: thunar/thunar-window.c:665
+#: thunar/thunar-window.c:672
 msgid "_Close Window"
 msgstr "_დახურე ფანჯარა"
 
-#: thunar/thunar-window.c:665
+#: thunar/thunar-window.c:672
 msgid "Close this window"
 msgstr "ამ ფანჯრის დახურვა"
 
-#: thunar/thunar-window.c:666
+#: thunar/thunar-window.c:673
 msgid "Close _All Windows"
 msgstr "ყველ_ა ფანჯრის დახურვა"
 
-#: thunar/thunar-window.c:666
+#: thunar/thunar-window.c:673
 msgid "Close all Thunar windows"
 msgstr "Thunar-ის ყველა ფანჯრის დახურვა"
 
-#: thunar/thunar-window.c:668
+#: thunar/thunar-window.c:675
 msgid "_Edit"
 msgstr "_ჩასწორება"
 
-#: thunar/thunar-window.c:669
+#: thunar/thunar-window.c:676
 msgid "_Undo"
 msgstr "_დაბრუნება"
 
-#: thunar/thunar-window.c:670
+#: thunar/thunar-window.c:677
 msgid "Red_o"
 msgstr "გამე_ორება"
 
-#: thunar/thunar-window.c:671
+#: thunar/thunar-window.c:678
 msgid "Pr_eferences..."
 msgstr "_მორგება…"
 
-#: thunar/thunar-window.c:671
+#: thunar/thunar-window.c:678
 msgid "Edit Thunar's Preferences"
 msgstr "Thunar-ის პარამეტრების ჩასწორება"
 
-#: thunar/thunar-window.c:673
+#: thunar/thunar-window.c:680
 msgid "_View"
 msgstr "ხ_ედი"
 
-#: thunar/thunar-window.c:674
+#: thunar/thunar-window.c:681
 msgid "_Reload"
 msgstr "_გადატვირთვა"
 
-#: thunar/thunar-window.c:674
+#: thunar/thunar-window.c:681
 msgid "Reload the current folder"
 msgstr "მიმდინარე საქაღალდის თავიდან ჩატვირთვა"
 
-#: thunar/thunar-window.c:677
+#: thunar/thunar-window.c:684
 msgid "S_plit View"
 msgstr "_ხედის გაყოფა"
 
-#: thunar/thunar-window.c:677
+#: thunar/thunar-window.c:684
 msgid "Open/Close Split View"
 msgstr "გაყოფილი ხედის დახურვა/გახსნა"
 
-#: thunar/thunar-window.c:678
+#: thunar/thunar-window.c:685
 msgid "Switch Focused Split View Pane"
 msgstr ""
 
-#: thunar/thunar-window.c:679
+#: thunar/thunar-window.c:686
 msgid "Locatio_n Selector"
 msgstr "მდებარეობის ა_მრჩევი"
 
-#: thunar/thunar-window.c:680
+#: thunar/thunar-window.c:687
 msgid "_Text Style"
 msgstr "_ტექსტის სტილი"
 
-#: thunar/thunar-window.c:680
+#: thunar/thunar-window.c:687
 msgid "Traditional text box showing the current path"
 msgstr ""
 
-#: thunar/thunar-window.c:681
+#: thunar/thunar-window.c:688
 msgid "_Buttons Style"
 msgstr "_ღილაკების სტილი"
 
-#: thunar/thunar-window.c:681
+#: thunar/thunar-window.c:688
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
 
-#: thunar/thunar-window.c:682
+#: thunar/thunar-window.c:689
 msgid "_Side Pane"
 msgstr "_გვერდითა პანელი"
 
-#: thunar/thunar-window.c:683
+#: thunar/thunar-window.c:690
 msgid "_Shortcuts"
 msgstr "მალ_სახმობები"
 
-#: thunar/thunar-window.c:683
+#: thunar/thunar-window.c:690
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr ""
 
-#: thunar/thunar-window.c:684
+#: thunar/thunar-window.c:691
 msgid "_Tree"
 msgstr "_ხე"
 
-#: thunar/thunar-window.c:684
+#: thunar/thunar-window.c:691
 msgid "Toggles the visibility of the tree pane"
 msgstr "გადართავს ხის პანელის ხილვადობას"
 
-#: thunar/thunar-window.c:686
+#: thunar/thunar-window.c:693
 msgid "_Image Preview"
 msgstr "გამოსახულების მ_ინიატურა"
 
-#: thunar/thunar-window.c:686
+#: thunar/thunar-window.c:693
 msgid "Change the visibility of this window's image preview"
 msgstr ""
 
-#: thunar/thunar-window.c:687
+#: thunar/thunar-window.c:694
 msgid "St_atusbar"
 msgstr "სტ_ატუსზოლი"
 
-#: thunar/thunar-window.c:687
+#: thunar/thunar-window.c:694
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
-#: thunar/thunar-window.c:688
+#: thunar/thunar-window.c:695
 msgid "_Menubar"
 msgstr "_მენიუს ზოლი"
 
-#: thunar/thunar-window.c:688
+#: thunar/thunar-window.c:695
 msgid "Change the visibility of this window's menubar"
 msgstr ""
 
-#: thunar/thunar-window.c:690
+#: thunar/thunar-window.c:697
 msgid "_Terminal"
 msgstr ""
 
-#: thunar/thunar-window.c:690
+#: thunar/thunar-window.c:697
 msgid "Toggle the visibility of the terminal emulator"
 msgstr ""
 
-#: thunar/thunar-window.c:692
+#: thunar/thunar-window.c:699
 msgid "Configure _Toolbar..."
 msgstr "_ხელსაწყოთა ზოლის მორგება..."
 
-#: thunar/thunar-window.c:692
+#: thunar/thunar-window.c:699
 msgid "Configure the toolbar"
 msgstr "ხელსაწყოთა ზოლის მორგება"
 
-#: thunar/thunar-window.c:693
+#: thunar/thunar-window.c:700
 msgid "Cl_ear Saved Folder View Settings"
 msgstr ""
 
-#: thunar/thunar-window.c:693
+#: thunar/thunar-window.c:700
 msgid "Delete saved view settings for this folder"
 msgstr ""
 
-#: thunar/thunar-window.c:694
+#: thunar/thunar-window.c:701
 msgid "Show _Hidden Files"
 msgstr "_ფარული ფაილების ჩვენება"
 
-#: thunar/thunar-window.c:694
-msgid "Toggles the display of hidden files in the current window"
+#: thunar/thunar-window.c:701
+msgid "Toggles the display of hidden files in the current tab"
 msgstr ""
 
-#: thunar/thunar-window.c:695
+#: thunar/thunar-window.c:702
 msgid "Show _File Highlight"
 msgstr ""
 
-#: thunar/thunar-window.c:695
+#: thunar/thunar-window.c:702
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: thunar/thunar-window.c:696
+#: thunar/thunar-window.c:703
 msgid "Zoom I_n"
 msgstr "გადიდე_ბა"
 
-#: thunar/thunar-window.c:696
+#: thunar/thunar-window.c:703
 msgid "Show the contents in more detail"
 msgstr ""
 
-#: thunar/thunar-window.c:699
+#: thunar/thunar-window.c:706
 msgid "Zoom _Out"
 msgstr "და_პატარავება"
 
-#: thunar/thunar-window.c:699
+#: thunar/thunar-window.c:706
 msgid "Show the contents in less detail"
 msgstr ""
 
-#: thunar/thunar-window.c:701
+#: thunar/thunar-window.c:708
 msgid "Normal Si_ze"
 msgstr "ნორმალურ _ზომაში"
 
-#: thunar/thunar-window.c:701
+#: thunar/thunar-window.c:708
 msgid "Show the contents at the normal size"
 msgstr ""
 
-#: thunar/thunar-window.c:703
+#: thunar/thunar-window.c:710
 msgid "_Icon View"
 msgstr "_ხატულების ხედი"
 
-#: thunar/thunar-window.c:703
+#: thunar/thunar-window.c:710
 msgid "Display folder content in an icon view"
 msgstr ""
 
-#: thunar/thunar-window.c:704
+#: thunar/thunar-window.c:711
 msgid "_List View"
 msgstr "_სიის ხედი"
 
-#: thunar/thunar-window.c:704
+#: thunar/thunar-window.c:711
 msgid "Display folder content in a detailed list view"
 msgstr ""
 
-#: thunar/thunar-window.c:705
+#: thunar/thunar-window.c:712
 msgid "_Compact View"
 msgstr "_კომპაქტური ხედი"
 
-#: thunar/thunar-window.c:705
+#: thunar/thunar-window.c:712
 msgid "Display folder content in a compact list view"
 msgstr ""
 
-#: thunar/thunar-window.c:707
+#: thunar/thunar-window.c:714
 msgid "_Go"
 msgstr "გადასვლა"
 
-#: thunar/thunar-window.c:708
+#: thunar/thunar-window.c:715
 msgid "F_ile System"
 msgstr "ფა_ილური სისტემა"
 
-#: thunar/thunar-window.c:709
+#: thunar/thunar-window.c:716
 msgid "_Home"
 msgstr "სახლი"
 
-#: thunar/thunar-window.c:709
+#: thunar/thunar-window.c:716
 msgid "Go to the home folder"
 msgstr "გადასვლა მთავარ საქაღალდეში"
 
-#: thunar/thunar-window.c:710
+#: thunar/thunar-window.c:717
 msgid "_Desktop"
 msgstr "_სამუშაო მაგიდა"
 
-#: thunar/thunar-window.c:710
+#: thunar/thunar-window.c:717
 msgid "Go to the desktop folder"
 msgstr "გადასვლა სამუშაო მაგიდის საქაღალდეში"
 
-#: thunar/thunar-window.c:711
+#: thunar/thunar-window.c:718
 msgid "_Computer"
 msgstr "_კომპიუტერი"
 
-#: thunar/thunar-window.c:711
+#: thunar/thunar-window.c:718
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "თქვენი კომპიუტერიდან ლოკალური ან დაშორებული დისკების, დასტების დათვალიერება"
 
-#: thunar/thunar-window.c:712
+#: thunar/thunar-window.c:719
 msgid "_Recent"
 msgstr "_უახლესი"
 
-#: thunar/thunar-window.c:712
+#: thunar/thunar-window.c:719
 msgid "Display recently used files"
 msgstr "ახლახან გამოყენებული ფაილების ჩვენება"
 
-#: thunar/thunar-window.c:713
+#: thunar/thunar-window.c:720
 msgid "_Trash"
 msgstr "_სანაგვე ყუთი"
 
-#: thunar/thunar-window.c:713
+#: thunar/thunar-window.c:720
 msgid "Display the contents of the trash can"
 msgstr ""
 
-#: thunar/thunar-window.c:714
+#: thunar/thunar-window.c:721
 msgid "Open _Parent"
 msgstr "_ძირეული დასტის გახსნა"
 
-#: thunar/thunar-window.c:714
+#: thunar/thunar-window.c:721
 msgid "Open the parent folder"
 msgstr "ძირეულ დასტაში გახსნა"
 
-#: thunar/thunar-window.c:715
+#: thunar/thunar-window.c:722
 msgid "_Open Location..."
 msgstr "მდებარე_ობის გახსნა..."
 
-#: thunar/thunar-window.c:715
+#: thunar/thunar-window.c:722
 msgid "Specify a location to open"
 msgstr "გასახსნელი მდებარეობის მითითება"
 
-#: thunar/thunar-window.c:717
+#: thunar/thunar-window.c:724
 msgid "T_emplates"
 msgstr "ნიმუშ_ები"
 
-#: thunar/thunar-window.c:717
+#: thunar/thunar-window.c:724
 msgid "Go to the templates folder"
 msgstr "შაბლონების საქაღალდეში გადასვლა"
 
-#: thunar/thunar-window.c:718
+#: thunar/thunar-window.c:725
 msgid "Browse _Network"
 msgstr "ქსელის დათვალიერებ_ა"
 
-#: thunar/thunar-window.c:720
+#: thunar/thunar-window.c:727
 msgid "_Bookmarks"
 msgstr "_სანიშნეები"
 
-#: thunar/thunar-window.c:723
+#: thunar/thunar-window.c:730
 msgid "_Contents"
 msgstr "_შინაარსი"
 
-#: thunar/thunar-window.c:723
+#: thunar/thunar-window.c:730
 msgid "Display Thunar user manual"
 msgstr "Thunar-ის მომხმარებლის სახელმძღვანელოს გახსნა"
 
-#: thunar/thunar-window.c:724
+#: thunar/thunar-window.c:731
 msgid "Display information about Thunar"
 msgstr "ინფორმაციის ჩვენება Thunar-ის შესახებ"
 
-#: thunar/thunar-window.c:726
+#: thunar/thunar-window.c:733
 msgid "_Back"
 msgstr "_უკან"
 
-#: thunar/thunar-window.c:726
+#: thunar/thunar-window.c:733
 msgid "Go to the previous visited folder"
 msgstr ""
 
-#: thunar/thunar-window.c:729
+#: thunar/thunar-window.c:736
 msgid "_Forward"
 msgstr "_წინ"
 
-#: thunar/thunar-window.c:729
+#: thunar/thunar-window.c:736
 msgid "Go to the next visited folder"
 msgstr ""
 
-#: thunar/thunar-window.c:731
+#: thunar/thunar-window.c:738
 msgid "_Previous Tab"
 msgstr "_წინა ჩანართი"
 
-#: thunar/thunar-window.c:731
+#: thunar/thunar-window.c:738
 msgid "Switch to Previous Tab"
 msgstr "გადართე წინა ჩანართზე"
 
-#: thunar/thunar-window.c:733
+#: thunar/thunar-window.c:740
 msgid "_Next Tab"
 msgstr "_შემდეგი ჩანართი"
 
-#: thunar/thunar-window.c:733
+#: thunar/thunar-window.c:740
 msgid "Switch to Next Tab"
 msgstr "გადართე შემდეგ ჩანართზე"
 
-#: thunar/thunar-window.c:736
+#: thunar/thunar-window.c:743
 msgid "_Search for Files..."
 msgstr "ფაილები_ს მოძებნა..."
 
-#: thunar/thunar-window.c:736
+#: thunar/thunar-window.c:743
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: thunar/thunar-window.c:738
+#: thunar/thunar-window.c:745
 msgid "Stop search for files"
 msgstr ""
 
-#: thunar/thunar-window.c:740
+#: thunar/thunar-window.c:747
 msgid "Menu"
 msgstr "მენიუ"
 
-#: thunar/thunar-window.c:740
+#: thunar/thunar-window.c:747
 msgid "Show the menu"
 msgstr "მენიუს ჩვენება"
 
 #. add the label with the root warning
-#: thunar/thunar-window.c:1092
+#: thunar/thunar-window.c:1097
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: thunar/thunar-window.c:1163
+#: thunar/thunar-window.c:1168
 msgid "Size: "
 msgstr "ზომა: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: thunar/thunar-window.c:1272
+#: thunar/thunar-window.c:1277
 msgid "Search with Catfish..."
 msgstr "ძებნა Catfish-ით..."
 
-#: thunar/thunar-window.c:1284
+#: thunar/thunar-window.c:1289
 msgid "Restore Selected Items"
 msgstr "აღადგინე არჩეული ელემენტები"
 
-#: thunar/thunar-window.c:3089
+#: thunar/thunar-window.c:3103
 msgid "Close tab"
 msgstr "ჩანართის დ_ახურვა"
 
-#: thunar/thunar-window.c:3614
+#: thunar/thunar-window.c:3628
 #, c-format
 msgid "Open the location \"%s\""
 msgstr ""
 
-#: thunar/thunar-window.c:4697
+#: thunar/thunar-window.c:4717
 msgid "Failed to open parent folder"
 msgstr ""
 
-#: thunar/thunar-window.c:4840
+#: thunar/thunar-window.c:4860
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr ""
 
-#: thunar/thunar-window.c:4842
+#: thunar/thunar-window.c:4862
 msgid "Create directory"
 msgstr "საქაღალდის შექმნა"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4911
+#: thunar/thunar-window.c:4931
 msgid "Failed to browse the computer"
 msgstr "კომპიუტერის დათვალიერება ჩავარდა"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4954
+#: thunar/thunar-window.c:4974
 msgid "About Templates"
 msgstr "შაბლონების შესახებ"
 
-#: thunar/thunar-window.c:4976
+#: thunar/thunar-window.c:4996
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 
-#: thunar/thunar-window.c:4983
+#: thunar/thunar-window.c:5003
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: thunar/thunar-window.c:4995
+#: thunar/thunar-window.c:5015
 msgid "Do _not display this message again"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:5029
+#: thunar/thunar-window.c:5049
 msgid "Failed to open the file system root folder"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:5065
+#: thunar/thunar-window.c:5085
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:5101
+#: thunar/thunar-window.c:5121
 msgid "Failed to display the contents of the trash can"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:5137
+#: thunar/thunar-window.c:5157
 msgid "Failed to browse the network"
 msgstr ""
 
-#: thunar/thunar-window.c:5296
+#: thunar/thunar-window.c:5316
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
 
-#: thunar/thunar-window.c:6413
+#: thunar/thunar-window.c:6474
 msgid "Select an image to preview"
 msgstr "აირჩიეთ სურათი მინიატურისთვის"
 
-#: thunar/thunar-window.c:6557
+#: thunar/thunar-window.c:6618
 msgid "Failed to launch search with Catfish"
 msgstr "Catfish-ით ძებნის გაშვება ჩავარდა"
 
-#: thunar/thunar-window.c:6888
+#: thunar/thunar-window.c:6949
 msgid "Change the active view type"
 msgstr "აქტიური ხედის ტიპის შეცვლა"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6891 thunar/thunar-window.c:6916
+#: thunar/thunar-window.c:6952 thunar/thunar-window.c:6977
 msgid "View Switcher"
 msgstr "ხედის გადამრთველი"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7081 thunar/thunar-window.c:7086
+#: thunar/thunar-window.c:7146 thunar/thunar-window.c:7151
 msgid "Location Bar"
 msgstr "მდებარეობის ზოლი"
 
