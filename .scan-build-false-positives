@@ -16,10 +16,6 @@ thunar-uca-model.c:[0-9]+:[0-9]+: warning: 1st function call argument is an unin
 # and there is at least one file in target_file_list
 thunar-dbus-service.c:[0-9]+:[0-9]+: warning: Access to field 'data' results in a dereference of a null pointer \(loaded from variable 'target_file_list'\) \[core.NullDereference\]
 
-# item_count = g_list_length (toolbar_items) so target_order[i] and current_order[j] are initialized for all i,j
-thunar-toolbar-editor.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
-thunar-toolbar-editor.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
-
 # the only case where new_name isn't reassigned is the else branch, where there is a g_assert
 thunar-util.c:[0-9]+:[0-9]+: warning: Use of memory after it is freed \[unix.Malloc\]
 
