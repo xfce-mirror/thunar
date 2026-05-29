@@ -2269,9 +2269,9 @@ thunar_tree_view_model_set_expandable_folders (ThunarTreeViewModel *model,
 static Node *
 thunar_tree_view_model_new_node (ThunarFile *file)
 {
-  Node *_node = g_malloc (sizeof (Node));
-
   THUNAR_WARN_RETURN_VAL (file == NULL, NULL);
+
+  Node *_node = g_malloc (sizeof (Node));
 
   _node->file = g_object_ref (file);
 
