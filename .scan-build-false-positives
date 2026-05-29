@@ -22,12 +22,5 @@ thunar-util.c:[0-9]+:[0-9]+: warning: Use of memory after it is freed \[unix.Mal
 # needed to avoid -Wunused-result
 thunar-window.c:[0-9]+:[0-9]+: warning: Value stored to 'list' is never read \[deadcode.DeadStores\]
 
-# zero size array is a legal thing and is consistent with i < item_count in for loops
-thunar-window.c:[0-9]+:[0-9]+: warning: Declared variable-length array \(VLA\) has zero size \[core.VLASize\]
-thunar-window.c:[0-9]+:[0-9]+: warning: Declared variable-length array \(VLA\) has zero size \[core.VLASize\]
-
-# item_count = g_list_length (toolbar_items) so current_order[j] is initialized for all j
-thunar-window.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
-
 # 'prefix' can't be NULL
 thunar-util.c:[0-9]+:[0-9]+: warning: Null pointer passed to 2nd parameter expecting 'nonnull' \[core.NonNullParamChecker\]
