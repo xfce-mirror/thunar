@@ -3609,7 +3609,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   gchar          *parse_name;
   gchar          *accel_path;
   gchar          *tooltip;
-  gchar          *name;
+  gchar          *name, *name_with_mnemonic;
   GtkIconTheme   *icon_theme;
   const gchar    *icon_name;
 
@@ -3650,9 +3650,13 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
           icon_name = "folder-remote";
         }
 
-      xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
+      /* allow to use mnemonics on bookmarks */
+      name_with_mnemonic = g_strdup_printf ("_%s", name);
+
+      xfce_gtk_image_menu_item_new_from_icon_name (name_with_mnemonic, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
 
       g_free (name);
+      g_free (name_with_mnemonic);
       g_free (tooltip);
       g_free (accel_path);
     }
