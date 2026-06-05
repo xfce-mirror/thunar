@@ -1,6 +1,3 @@
-# action_mgr->n_files_to_process > 0 ensures that action_mgr->files_to_process != NULL
-thunar-action-manager.c:[0-9]+:[0-9]+: warning: dereference of NULL .+\*action_mgr.files_to_process.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]
-
 # perhaps a bit questionable, but it's been working for a long time, and it seems
 # a bit pointless to add a lot of cast to silence this warning
 thunar-dbus-service.c:[0-9]+:[0-9]+: warning: .+va_arg.+ expected .+void \*\*.+ but received .+gboolean \(\*\)\(ThunarDBusFileManager \*, GDBusMethodInvocation \*, const gchar \*, gboolean,  gboolean,  const gchar \*, const gchar \*, ThunarDBusService \*\).+ \{aka .+int \(\*\)\(struct _ThunarDBusFileManager \*, struct _GDBusMethodInvocation \*, const char \*, int,  int,  const char \*, const char \*, struct _ThunarDBusService \*\).+\} for variadic argument 2 of .+ap.+ \[CWE-686\] \[-Wanalyzer-va-arg-type-mismatch\]
