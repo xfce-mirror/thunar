@@ -999,6 +999,7 @@ thunar_context_menu_item_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* The corresponding icons can be set in the thunar_context_menu_item_get_icon() function */
       /* clang-format off */
       static const GEnumValue values[] =
       {
@@ -1049,4 +1050,133 @@ thunar_context_menu_item_get_type (void)
     }
 
   return type;
+}
+
+
+
+const gchar *
+thunar_context_menu_item_get_icon (ThunarContextMenuItem item)
+{
+  switch (item)
+    {
+    case THUNAR_CONTEXT_MENU_ITEM_OPEN:
+      return "document-open";
+
+    case THUNAR_CONTEXT_MENU_ITEM_EXECUTE:
+      return "system-run";
+
+    case THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER:
+      return "gtk-edit";
+
+    case THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION:
+      return "go-jump";
+
+    case THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_SENDTO_SHORTCUTS:
+      return "bookmark-new";
+
+    case THUNAR_CONTEXT_MENU_ITEM_SENDTO_DESKTOP:
+      return "user-desktop";
+
+    case THUNAR_CONTEXT_MENU_ITEM_PROPERTIES:
+      return "document-properties";
+
+    case THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_DUPLICATE:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_RENAME:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER:
+      return "folder-new";
+
+    case THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT:
+      return "document-new";
+
+    case THUNAR_CONTEXT_MENU_ITEM_RESTORE:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH:
+      return "user-trash";
+
+    case THUNAR_CONTEXT_MENU_ITEM_DELETE:
+      return "edit-delete";
+
+    case THUNAR_CONTEXT_MENU_ITEM_PASTE:
+      return "edit-paste";
+
+    case THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER:
+      return "edit-paste";
+
+    case THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK:
+      return "edit-paste";
+
+    case THUNAR_CONTEXT_MENU_ITEM_COPY:
+      return "edit-copy";
+
+    case THUNAR_CONTEXT_MENU_ITEM_CUT:
+      return "edit-cut";
+
+    case THUNAR_CONTEXT_MENU_ITEM_MOUNT:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_UNMOUNT:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_EJECT:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN:
+      return "zoom-in";
+
+    case THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT:
+      return "zoom-out";
+
+    case THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET:
+      return "zoom-original";
+
+    case THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS:
+      return NULL;
+
+    case THUNAR_CONTEXT_MENU_ITEM_SEPARATOR:
+      return NULL;
+
+    default:
+      return NULL;
+    }
 }

@@ -736,6 +736,9 @@ typedef enum
 GType
 thunar_context_menu_item_get_type (void) G_GNUC_CONST;
 
+const gchar *
+thunar_context_menu_item_get_icon (ThunarContextMenuItem item) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

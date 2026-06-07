@@ -508,6 +508,7 @@ thunar_context_menu_order_model_item_new (ThunarContextMenuItem id,
   item->config_id = g_strdup_printf ("%s\\%s", enum_value->value_name, secondary_id != NULL ? secondary_id : "");
   item->name = g_strdup (enum_value->value_nick);
   item->visibility = visibility;
+  item->icon = g_strdup (thunar_context_menu_item_get_icon (id));
 
   if (id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR)
     item->removable = TRUE;
