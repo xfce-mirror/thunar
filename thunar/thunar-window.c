@@ -7481,6 +7481,7 @@ thunar_window_toolbar_move_item (ThunarWindow *window,
       g_object_ref (item);
       gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
       gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), dest_index);
+      g_object_unref (item);
     }
 
   g_list_free (items);
