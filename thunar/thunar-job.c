@@ -91,9 +91,11 @@ struct _ThunarJobPrivate
   gboolean               paused; /* the job has been manually paused using the UI */
   gboolean               frozen; /* the job has been automaticaly paused regarding some parallel copy behavior */
   ThunarOperationLogMode log_mode;
+
 #ifdef HAVE_LIBCANBERRA
-  char                  *sound_name; /* libcanberra name of the sound to be played upon job completion (NULL for none) */
-#endif  
+  const char            *sound_name; /* libcanberra name of the sound to be played upon job completion (NULL for none) */
+#endif
+
 };
 
 struct _ThunarJobSignalData
@@ -1416,15 +1418,19 @@ thunar_job_get_log_mode (ThunarJob *job)
   return job->priv->log_mode;
 }
 
+
+
 #ifdef HAVE_LIBCANBERRA
 void
-thunar_job_set_sound_name (ThunarJob *job,
-                           char      *sound_name)
+thunar_job_set_sound_name (ThunarJob  *job,
+                           const char *sound_name)
 {
   job->priv->sound_name = sound_name;
 }
 
-char *
+
+
+const char *
 thunar_job_get_sound_name (ThunarJob *job)
 {
   return job->priv->sound_name;
