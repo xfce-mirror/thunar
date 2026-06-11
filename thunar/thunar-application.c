@@ -46,6 +46,10 @@
 #include <gudev/gudev.h>
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+#include <canberra.h>
+#endif
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-dbus-service.h"
@@ -258,6 +262,10 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+  
+#ifdef HAVE_LIBCANBERRA
+  ca_context *canberra;
+#endif
 
   /* reference to the global job operation history */
   ThunarJobOperationHistory *job_operation_history;
@@ -430,6 +438,12 @@ thunar_application_startup (GApplication *gapp)
   thunar_application_initialize_media_fs_uuids (application);
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+  /* initialize context for sound output */
+  application->canberra = NULL;
+  ca_context_create (&application->canberra);
+#endif  
+
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
@@ -479,6 +493,12 @@ thunar_application_shutdown (GApplication *gapp)
   g_object_unref (application->udev_client);
 
   g_hash_table_destroy (application->media_fs_uuids);
+#endif
+
+#ifdef HAVE_LIBCANBERRA
+  /* free the sound context */
+  if (application->canberra != NULL)
+    ca_context_destroy (application->canberra);
 #endif
 
   /* drop any running "show dialogs" timer */
@@ -1045,6 +1065,14 @@ thunar_application_launch_finished (ThunarJob *job,
       g_object_unref (lp->data);
     }
   g_list_free (containing_folders);
+#ifdef HAVE_LIBCANBERRA
+  if (thunar_job_get_sound_name(job) != NULL)
+  {
+    ThunarApplication *application = thunar_application_get();
+   
+    ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name(job), NULL);
+  }
+#endif
 }
 
 

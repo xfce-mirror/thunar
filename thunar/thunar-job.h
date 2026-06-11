@@ -172,6 +172,14 @@ thunar_job_set_log_mode (ThunarJob             *job,
                          ThunarOperationLogMode log_mode);
 ThunarOperationLogMode
 thunar_job_get_log_mode (ThunarJob *job);
+
+#ifdef HAVE_LIBCANBERRA
+void
+thunar_job_set_sound_name (ThunarJob *job,
+                           char *sound_name);
+char *
+thunar_job_get_sound_name (ThunarJob *job);
+#endif
 G_END_DECLS
 
 #endif /* !__THUNAR_JOB_H__ */
