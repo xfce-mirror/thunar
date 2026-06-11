@@ -93,9 +93,8 @@ struct _ThunarJobPrivate
   ThunarOperationLogMode log_mode;
 
 #ifdef HAVE_LIBCANBERRA
-  const char            *sound_name; /* libcanberra name of the sound to be played upon job completion (NULL for none) */
+  const char *sound_name; /* libcanberra name of the sound to be played upon job completion (NULL for none) */
 #endif
-
 };
 
 struct _ThunarJobSignalData
