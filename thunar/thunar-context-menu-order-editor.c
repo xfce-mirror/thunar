@@ -225,7 +225,7 @@ void
 thunar_context_menu_order_editor_show (GtkWidget *window)
 {
   XfceItemListStore            *store = xfce_item_list_store_new (-1);
-  ThunarContextMenuOrderEditor *menu_editor = g_object_new (THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, "model", store, NULL);
+  ThunarContextMenuOrderEditor *menu_editor;
   GMenu                        *menu;
   GMenuItem                    *menu_item;
   GIcon                        *icon;
@@ -234,7 +234,10 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
   GtkTreeView                  *tree_view;
   GtkTreeSelection             *selection;
 
+  menu_editor = g_object_new (THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, "model", store, NULL);
   menu_editor->store = store;
+  g_object_unref (store); /* "menu_editor" now owns the "store" */
+
   menu_editor->item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
 
   g_object_set (store,
@@ -268,7 +271,6 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
   thunar_context_menu_order_editor_populate (menu_editor);
-  g_object_unref (store);
 
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (menu_editor), window);
 }
