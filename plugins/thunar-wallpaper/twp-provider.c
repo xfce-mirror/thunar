@@ -156,7 +156,7 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                   || thunarx_file_info_has_mime_type (files->data, "image/svg+xml")
                   || thunarx_file_info_has_mime_type (files->data, "image/svg+xml-compressed")))
             {
-              item = thunarx_menu_item_new ("Twp::setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
+              item = thunarx_menu_item_new ("Twp_setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
               g_signal_connect (item, "activate", G_CALLBACK (twp_action_set_wallpaper), files->data);
 
               items = g_list_append (items, item);
@@ -173,7 +173,7 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 static GList *
 twp_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
 {
-  ThunarxMenuItem *item = thunarx_menu_item_new ("Twp::setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
+  ThunarxMenuItem *item = thunarx_menu_item_new ("Twp_setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
   GList           *items = g_list_append (NULL, item);
 
   return items;

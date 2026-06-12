@@ -266,6 +266,9 @@ thunar_menu_insert_separators (ThunarMenu *menu,
       GtkWidget                       *child = GTK_WIDGET (li->data);
       ThunarContextMenuOrderModelItem *item = lj->data;
 
+      if (!item->visibility)
+        continue;
+
       if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_SEPARATOR))
         {
           if (allow_separator)
@@ -353,6 +356,9 @@ thunar_menu_reorder (ThunarMenu *menu,
   for (GList *li = new_order; li != NULL; li = li->next)
     {
       ThunarContextMenuOrderModelItem *item = li->data;
+
+      if (!item->visibility)
+        continue;
 
       if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
         {
@@ -532,7 +538,7 @@ thunar_menu_add_sections (ThunarMenu        *menu,
     {
       GList                       *unlisted_custom_actions = NULL;
       ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
-      GList                       *new_order = thunar_context_menu_order_model_get_visible_items (order_model);
+      GList                       *new_order = thunar_context_menu_order_model_get_items (order_model);
 
       thunar_menu_remove_all_separators (menu);
       thunar_menu_reorder (menu, new_order, &unlisted_custom_actions);

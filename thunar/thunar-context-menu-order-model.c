@@ -200,6 +200,51 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       g_free (content);
     }
 
+  if (default_items != NULL)
+    {
+      GList *new_custom_actions = NULL;
+      gint   index = 0;
+
+      for (GList *l = default_items, *lnext; l != NULL; l = lnext)
+        {
+          ThunarContextMenuOrderModelItem *item = l->data;
+
+          lnext = l->next;
+          if (g_str_has_prefix (item->id, "custom-action-"))
+            {
+              new_custom_actions = g_list_append (new_custom_actions, item);
+              default_items = g_list_remove (default_items, item);
+            }
+        }
+
+      for (GList *li = order_model->items; li != NULL; li = li->next, ++index)
+        {
+          ThunarContextMenuOrderModelItem *item = li->data;
+
+          if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
+            {
+              for (li = li->next; li != NULL; li = li->next, ++index)
+                {
+                  item = li->data;
+
+                  if (!g_str_has_prefix (item->id, "custom-action-"))
+                    break;
+                }
+              while (new_custom_actions != NULL)
+                {
+                  item = new_custom_actions->data;
+                  order_model->items = g_list_insert (order_model->items, item, ++index);
+                  new_custom_actions = g_list_remove (new_custom_actions, item);
+                }
+              break;
+            }
+        }
+
+      g_list_free_full (new_custom_actions, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+    }
+
+  g_list_free_full (default_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+
   /* signal */
   g_signal_handlers_block_by_func (order_model, thunar_context_menu_order_model_save, NULL);
   g_signal_emit (order_model, signals[CHANGED], 0);
@@ -222,28 +267,34 @@ thunar_context_menu_order_model_get_custom_actions (void)
       for (GList *provider_item = provider_items; provider_item != NULL; provider_item = provider_item->next)
         {
           ThunarxMenuItem                 *provider_menu_item = provider_item->data;
-          gchar                           *id = NULL;
+          gchar                           *custom_action_id = NULL;
           gchar                           *name = NULL;
           gchar                           *icon = NULL;
           gchar                           *tooltip = NULL;
+          gchar                           *id = NULL;
           ThunarContextMenuOrderModelItem *item = NULL;
 
           g_object_get (provider_menu_item,
-                        "name", &id,
+                        "name", &custom_action_id,
                         "label", &name,
                         "icon", &icon,
                         "tooltip", &tooltip,
                         NULL);
 
-          item = thunar_context_menu_order_model_item_new (id, TRUE);
-          item->name = g_strdup (name);
-          item->icon = g_strdup (icon);
-          item->tooltip = g_strdup (tooltip);
+          if (custom_action_id != NULL)
+            {
+              id = g_strdup_printf ("custom-action-%s", custom_action_id);
+              item = thunar_context_menu_order_model_item_new (id, TRUE);
+              item->name = g_strdup (name);
+              item->icon = g_strdup (icon);
+              item->tooltip = g_strdup (tooltip);
+            }
 
-          g_free (id);
+          g_free (custom_action_id);
           g_free (name);
           g_free (icon);
           g_free (tooltip);
+          g_free (id);
 
           custom_actions = g_list_append (custom_actions, item);
         }
@@ -428,26 +479,6 @@ thunar_context_menu_order_model_get_items (ThunarContextMenuOrderModel *order_mo
   _thunar_return_val_if_fail (THUNAR_IS_CONTEXT_MENU_ORDER_MODEL (order_model), NULL);
 
   return g_list_copy (order_model->items);
-}
-
-
-
-GList *
-thunar_context_menu_order_model_get_visible_items (ThunarContextMenuOrderModel *order_model)
-{
-  GList *list = NULL;
-
-  _thunar_return_val_if_fail (THUNAR_IS_CONTEXT_MENU_ORDER_MODEL (order_model), NULL);
-
-  for (GList *l = order_model->items; l != NULL; l = l->next)
-    {
-      ThunarContextMenuOrderModelItem *item = l->data;
-
-      if (item->visibility)
-        list = g_list_append (list, l->data);
-    }
-
-  return list;
 }
 
 

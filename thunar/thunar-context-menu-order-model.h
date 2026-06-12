@@ -57,9 +57,6 @@ thunar_context_menu_order_model_get_default (void);
 GList *
 thunar_context_menu_order_model_get_items (ThunarContextMenuOrderModel *order_model);
 
-GList *
-thunar_context_menu_order_model_get_visible_items (ThunarContextMenuOrderModel *order_model);
-
 void
 thunar_context_menu_order_model_move (ThunarContextMenuOrderModel *order_model,
                                       gint                         source_index,
