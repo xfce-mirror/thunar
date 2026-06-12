@@ -173,12 +173,14 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 
           if (g_strcmp0 ("THUNAR_CONTEXT_MENU_ITEM_SEPARATOR", item_data[0]) == 0)
             {
+              /* if a separator is encountered, then simply create it */
               ThunarContextMenuOrderModelItem *item = thunar_context_menu_order_model_item_new_from_enum_const (THUNAR_CONTEXT_MENU_ITEM_SEPARATOR, visibility);
 
               order_model->items = g_list_append (order_model->items, item);
             }
           else
             {
+              /* if a menu item is encountered, it must be removed from default_items and placed in the specified position */
               for (GList *l = default_items; l != NULL; l = l->next)
                 {
                   ThunarContextMenuOrderModelItem *item = l->data;
@@ -201,6 +203,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
     }
   else
     {
+      /* if the configuration value is not specified, the standard order of items is used */
       order_model->items = default_items;
       default_items = NULL;
     }
@@ -210,6 +213,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       GList *new_custom_actions = NULL;
       gint   index = 0;
 
+      /* search for menu items of custom actions that were not specified in the config but have appeared now */
       for (GList *l = default_items, *lnext; l != NULL; l = lnext)
         {
           ThunarContextMenuOrderModelItem *item = l->data;
@@ -222,26 +226,41 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
             }
         }
 
-      for (GList *li = order_model->items; li != NULL; li = li->next, ++index)
+      if (new_custom_actions != NULL)
         {
-          ThunarContextMenuOrderModelItem *item = li->data;
-
-          if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
+          /*if there are new custom actions, then put them at the end of the list of current custom actions */
+          for (GList *li = order_model->items; li != NULL; li = li->next, ++index)
             {
-              for (li = li->next; li != NULL; li = li->next, ++index)
-                {
-                  item = li->data;
+              ThunarContextMenuOrderModelItem *item = li->data;
 
-                  if (!g_str_has_prefix (item->id, "custom-action-"))
-                    break;
-                }
-              while (new_custom_actions != NULL)
+              if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
                 {
-                  item = new_custom_actions->data;
-                  order_model->items = g_list_insert (order_model->items, item, ++index);
-                  new_custom_actions = g_list_remove (new_custom_actions, item);
+                  /* new custom actions are added to the end after those that were already set in the config
+                   *
+                   * Visualization of the context menu:
+                   * - New File
+                   * - New Directory
+                   * - Custom action <- now the variable "item" refers to this item
+                   * - UCA action1
+                   * - UCA action2 <- the new_custom_actions list is inserted after this item
+                   * - Properties...
+                   */
+
+                  for (li = li->next; li != NULL; li = li->next, ++index)
+                    {
+                      item = li->data;
+
+                      if (!g_str_has_prefix (item->id, "custom-action-"))
+                        break;
+                    }
+                  while (new_custom_actions != NULL)
+                    {
+                      item = new_custom_actions->data;
+                      order_model->items = g_list_insert (order_model->items, item, ++index);
+                      new_custom_actions = g_list_remove (new_custom_actions, item);
+                    }
+                  break;
                 }
-              break;
             }
         }
 

@@ -257,10 +257,12 @@ thunar_menu_insert_separators (ThunarMenu *menu,
                                GList      *new_order,
                                GList      *unlisted_custom_actions)
 {
-  GList                       *children = gtk_container_get_children (GTK_CONTAINER (menu));
-  gboolean                     allow_separator = FALSE;
-  gint                         index = 0;
+  GList   *children = gtk_container_get_children (GTK_CONTAINER (menu));
+  gboolean allow_separator = FALSE;
+  gint     index = 0;
 
+  /* if we just go through the list and create separators, there will be too many of them, so this function only
+   * inserts separators if an element matching the model was encountered */
   for (GList *li = children, *lj = new_order; li != NULL && lj != NULL; lj = lj->next)
     {
       GtkWidget                       *child = GTK_WIDGET (li->data);
@@ -285,22 +287,23 @@ thunar_menu_insert_separators (ThunarMenu *menu,
 
           if (g_strcmp0 (item->id, child_id) == 0)
             {
+              /* if we encounter an element that matches the model, we simply move on to the next one and
+               * allow the separator to be inserted */
               ++index;
               li = li->next;
               allow_separator = TRUE;
             }
           else if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
             {
+              /* if a place for inserting custom actions is encountered, and we have actions that are
+               * missing from the model, then we will skip the custom actions and allow the insertion of a separator */
               if (unlisted_custom_actions != NULL && li->data == unlisted_custom_actions->data)
                 {
                   guint n_unlisted_custom_actions = g_list_length (unlisted_custom_actions);
 
-                  if (n_unlisted_custom_actions > 0)
-                    {
-                      index += n_unlisted_custom_actions;
-                      li = g_list_nth (li, n_unlisted_custom_actions);
-                      allow_separator = TRUE;
-                    }
+                  index += n_unlisted_custom_actions;
+                  li = g_list_nth (li, n_unlisted_custom_actions);
+                  allow_separator = TRUE;
                 }
             }
         }
@@ -326,6 +329,7 @@ thunar_menu_reorder (ThunarMenu *menu,
     }
   else
     {
+      /* collection of custom actions that are in GtkMenu but are missing from the model */
       for (GList *li = children; li != NULL; li = li->next)
         {
           GtkWidget   *child = li->data;
@@ -362,6 +366,7 @@ thunar_menu_reorder (ThunarMenu *menu,
 
       if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
         {
+          /* inserting custom actions that are not present in the model */
           for (GList *lj = *unlisted_custom_actions; lj != NULL; lj = lj->next)
             {
               GtkWidget *child = lj->data;
@@ -373,6 +378,7 @@ thunar_menu_reorder (ThunarMenu *menu,
         }
       else
         {
+          /* search for the corresponding GtkMenu item and move it to the desired position */
           for (GList *lj = children; lj != NULL; lj = lj->next)
             {
               GtkWidget   *child = lj->data;
@@ -391,6 +397,7 @@ thunar_menu_reorder (ThunarMenu *menu,
 
   if (new_order != NULL)
     {
+      /* if there are any menu items left, they are hidden and can be removed */
       for (GList *l = children; l != NULL; l = l->next)
         gtk_container_remove (GTK_CONTAINER (menu), GTK_WIDGET (l->data));
     }
@@ -540,7 +547,9 @@ thunar_menu_add_sections (ThunarMenu        *menu,
       ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
       GList                       *new_order = thunar_context_menu_order_model_get_items (order_model);
 
+      /* we will insert our own separators later, so let's remove all current separators */
       thunar_menu_remove_all_separators (menu);
+
       thunar_menu_reorder (menu, new_order, &unlisted_custom_actions);
       thunar_menu_insert_separators (menu, new_order, unlisted_custom_actions);
 

@@ -27,6 +27,20 @@
 
 G_BEGIN_DECLS
 
+/*
+ * A class for a model that stores the order and visibility of context menu items.
+ *
+ * Each element has a unique identifier in the form of a string, except for separators, they have one common id.
+ * Custom action items have an ID starting with "custom-action-" and an arbitrary suffix. The IDs of standard Thunar
+ * items (such as cut, paste, etc.) are specified by the ThunarContextMenuItem enumeration. 
+ *
+ * To map a ThunarContextMenuOrderModelItem to a GtkMenuItem, each GtkMenuItem must have an "id" set
+ * via g_object_set_data().
+ *
+ * A menu item with an ID equal to THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION has a special meaning; custom actions that
+ * are not present in the model are inserted in its place, for example because the plugin does not support unique
+ * IDs for menu items.
+ */
 typedef struct _ThunarContextMenuOrderModel      ThunarContextMenuOrderModel;
 typedef struct _ThunarContextMenuOrderModelClass ThunarContextMenuOrderModelClass;
 typedef struct _ThunarContextMenuOrderModelItem  ThunarContextMenuOrderModelItem;
@@ -38,6 +52,7 @@ typedef struct _ThunarContextMenuOrderModelItem  ThunarContextMenuOrderModelItem
 #define THUNAR_IS_CONTEXT_MENU_ORDER_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CONTEXT_MENU_ORDER_MODEL))
 #define THUNAR_CONTEXT_MENU_ORDER_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CONTEXT_MENU_ORDER_MODEL, ThunarContextMenuOrderModelClass))
 
+/* Items stored in ThunarContextMenuOrderModel */
 struct _ThunarContextMenuOrderModelItem
 {
   char    *id;

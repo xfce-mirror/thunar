@@ -178,7 +178,7 @@ thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *me
 {
   gint                            *sel_items = NULL;
   gint                             n_sel_items = xfce_item_list_view_get_selected_items (menu_editor->item_view, &sel_items);
-  gint                             index = -1;
+  gint                             index;
   gint                             separator_index;
   GList                           *items;
   ThunarContextMenuOrderModelItem *item;
@@ -188,6 +188,8 @@ thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *me
 
   if (n_sel_items > 0)
     index = sel_items[n_sel_items - 1] + 1;
+  else
+    index = -1;
 
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
   separator_index = thunar_context_menu_order_model_insert_separator (menu_editor->order_model, index);

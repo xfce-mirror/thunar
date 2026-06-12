@@ -1989,10 +1989,14 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
                                         ThunarActionManagerAction action,
                                         gboolean                  force)
 {
+  /* let's call the real function where all the work happens */
   GtkWidget *item = thunar_action_manager_do_append_menu_item (action_mgr, menu, action, force);
 
-  if (item != NULL)
+  /* now we can process the result of thunar_action_manager_do_append_menu_item() in one point */
+  if (item != NULL) {
+    /* for each element, we set the ID corresponding to its action, details in the thunar-context-menu-order-model.h */
     thunar_context_menu_item_set_id (item, thunar_action_manager_get_context_menu_item_from_action (action));
+  }
 
   return item;
 }
@@ -2461,7 +2465,11 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
           g_object_get (lp_item->data, "name", &name, NULL);
           if (name != NULL)
-            thunar_context_menu_item_set_custom_action_id(gtk_menu_item, name);
+            {
+              /* for each element we set an identifier based on a unique name, if the plugin supports it,
+               * more details in the thunar-context-menu-order-model.h file */
+              thunar_context_menu_item_set_custom_action_id (gtk_menu_item, name);
+            }
           g_free (name);
 
           /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item*/
