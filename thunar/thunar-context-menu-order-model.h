@@ -81,7 +81,7 @@ thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *o
 
 void
 thunar_context_menu_item_set_id (GtkWidget            *menu_item,
-                                 ThunarContextMenuItem id);
+                                 ThunarContextMenuItem enum_const);
 
 void
 thunar_context_menu_item_set_custom_action_id (GtkWidget   *menu_item,
@@ -92,7 +92,7 @@ thunar_context_menu_item_is_custom_action (GtkWidget *menu_item);
 
 gboolean
 thunar_context_menu_order_model_item_is (ThunarContextMenuOrderModelItem *item,
-                                         ThunarContextMenuItem            id);
+                                         ThunarContextMenuItem            enum_const);
 
 G_END_DECLS
 
