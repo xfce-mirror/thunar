@@ -33,6 +33,7 @@ dependency_versions = {
 
   'gir': '>= 1.72.0',
   'gudev': '>= 145',
+  'libcanberra': '>= 0.30',
   'libnotify': '>= 0.7.0',
   'polkit': '>= 0.102',
   'vte': '>= 0.70',
@@ -93,6 +94,11 @@ endif
 gudev = dependency('gudev-1.0', version: dependency_versions['gudev'], required: get_option('gudev'))
 if gudev.found()
   feature_cflags += '-DHAVE_GUDEV=1'
+endif
+
+libcanberra = dependency('libcanberra', version: dependency_versions['libcanberra'], required: get_option('libcanberra'))
+if libcanberra.found()
+  feature_cflags += '-DHAVE_LIBCANBERRA=1'
 endif
 
 libnotify = dependency('libnotify', version: dependency_versions['libnotify'], required: get_option('libnotify'))
