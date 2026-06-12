@@ -44,7 +44,7 @@ struct _ThunarContextMenuOrderModelItem
   gchar   *icon;
   gchar   *name;
   gchar   *tooltip;
-  gboolean hidden;
+  gboolean visibility;
   gboolean removable;
 };
 
@@ -66,9 +66,9 @@ thunar_context_menu_order_model_move (ThunarContextMenuOrderModel *order_model,
                                       gint                         dest_index);
 
 void
-thunar_context_menu_order_model_set_hidden (ThunarContextMenuOrderModel *order_model,
-                                            gint                         index,
-                                            gboolean                     hidden);
+thunar_context_menu_order_model_set_visibility (ThunarContextMenuOrderModel *order_model,
+                                                gint                         index,
+                                                gboolean                     visibility);
 
 void
 thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model);
