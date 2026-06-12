@@ -253,25 +253,20 @@ thunar_menu_remove_all_separators (ThunarMenu *menu)
 
 
 static void
-thunar_menu_insert_separators (ThunarMenu *menu)
+thunar_menu_insert_separators (ThunarMenu *menu,
+                               GList      *new_order,
+                               GList      *unlisted_custom_actions)
 {
-  ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
   GList                       *children = gtk_container_get_children (GTK_CONTAINER (menu));
-  GList                       *items = thunar_context_menu_order_model_get_items (order_model);
   gboolean                     allow_separator = FALSE;
   gint                         index = 0;
 
-  /* Inserts separators as in ThunarContextMenuOrderModel. If several consecutive separators
-   * are encountered, only one is inserted. If the elements above and below the separator do
-   * not exist in this menu, the separator will still be inserted. */
-  for (GList *li = children, *lj = items; li != NULL && lj != NULL; lj = lj->next)
+  for (GList *li = children, *lj = new_order; li != NULL && lj != NULL; lj = lj->next)
     {
       GtkWidget                       *child = GTK_WIDGET (li->data);
-      ThunarContextMenuItem            child_id;
-      const gchar                     *child_secondary_id;
       ThunarContextMenuOrderModelItem *item = lj->data;
 
-      if (item->id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR && item->visibility)
+      if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_SEPARATOR))
         {
           if (allow_separator)
             {
@@ -283,80 +278,118 @@ thunar_menu_insert_separators (ThunarMenu *menu)
         }
       else
         {
-          if (g_object_get_data (G_OBJECT (child), "id") == NULL)
-            continue;
+          const gchar *child_id = g_object_get_data (G_OBJECT (child), "id");
 
-          child_id = thunar_context_menu_item_get_id (child);
-          child_secondary_id = g_object_get_data (G_OBJECT (child), "secondary-id");
-
-          if (item->id == child_id && g_strcmp0 (item->secondary_id, child_secondary_id) == 0)
+          if (g_strcmp0 (item->id, child_id) == 0)
             {
-              allow_separator = TRUE;
-              li = li->next;
               ++index;
+              li = li->next;
+              allow_separator = TRUE;
+            }
+          else if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
+            {
+              if (unlisted_custom_actions != NULL && li->data == unlisted_custom_actions->data)
+                {
+                  guint n_unlisted_custom_actions = g_list_length (unlisted_custom_actions);
+
+                  if (n_unlisted_custom_actions > 0)
+                    {
+                      index += n_unlisted_custom_actions;
+                      li = g_list_nth (li, n_unlisted_custom_actions);
+                      allow_separator = TRUE;
+                    }
+                }
             }
         }
     }
 
   g_list_free (children);
-  g_list_free (items);
-  g_object_unref (order_model);
 }
 
 
 
 static void
-thunar_menu_reorder (ThunarMenu *menu)
+thunar_menu_reorder (ThunarMenu *menu,
+                     GList      *new_order,
+                     GList     **unlisted_custom_actions)
 {
-  ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
-  GList                       *new_order = thunar_context_menu_order_model_get_items (order_model);
-  GList                       *children = gtk_container_get_children (GTK_CONTAINER (menu));
-  gint                         index = 0;
+  GList *children = gtk_container_get_children (GTK_CONTAINER (menu));
+  gint   index = 0;
 
-  /* Changes the order of elements to the one specified in ThunarContextMenuOrderModel. It also removes
-   * elements that should be invisible. */
-  for (GList *l = new_order; l != NULL; l = l->next, ++index)
+  if (new_order == NULL)
     {
-      const ThunarContextMenuOrderModelItem *item = l->data;
-      gboolean                               any_removed = FALSE;
-
-      /* reverse order, so that inserting several elements with the same id does not invert their order */
-      for (GList *child = g_list_last (children); child != NULL; child = child->prev)
+      for (GList *l = children; l != NULL; l = l->next)
+        gtk_container_remove (GTK_CONTAINER (menu), l->data);
+    }
+  else
+    {
+      for (GList *li = children; li != NULL; li = li->next)
         {
-          GtkWidget            *menu_item = GTK_WIDGET (child->data);
-          ThunarContextMenuItem menu_item_id;
-          const gchar          *menu_item_secondary_id;
+          GtkWidget   *child = li->data;
+          const gchar *id = g_object_get_data (G_OBJECT (child), "id");
 
-          if (g_object_get_data (G_OBJECT (menu_item), "id") == NULL)
-            continue;
-
-          menu_item_id = thunar_context_menu_item_get_id (menu_item);
-          menu_item_secondary_id = g_object_get_data (G_OBJECT (menu_item), "secondary-id");
-
-          if (item->id == menu_item_id && g_strcmp0 (item->secondary_id, menu_item_secondary_id) == 0)
+          if (thunar_context_menu_item_is_custom_action (child))
             {
-              if (item->visibility)
-                {
-                  gtk_menu_reorder_child (GTK_MENU (menu), menu_item, index);
-                }
-              else
-                {
-                  gtk_container_remove (GTK_CONTAINER (menu), menu_item);
-                  any_removed = TRUE;
-                }
-            }
-        }
+              gboolean unlisted = TRUE;
 
-      if (any_removed)
-        {
-          g_list_free (children);
-          children = gtk_container_get_children (GTK_CONTAINER (menu));
+              for (GList *lj = new_order; lj != NULL; lj = lj->next)
+                {
+                  ThunarContextMenuOrderModelItem *item = lj->data;
+
+                  if (g_strcmp0 (id, item->id) == 0)
+                    {
+                      unlisted = FALSE;
+                      break;
+                    }
+                }
+
+
+              if (unlisted)
+                *unlisted_custom_actions = g_list_append (*unlisted_custom_actions, child);
+            }
         }
     }
 
-  g_list_free (new_order);
+  for (GList *li = new_order; li != NULL; li = li->next)
+    {
+      ThunarContextMenuOrderModelItem *item = li->data;
+
+      if (thunar_context_menu_order_model_item_is (item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION))
+        {
+          for (GList *lj = *unlisted_custom_actions; lj != NULL; lj = lj->next)
+            {
+              GtkWidget *child = lj->data;
+
+              gtk_menu_reorder_child (GTK_MENU (menu), child, index);
+              children = g_list_remove (children, child);
+              ++index;
+            }
+        }
+      else
+        {
+          for (GList *lj = children; lj != NULL; lj = lj->next)
+            {
+              GtkWidget   *child = lj->data;
+              const gchar *child_id = g_object_get_data (G_OBJECT (child), "id");
+
+              if (g_strcmp0 (item->id, child_id) == 0)
+                {
+                  gtk_menu_reorder_child (GTK_MENU (menu), child, index);
+                  children = g_list_remove (children, child);
+                  ++index;
+                  break;
+                }
+            }
+        }
+    }
+
+  if (new_order != NULL)
+    {
+      for (GList *l = children; l != NULL; l = l->next)
+        gtk_container_remove (GTK_CONTAINER (menu), GTK_WIDGET (l->data));
+    }
+
   g_list_free (children);
-  g_object_unref (order_model);
 }
 
 
@@ -497,9 +530,17 @@ thunar_menu_add_sections (ThunarMenu        *menu,
   /* if this is a right-click context menu, then change the order and visibility of the elements to custom ones */
   if (menu->type == THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW)
     {
+      GList                       *unlisted_custom_actions = NULL;
+      ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
+      GList                       *new_order = thunar_context_menu_order_model_get_visible_items (order_model);
+
       thunar_menu_remove_all_separators (menu);
-      thunar_menu_reorder (menu);
-      thunar_menu_insert_separators (menu);
+      thunar_menu_reorder (menu, new_order, &unlisted_custom_actions);
+      thunar_menu_insert_separators (menu, new_order, unlisted_custom_actions);
+
+      g_list_free (new_order);
+      g_object_unref (order_model);
+      g_list_free (unlisted_custom_actions);
     }
 
   return TRUE;

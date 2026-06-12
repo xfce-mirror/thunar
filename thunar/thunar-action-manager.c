@@ -2458,19 +2458,11 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
           gchar *name;
 
           gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp_item->data, menu);
-          thunar_context_menu_item_set_id (gtk_menu_item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION);
 
           g_object_get (lp_item->data, "name", &name, NULL);
-
-          if (thunar_context_menu_has_custom_action (name))
-            {
-              g_object_set_data (G_OBJECT (gtk_menu_item), "secondary-id", (gpointer) name);
-              g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_free), name);
-            }
-          else
-            {
-              g_free (name);
-            }
+          if (name != NULL)
+            thunar_context_menu_item_set_custom_action_id(gtk_menu_item, name);
+          g_free (name);
 
           /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item*/
           g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp_item->data);

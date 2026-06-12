@@ -158,9 +158,7 @@ enum
   PROP_TERMINAL_SSH_AUTO_DISCONNECT,
   PROP_TERMINAL_FONT_SIZE,
 #endif
-  PROP_CONTEXT_MENU_ITEM_ORDER,
-  PROP_CONTEXT_MENU_ITEM_VISIBILITY,
-  PROP_CONTEXT_MENU_ITEM_DELETED,
+  PROP_LAST_CONTEXT_MENU_ITEMS,
   N_PROPERTIES
 };
 
@@ -1623,31 +1621,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 #endif
 
   /**
-   * ThunarPreferences:context-menu-item-order:
+   * ThunarPreferences:last-context-menu-items:
    **/
-  preferences_props[PROP_CONTEXT_MENU_ITEM_ORDER] =
-  g_param_spec_string ("context-menu-item-order",
-                       "ContextMenuItemOrder",
-                       NULL,
-                       NULL,
-                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * ThunarPreferences:context-menu-item-visibility:
-   **/
-  preferences_props[PROP_CONTEXT_MENU_ITEM_VISIBILITY] =
-  g_param_spec_string ("context-menu-item-visibility",
-                       "ContextMenuItemVisibility",
-                       NULL,
-                       NULL,
-                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * ThunarPreferences:context-menu-item-visibility:
-   **/
-  preferences_props[PROP_CONTEXT_MENU_ITEM_DELETED] =
-  g_param_spec_string ("context-menu-item-deleted",
-                       "ContextMenuItemDeleted",
+  preferences_props[PROP_LAST_CONTEXT_MENU_ITEMS] =
+  g_param_spec_string ("last-context-menu-items",
+                       "LastContextMenuItems",
                        NULL,
                        NULL,
                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);

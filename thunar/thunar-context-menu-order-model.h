@@ -40,16 +40,11 @@ typedef struct _ThunarContextMenuOrderModelItem  ThunarContextMenuOrderModelItem
 
 struct _ThunarContextMenuOrderModelItem
 {
-  ThunarContextMenuItem id;
-  gchar                *secondary_id;
-
-  /* id:secondary_id */
-  gchar *config_id;
-
+  char    *id;
   gchar   *icon;
   gchar   *name;
   gchar   *tooltip;
-  gboolean visibility;
+  gboolean hidden;
   gboolean removable;
 };
 
@@ -62,22 +57,26 @@ thunar_context_menu_order_model_get_default (void);
 GList *
 thunar_context_menu_order_model_get_items (ThunarContextMenuOrderModel *order_model);
 
+GList *
+thunar_context_menu_order_model_get_visible_items (ThunarContextMenuOrderModel *order_model);
+
 void
 thunar_context_menu_order_model_move (ThunarContextMenuOrderModel *order_model,
                                       gint                         source_index,
                                       gint                         dest_index);
 
 void
-thunar_context_menu_order_model_set_visibility (ThunarContextMenuOrderModel *order_model,
-                                                gint                         index,
-                                                gboolean                     visibility);
+thunar_context_menu_order_model_set_hidden (ThunarContextMenuOrderModel *order_model,
+                                            gint                         index,
+                                            gboolean                     hidden);
 
 void
 thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model);
 
 void
 thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model,
-                                        gint                         index);
+                                        const gint                  *indexes,
+                                        gint                        n_indexes);
 
 gint
 thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *order_model,
@@ -85,13 +84,18 @@ thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *o
 
 void
 thunar_context_menu_item_set_id (GtkWidget            *menu_item,
-                                 ThunarContextMenuItem menu_item_id);
+                                 ThunarContextMenuItem id);
 
-ThunarContextMenuItem
-thunar_context_menu_item_get_id (GtkWidget *menu_item);
+void
+thunar_context_menu_item_set_custom_action_id (GtkWidget   *menu_item,
+                                               const gchar *custom_action_id);
 
 gboolean
-thunar_context_menu_has_custom_action (const gchar *secondary_id);
+thunar_context_menu_item_is_custom_action (GtkWidget *menu_item);
+
+gboolean
+thunar_context_menu_order_model_item_is (ThunarContextMenuOrderModelItem *item,
+                                         ThunarContextMenuItem            id);
 
 G_END_DECLS
 

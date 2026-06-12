@@ -46,9 +46,10 @@ struct _ThunarContextMenuOrderEditor
 static void
 thunar_context_menu_order_editor_finalize (GObject *object);
 
-static void
+static gboolean
 thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_editor,
-                                         gint                          index);
+                                         gint                         *indexes,
+                                         gint                          n_indexes);
 
 
 G_DEFINE_TYPE (ThunarContextMenuOrderEditor, thunar_context_menu_order_editor, THUNAR_TYPE_ORDER_EDITOR)
@@ -106,7 +107,7 @@ thunar_context_menu_order_editor_insert_item (ThunarContextMenuOrderEditor      
   GIcon *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
 
   xfce_item_list_store_insert_with_values (menu_editor->store, index,
-                                           XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, item->visibility,
+                                           XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, !item->hidden,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE, TRUE,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ICON, icon,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_NAME, gettext (item->name),
@@ -148,29 +149,32 @@ thunar_context_menu_order_editor_move (ThunarContextMenuOrderEditor *menu_editor
 
 
 static void
-thunar_context_menu_order_editor_set_visibility (ThunarContextMenuOrderEditor *menu_editor,
-                                                 gint                          index,
-                                                 gboolean                      visibility)
+thunar_context_menu_order_editor_set_hidden (ThunarContextMenuOrderEditor *menu_editor,
+                                             gint                          index,
+                                             gboolean                      visibility)
 {
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
-  thunar_context_menu_order_model_set_visibility (menu_editor->order_model, index, visibility);
+  thunar_context_menu_order_model_set_hidden (menu_editor->order_model, index, !visibility);
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
 }
 
 
-static void
+static gboolean
 thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_editor,
-                                         gint                          index)
+                                         gint                         *indexes,
+                                         gint                          n_items)
 {
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
-  thunar_context_menu_order_model_remove (menu_editor->order_model, index);
+  thunar_context_menu_order_model_remove (menu_editor->order_model, indexes, n_items);
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+
+  return FALSE;
 }
 
 
 
 static void
-thunar_context_menu_order_editor_add (ThunarContextMenuOrderEditor *menu_editor)
+thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *menu_editor)
 {
   gint                            *sel_items = NULL;
   gint                             n_sel_items = xfce_item_list_view_get_selected_items (menu_editor->item_view, &sel_items);
@@ -238,8 +242,8 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
                 | XFCE_ITEM_LIST_MODEL_RESETTABLE,
                 NULL);
   g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_context_menu_order_editor_move), menu_editor);
-  g_signal_connect_swapped (store, "activity-changed", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
-  g_signal_connect_swapped (store, "before-remove-item", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
+  g_signal_connect_swapped (store, "activity-changed", G_CALLBACK (thunar_context_menu_order_editor_set_hidden), menu_editor);
+  g_signal_connect_swapped (menu_editor->item_view, "remove-items", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
   g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_context_menu_order_editor_reset), menu_editor);
   g_signal_connect_swapped (menu_editor->order_model, "changed", G_CALLBACK (thunar_context_menu_order_editor_populate), menu_editor);
 
@@ -253,7 +257,7 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
 
   group = gtk_widget_get_action_group (GTK_WIDGET (menu_editor->item_view), "xfce-item-list-view");
   action = g_simple_action_new ("add-separator", NULL);
-  g_signal_connect_swapped (action, "activate", G_CALLBACK (thunar_context_menu_order_editor_add), menu_editor);
+  g_signal_connect_swapped (action, "activate", G_CALLBACK (thunar_context_menu_order_editor_add_separator), menu_editor);
   g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
   g_object_unref (action);
 
