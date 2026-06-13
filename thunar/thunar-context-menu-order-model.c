@@ -41,7 +41,9 @@ struct _ThunarContextMenuOrderModel
   GObject __parent__;
 
   ThunarPreferences *preferences;
-  GList             *items;
+
+  /* list of ThunarContextMenuOrderModelItem* in the order set by the user */
+  GList *items;
 
   /* table(gchar* => ThunarContextMenuOrderModelItem*) for storing menu item prototypes, from which items are then
    * created in the thunar_context_menu_order_model_new_item_from_prototype() */
