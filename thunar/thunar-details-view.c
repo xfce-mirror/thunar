@@ -22,6 +22,7 @@
 #include "thunar/thunar-action-manager.h"
 #include "thunar/thunar-column-model.h"
 #include "thunar/thunar-column-order-editor.h"
+#include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
@@ -1450,12 +1451,21 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
                                        GtkMenu            *menu,
                                        GtkAccelGroup      *accel_group)
 {
-  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  ThunarDetailsView        *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  const XfceGtkActionEntry *action_entry;
+  GtkWidget                *item;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS), G_OBJECT (details_view), details_view->expandable_folders, GTK_MENU_SHELL (menu));
+  action_entry = get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS);
+  item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+  /* setting the id for reordering elements by ThunarContextMenuOrderModel */
+  thunar_context_menu_item_set_id_by_entry (item, action_entry);
+
+  action_entry = get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS);
+  item = xfce_gtk_toggle_menu_item_new_from_action_entry (action_entry, G_OBJECT (details_view), details_view->expandable_folders, GTK_MENU_SHELL (menu));
+  /* setting the id for reordering elements by ThunarContextMenuOrderModel */
+  thunar_context_menu_item_set_id_by_entry (item, action_entry);
 }
 
 
@@ -1481,6 +1491,22 @@ XfceGtkActionEntry *
 thunar_details_view_get_action_entries (void)
 {
   return thunar_details_view_action_entries;
+}
+
+
+
+GList *
+thunar_details_view_get_right_click_context_menu_items (void)
+{
+  static guint ids_of_entries[] = {
+    THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,
+    THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS,
+  };
+
+  return thunar_context_menu_order_model_item_new_list_from_entries (thunar_details_view_action_entries,
+                                                                     G_N_ELEMENTS (thunar_details_view_action_entries),
+                                                                     ids_of_entries,
+                                                                     G_N_ELEMENTS (ids_of_entries));
 }
 
 

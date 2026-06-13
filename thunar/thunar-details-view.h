@@ -53,6 +53,9 @@ void
 thunar_details_view_set_location_column_visible (ThunarDetailsView *, gboolean);
 XfceGtkActionEntry *
 thunar_details_view_get_action_entries (void);
+GList *
+thunar_details_view_get_right_click_context_menu_items (void);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_DETAILS_VIEW_H__ */
