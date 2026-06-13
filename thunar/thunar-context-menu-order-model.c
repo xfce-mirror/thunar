@@ -481,7 +481,7 @@ thunar_context_menu_order_model_get_default_items (ThunarContextMenuOrderModel *
   ITEM ("zoom-reset");
 
   SEPARATOR;
-  
+
   ITEM ("properties");
 
 #undef ITEM
@@ -712,7 +712,7 @@ ThunarContextMenuOrderModelItem *
 thunar_context_menu_order_model_item_new_from_entry (const XfceGtkActionEntry *entry)
 {
   ThunarContextMenuOrderModelItem *item;
-  GString *name;
+  GString                         *name;
 
   _thunar_return_val_if_fail (entry != NULL, NULL);
 
@@ -750,7 +750,7 @@ thunar_context_menu_order_model_item_new_list_from_entries (const XfceGtkActionE
 
   for (guint i = 0; i < n_ids_of_entries; ++i)
     {
-      const XfceGtkActionEntry        *entry = xfce_gtk_get_action_entry_by_id(entries, n_entries, ids_of_entries[i]);
+      const XfceGtkActionEntry        *entry = xfce_gtk_get_action_entry_by_id (entries, n_entries, ids_of_entries[i]);
       ThunarContextMenuOrderModelItem *item = thunar_context_menu_order_model_item_new_from_entry (entry);
 
       if (item != NULL)

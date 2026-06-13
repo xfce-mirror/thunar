@@ -124,16 +124,17 @@ thunar_context_menu_order_editor_insert_item (ThunarContextMenuOrderEditor      
 static void
 thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_editor)
 {
-  GList     *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
+  GList *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
 
   g_signal_handlers_block_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
   xfce_item_list_store_clear (menu_editor->store);
   g_signal_handlers_unblock_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
 
-  for (GList *l = items; l != NULL; l = l->next) {
-    /* insert an item at the end */
-    thunar_context_menu_order_editor_insert_item (menu_editor, -1, l->data);
-  }
+  for (GList *l = items; l != NULL; l = l->next)
+    {
+      /* insert an item at the end */
+      thunar_context_menu_order_editor_insert_item (menu_editor, -1, l->data);
+    }
 
   g_list_free (items);
 }
@@ -154,8 +155,8 @@ thunar_context_menu_order_editor_move (ThunarContextMenuOrderEditor *menu_editor
 
 static void
 thunar_context_menu_order_editor_set_visibility (ThunarContextMenuOrderEditor *menu_editor,
-                                             gint                          index,
-                                             gboolean                      visibility)
+                                                 gint                          index,
+                                                 gboolean                      visibility)
 {
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
   thunar_context_menu_order_model_set_visibility (menu_editor->order_model, index, visibility);
