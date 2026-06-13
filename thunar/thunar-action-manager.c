@@ -2450,7 +2450,7 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
       for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
         {
-          const gchar *name;
+          gchar *name;
 
           gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp_item->data, menu);
 
@@ -2460,6 +2460,7 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
             g_object_set_data_full (G_OBJECT (gtk_menu_item), "id", g_strdup_printf ("custom-action-%s", name), (GDestroyNotify) g_free);
           else
             g_object_set_data (G_OBJECT (gtk_menu_item), "id", "custom-action-unnamed");
+          g_free (name);
 
           /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item*/
           g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp_item->data);
