@@ -261,6 +261,9 @@ thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *sta
 gboolean
 thunar_standard_view_get_loading (ThunarView *view);
 
+GList *
+thunar_standard_view_get_right_click_context_menu_items (void);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */
