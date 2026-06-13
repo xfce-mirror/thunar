@@ -149,6 +149,8 @@ thunar_action_manager_set_search_mode (ThunarActionManager *action_mgr,
                                        gboolean             b);
 XfceGtkActionEntry *
 thunar_action_manager_get_action_entries (void);
+GList *
+thunar_action_manager_get_right_click_context_menu_items (void);
 
 G_END_DECLS;
 
