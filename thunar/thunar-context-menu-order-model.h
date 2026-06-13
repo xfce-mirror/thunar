@@ -100,6 +100,8 @@ thunar_context_menu_order_model_item_new_list_from_entries (const XfceGtkActionE
                                                             const guint              *ids_of_entries,
                                                             guint                     n_ids_of_entries);
 
+/* Sets the menu item id based on the accel_path. For more information about id, see the
+ * description of ThunarContextMenuOrderModelItem. */
 void
 thunar_context_menu_item_set_id_by_entry (GtkWidget                *menu_item,
                                           const XfceGtkActionEntry *entry);
