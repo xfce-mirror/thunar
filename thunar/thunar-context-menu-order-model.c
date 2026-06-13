@@ -232,7 +232,10 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       for (gint i = 0; items[i] != NULL; ++i)
         {
           gchar  **item_data = g_strsplit (items[i], ":", -1);
-          gboolean visibility = g_strcmp0 (item_data[1], "0") != 0;
+          gboolean visibility = FALSE;
+
+          if (item_data[0] != NULL)
+            visibility = g_strcmp0 (item_data[1], "0") != 0;
 
           if (g_strcmp0 ("separator", item_data[0]) == 0)
             {
@@ -303,11 +306,13 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
                    *
                    * Visualization of the context menu:
                    * - New File
+                   * - UCA action0
                    * - New Directory
                    * - Custom action <- now the variable "item" refers to this item
                    * - UCA action1
                    * - UCA action2 <- the new_custom_actions list is inserted after this item
                    * - Properties...
+                   * - UCA action3
                    */
 
                   for (li = li->next; li != NULL; li = li->next, ++index)
@@ -329,9 +334,21 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
         }
 
       g_list_free_full (new_custom_actions, (GDestroyNotify) thunar_context_menu_order_model_item_free);
-    }
 
-  g_list_free_full (default_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+      /* if the default_items list contains items that are not in the config, it means that they appeared in the
+       * new version of thunar, and they can be added to the end and hidden */
+      if (default_items != NULL)
+        {
+          for (GList *l = default_items; l != NULL; l = l->next)
+            {
+              ThunarContextMenuOrderModelItem *item = l->data;
+
+              item->visibility = FALSE;
+            }
+
+          order_model->items = g_list_concat (order_model->items, default_items);
+        }
+    }
 
   /* signal */
   g_signal_handlers_block_by_func (order_model, thunar_context_menu_order_model_save, NULL);
