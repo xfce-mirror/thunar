@@ -70,6 +70,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
   THUNAR_WINDOW_ACTION_VIEW_TERMINAL,
   THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,
+  THUNAR_WINDOW_ACTION_CONFIGURE_CONTEXT_MENU,
   THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
   THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,
   THUNAR_WINDOW_ACTION_ZOOM_IN,
@@ -208,6 +209,8 @@ thunar_window_focus_view (ThunarWindow *window,
 void
 thunar_window_queue_redraw (ThunarWindow *window);
 
+GList *
+thunar_window_get_right_click_context_menu_items (void);
 
 G_END_DECLS;
 

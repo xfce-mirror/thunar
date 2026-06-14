@@ -158,6 +158,7 @@ enum
   PROP_TERMINAL_SSH_AUTO_DISCONNECT,
   PROP_TERMINAL_FONT_SIZE,
 #endif
+  PROP_LAST_CONTEXT_MENU_ITEMS,
   N_PROPERTIES
 };
 
@@ -1618,6 +1619,16 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     12, /* default font size */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 #endif
+
+  /**
+   * ThunarPreferences:last-context-menu-items:
+   **/
+  preferences_props[PROP_LAST_CONTEXT_MENU_ITEMS] =
+  g_param_spec_string ("last-context-menu-items",
+                       "LastContextMenuItems",
+                       NULL,
+                       NULL,
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);

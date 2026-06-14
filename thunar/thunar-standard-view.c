@@ -28,6 +28,7 @@
 
 #include "thunar/thunar-action-manager.h"
 #include "thunar/thunar-application.h"
+#include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-details-view.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-dnd.h"
@@ -1989,6 +1990,21 @@ gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->loading;
+}
+
+
+
+GList *
+thunar_standard_view_get_right_click_context_menu_items (void)
+{
+  static guint ids_of_entries[] = {
+    THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,
+  };
+
+  return thunar_context_menu_order_model_item_new_list_from_entries (thunar_standard_view_action_entries,
+                                                                     G_N_ELEMENTS (thunar_standard_view_action_entries),
+                                                                     ids_of_entries,
+                                                                     G_N_ELEMENTS (ids_of_entries));
 }
 
 
@@ -4800,12 +4816,18 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   GtkWidget *submenu;
   gboolean   folders_first;
   gboolean   hidden_last;
+  const XfceGtkActionEntry *action_entry;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   g_object_get (standard_view->model, "folders-first", &folders_first, "hidden-last", &hidden_last, NULL);
 
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
+  action_entry = get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU);
+  item = xfce_gtk_menu_item_new_from_action_entry (action_entry, NULL, GTK_MENU_SHELL (menu));
+
+  /* setting the id for reordering elements by ThunarContextMenuOrderModel */
+  thunar_context_menu_item_set_id_by_entry (item, action_entry);
+
   submenu = gtk_menu_new ();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_NAME, GTK_MENU_SHELL (submenu));
