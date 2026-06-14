@@ -365,6 +365,7 @@ thunar_menu_reorder (ThunarMenu *menu,
         }
     }
 
+  /* a loop in which GtkMenu items are moved to the required positions */
   for (GList *li = new_order; li != NULL; li = li->next)
     {
       ThunarContextMenuOrderModelItem *item = li->data;
@@ -557,9 +558,13 @@ thunar_menu_add_sections (ThunarMenu        *menu,
   apply_context_menu_order |= menu->type == THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS;
   if (apply_context_menu_order)
     {
-      GList                       *unlisted_custom_actions = NULL;
       ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
       GList                       *new_order = thunar_context_menu_order_model_get_items (order_model);
+
+      /* a list of custom action menu items that are missing from the "new_order" list. This may happen because the
+       * plugin that provides custom actions does not support passing information about menu items to the model, or
+       * because the model is not updated for some reason */
+      GList *unlisted_custom_actions = NULL;
 
       /* we will insert our own separators later, so let's remove all current separators */
       thunar_menu_remove_all_separators (menu);
