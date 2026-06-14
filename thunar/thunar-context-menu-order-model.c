@@ -227,8 +227,10 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
     {
       gchar **items = g_strsplit (content, ",", -1);
 
+      /* if the config value is set, then read the list of items in a loop */
       for (gint i = 0; items[i] != NULL; ++i)
         {
+          /* "item_data" now stores the pair [item_id, visibility] */
           gchar  **item_data = g_strsplit (items[i], ":", -1);
           gboolean visibility = FALSE;
 
@@ -245,6 +247,8 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
             }
           else
             {
+              gboolean added = FALSE;
+
               /* if a menu item is encountered, it must be removed from default_items and placed in the specified position */
               for (GList *l = default_items; l != NULL; l = l->next)
                 {
@@ -255,9 +259,13 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
                       item->visibility = visibility;
                       order_model->items = g_list_append (order_model->items, l->data);
                       default_items = g_list_remove (default_items, l->data);
+                      added = TRUE;
                       break;
                     }
                 }
+
+              if (!added)
+                g_warning ("Could not add menu item \"%s\" because the item is not in the list of default items", item_data[0]);
             }
 
           g_strfreev (item_data);
@@ -275,6 +283,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 
   if (default_items != NULL)
     {
+      /* need to process the remaining default items that were not removed when reading the config value */
       GList *new_custom_actions = NULL;
       GList *new_items = NULL;
       gint   index = 0;
