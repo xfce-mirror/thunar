@@ -65,6 +65,9 @@ void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
                                XfceItemListModel *model);
 
+XfceItemListModel *
+thunar_order_editor_get_model (ThunarOrderEditor *order_editor);
+
 void
 thunar_order_editor_show (ThunarOrderEditor *order_editor,
                           GtkWidget         *window);

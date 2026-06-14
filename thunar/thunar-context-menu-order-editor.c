@@ -37,10 +37,6 @@ struct _ThunarContextMenuOrderEditor
   ThunarOrderEditor __parent__;
 
   ThunarContextMenuOrderModel *order_model;
-
-  /* children of the ThunarContextMenuOrderEditor widget */
-  XfceItemListStore *store;
-  XfceItemListView  *item_view;
 };
 
 
@@ -75,7 +71,7 @@ thunar_context_menu_order_editor_init (ThunarContextMenuOrderEditor *menu_editor
 
   menu_editor->order_model = thunar_context_menu_order_model_get_default ();
 
-  label = gtk_label_new (_("Setting the order and visibility of context menu elements. Menu items are grouped into sections. Note that most context menu items only will be shown conditionally, based on the file type, the number of selected items and other ciretia."));
+  label = gtk_label_new (_("Setting the order and visibility of context menu elements. Menu items are grouped into sections. Note that most context menu items only will be shown conditionally, based on the file type, the number of selected items and other criteria."));
   gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
@@ -106,9 +102,10 @@ thunar_context_menu_order_editor_insert_item (ThunarContextMenuOrderEditor      
                                               gint                                   index,
                                               const ThunarContextMenuOrderModelItem *item)
 {
-  GIcon *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
+  XfceItemListModel *item_view_model = thunar_order_editor_get_model (THUNAR_ORDER_EDITOR (menu_editor));
+  GIcon             *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
 
-  xfce_item_list_store_insert_with_values (menu_editor->store, index,
+  xfce_item_list_store_insert_with_values (XFCE_ITEM_LIST_STORE (item_view_model), index,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, item->visibility,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE, TRUE,
                                            XFCE_ITEM_LIST_MODEL_COLUMN_ICON, icon,
@@ -124,11 +121,12 @@ thunar_context_menu_order_editor_insert_item (ThunarContextMenuOrderEditor      
 static void
 thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_editor)
 {
-  GList *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
+  XfceItemListModel *item_view_model = thunar_order_editor_get_model (THUNAR_ORDER_EDITOR (menu_editor));
+  GList             *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
 
-  g_signal_handlers_block_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
-  xfce_item_list_store_clear (menu_editor->store);
-  g_signal_handlers_unblock_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
+  g_signal_handlers_block_by_func (item_view_model, thunar_context_menu_order_editor_remove, menu_editor);
+  xfce_item_list_store_clear (XFCE_ITEM_LIST_STORE (item_view_model));
+  g_signal_handlers_unblock_by_func (item_view_model, thunar_context_menu_order_editor_remove, menu_editor);
 
   for (GList *l = items; l != NULL; l = l->next)
     {
@@ -181,8 +179,9 @@ thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_edit
 static void
 thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *menu_editor)
 {
+  XfceItemListView                *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
   gint                            *sel_items = NULL;
-  gint                             n_sel_items = xfce_item_list_view_get_selected_items (menu_editor->item_view, &sel_items);
+  gint                             n_sel_items = xfce_item_list_view_get_selected_items (item_view, &sel_items);
   gint                             index;
   gint                             separator_index;
   GList                           *items;
@@ -212,7 +211,7 @@ thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *me
   g_list_free (items);
 
   path = gtk_tree_path_new_from_indices (separator_index, -1);
-  tree_view = GTK_TREE_VIEW (xfce_item_list_view_get_tree_view (menu_editor->item_view));
+  tree_view = GTK_TREE_VIEW (xfce_item_list_view_get_tree_view (item_view));
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_unselect_all (selection);
   gtk_tree_selection_select_path (selection, path);
@@ -235,7 +234,8 @@ thunar_context_menu_order_editor_reset (ThunarContextMenuOrderEditor *menu_edito
 void
 thunar_context_menu_order_editor_show (GtkWidget *window)
 {
-  XfceItemListStore            *store = xfce_item_list_store_new (-1);
+  XfceItemListStore            *item_view_model = xfce_item_list_store_new (-1);
+  XfceItemListView             *item_view;
   ThunarContextMenuOrderEditor *menu_editor;
   GMenu                        *menu;
   GMenuItem                    *menu_item;
@@ -245,25 +245,24 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
   GtkTreeView                  *tree_view;
   GtkTreeSelection             *selection;
 
-  menu_editor = g_object_new (THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, "model", store, NULL);
-  menu_editor->store = store;
-  g_object_unref (store); /* "menu_editor" now owns the "store" */
+  menu_editor = g_object_new (THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, "model", item_view_model, NULL);
+  g_object_unref (item_view_model); /* "menu_editor" now owns the "item_view_model" */
 
-  menu_editor->item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
+  item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
 
-  g_object_set (store,
+  g_object_set (item_view_model,
                 "list-flags",
                 XFCE_ITEM_LIST_MODEL_REORDERABLE
                 | XFCE_ITEM_LIST_MODEL_REMOVABLE
                 | XFCE_ITEM_LIST_MODEL_RESETTABLE,
                 NULL);
-  g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_context_menu_order_editor_move), menu_editor);
-  g_signal_connect_swapped (store, "activity-changed", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
-  g_signal_connect_swapped (menu_editor->item_view, "remove-items", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
-  g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_context_menu_order_editor_reset), menu_editor);
+  g_signal_connect_swapped (item_view_model, "before-move-item", G_CALLBACK (thunar_context_menu_order_editor_move), menu_editor);
+  g_signal_connect_swapped (item_view_model, "activity-changed", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
+  g_signal_connect_swapped (item_view, "remove-items", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
+  g_signal_connect_swapped (item_view_model, "reset", G_CALLBACK (thunar_context_menu_order_editor_reset), menu_editor);
   g_signal_connect_swapped (menu_editor->order_model, "changed", G_CALLBACK (thunar_context_menu_order_editor_populate), menu_editor);
 
-  menu = xfce_item_list_view_get_menu (menu_editor->item_view);
+  menu = xfce_item_list_view_get_menu (item_view);
   menu_item = g_menu_item_new (_("Add separator"), "xfce-item-list-view.add-separator");
   icon = g_themed_icon_new ("list-add-symbolic");
   g_menu_item_set_icon (menu_item, icon);
@@ -271,13 +270,13 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
   g_menu_insert_item (menu, 0, menu_item);
   g_object_unref (menu_item);
 
-  group = gtk_widget_get_action_group (GTK_WIDGET (menu_editor->item_view), "xfce-item-list-view");
+  group = gtk_widget_get_action_group (GTK_WIDGET (item_view), "xfce-item-list-view");
   action = g_simple_action_new ("add-separator", NULL);
   g_signal_connect_swapped (action, "activate", G_CALLBACK (thunar_context_menu_order_editor_add_separator), menu_editor);
   g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
   g_object_unref (action);
 
-  tree_view = GTK_TREE_VIEW (xfce_item_list_view_get_tree_view (menu_editor->item_view));
+  tree_view = GTK_TREE_VIEW (xfce_item_list_view_get_tree_view (item_view));
   selection = gtk_tree_view_get_selection (tree_view);
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 

@@ -122,8 +122,6 @@ thunar_context_menu_order_model_init (ThunarContextMenuOrderModel *order_model)
   thunar_context_menu_order_model_init_prototypes_table (order_model);
 
   thunar_context_menu_order_model_load (order_model);
-
-  g_signal_connect (order_model, "changed", G_CALLBACK (thunar_context_menu_order_model_save), NULL);
 }
 
 
@@ -351,9 +349,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
     }
 
   /* signal */
-  g_signal_handlers_block_by_func (order_model, thunar_context_menu_order_model_save, NULL);
   g_signal_emit (order_model, signals[CHANGED], 0);
-  g_signal_handlers_unblock_by_func (order_model, thunar_context_menu_order_model_save, NULL);
 }
 
 
@@ -620,6 +616,7 @@ thunar_context_menu_order_model_move (ThunarContextMenuOrderModel *order_model,
   dest_sibling = g_list_nth (order_model->items, dest_index);
   order_model->items = g_list_insert_before_link (order_model->items, dest_sibling, link);
 
+  thunar_context_menu_order_model_save (order_model);
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
 
@@ -638,6 +635,7 @@ thunar_context_menu_order_model_set_visibility (ThunarContextMenuOrderModel *ord
   item = g_list_nth_data (order_model->items, index);
   item->visibility = visibility;
 
+  thunar_context_menu_order_model_save (order_model);
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
 
@@ -653,6 +651,8 @@ thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model)
     }
 
   order_model->items = thunar_context_menu_order_model_get_default_items (order_model);
+
+  thunar_context_menu_order_model_save (order_model);
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
 
@@ -700,6 +700,7 @@ thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model
         }
     }
 
+  thunar_context_menu_order_model_save (order_model);
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
 
@@ -720,6 +721,7 @@ thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *o
 
   order_model->items = g_list_insert (order_model->items, item, index);
 
+  thunar_context_menu_order_model_save (order_model);
   g_signal_emit (order_model, signals[CHANGED], 0);
 
   return index;
