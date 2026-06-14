@@ -276,6 +276,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
   if (default_items != NULL)
     {
       GList *new_custom_actions = NULL;
+      GList *new_items = NULL;
       gint   index = 0;
 
       /* search for menu items of custom actions that were not specified in the config but have appeared now */
@@ -335,17 +336,28 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 
       /* if the default_items list contains items that are not in the config, it means that they appeared in the
        * new version of thunar, and they can be added to the end and hidden */
-      if (default_items != NULL)
+      for (GList *l = default_items; l != NULL; l = l->next)
         {
-          for (GList *l = default_items; l != NULL; l = l->next)
+          ThunarContextMenuOrderModelItem *item = l->data;
+
+          /* since it is impossible to know whether a separator is a new or removed standard item,
+           * we simply will not add them */
+          if (g_strcmp0 (item->id, "separator") != 0)
             {
-              ThunarContextMenuOrderModelItem *item = l->data;
-
               item->visibility = FALSE;
+              new_items = g_list_append (new_items, item);
             }
-
-          order_model->items = g_list_concat (order_model->items, default_items);
         }
+      for (GList *l = new_items; l != NULL; l = l->next)
+        {
+          ThunarContextMenuOrderModelItem *item = l->data;
+
+          order_model->items = g_list_append (order_model->items, item);
+          default_items = g_list_remove (default_items, item);
+        }
+
+      /* only menu item separators could remain */
+      g_list_free_full (default_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
     }
 
   /* signal */
