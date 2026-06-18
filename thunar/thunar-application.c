@@ -175,6 +175,14 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
                                        gboolean               update_target_folders,
                                        ThunarOperationLogMode log_mode,
                                        GClosure              *new_files_closure);
+
+#ifdef HAVE_LIBCANBERRA
+static void
+thunar_application_launch_error (ThunarJob *job,
+                                 GError    *error,
+                                 gpointer   user_data);
+#endif
+
 static void
 thunar_application_launch_finished (ThunarJob *job,
                                     GList     *containing_folders);
@@ -1028,6 +1036,18 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
 }
 
 
+#ifdef HAVE_LIBCANBERRA
+static void
+thunar_application_launch_error (ThunarJob *job,
+                                 GError    *error,
+                                 gpointer   user_data)
+
+{
+  /* cancel any job completion sound (in case one has been set) */
+  thunar_job_set_sound_name (job, NULL);
+}
+#endif
+
 
 static void
 thunar_application_launch_finished (ThunarJob *job,
@@ -1109,6 +1129,12 @@ thunar_application_launch (ThunarApplication     *application,
     parent_folder_list = g_list_concat (parent_folder_list, thunar_g_file_list_get_parents (target_file_list));
 
   thunar_job_set_log_mode (job, log_mode);
+
+#ifdef HAVE_LIBCANBERRA
+   /* connect a callback to handle any errors */
+  g_signal_connect (G_OBJECT (job), "error",
+                    G_CALLBACK (thunar_application_launch_error), NULL);
+#endif
 
   /* connect a callback to instantly refresh the parent folders after the operation finished */
   g_signal_connect (G_OBJECT (job), "finished",
