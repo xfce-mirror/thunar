@@ -215,6 +215,7 @@ thunar_dependencies = [
     xfconf,
     x11_deps,
     gudev,
+    libcanberra,
     libnotify,
     pango,
     vte
