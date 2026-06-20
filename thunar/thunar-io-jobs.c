@@ -725,9 +725,9 @@ thunar_io_jobs_unlink_files (GList *file_list)
 
 #ifdef HAVE_LIBCANBERRA
   if (thunar_g_file_is_trashed (file_list->data)) /* is unlinking source in the trash? */
-    thunar_job_set_sound_name(job, "trash-empty");
-#endif 
-					  
+    thunar_job_set_sound_name (job, "trash-empty");
+#endif
+
   return job;
 }
 
@@ -749,7 +749,7 @@ thunar_io_jobs_move_files (GList *source_file_list,
   thunar_job_set_pausable (job, TRUE);
 
 #ifdef HAVE_LIBCANBERRA
-  thunar_job_set_sound_name(job, "complete-copy");
+  thunar_job_set_sound_name (job, "complete-copy");
 #endif
 
   return job;
@@ -773,7 +773,7 @@ thunar_io_jobs_copy_files (GList *source_file_list,
   thunar_job_set_pausable (job, TRUE);
 
 #ifdef HAVE_LIBCANBERRA
-  thunar_job_set_sound_name(job, "complete-copy");
+  thunar_job_set_sound_name (job, "complete-copy");
 #endif
 
   return job;

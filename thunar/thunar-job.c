@@ -371,7 +371,7 @@ thunar_job_init (ThunarJob *job)
   job->priv->frozen = FALSE;
 #ifdef HAVE_LICANBERRA
   job->priv->sound_name = NULL; /* default to playing no job completion sound */
-#endif  
+#endif
 }
 
 

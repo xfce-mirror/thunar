@@ -270,7 +270,7 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
-  
+
 #ifdef HAVE_LIBCANBERRA
   ca_context *canberra;
 #endif
@@ -450,7 +450,7 @@ thunar_application_startup (GApplication *gapp)
   /* initialize context for sound output */
   application->canberra = NULL;
   ca_context_create (&application->canberra);
-#endif  
+#endif
 
   thunar_application_dbus_init (application);
 
@@ -1058,17 +1058,17 @@ thunar_application_launch_finished (ThunarJob *job,
   ThunarFolder *folder;
 
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
-  
+
 #ifdef HAVE_LIBCANBERRA
   /* play event sound for completing the job if a sound has been set and the job has not been cancelled */
 
-  if (thunar_job_get_sound_name(job) != NULL && !thunar_job_is_cancelled(job))
-  {
-    ThunarApplication *application = thunar_application_get();
+  if (thunar_job_get_sound_name (job) != NULL && !thunar_job_is_cancelled (job))
+    {
+      ThunarApplication *application = thunar_application_get ();
 
-    ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name(job), NULL);
-    g_object_unref (G_OBJECT (application));
-  }
+      ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name (job), NULL);
+      g_object_unref (G_OBJECT (application));
+    }
 #endif
 
   for (lp = containing_folders; lp != NULL; lp = lp->next)
@@ -1131,7 +1131,7 @@ thunar_application_launch (ThunarApplication     *application,
   thunar_job_set_log_mode (job, log_mode);
 
 #ifdef HAVE_LIBCANBERRA
-   /* connect a callback to handle any errors */
+  /* connect a callback to handle any errors */
   g_signal_connect (G_OBJECT (job), "error",
                     G_CALLBACK (thunar_application_launch_error), NULL);
 #endif
