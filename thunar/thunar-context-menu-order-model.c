@@ -316,7 +316,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
                    * - New File
                    * - UCA action0
                    * - New Directory
-                   * - Custom action <- now the variable "item" refers to this item
+                   * - *** Custom actions *** <- now the variable "item" refers to this item
                    * - UCA action1
                    * - UCA action2 <- the new_custom_actions list is inserted after this item
                    * - Properties...
