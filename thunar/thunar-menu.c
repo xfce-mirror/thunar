@@ -15,9 +15,11 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "thunar/thunar-action-manager.h"
-#include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-menu.h"
+
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-context-menu-order-model.h"
+#include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-window.h"
 
@@ -59,6 +61,16 @@ thunar_menu_set_property (GObject      *object,
                           guint         prop_uid,
                           const GValue *value,
                           GParamSpec   *pspec);
+static void
+thunar_menu_remove_all_separators (ThunarMenu *menu);
+static void
+thunar_menu_insert_separators (ThunarMenu *menu,
+                               GList      *new_order,
+                               GList      *unlisted_custom_actions);
+static void
+thunar_menu_reorder (ThunarMenu *menu,
+                     GList      *new_order,
+                     GList     **unlisted_custom_actions);
 
 struct _ThunarMenuClass
 {
@@ -230,6 +242,180 @@ thunar_menu_set_property (GObject      *object,
 
 
 
+static void
+thunar_menu_remove_all_separators (ThunarMenu *menu)
+{
+  GList *children = gtk_container_get_children (GTK_CONTAINER (menu));
+
+  for (GList *l = children; l != NULL; l = l->next)
+    {
+      GtkWidget *item = GTK_WIDGET (l->data);
+
+      if (GTK_IS_SEPARATOR_MENU_ITEM (item))
+        gtk_container_remove (GTK_CONTAINER (menu), item);
+    }
+
+  g_list_free (children);
+}
+
+
+
+static void
+thunar_menu_insert_separators (ThunarMenu *menu,
+                               GList      *new_order,
+                               GList      *unlisted_custom_actions)
+{
+  GList   *children = gtk_container_get_children (GTK_CONTAINER (menu));
+  gboolean allow_separator = FALSE;
+  gint     index = 0;
+
+  /* if we just go through the list and create separators, there will be too many of them, so this function only
+   * inserts separators if an element matching the model was encountered */
+  for (GList *li = children, *lj = new_order; li != NULL && lj != NULL; lj = lj->next)
+    {
+      GtkWidget                       *child = GTK_WIDGET (li->data);
+      ThunarContextMenuOrderModelItem *item = lj->data;
+
+      if (!item->visibility)
+        continue;
+
+      if (g_strcmp0 (item->id, "separator") == 0)
+        {
+          if (allow_separator)
+            {
+              GtkWidget *separator = gtk_separator_menu_item_new ();
+
+              gtk_menu_shell_insert (GTK_MENU_SHELL (menu), separator, index++);
+              allow_separator = FALSE;
+            }
+        }
+      else
+        {
+          const gchar *child_id = g_object_get_data (G_OBJECT (child), "id");
+
+          if (g_strcmp0 (item->id, child_id) == 0)
+            {
+              /* if we encounter an element that matches the model, we simply move on to the next one and
+               * allow the separator to be inserted */
+              ++index;
+              li = li->next;
+              allow_separator = TRUE;
+            }
+          else if (g_strcmp0 (item->id, "custom-actions") == 0)
+            {
+              /* if a place for inserting custom actions is encountered, and we have actions that are
+               * missing from the model, then we will skip the custom actions and allow the insertion of a separator */
+              if (unlisted_custom_actions != NULL && li->data == unlisted_custom_actions->data)
+                {
+                  guint n_unlisted_custom_actions = g_list_length (unlisted_custom_actions);
+
+                  index += n_unlisted_custom_actions;
+                  li = g_list_nth (li, n_unlisted_custom_actions);
+                  allow_separator = TRUE;
+                }
+            }
+        }
+    }
+
+  g_list_free (children);
+}
+
+
+
+static void
+thunar_menu_reorder (ThunarMenu *menu,
+                     GList      *new_order,
+                     GList     **unlisted_custom_actions)
+{
+  GList *children = gtk_container_get_children (GTK_CONTAINER (menu));
+  gint   index = 0;
+
+  if (new_order == NULL)
+    {
+      for (GList *l = children; l != NULL; l = l->next)
+        gtk_container_remove (GTK_CONTAINER (menu), l->data);
+    }
+  else
+    {
+      /* collection of custom actions that are in GtkMenu but are missing from the model */
+      for (GList *li = children; li != NULL; li = li->next)
+        {
+          GtkWidget   *child = li->data;
+          const gchar *child_id = g_object_get_data (G_OBJECT (child), "id");
+
+          if (child_id != NULL && g_str_has_prefix (child_id, "custom-action-"))
+            {
+              gboolean unlisted = TRUE;
+
+              for (GList *lj = new_order; lj != NULL; lj = lj->next)
+                {
+                  ThunarContextMenuOrderModelItem *item = lj->data;
+
+                  if (g_strcmp0 (child_id, item->id) == 0)
+                    {
+                      unlisted = FALSE;
+                      break;
+                    }
+                }
+
+
+              if (unlisted)
+                *unlisted_custom_actions = g_list_append (*unlisted_custom_actions, child);
+            }
+        }
+    }
+
+  /* a loop in which GtkMenu items are moved to the required positions */
+  for (GList *li = new_order; li != NULL; li = li->next)
+    {
+      ThunarContextMenuOrderModelItem *item = li->data;
+
+      if (!item->visibility)
+        continue;
+
+      if (g_strcmp0 (item->id, "custom-actions") == 0)
+        {
+          /* inserting custom actions that are not present in the model */
+          for (GList *lj = *unlisted_custom_actions; lj != NULL; lj = lj->next)
+            {
+              GtkWidget *child = lj->data;
+
+              gtk_menu_reorder_child (GTK_MENU (menu), child, index);
+              children = g_list_remove (children, child);
+              ++index;
+            }
+        }
+      else
+        {
+          /* search for the corresponding GtkMenu item and move it to the desired position */
+          for (GList *lj = children; lj != NULL; lj = lj->next)
+            {
+              GtkWidget   *child = lj->data;
+              const gchar *child_id = g_object_get_data (G_OBJECT (child), "id");
+
+              if (g_strcmp0 (item->id, child_id) == 0)
+                {
+                  gtk_menu_reorder_child (GTK_MENU (menu), child, index);
+                  children = g_list_remove (children, child);
+                  ++index;
+                  break;
+                }
+            }
+        }
+    }
+
+  if (new_order != NULL)
+    {
+      /* if there are any menu items left, they are hidden and can be removed */
+      for (GList *l = children; l != NULL; l = l->next)
+        gtk_container_remove (GTK_CONTAINER (menu), GTK_WIDGET (l->data));
+    }
+
+  g_list_free (children);
+}
+
+
+
 /**
  * thunar_menu_add_sections:
  * @menu : a #ThunarMenu instance
@@ -247,6 +433,7 @@ thunar_menu_add_sections (ThunarMenu        *menu,
   GtkWidget *window;
   gboolean   item_added;
   gboolean   force = menu->type == THUNAR_MENU_TYPE_WINDOW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW;
+  gboolean   apply_context_menu_order;
 
   _thunar_return_val_if_fail (THUNAR_IS_MENU (menu), FALSE);
 
@@ -362,6 +549,33 @@ thunar_menu_add_sections (ThunarMenu        *menu,
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
     thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PROPERTIES, FALSE);
+
+  /* if this is a right-click context menu, then change the order and visibility of the elements to custom ones */
+  apply_context_menu_order = FALSE;
+  apply_context_menu_order |= menu->type == THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW;
+  apply_context_menu_order |= menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW;
+  apply_context_menu_order |= menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW;
+  apply_context_menu_order |= menu->type == THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS;
+  if (apply_context_menu_order)
+    {
+      ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
+      GList                       *new_order = thunar_context_menu_order_model_get_items (order_model);
+
+      /* a list of custom action menu items that are missing from the "new_order" list. This may happen because the
+       * plugin that provides custom actions does not support passing information about menu items to the model, or
+       * because the model is not updated for some reason */
+      GList *unlisted_custom_actions = NULL;
+
+      /* we will insert our own separators later, so let's remove all current separators */
+      thunar_menu_remove_all_separators (menu);
+
+      thunar_menu_reorder (menu, new_order, &unlisted_custom_actions);
+      thunar_menu_insert_separators (menu, new_order, unlisted_custom_actions);
+
+      g_list_free (new_order);
+      g_object_unref (order_model);
+      g_list_free (unlisted_custom_actions);
+    }
 
   return TRUE;
 }
