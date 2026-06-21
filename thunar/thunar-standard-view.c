@@ -4812,10 +4812,10 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                         GtkMenu            *menu,
                                         GtkAccelGroup      *accel_group)
 {
-  GtkWidget *item;
-  GtkWidget *submenu;
-  gboolean   folders_first;
-  gboolean   hidden_last;
+  GtkWidget                *item;
+  GtkWidget                *submenu;
+  gboolean                  folders_first;
+  gboolean                  hidden_last;
   const XfceGtkActionEntry *action_entry;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
