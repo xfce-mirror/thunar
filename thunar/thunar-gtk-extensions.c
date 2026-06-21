@@ -391,13 +391,14 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
  * @menu  : a #GtkMenu.
  * @event : a #GdkEvent which may be NULL if no previous event was stored.
  *
- * A simple wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
+ * A wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
  * main loop and returns only after the @menu was deactivated.
  *
  * This method automatically takes over the floating reference of @menu if any and
  * releases it on return. That means if you created the menu via gtk_menu_new() you'll
  * not need to take care of destroying the menu later.
  *
+ * If the menu is empty, this method will remove the menu instead of displaying it.
  **/
 void
 thunar_gtk_menu_run_at_event (GtkMenu  *menu,
@@ -405,11 +406,23 @@ thunar_gtk_menu_run_at_event (GtkMenu  *menu,
 {
   GMainLoop *loop;
   gulong     signal_id;
+  GList     *children;
+  gboolean   is_empty;
 
   _thunar_return_if_fail (GTK_IS_MENU (menu));
 
   /* take over the floating reference on the menu */
   g_object_ref_sink (G_OBJECT (menu));
+
+  /* if the menu is empty, it's better to hide it instead of displaying a strange-looking rectangle */
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  is_empty = children == NULL;
+  g_list_free (children);
+  if (is_empty)
+    {
+      g_object_unref (menu);
+      return;
+    }
 
   /* run an internal main loop */
   loop = g_main_loop_new (NULL, FALSE);
