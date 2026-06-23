@@ -46,6 +46,10 @@
 #include <gudev/gudev.h>
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+#include <canberra.h>
+#endif
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-dbus-service.h"
@@ -171,6 +175,14 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
                                        gboolean               update_target_folders,
                                        ThunarOperationLogMode log_mode,
                                        GClosure              *new_files_closure);
+
+#ifdef HAVE_LIBCANBERRA
+static void
+thunar_application_launch_error (ThunarJob *job,
+                                 GError    *error,
+                                 gpointer   user_data);
+#endif
+
 static void
 thunar_application_launch_finished (ThunarJob *job,
                                     GList     *containing_folders);
@@ -258,6 +270,10 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
+
+#ifdef HAVE_LIBCANBERRA
+  ca_context *canberra;
+#endif
 
   /* reference to the global job operation history */
   ThunarJobOperationHistory *job_operation_history;
@@ -430,6 +446,12 @@ thunar_application_startup (GApplication *gapp)
   thunar_application_initialize_media_fs_uuids (application);
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+  /* initialize context for sound output */
+  application->canberra = NULL;
+  ca_context_create (&application->canberra);
+#endif
+
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
@@ -479,6 +501,12 @@ thunar_application_shutdown (GApplication *gapp)
   g_object_unref (application->udev_client);
 
   g_hash_table_destroy (application->media_fs_uuids);
+#endif
+
+#ifdef HAVE_LIBCANBERRA
+  /* free the sound context */
+  if (application->canberra != NULL)
+    ca_context_destroy (application->canberra);
 #endif
 
   /* drop any running "show dialogs" timer */
@@ -1008,6 +1036,18 @@ thunar_application_collect_and_launch (ThunarApplication     *application,
 }
 
 
+#ifdef HAVE_LIBCANBERRA
+static void
+thunar_application_launch_error (ThunarJob *job,
+                                 GError    *error,
+                                 gpointer   user_data)
+
+{
+  /* cancel any job completion sound (in case one has been set) */
+  thunar_job_set_sound_name (job, NULL);
+}
+#endif
+
 
 static void
 thunar_application_launch_finished (ThunarJob *job,
@@ -1018,6 +1058,18 @@ thunar_application_launch_finished (ThunarJob *job,
   ThunarFolder *folder;
 
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+#ifdef HAVE_LIBCANBERRA
+  /* play event sound for completing the job if a sound has been set and the job has not been cancelled */
+
+  if (thunar_job_get_sound_name (job) != NULL && !thunar_job_is_cancelled (job))
+    {
+      ThunarApplication *application = thunar_application_get ();
+
+      ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name (job), NULL);
+      g_object_unref (G_OBJECT (application));
+    }
+#endif
 
   for (lp = containing_folders; lp != NULL; lp = lp->next)
     {
@@ -1077,6 +1129,12 @@ thunar_application_launch (ThunarApplication     *application,
     parent_folder_list = g_list_concat (parent_folder_list, thunar_g_file_list_get_parents (target_file_list));
 
   thunar_job_set_log_mode (job, log_mode);
+
+#ifdef HAVE_LIBCANBERRA
+  /* connect a callback to handle any errors */
+  g_signal_connect (G_OBJECT (job), "error",
+                    G_CALLBACK (thunar_application_launch_error), NULL);
+#endif
 
   /* connect a callback to instantly refresh the parent folders after the operation finished */
   g_signal_connect (G_OBJECT (job), "finished",
