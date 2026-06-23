@@ -724,7 +724,9 @@ thunar_io_jobs_unlink_files (GList *file_list)
                                           THUNAR_TYPE_G_FILE_LIST, file_list);
 
 #ifdef HAVE_LIBCANBERRA
-  if (thunar_g_file_is_trashed (file_list->data)) /* is unlinking source in the trash? */
+  /* If the files to unlink are in the trash, the job is an 'empty trash' job */
+  /* By design all files of a job share the same parent folder, so it is sufficient to check the first element of the list only */
+  if (thunar_g_file_is_trashed (file_list->data))
     thunar_job_set_sound_name (job, "trash-empty");
 #endif
 
