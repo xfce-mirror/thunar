@@ -310,6 +310,38 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
                           event);
 }
 
+
+
+static gboolean
+thunar_gtk_popup_menu_at_rect (GtkMenu     *menu,
+                               GdkRectangle rect,
+                               GdkWindow   *widget_window)
+{
+  GdkRectangle widget_area;
+
+  if (!GDK_IS_WINDOW (widget_window))
+    return FALSE;
+
+  /* check if rect is inside widget_window area */
+  widget_area.y = 0;
+  widget_area.x = 0;
+  widget_area.height = gdk_window_get_height (widget_window);
+  widget_area.width = gdk_window_get_width (widget_window);
+  if (!gdk_rectangle_intersect (&rect, &widget_area, &rect))
+    return FALSE;
+
+  gtk_menu_popup_at_rect (menu,
+                          widget_window,
+                          &rect,
+                          GDK_GRAVITY_SOUTH_WEST,
+                          GDK_GRAVITY_NORTH_WEST,
+                          NULL);
+
+  return TRUE;
+}
+
+
+
 static gboolean
 thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
                                 GdkEvent *event)
@@ -331,32 +363,49 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
   if (GTK_IS_TREE_VIEW (focus_widget))
     {
       GtkTreeView       *tree = GTK_TREE_VIEW (focus_widget);
-      GtkTreePath       *path;
-      GtkTreeViewColumn *column;
-
-      gtk_tree_view_get_cursor (tree, &path, &column);
-      if (path)
+      GtkTreeSelection  *selection = gtk_tree_view_get_selection (tree);
+      GList             *selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+      if (selected_rows != NULL)
         {
           GdkRectangle  rect;
-          GtkAllocation tree_view_alloc;
+          GdkWindow         *widget_window;
+          GtkTreePath       *path = (GtkTreePath *) g_list_last (selected_rows)->data;
+          GtkTreeViewColumn *column = gtk_tree_view_get_column (tree, 0);
+
           gtk_tree_view_get_cell_area (tree, path, column, &rect);
+          g_list_free_full (selected_rows, (GDestroyNotify) gtk_tree_path_free);
 
-          /* limit to tree_view visible area */
-          gtk_widget_get_allocation (GTK_WIDGET (tree), &tree_view_alloc);
-          rect.y = CLAMP (rect.y, 0, tree_view_alloc.height - rect.height);
+          /* convert rect coordinates to widget_window coordinates */
+          gtk_tree_view_convert_bin_window_to_widget_coords (tree, rect.x, rect.y, &rect.x, &rect.y);
 
-          GdkWindow *bin_window = gtk_tree_view_get_bin_window (tree);
-          gtk_tree_path_free (path);
-          if (bin_window != NULL)
-            {
-              gtk_menu_popup_at_rect (menu,
-                                      bin_window,
-                                      &rect,
-                                      GDK_GRAVITY_SOUTH_WEST,
-                                      GDK_GRAVITY_NORTH_WEST,
-                                      event);
-              return TRUE;
-            }
+          widget_window = gtk_widget_get_window (focus_widget);
+          if (thunar_gtk_popup_menu_at_rect (menu, rect, widget_window))
+            return TRUE;
+        }
+    }
+
+  /* position menu in files inside icon view */
+  if (XFCE_IS_ICON_VIEW (focus_widget))
+    {
+      GList *selected_files = xfce_icon_view_get_selected_items (XFCE_ICON_VIEW (focus_widget));
+      if (selected_files != NULL)
+        {
+          GdkRectangle rect;
+          GdkWindow   *widget_window;
+          GtkTreePath *path = (GtkTreePath *) g_list_last (selected_files)->data;
+
+          xfce_icon_view_get_cell_area (XFCE_ICON_VIEW (focus_widget), path, NULL, &rect);
+          g_list_free_full (selected_files, (GDestroyNotify) gtk_tree_path_free);
+
+          /* convert rect coordinates to widget_window coordinates */
+          GtkAdjustment *h_adjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (focus_widget));
+          GtkAdjustment *v_adjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (focus_widget));
+          rect.x -= (int) gtk_adjustment_get_value (h_adjustment);
+          rect.y -= (int) gtk_adjustment_get_value (v_adjustment);
+
+          widget_window = gtk_widget_get_window (focus_widget);
+          if (thunar_gtk_popup_menu_at_rect (menu, rect, widget_window))
+            return TRUE;
         }
     }
 
@@ -386,18 +435,20 @@ thunar_gtk_menu_popup_at_focus (GtkMenu  *menu,
 }
 
 
+
 /**
  * thunar_gtk_menu_run_at_event:
  * @menu  : a #GtkMenu.
  * @event : a #GdkEvent which may be NULL if no previous event was stored.
  *
- * A simple wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
+ * A wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
  * main loop and returns only after the @menu was deactivated.
  *
  * This method automatically takes over the floating reference of @menu if any and
  * releases it on return. That means if you created the menu via gtk_menu_new() you'll
  * not need to take care of destroying the menu later.
  *
+ * If the menu is empty, this method will remove the menu instead of displaying it.
  **/
 void
 thunar_gtk_menu_run_at_event (GtkMenu  *menu,
@@ -405,11 +456,23 @@ thunar_gtk_menu_run_at_event (GtkMenu  *menu,
 {
   GMainLoop *loop;
   gulong     signal_id;
+  GList     *children;
+  gboolean   is_empty;
 
   _thunar_return_if_fail (GTK_IS_MENU (menu));
 
   /* take over the floating reference on the menu */
   g_object_ref_sink (G_OBJECT (menu));
+
+  /* if the menu is empty, it's better to hide it instead of displaying a strange-looking rectangle */
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  is_empty = children == NULL;
+  g_list_free (children);
+  if (is_empty)
+    {
+      g_object_unref (menu);
+      return;
+    }
 
   /* run an internal main loop */
   loop = g_main_loop_new (NULL, FALSE);
