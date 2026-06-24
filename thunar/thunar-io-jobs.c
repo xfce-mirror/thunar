@@ -720,8 +720,17 @@ again:
 ThunarJob *
 thunar_io_jobs_unlink_files (GList *file_list)
 {
-  return thunar_simple_job_new (_thunar_io_jobs_unlink, 1,
-                                THUNAR_TYPE_G_FILE_LIST, file_list);
+  ThunarJob *job = thunar_simple_job_new (_thunar_io_jobs_unlink, 1,
+                                          THUNAR_TYPE_G_FILE_LIST, file_list);
+
+#ifdef HAVE_LIBCANBERRA
+  /* If the files to unlink are in the trash, the job is an 'empty trash' job */
+  /* By design all files of a job share the same parent folder, so it is sufficient to check the first element of the list only */
+  if (thunar_g_file_is_trashed (file_list->data))
+    thunar_job_set_sound_name (job, "trash-empty");
+#endif
+
+  return job;
 }
 
 
@@ -740,6 +749,10 @@ thunar_io_jobs_move_files (GList *source_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
   thunar_job_set_total_files (job, source_file_list);
   thunar_job_set_pausable (job, TRUE);
+
+#ifdef HAVE_LIBCANBERRA
+  thunar_job_set_sound_name (job, "complete-copy");
+#endif
 
   return job;
 }
@@ -760,6 +773,10 @@ thunar_io_jobs_copy_files (GList *source_file_list,
                                  THUNAR_TRANSFER_JOB_COPY);
   thunar_job_set_total_files (job, source_file_list);
   thunar_job_set_pausable (job, TRUE);
+
+#ifdef HAVE_LIBCANBERRA
+  thunar_job_set_sound_name (job, "complete-copy");
+#endif
 
   return job;
 }
@@ -1053,10 +1070,18 @@ _thunar_io_jobs_trash (ThunarJob *job,
 ThunarJob *
 thunar_io_jobs_trash_files (GList *file_list)
 {
+  ThunarJob *job;
+
   _thunar_return_val_if_fail (file_list != NULL, NULL);
 
-  return thunar_simple_job_new (_thunar_io_jobs_trash, 1,
-                                THUNAR_TYPE_G_FILE_LIST, file_list);
+  job = thunar_simple_job_new (_thunar_io_jobs_trash, 1,
+                               THUNAR_TYPE_G_FILE_LIST, file_list);
+
+#ifdef HAVE_LIBCANBERRA
+  thunar_job_set_sound_name (job, "file-trash");
+#endif
+
+  return job;
 }
 
 
