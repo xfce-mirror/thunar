@@ -37,6 +37,7 @@
 
 
 
+static const int IMAGE_TARGET_LEN = 6; // "image/" without the final slash
 enum
 {
   PROP_0,
@@ -311,7 +312,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   ThunarClipboardPasteRequest *request = user_data;
   ThunarClipboardManager      *manager = THUNAR_CLIPBOARD_MANAGER (request->manager);
   ThunarApplication           *application;
-  gboolean                     path_copy = FALSE;
+  gboolean                     path_copy = TRUE;
   GList                       *file_list = NULL;
   gchar                       *data;
 
@@ -382,13 +383,15 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   g_slice_free (ThunarClipboardPasteRequest, request);
 }
 
+
+
 void
 thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
                                          GtkSelectionData *selection_data,
                                          gpointer          data)
 {
   ThunarClipboardPasteRequest *request = data;
-  char                        *data_type = gdk_atom_name (request->manager->image_target);
+  g_autofree char                        *mime_type_name = gdk_atom_name (request->manager->image_target);
   GError                      *error = NULL;
   g_autofree char             *cwd_name = g_file_get_path (request->target_file);
   g_autoptr (GFile) cwd = g_file_new_for_path (cwd_name);
@@ -397,40 +400,42 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
   g_autofree char *filename = NULL;
   g_autoptr (GFile) dest = NULL;
   g_autoptr (GFileOutputStream) output_stream = NULL;
+  char * image_type = NULL;
 
 
-  if (g_ascii_strncasecmp ("image/", data_type, 6) == 0)
-    {
-      data_type += 6;
-      filename_tmp = g_strconcat (_("Selection."), data_type, NULL);
-      filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
-      dest = g_file_new_for_path (g_strconcat (cwd_name, "/", filename, NULL));
 
-      output_stream = g_file_create (dest, G_FILE_CREATE_NONE, NULL, &error);
-
-      if (error != NULL)
-        {
-          g_warning ("%s\n", error->message);
-          g_clear_error (&error);
-          return;
-        }
-
-      if (output_stream != NULL)
-        {
-          const gchar *content = (const gchar *) gtk_selection_data_get_data (selection_data);
-          gint         length = gtk_selection_data_get_length (selection_data);
-
-          if (g_output_stream_write_all (G_OUTPUT_STREAM (output_stream), content, length, NULL, NULL, NULL))
-            {
-              g_output_stream_close (G_OUTPUT_STREAM (output_stream), NULL, NULL);
-            }
-        }
-    }
-  else
+  if (g_ascii_strncasecmp ("image/", mime_type_name, IMAGE_TARGET_LEN) != 0)
     {
       g_warning ("Tried to paste image but data was not an image\n");
+      return;
+    }
+
+  image_type = mime_type_name + IMAGE_TARGET_LEN;
+  filename_tmp = g_strconcat (_("Selection."), image_type, NULL);
+  filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
+  dest = g_file_new_for_path (g_strconcat (cwd_name, "/", filename, NULL));
+
+  output_stream = g_file_create (dest, G_FILE_CREATE_NONE, NULL, &error);
+
+  if (error != NULL)
+    {
+      g_warning ("%s\n", error->message);
+      g_clear_error (&error);
+      return;
+    }
+
+  if (output_stream != NULL)
+    {
+      const gchar *content = (const gchar *) gtk_selection_data_get_data (selection_data);
+      gint         length = gtk_selection_data_get_length (selection_data);
+
+      if (g_output_stream_write_all (G_OUTPUT_STREAM (output_stream), content, length, NULL, NULL, NULL))
+        {
+          g_output_stream_close (G_OUTPUT_STREAM (output_stream), NULL, NULL);
+        }
     }
 }
+
 
 
 static void
@@ -462,7 +467,7 @@ thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
               break;
             }
 
-          if (g_ascii_strncasecmp ("image/", gdk_atom_name (targets[n]), 6) == 0)
+          if (g_ascii_strncasecmp ("image/", gdk_atom_name (targets[n]), IMAGE_TARGET_LEN) == 0)
             {
               manager->image_target = targets[n];
               break;
@@ -719,7 +724,6 @@ thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
 {
   _thunar_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
 
   return (manager->files_cutted && g_list_find (manager->files, file) != NULL);
 }
