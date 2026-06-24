@@ -410,6 +410,7 @@ thunar_context_menu_order_model_get_custom_actions (void)
               item->name = g_strdup (name);
               item->icon = g_strdup (icon);
               item->tooltip = g_strdup (tooltip);
+              custom_actions = g_list_append (custom_actions, item);
             }
 
           g_free (custom_action_id);
@@ -417,8 +418,6 @@ thunar_context_menu_order_model_get_custom_actions (void)
           g_free (icon);
           g_free (tooltip);
           g_free (id);
-
-          custom_actions = g_list_append (custom_actions, item);
         }
       g_list_free_full (provider_items, g_object_unref);
     }
@@ -561,8 +560,6 @@ thunar_context_menu_order_model_item_new (const gchar *id,
                                           gboolean     visibility)
 {
   ThunarContextMenuOrderModelItem *item;
-
-  _thunar_return_val_if_fail (id != NULL, NULL);
 
   item = g_new0 (ThunarContextMenuOrderModelItem, 1);
   item->id = g_strdup (id);
