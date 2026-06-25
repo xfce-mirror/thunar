@@ -400,6 +400,7 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
   g_autoptr (ThunarFile) current_dir = thunar_file_get (cwd, NULL);
   g_autofree char *filename_tmp = NULL;
   g_autofree char *filename = NULL;
+  g_autofree char *dest_path = NULL;
   g_autoptr (GFile) dest = NULL;
   g_autoptr (GFileOutputStream) output_stream = NULL;
   char *image_type = NULL;
@@ -408,22 +409,23 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
 
   if (g_ascii_strncasecmp (IMAGE_TARGET_STRING, mime_type_name, IMAGE_TARGET_LEN) != 0)
     {
-      g_warning ("Tried to paste image but data was not an image\n");
-      return;
+      g_warning ("Tried to paste image but data was not an image");
+      goto out;
     }
 
   image_type = mime_type_name + IMAGE_TARGET_LEN;
   filename_tmp = g_strconcat (_("Selection."), image_type, NULL);
   filename = thunar_util_next_new_file_name (current_dir, filename_tmp, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
-  dest = g_file_new_for_path (g_strconcat (cwd_name, "/", filename, NULL));
+  dest_path = g_strconcat (cwd_name, "/", filename, NULL);
+  dest = g_file_new_for_path (dest_path);
 
   output_stream = g_file_create (dest, G_FILE_CREATE_NONE, NULL, &error);
 
   if (error != NULL)
     {
-      g_warning ("%s\n", error->message);
+      g_warning ("%s", error->message);
       g_clear_error (&error);
-      return;
+      goto out;
     }
 
   if (output_stream != NULL)
@@ -436,6 +438,16 @@ thunar_clipboard_manager_image_received (GtkClipboard     *clipboard,
           g_output_stream_close (G_OUTPUT_STREAM (output_stream), NULL, NULL);
         }
     }
+
+out:
+  /* free the request */
+  if (G_LIKELY (request->widget != NULL))
+    g_object_remove_weak_pointer (G_OBJECT (request->widget), (gpointer) &request->widget);
+  if (G_LIKELY (request->new_files_closure != NULL))
+    g_closure_unref (request->new_files_closure);
+  g_object_unref (G_OBJECT (request->manager));
+  g_object_unref (request->target_file);
+  g_slice_free (ThunarClipboardPasteRequest, request);
 }
 
 
@@ -469,7 +481,8 @@ thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
               break;
             }
 
-          if (g_ascii_strncasecmp (IMAGE_TARGET_STRING, gdk_atom_name (targets[n]), IMAGE_TARGET_LEN) == 0)
+          g_autofree gchar *target_name = gdk_atom_name (targets[n]);
+          if (g_ascii_strncasecmp (IMAGE_TARGET_STRING, target_name, IMAGE_TARGET_LEN) == 0)
             {
               manager->image_target = targets[n];
               break;
