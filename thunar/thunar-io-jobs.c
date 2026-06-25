@@ -190,7 +190,7 @@ _thunar_io_jobs_create (ThunarJob *job,
   template_file = g_value_get_object (&g_array_index (param_values, GValue, 1));
 
   /* we know the total amount of files to be processed */
-  thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(file_list));
 
   /* check if we need to open the template */
   if (template_file != NULL)
@@ -391,7 +391,7 @@ _thunar_io_jobs_mkdir (ThunarJob *job,
   file_list = g_value_get_boxed (&g_array_index (param_values, GValue, 0));
 
   /* we know the total list of files to process */
-  thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(file_list));
 
   log_mode = thunar_job_get_log_mode (job);
 
@@ -641,7 +641,7 @@ _thunar_io_jobs_unlink (ThunarJob *job,
     }
 
   /* we know the total list of files to process */
-  thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(file_list));
 
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
@@ -747,7 +747,7 @@ thunar_io_jobs_move_files (GList *source_file_list,
 
   job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
-  thunar_job_set_total_files (job, source_file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(source_file_list));
   thunar_job_set_pausable (job, TRUE);
 
 #ifdef HAVE_LIBCANBERRA
@@ -771,7 +771,7 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 
   job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_COPY);
-  thunar_job_set_total_files (job, source_file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(source_file_list));
   thunar_job_set_pausable (job, TRUE);
 
 #ifdef HAVE_LIBCANBERRA
@@ -898,7 +898,7 @@ _thunar_io_jobs_link (ThunarJob *job,
   target_file_list = g_value_get_boxed (&g_array_index (param_values, GValue, 1));
 
   /* we know the total list of paths to process */
-  thunar_job_set_total_files (THUNAR_JOB (job), source_file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(source_file_list));
 
   /* take a reference on the thumbnail cache */
   application = thunar_application_get ();
@@ -1145,7 +1145,7 @@ _thunar_io_jobs_chown (ThunarJob *job,
     }
 
   /* we know the total list of files to process */
-  thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(file_list));
 
   /* change the ownership of all files */
   for (lp = file_list; lp != NULL && err == NULL; lp = lp->next, n_processed++)
@@ -1288,7 +1288,7 @@ _thunar_io_jobs_chmod (ThunarJob *job,
     }
 
   /* we know the total list of files to process */
-  thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+  thunar_job_set_n_total_files (THUNAR_JOB (job), g_list_length(file_list));
 
   /* change the ownership of all files */
   for (lp = file_list; lp != NULL && err == NULL; lp = lp->next, n_processed++)
