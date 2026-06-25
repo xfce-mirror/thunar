@@ -72,6 +72,7 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
+#include <xfconf/xfconf.h>
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 
@@ -1064,10 +1065,16 @@ thunar_application_launch_finished (ThunarJob *job,
 
   if (thunar_job_get_sound_name (job) != NULL && !thunar_job_is_cancelled (job))
     {
-      ThunarApplication *application = thunar_application_get ();
+      XfconfChannel *channel;
 
-      ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name (job), NULL);
-      g_object_unref (G_OBJECT (application));
+      channel = xfconf_channel_get ("xsettings");
+      if (xfconf_channel_get_bool (channel, "/Net/EnableEventSounds", FALSE))
+        {
+          ThunarApplication *application = thunar_application_get ();
+
+          ca_context_play (application->canberra, 0, CA_PROP_EVENT_ID, thunar_job_get_sound_name (job), NULL);
+          g_object_unref (G_OBJECT (application));
+        }
     }
 #endif
 
