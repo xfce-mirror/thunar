@@ -111,9 +111,6 @@ void
 thunar_job_set_n_total_files (ThunarJob *job, guint total_files);
 
 void
-thunar_job_set_total_files (ThunarJob *job,
-                            GList     *total_files);
-void
 thunar_job_set_pausable (ThunarJob *job,
                          gboolean   pausable);
 gboolean

@@ -85,7 +85,6 @@ struct _ThunarJobPrivate
   ThunarJobResponse      earlier_ask_delete_response;
   ThunarJobResponse      earlier_ask_skip_response;
 
-  GList                 *total_files;
   guint                  n_total_files;
   gboolean               pausable;
   gboolean               paused; /* the job has been manually paused using the UI */
@@ -1280,20 +1279,6 @@ guint
 thunar_job_get_n_total_files (ThunarJob *job)
 {
   return job->priv->n_total_files;
-}
-
-
-
-void
-thunar_job_set_total_files (ThunarJob *job,
-                            GList     *total_files)
-{
-  _thunar_return_if_fail (THUNAR_IS_JOB (job));
-  _thunar_return_if_fail (job->priv->total_files == NULL);
-  _thunar_return_if_fail (total_files != NULL);
-
-  job->priv->total_files = total_files;
-  job->priv->n_total_files = g_list_length (total_files);
 }
 
 
