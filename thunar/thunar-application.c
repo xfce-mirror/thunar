@@ -1077,9 +1077,9 @@ thunar_application_launch_finished (ThunarJob *job,
           ThunarApplication *application = thunar_application_get ();
 
           ca_context_play (application->canberra, 0,
-	                   CA_PROP_EVENT_ID, thunar_job_get_sound_name (job),
-	                   CA_PROP_CANBERRA_XDG_THEME_NAME, xfconf_channel_get_string (channel, "/Net/SoundThemeName", "freedesktop"),
-			   NULL);
+                           CA_PROP_EVENT_ID, thunar_job_get_sound_name (job),
+                           CA_PROP_CANBERRA_XDG_THEME_NAME, xfconf_channel_get_string (channel, "/Net/SoundThemeName", "freedesktop"),
+                           NULL);
           g_object_unref (G_OBJECT (application));
         }
     }
