@@ -74,7 +74,7 @@
 #include <libxfce4util/libxfce4util.h>
 
 #ifdef HAVE_LIBCANBERRA
-/* only when Thunar is complied with libcanberra sound support is xfconf used in thunar-application.c */
+/* only when Thunar is compiled with libcanberra sound support is xfconf used in thunar-application.c */
 #include <xfconf/xfconf.h>
 #endif
 
