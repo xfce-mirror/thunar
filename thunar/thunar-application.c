@@ -72,11 +72,7 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
-
-#ifdef HAVE_LIBCANBERRA
-/* only when Thunar is compiled with libcanberra sound support is xfconf used in thunar-application.c */
 #include <xfconf/xfconf.h>
-#endif
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 
@@ -1075,12 +1071,14 @@ thunar_application_launch_finished (ThunarJob *job,
       if (xfconf_channel_get_bool (channel, "/Net/EnableEventSounds", FALSE))
         {
           ThunarApplication *application = thunar_application_get ();
+	  gchar             *soundthemename = xfconf_channel_get_string (channel, "/Net/SoundThemeName", "freedesktop");
 
           ca_context_play (application->canberra, 0,
                            CA_PROP_EVENT_ID, thunar_job_get_sound_name (job),
-                           CA_PROP_CANBERRA_XDG_THEME_NAME, xfconf_channel_get_string (channel, "/Net/SoundThemeName", "freedesktop"),
+                           CA_PROP_CANBERRA_XDG_THEME_NAME, soundthemename,
                            NULL);
-          g_object_unref (G_OBJECT (application));
+          g_free(soundthemename);
+	  g_object_unref (G_OBJECT (application));
         }
     }
 #endif
