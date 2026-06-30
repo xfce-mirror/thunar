@@ -162,8 +162,10 @@ foreach function : functions
 endforeach
 
 headers = [
+  'linux/ioprio.h',
   'sys/param.h',
   'sys/stat.h',
+  'sys/syscall.h',
   'sys/types.h',
   'sys/wait.h',
   'errno.h',
@@ -175,7 +177,9 @@ headers = [
   'malloc.h',
   'memory.h',
   'paths.h',
+  'pthread.h',
   'pwd.h',
+  'sched.h',
   'signal.h',
   'stdarg.h',
   'stdio.h',
