@@ -2141,7 +2141,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
       /* if the source offers both copy and move and the GTK+ suggested action is copy, try to be smart telling whether
        * we should copy or move by default by checking whether the source and target are on the same disk.
        */
-      if ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE)) != 0
+      if ((actions & GDK_ACTION_COPY) != 0 && (actions & GDK_ACTION_MOVE) != 0
           && (suggested_action == GDK_ACTION_COPY))
         {
           /* default to move as suggested action */
