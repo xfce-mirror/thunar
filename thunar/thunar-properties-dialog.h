@@ -48,7 +48,7 @@ typedef struct _ThunarPropertiesDialog      ThunarPropertiesDialog;
 #define THUNAR_PROPERTIES_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PROPERTIES_DIALOG, ThunarPropertiesDialog))
 
 GType
-thunar_properties_dialog_get_type (void) G_GNUC_CONST;
+thunar_properties_dialog_get_type (void);
 
 GtkWidget *
 thunar_properties_dialog_new (GtkWindow                  *parent,

@@ -44,7 +44,7 @@ typedef enum
 } ThunarDetailsViewAction;
 
 GType
-thunar_details_view_get_type (void) G_GNUC_CONST;
+thunar_details_view_get_type (void);
 void
 thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *, gboolean);
 void

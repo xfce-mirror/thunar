@@ -62,7 +62,7 @@ struct _ThunarContextMenuOrderModelItem
 };
 
 GType
-thunar_context_menu_order_model_get_type (void) G_GNUC_CONST;
+thunar_context_menu_order_model_get_type (void);
 
 ThunarContextMenuOrderModel *
 thunar_context_menu_order_model_get_default (void);

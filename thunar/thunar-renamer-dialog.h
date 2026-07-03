@@ -35,7 +35,7 @@ typedef struct _ThunarRenamerDialog      ThunarRenamerDialog;
 #define THUNAR_RENAMER_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
 
 GType
-thunar_renamer_dialog_get_type (void) G_GNUC_CONST;
+thunar_renamer_dialog_get_type (void);
 
 void
 thunar_show_renamer_dialog (gpointer     parent,

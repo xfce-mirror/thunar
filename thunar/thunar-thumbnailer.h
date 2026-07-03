@@ -36,7 +36,7 @@ typedef struct _ThunarThumbnailer      ThunarThumbnailer;
 #define THUNAR_THUMBNAILER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
 
 GType
-thunar_thumbnailer_get_type (void) G_GNUC_CONST;
+thunar_thumbnailer_get_type (void);
 
 ThunarThumbnailer *
 thunar_thumbnailer_get (void) G_GNUC_MALLOC;

@@ -48,7 +48,7 @@ enum _ThunarDeviceKind
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarDevice, g_object_unref)
 
 GType
-thunar_device_get_type (void) G_GNUC_CONST;
+thunar_device_get_type (void);
 
 const gchar *
 thunar_device_get_eject_label (const ThunarDevice *device);

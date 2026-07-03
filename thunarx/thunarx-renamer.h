@@ -105,7 +105,7 @@ struct _ThunarxRenamer
 };
 
 GType
-thunarx_renamer_get_type (void) G_GNUC_CONST;
+thunarx_renamer_get_type (void);
 
 const gchar *
 thunarx_renamer_get_help_url (ThunarxRenamer *renamer);

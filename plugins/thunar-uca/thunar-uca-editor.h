@@ -36,7 +36,7 @@ typedef struct _ThunarUcaEditor      ThunarUcaEditor;
 #define THUNAR_UCA_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
 
 GType
-thunar_uca_editor_get_type (void) G_GNUC_CONST;
+thunar_uca_editor_get_type (void);
 void
 thunar_uca_editor_register_type (ThunarxProviderPlugin *plugin);
 

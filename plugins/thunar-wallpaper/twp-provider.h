@@ -36,7 +36,7 @@ typedef struct _TwpProvider      TwpProvider;
 #define TWP_PROVIDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TWP_TYPE_PROVIDER, TwpProviderClass))
 
 GType
-twp_provider_get_type (void) G_GNUC_CONST;
+twp_provider_get_type (void);
 void
 twp_provider_register_type (ThunarxProviderPlugin *plugin);
 

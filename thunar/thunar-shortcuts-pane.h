@@ -35,7 +35,7 @@ typedef struct _ThunarShortcutsPane      ThunarShortcutsPane;
 #define THUNAR_SHORTCUTS_PANE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPaneClass))
 
 GType
-thunar_shortcuts_pane_get_type (void) G_GNUC_CONST;
+thunar_shortcuts_pane_get_type (void);
 void
 thunar_shortcuts_pane_add_shortcut (ThunarShortcutsPane *shortcuts_pane,
                                     ThunarFile          *file);

@@ -49,7 +49,7 @@ typedef enum
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarApplication, g_object_unref)
 
 GType
-thunar_application_get_type (void) G_GNUC_CONST;
+thunar_application_get_type (void);
 
 ThunarApplication *
 thunar_application_get (void);

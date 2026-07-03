@@ -37,7 +37,7 @@ typedef struct _ThunarGroup      ThunarGroup;
 #define THUNAR_GROUP_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_GROUP, ThunarGroupClass))
 
 GType
-thunar_group_get_type (void) G_GNUC_CONST;
+thunar_group_get_type (void);
 
 guint32
 thunar_group_get_id (ThunarGroup *group);
@@ -56,7 +56,7 @@ typedef struct _ThunarUser      ThunarUser;
 #define THUNAR_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_USER, ThunarUserClass))
 
 GType
-thunar_user_get_type (void) G_GNUC_CONST;
+thunar_user_get_type (void);
 
 GList *
 thunar_user_get_groups (ThunarUser *user);
@@ -79,7 +79,7 @@ typedef struct _ThunarUserManager      ThunarUserManager;
 #define THUNAR_USER_MANAGER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_USER_MANAGER, ThunarUserManagerClass))
 
 GType
-thunar_user_manager_get_type (void) G_GNUC_CONST;
+thunar_user_manager_get_type (void);
 
 ThunarUserManager *
 thunar_user_manager_get_default (void) G_GNUC_WARN_UNUSED_RESULT;

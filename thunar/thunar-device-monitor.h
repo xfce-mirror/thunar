@@ -35,7 +35,7 @@ typedef struct _ThunarDeviceMonitor      ThunarDeviceMonitor;
 #define THUNAR_DEVICE_MONITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitorClass))
 
 GType
-thunar_device_monitor_get_type (void) G_GNUC_CONST;
+thunar_device_monitor_get_type (void);
 
 ThunarDeviceMonitor *
 thunar_device_monitor_get (void);

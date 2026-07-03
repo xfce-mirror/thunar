@@ -55,7 +55,7 @@ typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
 #define THUNAR_TREE_VIEW_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
 
 GType
-thunar_tree_view_model_get_type (void) G_GNUC_CONST;
+thunar_tree_view_model_get_type (void);
 
 ThunarTreeViewModel *
 thunar_tree_view_model_new (void);

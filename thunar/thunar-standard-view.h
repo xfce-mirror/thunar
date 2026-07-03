@@ -185,7 +185,7 @@ struct _ThunarStandardView
 };
 
 GType
-thunar_standard_view_get_type (void) G_GNUC_CONST;
+thunar_standard_view_get_type (void);
 
 void
 thunar_standard_view_context_menu (ThunarStandardView *standard_view);

@@ -33,7 +33,7 @@ typedef struct _ThunarDBusService      ThunarDBusService;
 #define THUNAR_DBUS_SERVICE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusServicetClass))
 
 GType
-thunar_dbus_service_get_type (void) G_GNUC_CONST;
+thunar_dbus_service_get_type (void);
 
 gboolean
 thunar_dbus_service_export_on_connection (ThunarDBusService *service,
