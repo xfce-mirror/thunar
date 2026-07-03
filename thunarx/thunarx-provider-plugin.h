@@ -82,7 +82,7 @@ struct _ThunarxProviderPluginIface
 };
 
 GType
-thunarx_provider_plugin_get_type (void) G_GNUC_CONST;
+thunarx_provider_plugin_get_type (void);
 
 gboolean
 thunarx_provider_plugin_get_resident (const ThunarxProviderPlugin *plugin);

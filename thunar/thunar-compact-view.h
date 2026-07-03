@@ -36,7 +36,7 @@ typedef struct _ThunarCompactView      ThunarCompactView;
 #define THUNAR_COMPACT_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_VIEW, ThunarCompactViewClass))
 
 GType
-thunar_compact_view_get_type (void) G_GNUC_CONST;
+thunar_compact_view_get_type (void);
 
 G_END_DECLS;
 

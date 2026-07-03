@@ -99,7 +99,7 @@ enum _ThunarShortcutGroup
 
 
 GType
-thunar_shortcuts_model_get_type (void) G_GNUC_CONST;
+thunar_shortcuts_model_get_type (void);
 
 ThunarShortcutsModel *
 thunar_shortcuts_model_get_default (void);

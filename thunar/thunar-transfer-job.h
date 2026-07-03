@@ -50,7 +50,7 @@ typedef struct _ThunarTransferJob        ThunarTransferJob;
 #define THUNAR_TRANSFER_JOB_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TRANSFER_JOB, ThunarTransferJobClass))
 
 GType
-thunar_transfer_job_get_type (void) G_GNUC_CONST;
+thunar_transfer_job_get_type (void);
 
 ThunarJob *
 thunar_transfer_job_new (GList                *source_file_list,

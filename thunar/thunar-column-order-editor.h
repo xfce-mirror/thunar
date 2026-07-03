@@ -38,7 +38,7 @@ typedef struct _ThunarColumnOrderEditor      ThunarColumnOrderEditor;
 #define THUNAR_COLUMN_ORDER_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_COLUMN_ORDER_EDITOR, ThunarColumnOrderEditorClass))
 
 GType
-thunar_column_order_editor_get_type (void) G_GNUC_CONST;
+thunar_column_order_editor_get_type (void);
 
 void
 thunar_column_order_editor_new_and_show (GtkWidget *window);

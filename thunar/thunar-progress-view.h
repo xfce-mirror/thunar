@@ -38,7 +38,7 @@ typedef struct _ThunarProgressView      ThunarProgressView;
 #define THUNAR_PROGRESS_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PROGRESS_VIEW, ThunarProgressViewClass))
 
 GType
-thunar_progress_view_get_type (void) G_GNUC_CONST;
+thunar_progress_view_get_type (void);
 
 GtkWidget *
 thunar_progress_view_new_with_job (ThunarJob *job) G_GNUC_MALLOC;

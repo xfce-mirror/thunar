@@ -118,7 +118,7 @@ typedef enum
 } ThunarWindowAction;
 
 GType
-thunar_window_get_type (void) G_GNUC_CONST;
+thunar_window_get_type (void);
 ThunarFile *
 thunar_window_get_current_directory (ThunarWindow *window);
 void

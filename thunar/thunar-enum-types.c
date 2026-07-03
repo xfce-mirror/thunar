@@ -31,7 +31,7 @@ static void
 thunar_thumbnail_size_from_icon_size (const GValue *src_value,
                                       GValue       *dst_value);
 static ThunarIconSize
-thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level);
+thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level) G_GNUC_CONST;
 
 
 

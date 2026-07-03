@@ -34,7 +34,7 @@ typedef struct _ThunarLocationBar      ThunarLocationBar;
 
 
 GType
-thunar_location_bar_get_type (void) G_GNUC_CONST;
+thunar_location_bar_get_type (void);
 
 GtkWidget *
 thunar_location_bar_new (void);

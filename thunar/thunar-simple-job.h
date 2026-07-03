@@ -53,7 +53,7 @@ typedef struct _ThunarSimpleJob      ThunarSimpleJob;
 #define THUNAR_SIMPLE_JOB_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
 
 GType
-thunar_simple_job_get_type (void) G_GNUC_CONST;
+thunar_simple_job_get_type (void);
 
 ThunarJob *
 thunar_simple_job_new (ThunarSimpleJobFunc func,

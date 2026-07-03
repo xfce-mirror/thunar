@@ -51,7 +51,7 @@ struct _ThunarNavigatorIface
 };
 
 GType
-thunar_navigator_get_type (void) G_GNUC_CONST;
+thunar_navigator_get_type (void);
 
 ThunarFile *
 thunar_navigator_get_current_directory (ThunarNavigator *navigator);

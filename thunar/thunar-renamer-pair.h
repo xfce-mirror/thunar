@@ -35,7 +35,7 @@ struct _ThunarRenamerPair
 };
 
 GType
-thunar_renamer_pair_get_type (void) G_GNUC_CONST;
+thunar_renamer_pair_get_type (void);
 
 ThunarRenamerPair *
 thunar_renamer_pair_new (ThunarFile  *file,

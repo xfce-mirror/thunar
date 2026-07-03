@@ -36,7 +36,7 @@ typedef struct _TexOpenTerminal      TexOpenTerminal;
 #define TEX_OPEN_TERMINAL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminalClass))
 
 GType
-tex_open_terminal_get_type (void) G_GNUC_CONST;
+tex_open_terminal_get_type (void);
 void
 tex_open_terminal_register_type (ThunarxProviderPlugin *plugin);
 

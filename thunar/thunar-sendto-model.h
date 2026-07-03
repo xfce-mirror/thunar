@@ -35,7 +35,7 @@ typedef struct _ThunarSendtoModel      ThunarSendtoModel;
 #define THUNAR_SENDTO_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SENDTO_MODEL))
 
 GType
-thunar_sendto_model_get_type (void) G_GNUC_CONST;
+thunar_sendto_model_get_type (void);
 
 ThunarSendtoModel *
 thunar_sendto_model_get_default (void) G_GNUC_WARN_UNUSED_RESULT;

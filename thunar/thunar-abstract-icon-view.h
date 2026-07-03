@@ -47,7 +47,7 @@ struct _ThunarAbstractIconView
 };
 
 GType
-thunar_abstract_icon_view_get_type (void) G_GNUC_CONST;
+thunar_abstract_icon_view_get_type (void);
 
 G_END_DECLS;
 

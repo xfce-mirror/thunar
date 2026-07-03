@@ -37,7 +37,7 @@ typedef struct _ThunarImageClass   ThunarImageClass;
 typedef struct _ThunarImage        ThunarImage;
 
 GType
-thunar_image_get_type (void) G_GNUC_CONST;
+thunar_image_get_type (void);
 
 GtkWidget *
 thunar_image_new (void) G_GNUC_MALLOC;

@@ -36,7 +36,7 @@ typedef struct _ThunarSbrRemoveRenamer      ThunarSbrRemoveRenamer;
 #define THUNAR_SBR_REMOVE_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_REMOVE_RENAMER, ThunarSbrRemoveRenamerClass))
 
 GType
-thunar_sbr_remove_renamer_get_type (void) G_GNUC_CONST;
+thunar_sbr_remove_renamer_get_type (void);
 void
 thunar_sbr_remove_renamer_register_type (ThunarxProviderPlugin *plugin);
 

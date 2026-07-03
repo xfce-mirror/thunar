@@ -40,7 +40,7 @@ typedef struct _ThunarxProviderFactory      ThunarxProviderFactory;
 #define THUNARX_PROVIDER_FACTORY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactoryClass))
 
 GType
-thunarx_provider_factory_get_type (void) G_GNUC_CONST;
+thunarx_provider_factory_get_type (void);
 
 ThunarxProviderFactory *
 thunarx_provider_factory_get_default (void);

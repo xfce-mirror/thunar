@@ -35,7 +35,7 @@ typedef struct _ThunarFolder      ThunarFolder;
 #define THUNAR_FOLDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FOLDER, ThunarFolderClass))
 
 GType
-thunar_folder_get_type (void) G_GNUC_CONST;
+thunar_folder_get_type (void);
 
 ThunarFolder *
 thunar_folder_get_for_file (ThunarFile *file);

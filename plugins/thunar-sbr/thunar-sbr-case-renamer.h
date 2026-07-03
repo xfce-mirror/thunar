@@ -36,7 +36,7 @@ typedef struct _ThunarSbrCaseRenamer      ThunarSbrCaseRenamer;
 #define THUNAR_SBR_CASE_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_CASE_RENAMER, ThunarSbrCaseRenamerClass))
 
 GType
-thunar_sbr_case_renamer_get_type (void) G_GNUC_CONST;
+thunar_sbr_case_renamer_get_type (void);
 void
 thunar_sbr_case_renamer_register_type (ThunarxProviderPlugin *plugin);
 

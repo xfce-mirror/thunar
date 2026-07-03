@@ -39,7 +39,7 @@ typedef struct _ThunarDeepCountJob        ThunarDeepCountJob;
 #define THUNAR_DEEP_COUNT_JOB_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
 
 GType
-thunar_deep_count_job_get_type (void) G_GNUC_CONST;
+thunar_deep_count_job_get_type (void);
 
 ThunarDeepCountJob *
 thunar_deep_count_job_new (GList              *files,
