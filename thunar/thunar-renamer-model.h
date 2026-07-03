@@ -56,7 +56,7 @@ typedef enum
 } ThunarRenamerModelColumn;
 
 GType
-thunar_renamer_model_get_type (void) G_GNUC_CONST;
+thunar_renamer_model_get_type (void);
 
 ThunarRenamerModel *
 thunar_renamer_model_new (void) G_GNUC_MALLOC;

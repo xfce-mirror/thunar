@@ -35,7 +35,7 @@ typedef struct _ThunarRenamerProgress      ThunarRenamerProgress;
 #define THUNAR_RENAMER_PROGRESS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgressClass))
 
 GType
-thunar_renamer_progress_get_type (void) G_GNUC_CONST;
+thunar_renamer_progress_get_type (void);
 
 GtkWidget *
 thunar_renamer_progress_new (void) G_GNUC_MALLOC;

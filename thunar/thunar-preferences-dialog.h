@@ -35,7 +35,7 @@ typedef struct _ThunarPreferencesDialog      ThunarPreferencesDialog;
 #define THUNAR_PREFERENCES_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialogClass))
 
 GType
-thunar_preferences_dialog_get_type (void) G_GNUC_CONST;
+thunar_preferences_dialog_get_type (void);
 
 GtkWidget *
 thunar_preferences_dialog_new (GtkWindow *parent) G_GNUC_MALLOC;

@@ -68,7 +68,7 @@ struct _ThunarViewIface
 };
 
 GType
-thunar_view_get_type (void) G_GNUC_CONST;
+thunar_view_get_type (void);
 
 gboolean
 thunar_view_get_loading (ThunarView *view);

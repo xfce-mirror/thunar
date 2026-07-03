@@ -35,7 +35,7 @@ typedef struct _ThunarContextMenuOrderEditorClass ThunarContextMenuOrderEditorCl
 #define THUNAR_CONTEXT_MENU_ORDER_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, ThunarContextMenuOrderEditorClass))
 
 GType
-thunar_context_menu_order_editor_get_type (void) G_GNUC_CONST;
+thunar_context_menu_order_editor_get_type (void);
 
 void
 thunar_context_menu_order_editor_show (GtkWidget *window);

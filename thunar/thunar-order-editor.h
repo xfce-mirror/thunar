@@ -50,7 +50,7 @@ struct _ThunarOrderEditor
 };
 
 GType
-thunar_order_editor_get_type (void) G_GNUC_CONST;
+thunar_order_editor_get_type (void);
 
 GtkContainer *
 thunar_order_editor_get_description_area (ThunarOrderEditor *order_editor);

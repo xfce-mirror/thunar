@@ -37,7 +37,7 @@ typedef struct _ThunarToolbarOrderEditorClass ThunarToolbarOrderEditorClass;
 #define THUNAR_TOOLBAR_ORDER_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, ThunarToolbarOrderEditorClass))
 
 GType
-thunar_toolbar_order_editor_get_type (void) G_GNUC_CONST;
+thunar_toolbar_order_editor_get_type (void);
 
 void
 thunar_toolbar_order_editor_new_and_show (GtkWidget *window,

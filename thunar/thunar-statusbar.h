@@ -51,7 +51,7 @@ typedef enum
 } ThunarStatusBarAction;
 
 GType
-thunar_statusbar_get_type (void) G_GNUC_CONST;
+thunar_statusbar_get_type (void);
 
 GtkWidget *
 thunar_statusbar_new (void);

@@ -38,7 +38,7 @@ typedef struct _ThunarProgressDialog      ThunarProgressDialog;
 #define THUNAR_PROGRESS_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PROGRESS_DIALOG, ThunarProgressDialogClass))
 
 GType
-thunar_progress_dialog_get_type (void) G_GNUC_CONST;
+thunar_progress_dialog_get_type (void);
 
 GtkWidget *
 thunar_progress_dialog_new (void);

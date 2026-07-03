@@ -62,7 +62,7 @@ struct _ThunarxPropertyPageProviderIface
 };
 
 GType
-thunarx_property_page_provider_get_type (void) G_GNUC_CONST;
+thunarx_property_page_provider_get_type (void);
 
 GList *
 thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,

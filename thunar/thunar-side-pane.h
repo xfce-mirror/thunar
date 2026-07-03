@@ -45,7 +45,7 @@ struct _ThunarSidePaneIface
 };
 
 GType
-thunar_side_pane_get_type (void) G_GNUC_CONST;
+thunar_side_pane_get_type (void);
 
 gboolean
 thunar_side_pane_get_show_hidden (ThunarSidePane *side_pane);

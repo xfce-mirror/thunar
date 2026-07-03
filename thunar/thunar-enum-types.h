@@ -56,7 +56,7 @@ typedef enum
 } ThunarRenamerMode;
 
 GType
-thunar_renamer_mode_get_type (void) G_GNUC_CONST;
+thunar_renamer_mode_get_type (void);
 
 
 
@@ -84,7 +84,7 @@ typedef enum
 } ThunarDateStyle;
 
 GType
-thunar_date_style_get_type (void) G_GNUC_CONST;
+thunar_date_style_get_type (void);
 
 
 #define THUNAR_TYPE_COLUMN (thunar_column_get_type ())
@@ -141,7 +141,7 @@ typedef enum
 } ThunarColumn;
 
 GType
-thunar_column_get_type (void) G_GNUC_CONST;
+thunar_column_get_type (void);
 const gchar *
 thunar_column_string_from_value (ThunarColumn value);
 gboolean
@@ -177,7 +177,7 @@ typedef enum
 #define THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT 50
 
 GType
-thunar_icon_size_get_type (void) G_GNUC_CONST;
+thunar_icon_size_get_type (void);
 
 
 #define THUNAR_TYPE_THUMBNAIL_MODE (thunar_thumbnail_mode_get_type ())
@@ -196,7 +196,7 @@ typedef enum
 } ThunarThumbnailMode;
 
 GType
-thunar_thumbnail_mode_get_type (void) G_GNUC_CONST;
+thunar_thumbnail_mode_get_type (void);
 
 
 #define THUNAR_TYPE_THUMBNAIL_SIZE (thunar_thumbnail_size_get_type ())
@@ -219,9 +219,9 @@ typedef enum
 } ThunarThumbnailSize;
 
 GType
-thunar_thumbnail_size_get_type (void) G_GNUC_CONST;
+thunar_thumbnail_size_get_type (void);
 const char *
-thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST;
+thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size);
 ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size);
 
@@ -246,7 +246,7 @@ typedef enum
 } ThunarParallelCopyMode;
 
 GType
-thunar_parallel_copy_mode_get_type (void) G_GNUC_CONST;
+thunar_parallel_copy_mode_get_type (void);
 
 
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
@@ -267,7 +267,7 @@ typedef enum
 } ThunarRecursivePermissionsMode;
 
 GType
-thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
+thunar_recursive_permissions_get_type (void);
 
 
 #define THUNAR_TYPE_RECURSIVE_SEARCH (thunar_recursive_search_get_type ())
@@ -287,7 +287,7 @@ typedef enum
 } ThunarRecursiveSearchMode;
 
 GType
-thunar_recursive_search_get_type (void) G_GNUC_CONST;
+thunar_recursive_search_get_type (void);
 
 
 #define THUNAR_TYPE_ZOOM_LEVEL (thunar_zoom_level_get_type ())
@@ -317,11 +317,11 @@ typedef enum
 } ThunarZoomLevel;
 
 GType
-thunar_zoom_level_get_type (void) G_GNUC_CONST;
+thunar_zoom_level_get_type (void);
 ThunarThumbnailSize
-thunar_zoom_level_to_thumbnail_size (ThunarZoomLevel zoom_level) G_GNUC_CONST;
+thunar_zoom_level_to_thumbnail_size (ThunarZoomLevel zoom_level);
 gint
-thunar_zoom_level_to_view_margin (ThunarZoomLevel zoom_level) G_GNUC_CONST;
+thunar_zoom_level_to_view_margin (ThunarZoomLevel zoom_level);
 const gchar *
 thunar_zoom_level_string_from_value (ThunarZoomLevel zoom_level);
 gboolean
@@ -372,7 +372,7 @@ typedef enum /*< flags >*/
 #define THUNAR_JOB_RESPONSE_MAX_INT 12
 
 GType
-thunar_job_response_get_type (void) G_GNUC_CONST;
+thunar_job_response_get_type (void);
 
 
 #define THUNAR_TYPE_FILE_MODE (thunar_file_mode_get_type ())
@@ -402,7 +402,7 @@ typedef enum /*< flags >*/
 } ThunarFileMode;
 
 GType
-thunar_file_mode_get_type (void) G_GNUC_CONST;
+thunar_file_mode_get_type (void);
 
 
 
@@ -422,7 +422,7 @@ typedef enum
 } ThunarUsePartialMode;
 
 GType
-thunar_use_partial_get_type (void) G_GNUC_CONST;
+thunar_use_partial_get_type (void);
 
 
 
@@ -442,7 +442,7 @@ typedef enum
 } ThunarVerifyFileMode;
 
 GType
-thunar_verify_file_get_type (void) G_GNUC_CONST;
+thunar_verify_file_get_type (void);
 
 
 
@@ -497,7 +497,7 @@ typedef enum
 } ThunarJobOperationKind;
 
 GType
-thunar_job_operation_kind_get_type (void) G_GNUC_CONST;
+thunar_job_operation_kind_get_type (void);
 
 /**
  * ThunarOperationLogMode:
@@ -515,7 +515,7 @@ typedef enum
 } ThunarOperationLogMode;
 
 GType
-thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
+thunar_operation_log_mode_get_type (void);
 
 /**
  * ThunarImagePreviewMode:
@@ -532,7 +532,7 @@ typedef enum
 } ThunarImagePreviewMode;
 
 GType
-thunar_image_preview_mode_get_type (void) G_GNUC_CONST;
+thunar_image_preview_mode_get_type (void);
 
 /**
  * ThunarFolderItemCount
@@ -557,7 +557,7 @@ typedef enum
 } ThunarFolderItemCount;
 
 GType
-thunar_folder_item_count_get_type (void) G_GNUC_CONST;
+thunar_folder_item_count_get_type (void);
 
 /**
  * ThunarWindowTitleStyle
@@ -584,7 +584,7 @@ typedef enum
 } ThunarWindowTitleStyle;
 
 GType
-thunar_window_title_style_get_type (void) G_GNUC_CONST;
+thunar_window_title_style_get_type (void);
 
 /**
  * ThunarSidepaneType
@@ -609,7 +609,7 @@ typedef enum
 } ThunarSidepaneType;
 
 GType
-thunar_sidepane_type_get_type (void) G_GNUC_CONST;
+thunar_sidepane_type_get_type (void);
 
 /**
  * ThunarRenameLauncher:
@@ -643,7 +643,7 @@ typedef enum
 } ThunarExecuteShellScript;
 
 GType
-thunar_execute_shell_script_get_type (void) G_GNUC_CONST;
+thunar_execute_shell_script_get_type (void);
 
 /**
  * ThunarFileDragMode
@@ -666,7 +666,7 @@ typedef enum
 } ThunarFileDragMode;
 
 GType
-thunar_file_drag_mode_get_type (void) G_GNUC_CONST;
+thunar_file_drag_mode_get_type (void);
 #define THUNAR_TYPE_TERMINAL_SYNC_MODE (thunar_terminal_sync_mode_get_type ())
 
 /**
@@ -685,7 +685,7 @@ typedef enum
 } ThunarTerminalSyncMode;
 
 GType
-thunar_terminal_sync_mode_get_type (void) G_GNUC_CONST;
+thunar_terminal_sync_mode_get_type (void);
 
 
 G_END_DECLS;
