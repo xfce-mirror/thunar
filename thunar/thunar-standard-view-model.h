@@ -114,7 +114,7 @@ struct _ThunarStandardViewModelIface
 };
 
 GType
-thunar_standard_view_model_get_type (void) G_GNUC_CONST;
+thunar_standard_view_model_get_type (void);
 
 ThunarFolder *
 thunar_standard_view_model_get_folder (ThunarStandardViewModel *model);

@@ -136,7 +136,7 @@ typedef void (*ThunarFileGetFunc) (GFile      *location,
 
 
 GType
-thunar_file_get_type (void) G_GNUC_CONST;
+thunar_file_get_type (void);
 
 ThunarFile *
 thunar_file_get (GFile   *file,
@@ -236,7 +236,7 @@ thunar_file_get_content_type_desc (ThunarFile *file);
 const gchar *
 thunar_file_get_symlink_target (const ThunarFile *file);
 const gchar *
-thunar_file_get_basename (const ThunarFile *file) G_GNUC_CONST;
+thunar_file_get_basename (const ThunarFile *file);
 gboolean
 thunar_file_is_symlink (const ThunarFile *file);
 guint64
@@ -300,7 +300,7 @@ thunar_file_add_to_recent (const ThunarFile *file);
 gboolean
 thunar_file_is_desktop_file (const ThunarFile *file);
 const gchar *
-thunar_file_get_display_name (const ThunarFile *file) G_GNUC_CONST;
+thunar_file_get_display_name (const ThunarFile *file);
 
 gchar *
 thunar_file_get_deletion_date (const ThunarFile *file,

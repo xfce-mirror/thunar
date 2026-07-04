@@ -137,7 +137,7 @@ struct _ThunarxFileInfoIface
 };
 
 GType
-thunarx_file_info_get_type (void) G_GNUC_CONST;
+thunarx_file_info_get_type (void);
 
 gchar *
 thunarx_file_info_get_name (ThunarxFileInfo *file_info);
@@ -173,7 +173,7 @@ thunarx_file_info_renamed (ThunarxFileInfo *file_info);
 #define THUNARX_TYPE_FILE_INFO_LIST (thunarx_file_info_list_get_type ())
 
 GType
-thunarx_file_info_list_get_type (void) G_GNUC_CONST;
+thunarx_file_info_list_get_type (void);
 
 GList *
 thunarx_file_info_list_copy (GList *file_infos);

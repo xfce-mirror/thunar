@@ -44,7 +44,7 @@ typedef enum
 
 
 GType
-thunar_size_label_get_type (void) G_GNUC_CONST;
+thunar_size_label_get_type (void);
 
 GtkWidget *
 thunar_size_label_new (void) G_GNUC_MALLOC;

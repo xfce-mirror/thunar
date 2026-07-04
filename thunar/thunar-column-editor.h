@@ -35,7 +35,7 @@ typedef struct _ThunarColumnEditor      ThunarColumnEditor;
 #define THUNAR_COLUMN_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditorClass))
 
 GType
-thunar_column_editor_get_type (void) G_GNUC_CONST;
+thunar_column_editor_get_type (void);
 
 gboolean
 thunar_show_column_editor (gpointer parent);

@@ -36,7 +36,7 @@ typedef struct _ThunarSbrProvider      ThunarSbrProvider;
 #define THUNAR_SBR_PROVIDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProviderClass))
 
 GType
-thunar_sbr_provider_get_type (void) G_GNUC_CONST;
+thunar_sbr_provider_get_type (void);
 void
 thunar_sbr_provider_register_type (ThunarxProviderPlugin *plugin);
 

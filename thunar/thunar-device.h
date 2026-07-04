@@ -47,7 +47,7 @@ enum _ThunarDeviceKind
 #define THUNAR_DEVICE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEVICE, ThunarDeviceClass))
 
 GType
-thunar_device_get_type (void) G_GNUC_CONST;
+thunar_device_get_type (void);
 
 const gchar *
 thunar_device_get_eject_label (const ThunarDevice *device);

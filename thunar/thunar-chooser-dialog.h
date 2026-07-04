@@ -35,7 +35,7 @@ typedef struct _ThunarChooserDialog      ThunarChooserDialog;
 #define THUNAR_CHOOSER_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_DIALOG, ThunarChooserDialogClass))
 
 GType
-thunar_chooser_dialog_get_type (void) G_GNUC_CONST;
+thunar_chooser_dialog_get_type (void);
 
 void
 thunar_show_chooser_dialog (gpointer    parent,

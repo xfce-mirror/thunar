@@ -53,7 +53,7 @@ typedef enum
 } ThunarColumnModelColumn;
 
 GType
-thunar_column_model_get_type (void) G_GNUC_CONST;
+thunar_column_model_get_type (void);
 
 ThunarColumnModel *
 thunar_column_model_get_default (void);

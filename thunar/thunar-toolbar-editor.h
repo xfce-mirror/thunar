@@ -33,7 +33,7 @@ typedef struct _ThunarToolbarEditor      ThunarToolbarEditor;
 #define THUNAR_TOOLBAR_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditorClass))
 
 GType
-thunar_toolbar_editor_get_type (void) G_GNUC_CONST;
+thunar_toolbar_editor_get_type (void);
 
 void
 thunar_show_toolbar_editor (GtkWidget *window,

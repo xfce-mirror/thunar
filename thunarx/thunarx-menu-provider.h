@@ -77,7 +77,7 @@ struct _ThunarxMenuProviderIface
 };
 
 GType
-thunarx_menu_provider_get_type (void) G_GNUC_CONST;
+thunarx_menu_provider_get_type (void);
 
 GList *
 thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,

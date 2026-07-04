@@ -35,7 +35,7 @@ typedef struct _ThunarEmblemChooser      ThunarEmblemChooser;
 #define THUNAR_EMBLEM_CHOOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
 
 GType
-thunar_emblem_chooser_get_type (void) G_GNUC_CONST;
+thunar_emblem_chooser_get_type (void);
 
 GtkWidget *
 thunar_emblem_chooser_new (void) G_GNUC_MALLOC;

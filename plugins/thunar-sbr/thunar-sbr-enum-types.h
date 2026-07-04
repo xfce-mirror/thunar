@@ -45,7 +45,7 @@ typedef enum
 } ThunarSbrCaseRenamerMode;
 
 GType
-thunar_sbr_case_renamer_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_case_renamer_mode_get_type (void);
 
 
 #define THUNAR_SBR_TYPE_INSERT_MODE (thunar_sbr_insert_mode_get_type ())
@@ -64,7 +64,7 @@ typedef enum
 } ThunarSbrInsertMode;
 
 GType
-thunar_sbr_insert_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_insert_mode_get_type (void);
 
 
 #define THUNAR_SBR_TYPE_NUMBER_MODE (thunar_sbr_number_mode_get_type ())
@@ -91,7 +91,7 @@ typedef enum
 } ThunarSbrNumberMode;
 
 GType
-thunar_sbr_number_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_number_mode_get_type (void);
 
 
 #define THUNAR_SBR_TYPE_OFFSET_MODE (thunar_sbr_offset_mode_get_type ())
@@ -111,7 +111,7 @@ typedef enum
 } ThunarSbrOffsetMode;
 
 GType
-thunar_sbr_offset_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_offset_mode_get_type (void);
 
 
 #define THUNAR_SBR_TYPE_TEXT_MODE (thunar_sbr_text_mode_get_type ())
@@ -134,7 +134,7 @@ typedef enum
 } ThunarSbrTextMode;
 
 GType
-thunar_sbr_text_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_text_mode_get_type (void);
 
 
 #define THUNAR_SBR_TYPE_DATE_MODE (thunar_sbr_date_mode_get_type ())
@@ -159,7 +159,7 @@ typedef enum
 } ThunarSbrDateMode;
 
 GType
-thunar_sbr_date_mode_get_type (void) G_GNUC_CONST;
+thunar_sbr_date_mode_get_type (void);
 
 
 void

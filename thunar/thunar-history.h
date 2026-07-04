@@ -52,7 +52,7 @@ struct _ThunarHistoryClass
 };
 
 GType
-thunar_history_get_type (void) G_GNUC_CONST;
+thunar_history_get_type (void);
 
 ThunarHistory *
 thunar_history_copy (ThunarHistory *history);

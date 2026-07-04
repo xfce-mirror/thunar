@@ -35,7 +35,7 @@ typedef struct _ThunarSessionClient      ThunarSessionClient;
 #define THUNAR_SESSION_CLIENT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClientClass))
 
 GType
-thunar_session_client_get_type (void) G_GNUC_CONST;
+thunar_session_client_get_type (void);
 ThunarSessionClient *
 thunar_session_client_new (const gchar *session_id) G_GNUC_MALLOC;
 

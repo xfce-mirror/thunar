@@ -35,7 +35,7 @@ typedef struct _ThunarTextRenderer      ThunarTextRenderer;
 #define THUNAR_TEXT_RENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TEXT_RENDERER, ThunarTextRendererClass))
 
 GType
-thunar_text_renderer_get_type (void) G_GNUC_CONST;
+thunar_text_renderer_get_type (void);
 
 GtkCellRenderer *
 thunar_text_renderer_new (void) G_GNUC_MALLOC;

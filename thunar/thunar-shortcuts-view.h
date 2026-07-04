@@ -35,7 +35,7 @@ typedef struct _ThunarShortcutsView      ThunarShortcutsView;
 #define THUNAR_SHORTCUTS_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_VIEW, ThunarShortcutsViewClass))
 
 GType
-thunar_shortcuts_view_get_type (void) G_GNUC_CONST;
+thunar_shortcuts_view_get_type (void);
 
 GtkWidget *
 thunar_shortcuts_view_new (void) G_GNUC_MALLOC;

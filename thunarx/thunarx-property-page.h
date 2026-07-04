@@ -60,7 +60,7 @@ struct _ThunarxPropertyPage
 };
 
 GType
-thunarx_property_page_get_type (void) G_GNUC_CONST;
+thunarx_property_page_get_type (void);
 
 GtkWidget *
 thunarx_property_page_new (const gchar *label) G_GNUC_MALLOC;

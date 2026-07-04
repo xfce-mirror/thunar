@@ -92,7 +92,7 @@ typedef enum
 } ThunarActionManagerFolderOpenAction;
 
 GType
-thunar_action_manager_get_type (void) G_GNUC_CONST;
+thunar_action_manager_get_type (void);
 void
 thunar_action_manager_activate_selected_files (ThunarActionManager                *action_mgr,
                                                ThunarActionManagerFolderOpenAction action,

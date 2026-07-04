@@ -46,7 +46,7 @@ typedef enum
 #define THUNAR_APPLICATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_APPLICATION, ThunarApplicationClass))
 
 GType
-thunar_application_get_type (void) G_GNUC_CONST;
+thunar_application_get_type (void);
 
 ThunarApplication *
 thunar_application_get (void);

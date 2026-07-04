@@ -35,7 +35,7 @@ typedef struct _ThunarChooserButton      ThunarChooserButton;
 #define THUNAR_CHOOSER_BUTTON_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButtonClass))
 
 GType
-thunar_chooser_button_get_type (void) G_GNUC_CONST;
+thunar_chooser_button_get_type (void);
 
 GtkWidget *
 thunar_chooser_button_new (void) G_GNUC_MALLOC;

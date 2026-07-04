@@ -86,7 +86,7 @@ struct _ThunarxMenuItem
 
 /* ThunarxMenu methods */
 GType
-thunarx_menu_get_type (void) G_GNUC_CONST;
+thunarx_menu_get_type (void);
 
 ThunarxMenu *
 thunarx_menu_new (void) G_GNUC_MALLOC;
@@ -104,7 +104,7 @@ thunarx_menu_get_items (ThunarxMenu *menu);
 
 /* ThunarxMenuItem methods */
 GType
-thunarx_menu_item_get_type (void) G_GNUC_CONST;
+thunarx_menu_item_get_type (void);
 
 ThunarxMenuItem *
 thunarx_menu_item_new (const gchar *name,

@@ -35,7 +35,7 @@ typedef struct _ThunarPreferences      ThunarPreferences;
 #define THUNAR_PREFERENCES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
 
 GType
-thunar_preferences_get_type (void) G_GNUC_CONST;
+thunar_preferences_get_type (void);
 
 ThunarPreferences *
 thunar_preferences_get (void);

@@ -37,7 +37,7 @@ typedef struct _ThunarPathEntry      ThunarPathEntry;
 #define THUNAR_PATH_ENTRY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntryClass))
 
 GType
-thunar_path_entry_get_type (void) G_GNUC_CONST;
+thunar_path_entry_get_type (void);
 
 GtkWidget *
 thunar_path_entry_new (void);

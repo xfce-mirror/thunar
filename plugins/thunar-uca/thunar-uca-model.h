@@ -72,7 +72,7 @@ typedef enum /*< flags >*/
 } ThunarUcaTypes;
 
 GType
-thunar_uca_model_get_type (void) G_GNUC_CONST;
+thunar_uca_model_get_type (void);
 void
 thunar_uca_model_register_type (ThunarxProviderPlugin *plugin);
 

@@ -37,7 +37,7 @@ typedef struct _ThunarIconFactory      ThunarIconFactory;
 
 
 GType
-thunar_icon_factory_get_type (void) G_GNUC_CONST;
+thunar_icon_factory_get_type (void);
 
 ThunarIconFactory *
 thunar_icon_factory_get_default (void);

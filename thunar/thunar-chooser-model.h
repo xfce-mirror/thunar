@@ -56,7 +56,7 @@ typedef enum
 } ThunarChooserModelColumn;
 
 GType
-thunar_chooser_model_get_type (void) G_GNUC_CONST;
+thunar_chooser_model_get_type (void);
 
 ThunarChooserModel *
 thunar_chooser_model_new (const gchar *content_type) G_GNUC_MALLOC;

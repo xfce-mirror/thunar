@@ -57,7 +57,7 @@ struct _ThunarIconRenderer
 };
 
 GType
-thunar_icon_renderer_get_type (void) G_GNUC_CONST;
+thunar_icon_renderer_get_type (void);
 
 GtkCellRenderer *
 thunar_icon_renderer_new (void) G_GNUC_MALLOC;

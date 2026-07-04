@@ -66,7 +66,7 @@ struct _ThunarJob
 };
 
 GType
-thunar_job_get_type (void) G_GNUC_CONST;
+thunar_job_get_type (void);
 guint
 thunar_job_get_n_total_files (ThunarJob *job);
 void

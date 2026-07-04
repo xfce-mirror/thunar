@@ -35,7 +35,7 @@ typedef struct _ThunarListModel      ThunarListModel;
 #define THUNAR_LIST_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LIST_MODEL, ThunarListModelClass))
 
 GType
-thunar_list_model_get_type (void) G_GNUC_CONST;
+thunar_list_model_get_type (void);
 
 ThunarStandardViewModel *
 thunar_list_model_new (void);

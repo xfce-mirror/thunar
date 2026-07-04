@@ -37,7 +37,7 @@ typedef struct _ThunarThumbnailCacheClass   ThunarThumbnailCacheClass;
 typedef struct _ThunarThumbnailCache        ThunarThumbnailCache;
 
 GType
-thunar_thumbnail_cache_get_type (void) G_GNUC_CONST;
+thunar_thumbnail_cache_get_type (void);
 
 ThunarThumbnailCache *
 thunar_thumbnail_cache_new (void) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
