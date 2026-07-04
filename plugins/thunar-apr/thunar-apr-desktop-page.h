@@ -36,7 +36,7 @@ typedef struct _ThunarAprDesktopPage      ThunarAprDesktopPage;
 #define THUNAR_APR_DESKTOP_PAGE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_DESKTOP_PAGE, ThunarAprDesktopPageClass))
 
 GType
-thunar_apr_desktop_page_get_type (void) G_GNUC_CONST;
+thunar_apr_desktop_page_get_type (void);
 void
 thunar_apr_desktop_page_register_type (ThunarxProviderPlugin *plugin);
 

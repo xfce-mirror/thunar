@@ -51,7 +51,7 @@ struct _ThunarAprAbstractPage
 };
 
 GType
-thunar_apr_abstract_page_get_type (void) G_GNUC_CONST;
+thunar_apr_abstract_page_get_type (void);
 void
 thunar_apr_abstract_page_register_type (ThunarxProviderPlugin *plugin);
 

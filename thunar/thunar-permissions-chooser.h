@@ -35,7 +35,7 @@ typedef struct _ThunarPermissionsChooser      ThunarPermissionsChooser;
 #define THUNAR_PERMISSIONS_CHOOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
 
 GType
-thunar_permissions_chooser_get_type (void) G_GNUC_CONST;
+thunar_permissions_chooser_get_type (void);
 
 GtkWidget *
 thunar_permissions_chooser_new (void) G_GNUC_MALLOC;

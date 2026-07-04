@@ -45,7 +45,7 @@ struct _ThunarAbstractDialog
 };
 
 GType
-thunar_abstract_dialog_get_type (void) G_GNUC_CONST;
+thunar_abstract_dialog_get_type (void);
 
 G_END_DECLS;
 

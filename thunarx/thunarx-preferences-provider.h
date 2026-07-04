@@ -65,7 +65,7 @@ struct _ThunarxPreferencesProviderIface
 };
 
 GType
-thunarx_preferences_provider_get_type (void) G_GNUC_CONST;
+thunarx_preferences_provider_get_type (void);
 
 GList *
 thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,

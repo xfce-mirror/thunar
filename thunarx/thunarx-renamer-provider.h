@@ -62,7 +62,7 @@ struct _ThunarxRenamerProviderIface
 };
 
 GType
-thunarx_renamer_provider_get_type (void) G_GNUC_CONST;
+thunarx_renamer_provider_get_type (void);
 
 GList *
 thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider) G_GNUC_MALLOC;

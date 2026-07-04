@@ -43,7 +43,7 @@ struct _ThunarComponentIface
 };
 
 GType
-thunar_component_get_type (void) G_GNUC_CONST;
+thunar_component_get_type (void);
 
 GList *
 thunar_component_get_selected_files (ThunarComponent *component);

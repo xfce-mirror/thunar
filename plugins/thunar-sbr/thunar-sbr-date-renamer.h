@@ -37,7 +37,7 @@ typedef struct _ThunarSbrDateRenamer      ThunarSbrDateRenamer;
 #define THUNAR_SBR_DATE_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamerClass))
 
 GType
-thunar_sbr_date_renamer_get_type (void) G_GNUC_CONST;
+thunar_sbr_date_renamer_get_type (void);
 
 void
 thunar_sbr_date_renamer_register_type (ThunarxProviderPlugin *plugin);

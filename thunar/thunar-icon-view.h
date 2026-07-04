@@ -35,7 +35,7 @@ typedef struct _ThunarIconView      ThunarIconView;
 #define THUNAR_ICON_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
 
 GType
-thunar_icon_view_get_type (void) G_GNUC_CONST;
+thunar_icon_view_get_type (void);
 
 G_END_DECLS;
 

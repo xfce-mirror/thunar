@@ -36,7 +36,7 @@ typedef struct _ThunarClipboardManager      ThunarClipboardManager;
 #define THUNAR_CLIPBOARD_MANAGER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
 
 GType
-thunar_clipboard_manager_get_type (void) G_GNUC_CONST;
+thunar_clipboard_manager_get_type (void);
 
 ThunarClipboardManager *
 thunar_clipboard_manager_get_for_display (GdkDisplay *display);

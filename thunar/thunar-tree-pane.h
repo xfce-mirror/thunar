@@ -35,7 +35,7 @@ typedef struct _ThunarTreePane      ThunarTreePane;
 #define THUNAR_TREE_PANE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_PANE, ThunarTreePaneClass))
 
 GType
-thunar_tree_pane_get_type (void) G_GNUC_CONST;
+thunar_tree_pane_get_type (void);
 
 G_END_DECLS;
 

@@ -35,7 +35,7 @@ typedef struct _ThunarLocationButtons      ThunarLocationButtons;
 #define THUNAR_LOCATION_BUTTONS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtonsClass))
 
 GType
-thunar_location_buttons_get_type (void) G_GNUC_CONST;
+thunar_location_buttons_get_type (void);
 
 G_END_DECLS;
 

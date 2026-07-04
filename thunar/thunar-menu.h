@@ -69,7 +69,7 @@ typedef enum
 
 
 GType
-thunar_menu_get_type (void) G_GNUC_CONST;
+thunar_menu_get_type (void);
 
 gboolean
 thunar_menu_add_sections (ThunarMenu        *menu,

@@ -35,7 +35,7 @@ typedef struct _ThunarShortcutsIconRenderer      ThunarShortcutsIconRenderer;
 #define THUNAR_SHORTCUTS_ICON_RENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRendererClass))
 
 GType
-thunar_shortcuts_icon_renderer_get_type (void) G_GNUC_CONST;
+thunar_shortcuts_icon_renderer_get_type (void);
 
 GtkCellRenderer *
 thunar_shortcuts_icon_renderer_new (void) G_GNUC_MALLOC;

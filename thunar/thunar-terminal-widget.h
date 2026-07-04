@@ -65,7 +65,7 @@ struct _ThunarTerminalWidgetClass
 };
 
 GType
-thunar_terminal_widget_get_type (void) G_GNUC_CONST;
+thunar_terminal_widget_get_type (void);
 
 ThunarTerminalWidget *
 thunar_terminal_widget_new (void);

@@ -74,7 +74,7 @@ struct _ThunarJob
 };
 
 GType
-thunar_job_get_type (void) G_GNUC_CONST;
+thunar_job_get_type (void);
 
 ThunarJob *
 thunar_job_launch (ThunarJob *job);

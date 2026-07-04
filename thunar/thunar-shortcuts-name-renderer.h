@@ -35,7 +35,7 @@ typedef struct _ThunarShortcutsNameRendererClass ThunarShortcutsNameRendererClas
 #define THUNAR_SHORTCUTS_NAME_RENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_NAME_RENDERER, ThunarShortcutsNameRendererClass))
 
 GType
-thunar_shortcuts_name_renderer_get_type (void) G_GNUC_CONST;
+thunar_shortcuts_name_renderer_get_type (void);
 
 G_END_DECLS
 

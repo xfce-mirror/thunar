@@ -36,7 +36,7 @@ typedef struct _ThunarUcaProvider      ThunarUcaProvider;
 #define THUNAR_UCA_PROVIDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_PROVIDER, ThunarUcaProviderClass))
 
 GType
-thunar_uca_provider_get_type (void) G_GNUC_CONST;
+thunar_uca_provider_get_type (void);
 void
 thunar_uca_provider_register_type (ThunarxProviderPlugin *plugin);
 

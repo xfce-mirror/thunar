@@ -58,7 +58,7 @@ typedef enum
 } ThunarTreeModelColumn;
 
 GType
-thunar_tree_model_get_type (void) G_GNUC_CONST;
+thunar_tree_model_get_type (void);
 
 void
 thunar_tree_model_cleanup (ThunarTreeModel *model);

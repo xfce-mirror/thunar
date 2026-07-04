@@ -36,7 +36,7 @@ typedef struct _ThunarPreferences      ThunarPreferences;
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarPreferences, g_object_unref)
 
 GType
-thunar_preferences_get_type (void) G_GNUC_CONST;
+thunar_preferences_get_type (void);
 
 ThunarPreferences *
 thunar_preferences_get (void);
