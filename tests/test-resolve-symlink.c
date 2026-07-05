@@ -46,7 +46,9 @@ test_relative_link (void)
   g_autoptr (GFile) g_file_link_resolved = thunar_g_file_resolve_symlink (g_file_link);
   g_assert_nonnull (g_file_link_resolved);
 
-  g_assert_cmpstr (g_file_get_path (g_file_target), ==, g_file_get_path (g_file_link_resolved));
+  g_autofree gchar *target_path = g_file_get_path (g_file_target);
+  g_autofree gchar *resolved_path = g_file_get_path (g_file_link_resolved);
+  g_assert_cmpstr (target_path, ==, resolved_path);
 
   /* Delete testfiles */
   g_remove (link_d2);
@@ -95,7 +97,9 @@ test_desktop_link (void)
 
   g_assert_nonnull (g_file_link_resolved);
 
-  g_assert_cmpstr (g_file_get_path (g_file_target), ==, g_file_get_path (g_file_link_resolved));
+  g_autofree gchar *target_path = g_file_get_path (g_file_target);
+  g_autofree gchar *resolved_path = g_file_get_path (g_file_link_resolved);
+  g_assert_cmpstr (target_path, ==, resolved_path);
 
   /* Delete testfiles */
   g_remove (link);
@@ -134,7 +138,9 @@ test_multi_level_link (void)
 
   g_assert_nonnull (g_file_link_resolved);
 
-  g_assert_cmpstr (g_file_get_path (g_file_target), ==, g_file_get_path (g_file_link_resolved));
+  g_autofree gchar *target_path = g_file_get_path (g_file_target);
+  g_autofree gchar *resolved_path = g_file_get_path (g_file_link_resolved);
+  g_assert_cmpstr (target_path, ==, resolved_path);
 
   /* Delete testfiles */
   g_remove (link1);
