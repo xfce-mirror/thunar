@@ -43,7 +43,10 @@ enum
 
 #define GTK_MOVE_DIRECTION_FORWARD 1
 #define GTK_MOVE_DIRECTION_BACKWARD -1
+#define THUNAR_DETAILED_VIEW_UPDATE_EXPAND_ARROW_TIMEOUT (20)
 
+static void
+thunar_details_view_realize (GtkWidget *widget);
 static void
 thunar_details_view_finalize (GObject *object);
 static void
@@ -87,6 +90,8 @@ static gboolean
 thunar_details_view_get_visible_range (ThunarStandardView *standard_view,
                                        GtkTreePath       **start_path,
                                        GtkTreePath       **end_path);
+static GList *
+thunar_details_view_get_visible_files (ThunarDetailsView *details_view);
 static void
 thunar_details_view_highlight_path (ThunarStandardView *standard_view,
                                     GtkTreePath        *path);
@@ -166,8 +171,8 @@ static void
 thunar_details_view_block_selection_changed (ThunarStandardView *standard_view);
 static void
 thunar_details_view_unblock_selection_changed (ThunarStandardView *standard_view);
-
-
+static void
+thunar_details_view_update_visible_expand_arrows (ThunarDetailsView *details_view);
 
 struct _ThunarDetailsViewClass
 {
@@ -197,6 +202,8 @@ struct _ThunarDetailsView
   XfceTreeView *tree_view;
 
   gboolean expandable_folders;
+
+  guint update_expand_arrows_timeout_source_id;
 };
 
 
@@ -230,6 +237,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   gobject_class->set_property = thunar_details_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->realize = thunar_details_view_realize;
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
@@ -309,6 +317,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkCellRenderer  *left_aligned_renderer;
   GtkCellRenderer  *renderer;
   ThunarColumn      column;
+
+  details_view->update_expand_arrows_timeout_source_id = 0;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
@@ -472,6 +482,19 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
 
 static void
+thunar_details_view_realize (GtkWidget *widget)
+{
+  /* realize the widget */
+  (*GTK_WIDGET_CLASS (thunar_details_view_parent_class)->realize) (widget);
+
+  /* The binding for scroll only will take effect after realize */
+  if (THUNAR_DETAILS_VIEW (widget)->expandable_folders)
+    thunar_details_view_set_expandable_folders (THUNAR_DETAILS_VIEW (widget), TRUE);
+}
+
+
+
+static void
 thunar_details_view_get_property (GObject    *object,
                                   guint       prop_id,
                                   GValue     *value,
@@ -536,6 +559,9 @@ thunar_details_view_finalize (GObject *object)
   /* disconnect from the default column model */
   g_signal_handlers_disconnect_by_func (G_OBJECT (details_view->column_model), thunar_details_view_columns_changed, details_view);
   g_object_unref (G_OBJECT (details_view->column_model));
+
+  if (details_view->update_expand_arrows_timeout_source_id != 0)
+    g_source_remove (details_view->update_expand_arrows_timeout_source_id);
 
   if (details_view->idle_id)
     g_source_remove (details_view->idle_id);
@@ -716,6 +742,9 @@ thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
   /* tell the tree view to scroll to the given row */
   column = gtk_tree_view_get_column (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), 0);
   gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path, column, use_align, row_align, col_align);
+
+  if (THUNAR_DETAILS_VIEW (standard_view)->expandable_folders)
+    thunar_details_view_update_visible_expand_arrows (THUNAR_DETAILS_VIEW (standard_view));
 }
 
 
@@ -745,6 +774,98 @@ thunar_details_view_get_visible_range (ThunarStandardView *standard_view,
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), FALSE);
 
   return gtk_tree_view_get_visible_range (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), start_path, end_path);
+}
+
+
+
+static GList *
+thunar_details_view_get_visible_files_inner (ThunarDetailsView *details_view,
+                                             GtkTreeIter       *start_iter,
+                                             GtkTreeIter       *end_iter,
+                                             GtkTreePath       *end_path)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  ThunarTreeViewModel *model = (THUNAR_STANDARD_VIEW (details_view))->model;
+  GtkTreeIter          iter = *start_iter;
+  ThunarFile          *file;
+  GList               *files = 0;
+
+  while (TRUE)
+    {
+      GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+
+      if (gtk_tree_view_row_expanded (GTK_TREE_VIEW (details_view->tree_view), path))
+        {
+          GtkTreeIter first_child;
+          if (gtk_tree_model_iter_children (GTK_TREE_MODEL (model), &first_child, &iter))
+            {
+              GList *child_files;
+              child_files = thunar_details_view_get_visible_files_inner (details_view, &first_child, end_iter, end_path);
+              files = g_list_concat (files, child_files);
+            }
+        }
+
+      /* determine the file for the start path */
+      file = thunar_tree_view_model_get_file (model, &iter);
+      if (file != NULL)
+        files = g_list_append (files, file);
+
+      /* all elements checked ? */
+      if (gtk_tree_path_compare (path, end_path) == 0)
+        {
+          gtk_tree_path_free (path);
+          break;
+        }
+
+      gtk_tree_path_free (path);
+
+      if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter))
+        break;
+    }
+
+  return files;
+}
+
+
+
+static GList *
+thunar_details_view_get_visible_files (ThunarDetailsView *details_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  ThunarTreeViewModel *model = (THUNAR_STANDARD_VIEW (details_view))->model;
+  GtkTreePath         *start_path;
+  GtkTreePath         *end_path;
+  GtkTreeIter          start_iter;
+  GtkTreeIter          end_iter;
+  GList               *files = 0;
+
+  details_view->update_expand_arrows_timeout_source_id = 0;
+
+  if (!thunar_details_view_get_visible_range (THUNAR_STANDARD_VIEW (details_view), &start_path, &end_path))
+    return NULL;
+
+  if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &start_iter, start_path))
+    {
+      gtk_tree_path_free (start_path);
+      gtk_tree_path_free (end_path);
+      return NULL;
+    }
+
+  if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &end_iter, end_path))
+    {
+      gtk_tree_path_free (start_path);
+      gtk_tree_path_free (end_path);
+      return NULL;
+    }
+
+  files = thunar_details_view_get_visible_files_inner (details_view, &start_iter, &end_iter, end_path);
+
+  /* release the tree paths */
+  gtk_tree_path_free (start_path);
+  gtk_tree_path_free (end_path);
+  return files;
 }
 
 
@@ -1201,6 +1322,9 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
 
   thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
 
+  /* update expand arrows of directories which might be visible now */
+  thunar_details_view_update_visible_expand_arrows (details_view);
+
   gtk_tree_path_free (path);
   if (stopPropagation)
     gtk_widget_grab_focus (GTK_WIDGET (tree_view));
@@ -1235,9 +1359,12 @@ static void
 thunar_details_view_row_expanded (GtkTreeView       *tree_view,
                                   GtkTreeIter       *parent,
                                   GtkTreePath       *path,
-                                  ThunarDetailsView *view)
+                                  ThunarDetailsView *details_view)
 {
   GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
+
+  if (details_view->expandable_folders)
+    thunar_details_view_update_visible_expand_arrows (details_view);
 
   /* this will replace the dummy child with actual children */
   thunar_tree_view_model_load_subdir (THUNAR_TREE_VIEW_MODEL (model), parent);
@@ -1294,6 +1421,9 @@ thunar_details_view_row_changed (GtkTreeView       *tree_view,
                                  ThunarDetailsView *details_view)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  if (details_view->expandable_folders)
+    thunar_details_view_update_visible_expand_arrows (details_view);
 
   gtk_widget_queue_draw (GTK_WIDGET (details_view->tree_view));
 }
@@ -1391,6 +1521,9 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
       /* Call when idle to ensure that gtk_tree_view_column_queue_resize got finished */
       details_view->idle_id = gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_height, details_view);
     }
+
+  if (details_view->expandable_folders)
+    thunar_details_view_update_visible_expand_arrows (details_view);
 }
 
 
@@ -1583,6 +1716,46 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
 
 
 
+static gboolean
+thunar_details_view_update_visible_expand_arrows_timeout (gpointer data)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (data), G_SOURCE_REMOVE);
+
+  ThunarDetailsView   *details_view = THUNAR_DETAILS_VIEW (data);
+  ThunarTreeViewModel *model = (THUNAR_STANDARD_VIEW (details_view))->model;
+
+  GList   *files_for_update = 0;
+  gboolean success;
+
+  details_view->update_expand_arrows_timeout_source_id = 0;
+
+  files_for_update = thunar_details_view_get_visible_files (details_view);
+
+  success = thunar_tree_view_model_update_expand_arrows (model, files_for_update, FALSE);
+  g_list_free_full (files_for_update, g_object_unref);
+
+  /* In case some previous job is still running, take another try later */
+  if (success)
+    return G_SOURCE_REMOVE;
+  else
+    return G_SOURCE_CONTINUE;
+}
+
+
+
+static void
+thunar_details_view_update_visible_expand_arrows (ThunarDetailsView *details_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  if (details_view->update_expand_arrows_timeout_source_id != 0)
+    g_source_remove (details_view->update_expand_arrows_timeout_source_id);
+
+  details_view->update_expand_arrows_timeout_source_id = g_timeout_add (THUNAR_DETAILED_VIEW_UPDATE_EXPAND_ARROW_TIMEOUT, (GSourceFunc) thunar_details_view_update_visible_expand_arrows_timeout, details_view);
+}
+
+
+
 /**
  * thunar_details_view_set_expandable_folders:
  * @details_view  : a #ThunarDetailsView.
@@ -1595,6 +1768,8 @@ static void
 thunar_details_view_set_expandable_folders (ThunarDetailsView *details_view,
                                             gboolean           expandable_folders)
 {
+  GtkAdjustment *vadj;
+
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   details_view->expandable_folders = expandable_folders;
@@ -1602,8 +1777,26 @@ thunar_details_view_set_expandable_folders (ThunarDetailsView *details_view,
   gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), details_view->expandable_folders);
   gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), details_view->expandable_folders);
 
-  if (details_view->expandable_folders == FALSE)
-    gtk_tree_view_collapse_all (GTK_TREE_VIEW (details_view->tree_view));
+  vadj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (details_view));
+
+  if (details_view->expandable_folders)
+    {
+      /* Note: This binding on 'scroll' only will work when done after the widget got realized */
+      g_signal_connect_swapped (vadj, "value-changed", G_CALLBACK (thunar_details_view_update_visible_expand_arrows), details_view);
+
+      g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->model, "rows-reordered", G_CALLBACK (thunar_details_view_update_visible_expand_arrows), details_view);
+      g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->model, "row-inserted", G_CALLBACK (thunar_details_view_update_visible_expand_arrows), details_view);
+      g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->model, "notify::num-files", G_CALLBACK (thunar_details_view_update_visible_expand_arrows), details_view);
+
+      thunar_details_view_update_visible_expand_arrows (details_view);
+    }
+  else
+    {
+      g_signal_handlers_disconnect_by_func (vadj, thunar_details_view_update_visible_expand_arrows, details_view);
+      g_signal_handlers_disconnect_by_func (THUNAR_STANDARD_VIEW (details_view)->model, thunar_details_view_update_visible_expand_arrows, details_view);
+
+      gtk_tree_view_collapse_all (GTK_TREE_VIEW (details_view->tree_view));
+    }
 
   /* notify listeners */
   g_object_notify (G_OBJECT (details_view), "expandable-folders");
