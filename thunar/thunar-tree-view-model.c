@@ -69,6 +69,16 @@
  * expanded before the delay elapses the scheduled cleanup will be cancelled */
 #define CLEANUP_AFTER_COLLAPSE_DELAY 5000 /* in ms */
 
+/* used in order to model expand arrows on folders */
+typedef enum
+{
+  can_expand_unknown,
+  can_expand_loading,
+  can_expand_yes,
+  can_expand_no,
+} CanExpand;
+
+
 /* Defintions & typedefs */
 typedef struct _Node Node;
 
@@ -354,6 +364,14 @@ struct _ThunarTreeViewModel
   GMutex     mutex_add_search_files;
 
   guint update_search_results_timeout_id;
+
+  /* Separate ThunarJob to do the empty-checks, since doing so involves file IO */
+  ThunarJob *check_empty_job;
+
+  /* type: [ThunarFile*, gboolean* (is_empty)] */
+  /* The 'is_empty' values of this GHashtable are filled by the 'check_empty_job' */
+  /* As such, do not access the GHashTable while the job is running */
+  GHashTable *files_for_empty_check;
 };
 
 
@@ -369,7 +387,7 @@ struct _Node
   gint     depth;
   gint     n_children;
   gboolean loaded;
-  gboolean expanded;
+  CanExpand can_expand;
   gboolean file_watch_active;
 
   /* set of all the children gfiles;
@@ -648,6 +666,12 @@ thunar_tree_view_model_init (ThunarTreeViewModel *model)
   model->loading = 0;
 
   model->subdirs = g_hash_table_new (g_direct_hash, g_direct_equal);
+
+  /* Hashtable data type: [ThunarFile*, gboolean*] */
+  model->files_for_empty_check = g_hash_table_new_full (g_direct_hash,
+                                                        g_direct_equal,
+                                                        (GDestroyNotify) g_object_unref,
+                                                        g_free);
 }
 
 
@@ -716,6 +740,16 @@ thunar_tree_view_model_finalize (GObject *object)
                                      NULL, NULL);
 
   g_mutex_clear (&model->mutex_add_search_files);
+
+  /* stop check empty job and clear job data */
+  if (G_UNLIKELY (model->check_empty_job != NULL))
+    {
+      thunar_job_cancel (THUNAR_JOB (model->check_empty_job));
+      g_object_unref (model->check_empty_job);
+      model->check_empty_job = NULL;
+    }
+
+  g_hash_table_destroy (model->files_for_empty_check);
 
   g_free (model->date_custom_style);
   g_strfreev (model->search_terms);
@@ -2218,31 +2252,129 @@ thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel  *model,
 
 
 
-static gboolean
-thunar_tree_view_model_node_update_expand_arrow (Node *node)
+static void
+_thunar_tree_view_model_node_check_empty_job_finished (ThunarTreeViewModel *model,
+                                                       ThunarJob           *job)
 {
-  if (node == NULL || node->model == NULL)
-    return FALSE;
+  gpointer       thunar_file, value;
+  GHashTableIter iter_map;
+  gboolean      *is_empty;
+  Node          *node;
 
-  if (node->model->expandable_folders
-      && thunar_file_is_directory (node->file)
-      && !thunar_tree_view_model_node_has_dummy_child (node)
-      && !thunar_file_is_empty_directory (node->file))
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+  /* Note: This method will be called whenever the job finsihed. No matter if it finished sucesfully or was aborted in some way */
+
+  if (model->check_empty_job != NULL)
     {
-      thunar_tree_view_model_node_add_dummy_child (node);
-      return TRUE;
+      g_object_unref (model->check_empty_job);
+      model->check_empty_job = NULL;
     }
 
-  return FALSE;
+  if (model->expandable_folders)
+    {
+      g_hash_table_iter_init (&iter_map, model->files_for_empty_check);
+      while (g_hash_table_iter_next (&iter_map, &thunar_file, &value))
+        {
+          is_empty = (gboolean *) value;
+          node = thunar_tree_view_model_locate_file (model, thunar_file);
+
+          if (node == NULL)
+            continue;
+
+          if (*is_empty)
+            {
+              node->can_expand = can_expand_no;
+              continue;
+            }
+
+          node->can_expand = can_expand_yes;
+
+          /* No dummy child and no files added yet */
+          if (node->n_children == 0)
+            {
+              GtkTreeIter  tree_iter;
+              GtkTreePath *path;
+
+              thunar_tree_view_model_node_add_dummy_child (node);
+
+              GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
+              path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
+              gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &tree_iter);
+              gtk_tree_path_free (path);
+            }
+        }
+    }
+
+  /* cleanup hashtable */
+  g_hash_table_remove_all (model->files_for_empty_check);
+
+  /* drop the job reference we kept for the time the job runs */
+  g_object_unref (model);
 }
 
 
 
-static void
-_thunar_tree_view_model_node_update_expand_arrow (Node    *node,
-                                                  gpointer data)
+/**
+ * thunar_tree_view_model_update_expand_arrows:
+ * @model : a #ThunarTreeViewModel
+ * @force : force an update, even if nodes already have expand states set
+ *
+ * Updates the expand state for nodes which have an unknown expand state
+ *
+ * Returns %FALSE if a job is still running, %TRUE otherwise
+ **/
+gboolean
+thunar_tree_view_model_update_expand_arrows (ThunarTreeViewModel *model,
+                                             GList               *files,
+                                             gboolean             force)
 {
-  thunar_tree_view_model_node_update_expand_arrow (node);
+  ThunarFile *file;
+  Node       *node;
+
+  if (!model->expandable_folders)
+    return TRUE;
+
+  /* If the job is still running, inform the caller on that */
+  if (G_UNLIKELY (model->check_empty_job != NULL))
+    return FALSE;
+
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    {
+      file = lp->data;
+
+      /* only readable directories are relevant here */
+      if (!thunar_file_is_directory (file) || !thunar_file_is_readable (file))
+        continue;
+
+      node = thunar_tree_view_model_locate_file (model, file);
+
+      if (node == NULL)
+        continue;
+
+      /* only load 'can_expand' for nodes which do not yet have a value for it */
+      if (!force && (node->can_expand == can_expand_yes || node->can_expand == can_expand_no))
+        continue;
+
+      node->can_expand = can_expand_loading;
+
+      /* actually it should not be possible that we alreay have that file */
+      if (g_hash_table_contains (model->files_for_empty_check, lp->data))
+        continue;
+
+      gboolean *is_empty = g_new (gboolean, 1);
+      *is_empty = FALSE;
+      g_hash_table_insert (model->files_for_empty_check, g_object_ref (lp->data), is_empty);
+    }
+
+  /* start a new job */
+  model->check_empty_job = thunar_io_jobs_check_empty (model->files_for_empty_check);
+  g_signal_connect_swapped (model->check_empty_job, "finished", G_CALLBACK (_thunar_tree_view_model_node_check_empty_job_finished), g_object_ref (model));
+
+  thunar_job_launch (THUNAR_JOB (model->check_empty_job));
+
+  return TRUE;
 }
 
 
@@ -2253,15 +2385,7 @@ thunar_tree_view_model_set_expandable_folders (ThunarTreeViewModel *model,
 {
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
-  /* check if the new setting differs */
-  if (model->expandable_folders == expandable_folders)
-    return;
-
   model->expandable_folders = expandable_folders;
-
-  /* update all base-directories to show the expand-arrow when required */
-  if (expandable_folders && model->root != NULL)
-    g_sequence_foreach (model->root->children, (GFunc) _thunar_tree_view_model_node_update_expand_arrow, NULL);
 }
 
 
@@ -2293,6 +2417,8 @@ thunar_tree_view_model_new_node (ThunarFile *file)
   _node->scheduled_unload_id = 0;
 
   _node->file_watch_active = FALSE;
+
+  _node->can_expand = can_expand_unknown;
 
   return _node;
 }
@@ -2481,11 +2607,10 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
 
-  thunar_tree_view_model_node_update_expand_arrow (child);
-
   /* notify the model if a child has been added to previously empty folder */
   if (node->ptr != NULL && node->n_children == 1)
     {
+      node->can_expand = can_expand_yes;
       GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
       gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (node->model), path, &tree_iter);
@@ -2821,6 +2946,11 @@ _thunar_tree_view_model_dir_notify_loading (Node         *node,
       if (thunar_tree_view_model_node_has_dummy_child (node))
         thunar_tree_view_model_node_drop_dummy_child (node);
 
+      if (node->n_children == 0)
+        node->can_expand = can_expand_no;
+      else
+        node->can_expand = can_expand_yes;
+
       /* signal model that this dir is done loading */
       thunar_tree_view_model_set_loading (node->model, FALSE);
     }
@@ -3015,7 +3145,6 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
   gint                 pos_after, pos_before;
   gint                *new_order;
   gint                 length;
-  gboolean             dummy_added = FALSE;
   ThunarFile          *file;
   gpointer             key;
 
@@ -3091,14 +3220,10 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
           g_free (new_order);
         }
 
-      if (!node->loaded && thunar_tree_view_model_node_update_expand_arrow (node))
-        dummy_added = TRUE;
 
       GTK_TREE_ITER_INIT (tree_iter, model->stamp, iter);
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &tree_iter);
       gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &tree_iter);
-      if (dummy_added)
-        gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &tree_iter);
       gtk_tree_path_free (path);
     } /* end for all files */
 }
@@ -3136,7 +3261,6 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
   node = g_sequence_get (iter->user_data);
   THUNAR_WARN_VOID_RETURN (node == NULL);
 
-  node->expanded = TRUE;
   if (node->scheduled_unload_id != 0)
     g_source_remove (node->scheduled_unload_id);
   node->scheduled_unload_id = 0;
@@ -3213,7 +3337,6 @@ thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
   node = g_sequence_get (iter->user_data);
   THUNAR_WARN_VOID_RETURN (node == NULL);
 
-  node->expanded = FALSE;
   node->scheduled_unload_id = g_timeout_add_full (G_PRIORITY_LOW, CLEANUP_AFTER_COLLAPSE_DELAY,
                                                   G_SOURCE_FUNC (_thunar_tree_view_model_dir_unload_timeout),
                                                   node, (GDestroyNotify) _thunar_tree_view_model_dir_unload_timeout_destroy);

@@ -82,6 +82,8 @@ thunar_io_jobs_set_metadata_for_files (GList      *files,
 ThunarJob *
 thunar_io_jobs_load_content_types (GHashTable *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *
+thunar_io_jobs_check_empty (GHashTable *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
 thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view,
                                                ThunarFolder       *folder);
 ThunarJob *
