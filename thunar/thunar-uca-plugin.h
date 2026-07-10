@@ -1,6 +1,5 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2026 The Xfce Development Team
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -18,29 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNAR_UCA_CONTEXT_H__
-#define __THUNAR_UCA_CONTEXT_H__
 
-#include <gtk/gtk.h>
+#ifndef __THUNAR_UCA_PLUGIN_H__
+#define __THUNAR_UCA_PLUGIN_H__
 
-G_BEGIN_DECLS;
-
-typedef struct _ThunarUcaContext ThunarUcaContext;
-
-ThunarUcaContext *
-thunar_uca_context_new (GtkWidget *window,
-                        GList     *files);
-
-ThunarUcaContext *
-thunar_uca_context_ref (ThunarUcaContext *context);
 void
-thunar_uca_context_unref (ThunarUcaContext *context);
+thunar_uca_plugin_init (void);
 
-GList *
-thunar_uca_context_get_files (const ThunarUcaContext *context);
-GtkWidget *
-thunar_uca_context_get_window (const ThunarUcaContext *context);
-
-G_END_DECLS;
-
-#endif /* !__THUNAR_UCA_CONTEXT_H__ */
+#endif /* !__THUNAR_UCA_PLUGIN_H__ */
