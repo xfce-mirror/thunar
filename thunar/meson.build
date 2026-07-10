@@ -254,7 +254,12 @@ executable(
   ],
   dependencies: thunar_dependencies,
   link_with: libthunarx,
+
+  # `link_whole` is necessary because `link_with` strips unused symbols from
+  # static libraries; this can result in `gresources` being removed from the
+  # executable, as there are no references to them in the `thunar`/`libthunar` code
   link_whole: libthunar,
+
   install: true,
   install_dir: get_option('prefix') / get_option('bindir'),
 )
