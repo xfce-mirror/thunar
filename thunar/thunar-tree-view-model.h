@@ -113,6 +113,10 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
 void
 thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
                                         GtkTreeIter         *iter);
+gboolean
+thunar_tree_view_model_update_expand_arrows (ThunarTreeViewModel *model,
+                                             GList               *files,
+                                             gboolean             force);
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_VIEW_MODEL_H__ */
