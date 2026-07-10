@@ -1892,6 +1892,10 @@ thunar_tree_view_model_set_folder (ThunarTreeViewModel *model,
 
   g_object_ref (_model->dir);
   _model->root = thunar_tree_view_model_new_node (thunar_folder_get_corresponding_file (_model->dir));
+
+  if (_model->root == NULL)
+    return;
+  
   _model->root->model = _model;
 
   if (search_query == NULL || strlen (g_strstrip (search_query)) == 0)
