@@ -253,10 +253,8 @@ executable(
     include_directories('..'),
   ],
   dependencies: thunar_dependencies,
-  link_with: [
-    libthunar,
-    libthunarx,
-  ],
+  link_with: libthunarx,
+  link_whole: libthunar,
   install: true,
   install_dir: get_option('prefix') / get_option('bindir'),
 )
