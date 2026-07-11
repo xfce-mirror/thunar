@@ -1814,7 +1814,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
   /* try to process all filenames and convert them to the appropriate file objects */
   for (n = 0; filenames[n] != NULL; ++n)
     {
-      /* check if the filename is an absolute path or looks like an URI */
+      /* check if the filename is an absolute path or looks like a URI */
       if (g_path_is_absolute (filenames[n]) || g_uri_is_valid (filenames[n], G_URI_FLAGS_NONE, NULL))
         {
           /* determine the file for the filename directly */
@@ -2050,7 +2050,7 @@ thunar_application_process_filenames (ThunarApplication             *application
   /* try to process all filenames and convert them to the appropriate file objects */
   for (n = 0; filenames[n] != NULL; ++n)
     {
-      /* check if the filename is an absolute path or looks like an URI */
+      /* check if the filename is an absolute path or looks like a URI */
       if (g_path_is_absolute (filenames[n]) || g_uri_is_valid (filenames[n], G_URI_FLAGS_NONE, NULL))
         {
           /* determine the file for the filename directly */

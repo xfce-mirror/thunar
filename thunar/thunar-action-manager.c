@@ -3558,7 +3558,7 @@ thunar_action_manager_get_widget (ThunarActionManager *action_mgr)
  * @action_mgr:            a #ThunarActionManager instance
  * @selected_thunar_files: #GList of selected #ThunarFile instances, or NULL
  * @selected_device:       selected #ThunarDevice or NULL
- * @selected_location:     selected #GFile (possibly only holds an URI), or NULL
+ * @selected_location:     selected #GFile (possibly only holds a URI), or NULL
  *
  * Will set the related items as "selection" and clear any previous selection.
  * Note that always only one of the 3 "selected" arguments should be set.
