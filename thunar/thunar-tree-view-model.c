@@ -2549,13 +2549,15 @@ _thunar_tree_view_model_folder_error (Node         *node,
 {
   _thunar_return_if_fail (error != NULL);
 
+  ThunarTreeViewModel *model = node->model;
+
   if (node->parent == NULL)
     _thunar_tree_view_model_folder_destroy (node);
   else
     thunar_tree_view_model_dir_remove_file (node->parent, node->file);
 
   /* forward the error signal */
-  g_signal_emit_by_name (G_OBJECT (node->model), "error", error);
+  g_signal_emit_by_name (G_OBJECT (model), "error", error);
 }
 
 
