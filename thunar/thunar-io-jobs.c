@@ -2104,8 +2104,10 @@ _thunar_job_check_empty (ThunarJob *job,
       if (err != NULL)
         {
           /* skip files which do cause trouble */
-          g_warning ("Failed to check if the file '%s' has any children! Reason: %s", g_file_get_basename (G_FILE (g_file)), err->message);
+          gchar *basename = g_file_get_basename (G_FILE (g_file));
+          g_warning ("Failed to check if the file '%s' has any children! Reason: %s", basename, err->message);
           g_clear_error (&err);
+          g_free (basename);
           continue;
         }
 
