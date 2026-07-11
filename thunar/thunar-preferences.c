@@ -245,7 +245,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:hidden-bookmarks:
    *
    * List of URI's that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
-   * If an URI is not in the bookmarks file it will be removed from this list.
+   * If a URI is not in the bookmarks file it will be removed from this list.
    **/
   preferences_props[PROP_HIDDEN_BOOKMARKS] =
   g_param_spec_boxed ("hidden-bookmarks",

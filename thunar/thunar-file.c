@@ -1361,7 +1361,7 @@ thunar_file_get (GFile   *gfile,
 
 /**
  * thunar_file_get_with_info:
- * @uri         : an URI or an absolute filename.
+ * @uri         : a URI or an absolute filename.
  * @info        : #GFileInfo to use when loading the info.
  * @recent_info : additional #GFileInfo to use when loading the info, only for files in `recent:///`.
  * @not_mounted : if the file is mounted.
@@ -1437,7 +1437,7 @@ thunar_file_get_with_info (GFile     *gfile,
 
 /**
  * thunar_file_get_for_uri:
- * @uri   : an URI or an absolute filename.
+ * @uri   : a URI or an absolute filename.
  * @error : return location for errors or %NULL.
  *
  * Convenience wrapper function for thunar_file_get_for_path(), as its

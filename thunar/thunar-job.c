@@ -142,7 +142,7 @@ thunar_job_class_init (ThunarJobClass *klass)
 
   /**
    * ThunarJob::error:
-   * @job   : an #ThunarJob.
+   * @job   : a #ThunarJob.
    * @error : a #GError describing the cause.
    *
    * Emitted whenever an error occurs while executing the @job. This signal
@@ -167,7 +167,7 @@ thunar_job_class_init (ThunarJobClass *klass)
 
   /**
    * ThunarJob::finished:
-   * @job : an #ThunarJob.
+   * @job : a #ThunarJob.
    *
    * This signal will be automatically emitted once the @job finishes
    * its execution, no matter whether @job completed successfully or
@@ -186,7 +186,7 @@ thunar_job_class_init (ThunarJobClass *klass)
 
   /**
    * ThunarJob::info-message:
-   * @job     : an #ThunarJob.
+   * @job     : a #ThunarJob.
    * @message : information to be displayed about @job.
    *
    * This signal is emitted to display information about the status of
@@ -206,7 +206,7 @@ thunar_job_class_init (ThunarJobClass *klass)
 
   /**
    * ThunarJob::percent:
-   * @job     : an #ThunarJob.
+   * @job     : a #ThunarJob.
    * @percent : the percentage of completeness.
    *
    * This signal is emitted to present the overall progress of the
@@ -398,7 +398,7 @@ thunar_job_finalize (GObject *object)
 
 /**
  * thunar_job_async_ready:
- * @object : an #ThunarJob.
+ * @object : a #ThunarJob.
  * @result : the #GAsyncResult of the job.
  *
  * This function is called by the #GIOScheduler at the end of the
@@ -437,7 +437,7 @@ thunar_job_async_ready (gpointer user_data)
  * thunar_job_scheduler_job_func:
  * @scheduler_job : the #GIOSchedulerJob running the operation.
  * @cancellable   : the #GCancellable associated with the job.
- * @user_data     : an #ThunarJob.
+ * @user_data     : a #ThunarJob.
  *
  * This function is called by the #GIOScheduler to execute the
  * operation associated with the job. It basically calls the
@@ -489,7 +489,7 @@ thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
 
 /**
  * thunar_job_emit_valist_in_mainloop:
- * @user_data : an #ThunarJobSignalData.
+ * @user_data : a #ThunarJobSignalData.
  *
  * Called from the main loop of the application to emit the signal
  * specified by the @user_data.
@@ -511,7 +511,7 @@ thunar_job_emit_valist_in_mainloop (gpointer user_data)
 
 /**
  * thunar_job_emit_valist:
- * @job           : an #ThunarJob.
+ * @job           : a #ThunarJob.
  * @signal_id     : the signal id.
  * @signal_detail : the signal detail.
  * @var_args      : a list of parameters to be passed to the signal,
@@ -552,7 +552,7 @@ thunar_job_emit_valist (ThunarJob *job,
 
 /**
  * thunar_job_error:
- * @job   : an #ThunarJob.
+ * @job   : a #ThunarJob.
  * @error : a #GError.
  *
  * Emits the "error" signal and passes the @error to it so that the
@@ -573,7 +573,7 @@ thunar_job_error (ThunarJob    *job,
 
 /**
  * thunar_job_finished:
- * @job : an #ThunarJob.
+ * @job : a #ThunarJob.
  *
  * Emits the "finished" signal to notify listeners of the end of the
  * operation.
@@ -592,7 +592,7 @@ thunar_job_finished (ThunarJob *job)
 
 /**
  * thunar_job_launch:
- * @job : an #ThunarJob.
+ * @job : a #ThunarJob.
  *
  * This functions schedules the @job to be run as soon as possible, in
  * a separate thread. The caller can connect to signals of the @job prior
@@ -667,7 +667,7 @@ thunar_job_is_cancelled (const ThunarJob *job)
 
 /**
  * thunar_job_get_cancellable:
- * @job : an #ThunarJob.
+ * @job : a #ThunarJob.
  *
  * Returns the #GCancellable that can be used to cancel the @job.
  *
@@ -685,7 +685,7 @@ thunar_job_get_cancellable (const ThunarJob *job)
 
 /**
  * thunar_job_set_error_if_cancelled:
- * @job   : an #ThunarJob.
+ * @job   : a #ThunarJob.
  * @error : error to be set if the @job was cancelled.
  *
  * Sets the @error if the @job was cancelled. This is a convenience
@@ -711,7 +711,7 @@ thunar_job_set_error_if_cancelled (ThunarJob *job,
 
 /**
  * thunar_job_emit:
- * @job           : an #ThunarJob.
+ * @job           : a #ThunarJob.
  * @signal_id     : the signal id.
  * @signal_detail : the signal detail.
  * @...           : a list of parameters to be passed to the signal,
@@ -741,7 +741,7 @@ thunar_job_emit (ThunarJob *job,
 
 /**
  * thunar_job_info_message:
- * @job     : an #ThunarJob.
+ * @job     : a #ThunarJob.
  * @format  : a format string.
  * @...     : parameters for the format string.
  *
@@ -772,7 +772,7 @@ thunar_job_info_message (ThunarJob   *job,
 
 /**
  * thunar_job_percent:
- * @job     : an #ThunarJob.
+ * @job     : a #ThunarJob.
  * @percent : percentage of completeness of the operation.
  *
  * Emits a "percent" signal and sends it to the application's main
@@ -792,7 +792,7 @@ thunar_job_percent (ThunarJob *job,
 
 /**
  * thunar_job_send_to_mainloop:
- * @job            : an #ThunarJob.
+ * @job            : a #ThunarJob.
  * @func           : a #GSourceFunc callback that will be called in the main thread.
  * @user_data      : data to pass to @func.
  * @destroy_notify : a #GDestroyNotify for @user_data, or %NULL.
