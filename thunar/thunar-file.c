@@ -1047,7 +1047,7 @@ thunar_file_info_reload (ThunarFile   *file,
               /* drop freedesktop.org supported suffixes from themed icons, if any */
               if (!g_path_is_absolute (file->custom_icon_name))
                 {
-                  p = strrchr (file->custom_icon_name, '.');
+                  p = (gchar *) strrchr (file->custom_icon_name, '.');
                   if (g_strcmp0 (p, ".png") == 0 || g_strcmp0 (p, ".xpm") == 0 || g_strcmp0 (p, ".svg") == 0)
                     *p = '\0';
                 }
