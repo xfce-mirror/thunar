@@ -244,8 +244,8 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:hidden-bookmarks:
    *
-   * List of URI's that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
-   * If an URI is not in the bookmarks file it will be removed from this list.
+   * List of URIs that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
+   * If a URI is not in the bookmarks file it will be removed from this list.
    **/
   preferences_props[PROP_HIDDEN_BOOKMARKS] =
   g_param_spec_boxed ("hidden-bookmarks",
@@ -304,7 +304,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:last-tabs-left:
    *
-   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * List of URIs that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
    * of the last program exit. This preference holds the tabs of the default view (or the left split-view).
    **/
   preferences_props[PROP_LAST_TABS_LEFT] =
@@ -317,7 +317,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:last-tabs-right:
    *
-   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * List of URIs that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
    * of the last program exit. This preference holds the tabs of the right split-view.
    **/
   preferences_props[PROP_LAST_TABS_RIGHT] =

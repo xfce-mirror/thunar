@@ -1305,9 +1305,9 @@ thunar_g_file_compare_contents (GFile        *file_a,
 
 /**
  * thunar_g_file_list_new_from_string:
- * @string : a string representation of an URI list.
+ * @string : a string representation of a URI list.
  *
- * Splits an URI list conforming to the text/uri-list
+ * Splits a URI list conforming to the text/uri-list
  * mime type defined in RFC 2483 into individual URIs,
  * discarding any comments and whitespace. The resulting
  * list will hold one #GFile for each URI.
