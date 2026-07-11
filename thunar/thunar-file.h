@@ -260,8 +260,6 @@ thunar_file_exists (const ThunarFile *file);
 gboolean
 thunar_file_is_directory (const ThunarFile *file) G_GNUC_PURE;
 gboolean
-thunar_file_is_empty_directory (const ThunarFile *file) G_GNUC_PURE;
-gboolean
 thunar_file_is_shortcut (const ThunarFile *file) G_GNUC_PURE;
 gboolean
 thunar_file_is_mountable (const ThunarFile *file) G_GNUC_PURE;
@@ -281,6 +279,8 @@ thunar_file_is_ancestor (const ThunarFile *file,
 gboolean
 thunar_file_can_execute (ThunarFile *file,
                          gboolean   *ask_execute);
+gboolean
+thunar_file_is_readable (const ThunarFile *file);
 gboolean
 thunar_file_is_writable (const ThunarFile *file);
 gboolean

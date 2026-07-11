@@ -2066,6 +2066,106 @@ thunar_io_jobs_load_content_types (GHashTable *files)
 
 
 static gboolean
+_thunar_job_check_empty (ThunarJob *job,
+                         GArray    *param_values,
+                         GError   **error)
+{
+  GHashTable      *map, *g_files;
+  gpointer         thunar_file, value, g_file;
+  GHashTableIter   iter_map;
+  GFileEnumerator *enumerator;
+  GError          *err = NULL;
+  GFileInfo       *info;
+  gboolean        *is_empty;
+
+  map = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  g_files = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+    {
+      g_hash_table_destroy (g_files);
+      return FALSE;
+    }
+
+  g_hash_table_iter_init (&iter_map, map);
+  while (g_hash_table_iter_next (&iter_map, &thunar_file, &value))
+    {
+      g_file = g_hash_table_lookup (g_files, thunar_file);
+
+      if (g_file == NULL)
+        continue;
+
+      is_empty = value;
+
+      enumerator = g_file_enumerate_children (G_FILE (g_file), NULL,
+                                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                              NULL, &err);
+
+      if (err != NULL)
+        {
+          /* skip files which do cause trouble */
+          gchar *basename = g_file_get_basename (G_FILE (g_file));
+          g_warning ("Failed to check if the file '%s' has any children! Reason: %s", basename, err->message);
+          g_clear_error (&err);
+          g_free (basename);
+          continue;
+        }
+
+      /* try to get the next element. A fail for whatever reason means, that there is no next element */
+      /* Update the 'is_empty' state for the file in the hashtable of the caller */
+      if (g_file_enumerator_iterate (enumerator, &info, NULL, NULL, NULL) && info != NULL)
+        *is_empty = FALSE;
+      else
+        *is_empty = TRUE;
+
+      g_object_unref (enumerator);
+
+      /* abort on cancellation */
+      if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+        {
+          g_hash_table_destroy (g_files);
+          return FALSE;
+        }
+    }
+
+  g_hash_table_destroy (g_files);
+
+  return TRUE;
+}
+
+
+
+/**
+ * thunar_io_jobs_check_empty:
+ * @files: a #GHashMap which of [ThunarFile*, gboolean*]
+ *
+ * Checks if the passed #ThunarFiles are empty in a separate thread.
+ * The value 'is_empty_directory' is set during that process, so make sure to only use the map again, after the job has finished
+ *
+ * Returns: (transfer none): the #ThunarJob which manages the separate thread
+ **/
+ThunarJob *
+thunar_io_jobs_check_empty (GHashTable *map)
+{
+  /* Create a table of [ThunarFile, GFile] before processing the job, because ThunarFile is not thread-save */
+  GHashTable    *g_file_map = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
+  GHashTableIter iter;
+  gpointer       key;
+
+  g_hash_table_iter_init (&iter, map);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
+    g_hash_table_insert (g_file_map, g_object_ref (key), g_object_ref (thunar_file_get_file (THUNAR_FILE (key))));
+
+  ThunarJob *job = thunar_simple_job_new (_thunar_job_check_empty, 2,
+                                          G_TYPE_POINTER, map,
+                                          G_TYPE_POINTER, g_file_map);
+
+  return job;
+}
+
+
+
+static gboolean
 _thunar_job_load_statusbar_text (ThunarJob *job,
                                  GArray    *param_values,
                                  GError   **error)
