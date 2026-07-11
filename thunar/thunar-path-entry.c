@@ -883,7 +883,7 @@ thunar_path_entry_common_prefix_append (ThunarPathEntry *path_entry,
     {
       /* determine the UTF-8 length of the entry text */
       text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-      last_slash = g_utf8_strrchr (text, -1, G_DIR_SEPARATOR);
+      last_slash = (gchar *) g_utf8_strrchr (text, -1, G_DIR_SEPARATOR);
       if (G_LIKELY (last_slash != NULL))
         offset = g_utf8_strlen (text, last_slash - text) + 1;
       else
@@ -961,7 +961,7 @@ thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
 
   /* lookup the last slash character in the entry text */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  s = strrchr (text, G_DIR_SEPARATOR);
+  s = (gchar *) strrchr (text, G_DIR_SEPARATOR);
   if (G_UNLIKELY (s != NULL && s[1] == '\0'))
     return;
   else if (G_LIKELY (s != NULL))
@@ -1046,7 +1046,7 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
   text_normalized = g_utf8_normalize (gtk_entry_get_text (GTK_ENTRY (user_data)), -1, G_NORMALIZE_ALL);
 
   /* lookup the last slash character in the key */
-  last_slash = strrchr (text_normalized, G_DIR_SEPARATOR);
+  last_slash = (gchar *) strrchr (text_normalized, G_DIR_SEPARATOR);
   if (G_UNLIKELY (last_slash != NULL && last_slash[1] == '\0'))
     {
       /* check if the file is hidden */
@@ -1117,7 +1117,7 @@ thunar_path_entry_match_selected (GtkEntryCompletion *completion,
 
   /* determine the UTF-8 offset of the last slash on the entry text */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  last_slash = g_utf8_strrchr (text, -1, G_DIR_SEPARATOR);
+  last_slash = (gchar *) g_utf8_strrchr (text, -1, G_DIR_SEPARATOR);
   if (G_LIKELY (last_slash != NULL))
     offset = g_utf8_strlen (text, last_slash - text) + 1;
   else
@@ -1164,7 +1164,7 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
     return FALSE;
 
   /* lookup the last slash character in the filename */
-  last_slash = strrchr (filename, G_DIR_SEPARATOR);
+  last_slash = (gchar *) strrchr (filename, G_DIR_SEPARATOR);
   if (G_UNLIKELY (last_slash == NULL))
     {
       /* no slash character, it's relative to the home dir */
