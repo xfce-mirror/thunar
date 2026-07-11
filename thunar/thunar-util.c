@@ -143,7 +143,7 @@ thunar_util_str_get_extension (const gchar *filename)
   gboolean            is_in;
 
   /* check if there is an possible extension part in the name */
-  dot = strrchr (filename, '.');
+  dot = (gchar *) strrchr (filename, '.');
   if (dot == NULL
       || dot == filename
       || dot[1] == '\0')
@@ -158,7 +158,7 @@ thunar_util_str_get_extension (const gchar *filename)
       if (strcasecmp (ext, compressed[i]) == 0)
         {
           /* look for a possible container part (tar, psd, epsf) */
-          dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
+          dot2 = (gchar *) thunar_util_strrchr_offset (filename, dot - 1, '.');
           if (dot2 != NULL
               && dot2 != filename)
             {
@@ -179,7 +179,7 @@ thunar_util_str_get_extension (const gchar *filename)
     {
       for (i = 0, is_in = TRUE; is_in && i < 3; i++)
         {
-          dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
+          dot2 = (gchar *) thunar_util_strrchr_offset (filename, dot - 1, '.');
           /* the extension before .in could be long. check that it's at least 2 chars */
           len = dot - dot2 - 1;
           if (dot2 == NULL

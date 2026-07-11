@@ -450,7 +450,7 @@ tse_compress (GList  *infos,
       /* determine the name for the ZIP file */
       tse_data = (TseData *) infos->data;
       path = g_strdup (g_file_info_get_display_name (tse_data->info));
-      dot = strrchr (path, '.');
+      dot = (gchar *) strrchr (path, '.');
       if (G_LIKELY (dot != NULL))
         *dot = '\0';
       zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, path, ".zip", NULL);
