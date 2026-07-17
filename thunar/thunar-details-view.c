@@ -1305,7 +1305,10 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       /* Allow default actions to handle this case */
       GTK_WIDGET_CLASS (thunar_details_view_parent_class)->key_press_event (GTK_WIDGET (tree_view), event);
       stopPropagation = TRUE;
-      break;
+
+      /* Directly return here, since this view might not exist anymore after a directory change */
+      gtk_tree_path_free (path);
+      return stopPropagation;
     }
 
   thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
