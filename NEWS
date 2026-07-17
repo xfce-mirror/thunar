@@ -1,3 +1,55 @@
+4.21.6 (2026-07-17)
+======
+- Prevent use-after-free in list-view (#1861)
+- Fix use-after-free in tree-view-model (#1860)
+- gresources-fix: Fixed meson.build
+- Check for "empty dir" in separate thread (#1838)
+- Fix various minor memory leaks which can occur
+- Remove G_GNUC_CONST specifiers
+- Correct logic in dnd default action selection (#1821)
+- Add Support for pasting images from clipboard (#1813)
+- Fix some possible NULL dereferences
+- Add support for event sounds using libcanberra
+- Introduce menu-order editor feature (#1215)
+- Position popup menu on selection instead cursor
+- Tree_view use new function thunar_gtk_menu_popup_at_rect
+- Popup menu on selected icon on keyboard activated
+- gcc-analyzer: Update false positive file after gcc version bump
+- scan-build: Update false positive file after clang version bump
+- Allow to use mnemonics on bookmarks (#1841)
+- Make use of generic libxfce4ui order-editor
+- Remove redund. toggle-sort-order menu item (#1839)
+- Check/Update view-type on reload (#1799)
+- Prevent Criticals in some use-cases (#1799)
+- Prevent crash on reload when unmounted (#1799)
+- Update expandable folders only when enabled (#1830)
+- Allow plural forms for 'hidden count' string (#1835)
+- Fix crash when open unknown gvfs location (#1834)
+- Prevent use-after-free on re-login (#1831)
+- Prevent crash when the location bas is hidden (#1827)
+- Use original path when moving files from trash (#142)
+- Keep a global ref. to job operation history (#1823)
+- Add preference to resolve symlinks (#152)
+- Reset file copy progress on "retry" (#1775)
+- Unify path entry search logic (#1817)
+- Update tab title after search (#1818)
+- Unify path entry search logic (#1817)
+- Tree view side pane - expand arrow visibility fixes
+- Tree view pane: Always show devices (#1819)
+- Add toolbar button to toggle hidden files (#1680)
+- Disconnect from 'action_mgr' on finalize (#1816)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Belarusian, Bulgarian, Catalan, Chinese (China), Chinese (Hong Kong),
+  Chinese (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, Georgian, German, Greek, Hebrew, Hungarian,
+  Icelandic, Indonesian, Interlingue, Italian, Japanese, Kazakh, Lao,
+  Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500),
+  Persian (Iran), Polish, Portuguese, Portuguese (Brazil), Romanian,
+  Russian, Serbian, Slovak, Slovenian, Spanish, Swedish, Thai, Turkish,
+  Uyghur, Venetian, Vietnamese
+
 4.21.5 (2026-03-28)
 ======
 - Popup menu at tab label on keybord activated
