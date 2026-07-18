@@ -49,6 +49,10 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                         ThunarUcaModel  *uca_model,
                         GtkTreeIter     *iter);
 
+void
+thunar_uca_editor_show (GtkWindow   *window,
+                        const gchar *item_id);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UCA_EDITOR_H__ */

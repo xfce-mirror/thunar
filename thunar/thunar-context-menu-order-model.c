@@ -24,6 +24,7 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-standard-view.h"
+#include "thunar/thunar-uca-model.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
 
@@ -75,6 +76,10 @@ thunar_context_menu_order_model_get_custom_actions (void);
 
 static GList *
 thunar_context_menu_order_model_get_default_items (ThunarContextMenuOrderModel *order_model);
+
+static void
+thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel     *order_model,
+                                                 ThunarContextMenuOrderModelItem *item);
 
 static ThunarContextMenuOrderModelItem *
 thunar_context_menu_order_model_new_item_from_prototype (ThunarContextMenuOrderModel *order_model,
@@ -241,6 +246,10 @@ thunar_context_menu_order_model_get_custom_actions (void)
               item->name = g_strdup (name);
               item->icon = g_strdup (icon);
               item->tooltip = g_strdup (tooltip);
+
+              if (g_str_has_prefix (id, "custom-action-uca-"))
+                item->removable = TRUE;
+
               custom_actions = g_list_append (custom_actions, item);
             }
 
@@ -357,6 +366,29 @@ thunar_context_menu_order_model_get_default_items (ThunarContextMenuOrderModel *
   default_items = g_list_remove_all (default_items, NULL);
 
   return default_items;
+}
+
+
+
+static void
+thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel     *order_model,
+                                                 ThunarContextMenuOrderModelItem *item)
+{
+  ThunarUcaModel *uca_model = thunar_uca_model_get_default ();
+  const gchar    *unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
+  GtkTreeIter     iter;
+
+  if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
+    {
+      thunar_uca_model_remove (uca_model, &iter);
+
+      thunar_context_menu_order_model_item_free (item);
+      order_model->items = g_list_remove (order_model->items, item);
+
+      thunar_uca_model_save (uca_model, NULL);
+    }
+
+  g_object_unref (uca_model);
 }
 
 
@@ -546,6 +578,8 @@ thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model
         {
           thunar_context_menu_order_model_item_free (item);
           order_model->items = g_list_delete_link (order_model->items, link);
+        } else if (g_str_has_prefix(item->id, "custom-action-uca-")) {
+          thunar_context_menu_order_model_remove_uca_item (order_model, item);
         }
     }
 
@@ -794,6 +828,17 @@ thunar_context_menu_order_model_item_new_list_from_entries (const XfceGtkActionE
     }
 
   return items;
+}
+
+
+
+const gchar *
+thunar_context_menu_order_model_item_get_uca_unique_id (ThunarContextMenuOrderModelItem *item)
+{
+  _thunar_return_val_if_fail (item != NULL, NULL);
+  _thunar_return_val_if_fail (g_str_has_prefix (item->id, "custom-action-uca-"), NULL);
+
+  return item->id + strlen ("custom-action-uca-");
 }
 
 

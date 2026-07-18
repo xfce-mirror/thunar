@@ -124,6 +124,11 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                              gchar        ***argvp,
                              GError        **error);
 
+gboolean
+thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
+                                        GtkTreeIter    *iter,
+                                        const gchar    *unique_id);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UCA_MODEL_H__ */

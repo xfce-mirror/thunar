@@ -5769,6 +5769,7 @@ thunar_window_on_uca_changed (ThunarWindow *window)
   /* update context menu */
   context_menu_model = thunar_context_menu_order_model_get_default ();
   thunar_context_menu_order_model_load (context_menu_model);
+  g_object_unref (context_menu_model);
 }
 
 

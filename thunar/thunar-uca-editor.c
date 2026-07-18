@@ -698,3 +698,87 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 
   g_free (unique_id);
 }
+
+
+
+static void
+thunar_uca_editor_save_persistently (GtkWindow      *window,
+                                     ThunarUcaModel *model)
+{
+  GtkWidget *dialog;
+  GError    *error = NULL;
+
+  g_return_if_fail (GTK_IS_WINDOW (window));
+  g_return_if_fail (THUNAR_UCA_IS_MODEL (model));
+
+  /* sync the model to persistent storage */
+  if (!thunar_uca_model_save (model, &error))
+    {
+      dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT
+                                       | GTK_DIALOG_MODAL,
+                                       GTK_MESSAGE_ERROR,
+                                       GTK_BUTTONS_CLOSE,
+                                       _("Failed to save actions to disk."));
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      g_error_free (error);
+    }
+}
+
+
+
+void
+thunar_uca_editor_show (GtkWindow   *window,
+                        const gchar *item_id)
+{
+  ThunarUcaModel *model;
+  GtkWidget      *editor;
+  GtkTreeIter     iter;
+  gboolean        use_header_bar;
+  gboolean        is_edit = item_id != NULL;
+
+  model = thunar_uca_model_get_default ();
+
+  /* if item_id is specified, then set the value for iter */
+  if (item_id != NULL)
+    {
+      if (!thunar_uca_model_get_iter_by_unique_id (model, &iter, item_id))
+        {
+          g_warning ("UCA item with unique_id=\"%s\" not found", item_id);
+          g_object_unref (model);
+          return;
+        }
+    }
+
+  /* allocate the new editor */
+  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+                "gtk-dialogs-use-header", &use_header_bar, NULL);
+
+  editor = g_object_new (THUNAR_UCA_TYPE_EDITOR, "use-header-bar", use_header_bar, NULL);
+  gtk_window_set_title (GTK_WINDOW (editor), is_edit ? _("Edit Action") : _("Create Action"));
+  gtk_window_set_transient_for (GTK_WINDOW (editor), GTK_WINDOW (window));
+
+  if (is_edit)
+    thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+  if (gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK)
+    {
+      /* append a new iter (when not editing) */
+      if (G_UNLIKELY (!is_edit))
+        thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
+
+      /* save the editor values to the model */
+      thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+      /* hide the editor window */
+      gtk_widget_hide (editor);
+
+      /* sync the model to persistent storage */
+      thunar_uca_editor_save_persistently (window, model);
+    }
+
+  g_object_unref (model);
+}

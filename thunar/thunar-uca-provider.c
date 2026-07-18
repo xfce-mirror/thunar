@@ -465,7 +465,7 @@ thunar_uca_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_pr
                               -1);
 
           /* generate a unique action name */
-          name = g_strdup_printf ("custom-action-%s", unique_id);
+          name = g_strdup_printf ("uca-%s", unique_id);
 
           menu_item = thunarx_menu_item_new (name, label, tooltip, icon);
           items = g_list_append (items, menu_item);

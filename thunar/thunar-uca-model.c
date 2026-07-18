@@ -1748,3 +1748,36 @@ error:
   g_string_free (command_line, TRUE);
   return FALSE;
 }
+
+
+
+gboolean
+thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
+                                        GtkTreeIter    *iter,
+                                        const gchar    *unique_id)
+{
+  gchar *iter_unique_id;
+
+  g_return_val_if_fail (uca_model != NULL, FALSE);
+  g_return_val_if_fail (iter != NULL, FALSE);
+  g_return_val_if_fail (unique_id != NULL, FALSE);
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+
+  if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (uca_model), iter))
+    return FALSE;
+
+  while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_model), iter))
+    {
+      gboolean found = FALSE;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
+                          THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &iter_unique_id, NULL);
+      found = g_strcmp0 (iter_unique_id, unique_id) == 0;
+      g_free (iter_unique_id);
+
+      if (found)
+        return TRUE;
+    }
+
+  return FALSE;
+}
