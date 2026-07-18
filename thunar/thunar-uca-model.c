@@ -1771,7 +1771,8 @@ thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
       gboolean found = FALSE;
 
       gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
-                          THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &iter_unique_id, NULL);
+                          THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &iter_unique_id,
+                          -1);
       found = g_strcmp0 (iter_unique_id, unique_id) == 0;
       g_free (iter_unique_id);
 

@@ -186,10 +186,26 @@ thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor
   GList                           *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
   ThunarContextMenuOrderModelItem *item = g_list_nth_data (items, index);
   const gchar                     *unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
+  XfceItemListView                *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
+  GtkWidget                       *tree_view = xfce_item_list_view_get_tree_view (item_view);
+  XfceItemListModel               *model = xfce_item_list_view_get_model (item_view);
+  GtkTreeIter                      iter;
+  GtkTreePath                     *path;
 
-  thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id);
+  /* show dialog */
+  thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id, NULL);
+
+  /* refresh */
+  thunar_context_menu_order_model_load (menu_editor->order_model);
+  thunar_context_menu_order_editor_populate (menu_editor);
+
+  /* set cursor */
+  xfce_item_list_model_set_index (model, &iter, index);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+  gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
 
   g_list_free (items);
+  gtk_tree_path_free (path);
 
   return FALSE;
 }
@@ -246,7 +262,46 @@ thunar_context_menu_order_editor_add_separator (ThunarContextMenuOrderEditor *me
 static void
 thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_editor)
 {
-  thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL);
+  XfceItemListView  *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
+  GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
+  XfceItemListModel *model = xfce_item_list_view_get_model (item_view);
+  gchar             *new_unique_id = NULL;
+  GList             *items;
+  gint               index;
+  GtkTreeIter        iter;
+  GtkTreePath       *path;
+
+  /* show dialog */
+  thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL, &new_unique_id);
+
+  /* refresh */
+  thunar_context_menu_order_model_load (menu_editor->order_model);
+  thunar_context_menu_order_editor_populate (menu_editor);
+
+  /* place the cursor on the new item */
+  items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
+  index = 0;
+  for (GList *l = items; l != NULL; l = l->next, ++index)
+    {
+      ThunarContextMenuOrderModelItem *item = l->data;
+
+      if (g_str_has_prefix (item->id, "custom-action-uca-"))
+        {
+          const gchar *item_unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
+
+          if (g_str_equal (item_unique_id, new_unique_id))
+            break;
+        }
+    }
+
+  xfce_item_list_model_set_index (model, &iter, index);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+  gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+
+  /* cleanup */
+  g_free (new_unique_id);
+  g_list_free (items);
+  gtk_tree_path_free (path);
 }
 
 

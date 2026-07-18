@@ -732,7 +732,8 @@ thunar_uca_editor_save_persistently (GtkWindow      *window,
 
 void
 thunar_uca_editor_show (GtkWindow   *window,
-                        const gchar *item_id)
+                        const gchar *item_id,
+                        gchar      **new_item_id)
 {
   ThunarUcaModel *model;
   GtkWidget      *editor;
@@ -772,6 +773,10 @@ thunar_uca_editor_show (GtkWindow   *window,
 
       /* save the editor values to the model */
       thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+      /* get new unique_id */
+      if (!is_edit && new_item_id != NULL)
+        gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, new_item_id, -1);
 
       /* hide the editor window */
       gtk_widget_hide (editor);

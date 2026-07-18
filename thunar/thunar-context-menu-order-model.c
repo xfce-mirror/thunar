@@ -49,6 +49,8 @@ struct _ThunarContextMenuOrderModel
   /* table(gchar* => ThunarContextMenuOrderModelItem*) for storing menu item prototypes, from which items are then
    * created in the thunar_context_menu_order_model_new_item_from_prototype() */
   GHashTable *prototypes_table;
+
+  ThunarUcaModel *uca_model;
 };
 
 enum
@@ -124,6 +126,9 @@ thunar_context_menu_order_model_init (ThunarContextMenuOrderModel *order_model)
   thunar_context_menu_order_model_init_prototypes_table (order_model);
 
   thunar_context_menu_order_model_load (order_model);
+
+  order_model->uca_model = thunar_uca_model_get_default ();
+  g_signal_connect_swapped (order_model->uca_model, "row_changed", G_CALLBACK (thunar_context_menu_order_model_load), order_model);
 }
 
 
@@ -184,6 +189,9 @@ thunar_context_menu_order_model_finalize (GObject *object)
 
   if (order_model->items != NULL)
     g_list_free_full (order_model->items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+
+  g_signal_handlers_disconnect_by_data (order_model->uca_model, order_model);
+  g_object_unref (order_model->uca_model);
 
   G_OBJECT_CLASS (thunar_context_menu_order_model_parent_class)->finalize (object);
 }
@@ -378,6 +386,8 @@ thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel    
   const gchar    *unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
   GtkTreeIter     iter;
 
+  g_signal_handlers_block_by_func (order_model->uca_model, thunar_context_menu_order_model_load, order_model);
+
   if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
     {
       thunar_uca_model_remove (uca_model, &iter);
@@ -387,6 +397,8 @@ thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel    
 
       thunar_uca_model_save (uca_model, NULL);
     }
+
+  g_signal_handlers_unblock_by_func (order_model->uca_model, thunar_context_menu_order_model_load, order_model);
 
   g_object_unref (uca_model);
 }

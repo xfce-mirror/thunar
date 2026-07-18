@@ -51,7 +51,8 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 
 void
 thunar_uca_editor_show (GtkWindow   *window,
-                        const gchar *item_id);
+                        const gchar *item_id,
+                        gchar      **new_item_id);
 
 G_END_DECLS;
 
