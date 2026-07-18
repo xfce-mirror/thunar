@@ -92,6 +92,10 @@ gint
 thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *order_model,
                                                   gint                         index);
 
+/* loads the model from a file and also adds current menu items from plugins */
+void
+thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model);
+
 ThunarContextMenuOrderModelItem *
 thunar_context_menu_order_model_item_new_from_entry (const XfceGtkActionEntry *entry);
 
