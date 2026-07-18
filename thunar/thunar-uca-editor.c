@@ -114,7 +114,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   object_class->finalize = thunar_uca_editor_finalize;
 
   /* Setup the template xml */
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca-editor.ui");
 
   /* bind stuff */
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, notebook);

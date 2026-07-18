@@ -96,7 +96,7 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
   dialog_class->response = thunar_uca_chooser_response;
 
   /* Setup the template xml */
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/chooser.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca-chooser.ui");
 
   /* bind stuff */
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaChooser, treeview);
