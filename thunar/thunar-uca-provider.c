@@ -160,15 +160,7 @@ thunar_uca_provider_finalize (GObject *object)
 static void
 manage_menu_items (GtkWindow *window)
 {
-  GtkWidget *dialog;
-  gboolean   use_header_bar = FALSE;
-
-  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
-                "gtk-dialogs-use-header", &use_header_bar, NULL);
-
-  dialog = g_object_new (THUNAR_UCA_TYPE_CHOOSER, "use-header-bar", use_header_bar, NULL);
-  gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
-  gtk_widget_show (dialog);
+  thunar_uca_chooser_show (window);
 }
 
 

@@ -146,7 +146,7 @@ static void
 thunar_context_menu_order_editor_move (ThunarContextMenuOrderEditor *menu_editor,
                                        gint                          source_index,
                                        gint                          dest_index)
-{
+{  
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
   thunar_context_menu_order_model_move (menu_editor->order_model, source_index, dest_index);
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
@@ -170,11 +170,35 @@ thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_edit
                                          gint                         *indexes,
                                          gint                          n_items)
 {
-  g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
-  thunar_context_menu_order_model_remove (menu_editor->order_model, indexes, n_items);
-  g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+  GtkWidget *dialog;
+  gint       response;
 
-  return FALSE;
+  /* create the question dialog */
+  dialog = gtk_message_dialog_new (GTK_WINDOW (menu_editor),
+                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                   | GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   _("Are you sure you want to delete the selected items?"));
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Delete action"));
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a item, it is permanently lost."));
+  gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Delete"), GTK_RESPONSE_YES, NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  if (response == GTK_RESPONSE_YES)
+    {
+      g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+      thunar_context_menu_order_model_remove (menu_editor->order_model, indexes, n_items);
+      g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+
+      return FALSE;
+    }
+
+  /* cancelled, stop event processing */
+  return TRUE;
 }
 
 

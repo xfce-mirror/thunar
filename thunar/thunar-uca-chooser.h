@@ -21,6 +21,8 @@
 #ifndef __THUNAR_UCA_CHOOSER_H__
 #define __THUNAR_UCA_CHOOSER_H__
 
+#include "thunar/thunar-uca-model.h"
+
 #include <thunarx/thunarx.h>
 
 G_BEGIN_DECLS;
@@ -39,6 +41,8 @@ GType
 thunar_uca_chooser_get_type (void);
 void
 thunar_uca_chooser_register_type (ThunarxProviderPlugin *plugin);
+void
+thunar_uca_chooser_show (GtkWindow *window);
 
 G_END_DECLS;
 

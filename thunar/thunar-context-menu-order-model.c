@@ -390,7 +390,9 @@ thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel    
 
   if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
     {
-      thunar_uca_model_remove (uca_model, &iter);
+      gint index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), &iter);
+
+      xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
 
       thunar_context_menu_order_model_item_free (item);
       order_model->items = g_list_remove (order_model->items, item);

@@ -161,7 +161,6 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   /* create item_view */
   priv->item_view = xfce_item_list_view_new (NULL);
   xfce_item_list_view_set_label_visibility (XFCE_ITEM_LIST_VIEW (priv->item_view), TRUE);
-  gtk_widget_set_size_request (priv->item_view, 100, 250);
   gtk_box_pack_start (GTK_BOX (hbox), priv->item_view, TRUE, TRUE, 0);
   gtk_widget_show (priv->item_view);
 
@@ -296,10 +295,13 @@ void
 thunar_order_editor_show (ThunarOrderEditor *order_editor,
                           GtkWidget         *window)
 {
-  GdkScreen *screen = NULL;
+  ThunarOrderEditorPrivate *priv;
+  GdkScreen                *screen = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
   _thunar_return_if_fail (GTK_IS_WIDGET (window));
+
+  priv = thunar_order_editor_get_instance_private (order_editor);
 
   if (window == NULL)
     {
@@ -325,6 +327,9 @@ thunar_order_editor_show (ThunarOrderEditor *order_editor,
 
   /* run the dialog */
   gtk_dialog_run (GTK_DIALOG (order_editor));
+
+  /* cleanup */
+  xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
 
   /* destroy the dialog */
   gtk_widget_destroy (GTK_WIDGET (order_editor));

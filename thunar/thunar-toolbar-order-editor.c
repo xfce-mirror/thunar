@@ -135,6 +135,8 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
   GIcon             *icon;
   GActionGroup      *group;
   GSimpleAction     *action;
+  GtkWidget         *tree_view;
+  GtkTreeSelection  *selection;
 
   toolbar_editor->application = thunar_application_get ();
   toolbar_editor->preferences = thunar_preferences_get ();
@@ -203,6 +205,11 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
   g_signal_connect_swapped (action, "activate", G_CALLBACK (thunar_toolbar_order_editor_add_uca), toolbar_editor);
   g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
   g_object_unref (action);
+
+  /* tree view */
+  tree_view = xfce_item_list_view_get_tree_view (item_view);
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+  gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 }
 
 
@@ -375,45 +382,62 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
                                     gint                      n_items)
 {
   ThunarUcaModel *uca_model = thunar_uca_model_get_default ();
-  GError         *error = NULL;
+  GtkWidget      *dialog;
+  gint            response;
 
-  /* disable widget rebuilding when UCA changes */
-  g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (TRUE));
+  /* create the question dialog */
+  dialog = gtk_message_dialog_new (GTK_WINDOW (toolbar_editor),
+                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                   | GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   _("Are you sure you want to delete the selected actions?"));
 
-  /* deletion in reverse order to maintain index validity */
-  for (gint i = n_items - 1; i >= 0; --i)
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Delete action"));
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
+  gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Delete"), GTK_RESPONSE_YES, NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  if (response == GTK_RESPONSE_YES)
     {
-      GtkWidget   *item = g_list_nth_data (toolbar_editor->children, indexes[i]);
-      const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
-      const gchar *unique_id = item_id + strlen ("uca-action-");
-      GtkTreeIter  iter;
+      /* disable widget rebuilding when UCA changes */
+      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (TRUE));
 
-      if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
+      /* deletion in reverse order to maintain index validity */
+      for (gint i = n_items - 1; i >= 0; --i)
         {
-          /* remove uca item */
-          thunar_uca_model_remove (uca_model, &iter);
+          GtkWidget   *item = g_list_nth_data (toolbar_editor->children, indexes[i]);
+          const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
+          const gchar *unique_id = item_id + strlen ("uca-action-");
+          GtkTreeIter  iter;
 
-          /* remove widget */
-          toolbar_editor->children = g_list_remove (toolbar_editor->children, item);
-          gtk_container_remove (GTK_CONTAINER (toolbar_editor->toolbar), item);
+          if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
+            {
+              gint index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), &iter);
+
+              /* remove uca item */
+              xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
+
+              /* remove widget */
+              toolbar_editor->children = g_list_remove (toolbar_editor->children, item);
+              gtk_container_remove (GTK_CONTAINER (toolbar_editor->toolbar), item);
+            }
         }
-    }
 
-  /* save uca model */
-  thunar_uca_model_save (uca_model, &error);
+      /* save uca model */
+      thunar_uca_editor_save_persistently (GTK_WINDOW (toolbar_editor), uca_model);
 
-  /* enable widget rebuilding when UCA changes */
-  g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (FALSE));
+      /* enable widget rebuilding when UCA changes */
+      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (FALSE));
 
-  if (error != NULL)
-    {
-      g_printerr ("Failed to delete UCA items: %s", error->message);
-      g_error_free (error);
+      return FALSE;
     }
 
   g_object_unref (uca_model);
 
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -463,6 +487,8 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
   /* place the cursor on the new item */
   if (new_unique_id != NULL)
     {
+      gboolean found = FALSE;
+
       index = 0;
       for (GList *l = toolbar_editor->children; l != NULL; l = l->next, ++index)
         {
@@ -474,13 +500,19 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
               const gchar *item_unique_id = item_id + strlen ("uca-action-");
 
               if (g_str_equal (item_unique_id, new_unique_id))
-                break;
+                {
+                  found = TRUE;
+                  break;
+                }
             }
         }
 
-      xfce_item_list_model_set_index (model, &iter, index);
-      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-      gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+      if (found)
+        {
+          xfce_item_list_model_set_index (model, &iter, index);
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+        }
     }
 
   /* cleanup */
