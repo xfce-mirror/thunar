@@ -58,6 +58,7 @@
 #include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-toolbar-order-editor.h"
 #include "thunar/thunar-tree-pane.h"
+#include "thunar/thunar-uca-model.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
 
@@ -527,8 +528,6 @@ static void
 image_preview_update (GtkWidget     *parent,
                       GtkAllocation *allocation,
                       GtkWidget     *image);
-static void
-thunar_window_on_uca_changed (ThunarWindow *window);
 
 
 struct _ThunarWindowClass
@@ -609,10 +608,10 @@ struct _ThunarWindow
   GSList *view_bindings;
 
   /* support for two different styles of location bars */
-  GtkWidget    *location_bar;
-  GtkWidget    *location_toolbar;
-  GFileMonitor *uca_file_monitor;
-  GFile        *uca_file;
+  GtkWidget                *location_bar;
+  GtkWidget                *location_toolbar;
+  ThunarUcaModel           *uca_model;
+  ThunarToolbarOrderEditor *toolbar_editor;
 
   /* we need to maintain pointers to be able to toggle sensitivity and activity */
   GtkWidget *location_toolbar_item_menu;
@@ -967,7 +966,6 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget         *event_box;
   gboolean           last_menubar_visible;
   ThunarSidepaneType last_side_pane;
-  gchar             *uca_path;
   gchar             *catfish_path;
   gint               last_separator_position;
   gint               last_window_width;
@@ -1243,12 +1241,8 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar_icons), window);
 
   /* update the location toolbar when custom actions are changed */
-  uca_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
-  window->uca_file = g_file_new_for_path (uca_path);
-  window->uca_file_monitor = g_file_monitor_file (window->uca_file, G_FILE_MONITOR_WATCH_MOVES, NULL, NULL);
-  if (G_LIKELY (window->uca_file_monitor != NULL))
-    g_signal_connect_swapped (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_on_uca_changed), window);
-  g_free (uca_path);
+  window->uca_model = thunar_uca_model_get_default();
+  g_signal_connect_swapped (window->uca_model, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
 
   /* the UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
@@ -1893,13 +1887,9 @@ thunar_window_finalize (GObject *object)
       g_object_unref (window->bookmark_monitor);
     }
 
-  /* detach from the file monitor */
-  if (window->uca_file_monitor != NULL)
-    {
-      g_file_monitor_cancel (window->uca_file_monitor);
-      g_object_unref (window->uca_file_monitor);
-      g_object_unref (window->uca_file);
-    }
+  /* release the uca model */
+  g_signal_handlers_disconnect_by_data (window->uca_model, window);
+  g_object_unref (window->uca_model);
 
   /* release our reference on the provider factory */
   g_object_unref (window->provider_factory);
@@ -4534,7 +4524,9 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
-  thunar_toolbar_order_editor_new_and_show (GTK_WIDGET (window), window->location_toolbar);
+  window->toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "toolbar", window->location_toolbar, NULL);
+  thunar_order_editor_show (THUNAR_ORDER_EDITOR (window->toolbar_editor), GTK_WIDGET (window));
+  window->toolbar_editor = NULL;
   return TRUE;
 }
 
@@ -5754,17 +5746,6 @@ static void
 thunar_window_save_geometry_timer_destroy (gpointer user_data)
 {
   THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
-}
-
-
-
-static void
-thunar_window_on_uca_changed (ThunarWindow *window)
-{
-  ThunarContextMenuOrderModel *context_menu_model;
-
-  /* update toolbar */
-  thunar_window_update_location_toolbar (window);
 }
 
 
@@ -7219,11 +7200,19 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 static void
 thunar_window_update_location_toolbar (ThunarWindow *window)
 {
-  gtk_widget_destroy (window->location_toolbar);
-  thunar_window_location_toolbar_create (window);
-  if (gtk_window_get_titlebar (GTK_WINDOW (window)) == NULL)
-    gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
-  thunar_window_csd_update (window);
+  gint locked = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window->location_toolbar), "locked"));
+
+  if (!locked)
+    {
+      gtk_widget_destroy (window->location_toolbar);
+      thunar_window_location_toolbar_create (window);
+      if (gtk_window_get_titlebar (GTK_WINDOW (window)) == NULL)
+        gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
+      thunar_window_csd_update (window);
+
+      if (window->toolbar_editor != NULL)
+        g_object_set (G_OBJECT (window->toolbar_editor), "toolbar", window->location_toolbar, NULL);
+    }
 }
 
 

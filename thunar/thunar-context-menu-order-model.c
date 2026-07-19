@@ -128,7 +128,7 @@ thunar_context_menu_order_model_init (ThunarContextMenuOrderModel *order_model)
   thunar_context_menu_order_model_load (order_model);
 
   order_model->uca_model = thunar_uca_model_get_default ();
-  g_signal_connect_swapped (order_model->uca_model, "row_changed", G_CALLBACK (thunar_context_menu_order_model_load), order_model);
+  g_signal_connect_swapped (order_model->uca_model, "changed", G_CALLBACK (thunar_context_menu_order_model_load), order_model);
 }
 
 

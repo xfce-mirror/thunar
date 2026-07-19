@@ -269,7 +269,7 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
   GList             *items;
   gint               index;
   GtkTreeIter        iter;
-  GtkTreePath       *path;
+  GtkTreePath       *path = NULL;
 
   /* show dialog */
   thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL, &new_unique_id);
@@ -279,24 +279,27 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
   thunar_context_menu_order_editor_populate (menu_editor);
 
   /* place the cursor on the new item */
-  items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
-  index = 0;
-  for (GList *l = items; l != NULL; l = l->next, ++index)
+  if (new_unique_id != NULL)
     {
-      ThunarContextMenuOrderModelItem *item = l->data;
-
-      if (g_str_has_prefix (item->id, "custom-action-uca-"))
+      items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
+      index = 0;
+      for (GList *l = items; l != NULL; l = l->next, ++index)
         {
-          const gchar *item_unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
+          ThunarContextMenuOrderModelItem *item = l->data;
 
-          if (g_str_equal (item_unique_id, new_unique_id))
-            break;
+          if (g_str_has_prefix (item->id, "custom-action-uca-"))
+            {
+              const gchar *item_unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
+
+              if (g_str_equal (item_unique_id, new_unique_id))
+                break;
+            }
         }
-    }
 
-  xfce_item_list_model_set_index (model, &iter, index);
-  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-  gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+      xfce_item_list_model_set_index (model, &iter, index);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+    }
 
   /* cleanup */
   g_free (new_unique_id);

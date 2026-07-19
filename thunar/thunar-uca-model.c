@@ -56,6 +56,12 @@
 
 typedef struct _ThunarUcaModelItem ThunarUcaModelItem;
 
+enum
+{
+  CHANGED,
+  N_SIGNALS,
+};
+
 
 
 typedef enum
@@ -222,6 +228,8 @@ static const GMarkupParser markup_parser = {
   NULL,
 };
 
+static gint signals[N_SIGNALS];
+
 
 
 THUNARX_DEFINE_TYPE_WITH_CODE (ThunarUcaModel,
@@ -239,6 +247,14 @@ thunar_uca_model_class_init (ThunarUcaModelClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_uca_model_finalize;
+
+  signals[CHANGED] = g_signal_new ("changed",
+                                   G_TYPE_FROM_CLASS (klass),
+                                   G_SIGNAL_RUN_LAST,
+                                   0,
+                                   NULL, NULL,
+                                   NULL,
+                                   G_TYPE_NONE, 0);
 }
 
 
@@ -1598,6 +1614,9 @@ done:
   g_free (tmp_path);
   g_free (path);
 
+  /* signal */
+  g_signal_emit (uca_model, signals[CHANGED], 0);
+
   return result;
 }
 
@@ -1766,7 +1785,7 @@ thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
   if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (uca_model), iter))
     return FALSE;
 
-  while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_model), iter))
+  do
     {
       gboolean found = FALSE;
 
@@ -1779,6 +1798,7 @@ thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
       if (found)
         return TRUE;
     }
+  while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_model), iter));
 
   return FALSE;
 }
