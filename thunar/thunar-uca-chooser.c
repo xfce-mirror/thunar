@@ -117,7 +117,7 @@ static gboolean
 thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
                          gint              index)
 {
-  GValue   value;
+  GValue   value = G_VALUE_INIT;
   gboolean status;
 
   xfce_item_list_model_get_item_value (XFCE_ITEM_LIST_MODEL (chooser->uca_model), index, THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &value);
