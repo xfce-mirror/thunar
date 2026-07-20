@@ -958,7 +958,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:misc-remember-geometry:
+   * ThunarPreferences:misc-resolve-links:
    *
    * Whether Thunar should resolve symbolic links when they are opened
    **/
@@ -1232,7 +1232,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:disk-space-usage-bar:
+   * ThunarPreferences:shortcuts-disk-space-usage-bar:
    *
    * Progressbar that displays disk space usage
    **/
@@ -1244,7 +1244,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:disk-space-usage-bar:
+   * ThunarPreferences:shortcuts-disk-space-usage-warning-percent:
    *
    * Threshold value
    **/
