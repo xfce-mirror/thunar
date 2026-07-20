@@ -43,7 +43,6 @@ struct _ThunarUcaChooser
 
 
 
-
 static void
 thunar_uca_chooser_finalize (GObject *object);
 
@@ -67,7 +66,7 @@ static gboolean
 thunar_uca_chooser_add (ThunarUcaChooser *chooser)
 {
   if (thunar_uca_editor_show (GTK_WINDOW (chooser), NULL, NULL))
-      return FALSE;
+    return FALSE;
 
   /* failed to add element, stop event processing */
   return TRUE;

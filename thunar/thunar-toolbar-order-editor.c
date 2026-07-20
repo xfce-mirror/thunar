@@ -241,7 +241,7 @@ thunar_toolbar_order_editor_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_TOOLBAR:
-      g_clear_object(&toolbar_editor->toolbar);
+      g_clear_object (&toolbar_editor->toolbar);
       toolbar_editor->toolbar = g_value_dup_object (value);
       thunar_toolbar_order_editor_refresh (toolbar_editor);
       break;

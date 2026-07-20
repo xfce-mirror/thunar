@@ -303,7 +303,7 @@ thunar_uca_model_get_column_type (XfceItemListModel *model,
       return G_TYPE_STRING;
 
     case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
-    return G_TYPE_STRING;
+      return G_TYPE_STRING;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
       return G_TYPE_STRING;
@@ -434,7 +434,6 @@ thunar_uca_model_get_item_value (XfceItemListModel *model,
       break;
 
     default:
-      printf("%d\n", column);
       g_warn_if_reached ();
     }
 }

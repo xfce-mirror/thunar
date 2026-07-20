@@ -592,7 +592,9 @@ thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model
         {
           thunar_context_menu_order_model_item_free (item);
           order_model->items = g_list_delete_link (order_model->items, link);
-        } else if (g_str_has_prefix(item->id, "custom-action-uca-")) {
+        }
+      else if (g_str_has_prefix (item->id, "custom-action-uca-"))
+        {
           thunar_context_menu_order_model_remove_uca_item (order_model, item);
         }
     }

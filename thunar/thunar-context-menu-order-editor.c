@@ -146,7 +146,7 @@ static void
 thunar_context_menu_order_editor_move (ThunarContextMenuOrderEditor *menu_editor,
                                        gint                          source_index,
                                        gint                          dest_index)
-{  
+{
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
   thunar_context_menu_order_model_move (menu_editor->order_model, source_index, dest_index);
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);

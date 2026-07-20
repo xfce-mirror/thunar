@@ -1241,7 +1241,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar_icons), window);
 
   /* update the location toolbar when custom actions are changed */
-  window->uca_model = thunar_uca_model_get_default();
+  window->uca_model = thunar_uca_model_get_default ();
   g_signal_connect_swapped (window->uca_model, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
 
   /* the UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
