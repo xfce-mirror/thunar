@@ -135,10 +135,12 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
 static void
 thunar_uca_chooser_init (ThunarUcaChooser *chooser)
 {
-  GtkWidget        *label;
-  GtkWidget        *tree_view;
-  GtkTreeSelection *selection;
-  XfceItemListView *item_view;
+  GtkWidget         *label;
+  GtkWidget         *tree_view;
+  GtkTreeSelection  *selection;
+  XfceItemListView  *item_view;
+  GtkTreeViewColumn *column;
+  GtkCellRenderer   *cell_renderer;
 
   chooser->uca_model = thunar_uca_model_get_default ();
 
@@ -172,6 +174,14 @@ thunar_uca_chooser_init (ThunarUcaChooser *chooser)
   tree_view = xfce_item_list_view_get_tree_view (item_view);
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+
+  column = gtk_tree_view_get_column (GTK_TREE_VIEW (tree_view), XFCE_ITEM_LIST_VIEW_COLUMN_ICON);
+  cell_renderer = g_object_get_data (G_OBJECT (column), "renderer");
+  g_object_set (cell_renderer,
+                "stock-size", GTK_ICON_SIZE_DND,
+                "xpad", 2,
+                "ypad", 2,
+                NULL);
 }
 
 
