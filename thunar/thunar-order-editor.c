@@ -295,13 +295,10 @@ void
 thunar_order_editor_show (ThunarOrderEditor *order_editor,
                           GtkWidget         *window)
 {
-  ThunarOrderEditorPrivate *priv;
-  GdkScreen                *screen = NULL;
+  GdkScreen *screen = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
   _thunar_return_if_fail (GTK_IS_WIDGET (window));
-
-  priv = thunar_order_editor_get_instance_private (order_editor);
 
   if (window == NULL)
     {
@@ -327,9 +324,6 @@ thunar_order_editor_show (ThunarOrderEditor *order_editor,
 
   /* run the dialog */
   gtk_dialog_run (GTK_DIALOG (order_editor));
-
-  /* cleanup */
-  xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
 
   /* destroy the dialog */
   gtk_widget_destroy (GTK_WIDGET (order_editor));

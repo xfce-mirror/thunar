@@ -290,7 +290,7 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
   GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
   XfceItemListModel *model = xfce_item_list_view_get_model (item_view);
   gchar             *new_unique_id = NULL;
-  GList             *items;
+  GList             *items = NULL;
   gint               index;
   GtkTreeIter        iter;
   GtkTreePath       *path = NULL;

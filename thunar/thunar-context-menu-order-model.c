@@ -394,8 +394,8 @@ thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel    
 
       xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
 
-      thunar_context_menu_order_model_item_free (item);
       order_model->items = g_list_remove (order_model->items, item);
+      thunar_context_menu_order_model_item_free (item);
 
       thunar_uca_model_save (uca_model, NULL);
     }
@@ -615,6 +615,7 @@ thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *o
     index = g_list_length (order_model->items);
 
   item = thunar_context_menu_order_model_new_item_from_prototype (order_model, "separator");
+  _thunar_return_val_if_fail (item != NULL, -1);
 
   order_model->items = g_list_insert (order_model->items, item, index);
 
@@ -659,8 +660,15 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
               /* if a separator is encountered, then simply create it */
               ThunarContextMenuOrderModelItem *item = thunar_context_menu_order_model_new_item_from_prototype (order_model, "separator");
 
-              item->visibility = visibility;
-              order_model->items = g_list_append (order_model->items, item);
+              if (item == NULL)
+                {
+                  g_warning ("Failed to create separator");
+                }
+              else
+                {
+                  item->visibility = visibility;
+                  order_model->items = g_list_append (order_model->items, item);
+                }
             }
           else
             {
