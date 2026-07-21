@@ -177,6 +177,7 @@ struct _ThunarPropertiesDialog
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
   GtkWidget *deleted_label;
+  GtkWidget *fs_data_separator;
   GtkWidget *filesystem_vbox;
   GtkWidget *filesystem_label;
   GtkWidget *capacity_vbox;
@@ -336,7 +337,6 @@ thunar_properties_dialog_constructed (GObject *object)
   GtkWidget *button;
   GtkWidget *infobar;
   GtkWidget *frame;
-  GtkWidget *separator;
 
   G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructed (object);
 
@@ -713,12 +713,12 @@ thunar_properties_dialog_constructed (GObject *object)
   ++row;
 
   /* Separate filesystem data from file data */
-  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_widget_set_halign (separator, GTK_ALIGN_FILL);
-  gtk_widget_set_margin_top (separator, 5);
-  gtk_widget_set_margin_bottom (separator, 5);
-  gtk_grid_attach (GTK_GRID (grid), separator, 0, row, 2, 1);
-  gtk_widget_show (separator);
+  dialog->fs_data_separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_widget_set_halign (dialog->fs_data_separator, GTK_ALIGN_FILL);
+  gtk_widget_set_margin_top (dialog->fs_data_separator, 5);
+  gtk_widget_set_margin_bottom (dialog->fs_data_separator, 5);
+  gtk_grid_attach (GTK_GRID (grid), dialog->fs_data_separator, 0, row, 2, 1);
+  gtk_widget_show (dialog->fs_data_separator);
 
   ++row;
 
@@ -1607,6 +1607,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
   else
     {
+      gtk_widget_hide (dialog->fs_data_separator);
+      gtk_widget_hide (dialog->filesystem_vbox);
       gtk_widget_hide (dialog->capacity_vbox);
       gtk_widget_hide (dialog->freespace_vbox);
     }
