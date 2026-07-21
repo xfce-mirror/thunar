@@ -365,9 +365,6 @@ subdir('plugins' / 'thunar-sendto-email')
 if not get_option('thunar-tpa').disabled() and libxfce4panel.found()
   subdir('plugins' / 'thunar-tpa')
 endif
-if not get_option('thunar-uca').disabled()
-  subdir('plugins' / 'thunar-uca')
-endif
 if not get_option('thunar-wallpaper').disabled()
   subdir('plugins' / 'thunar-wallpaper')
 endif

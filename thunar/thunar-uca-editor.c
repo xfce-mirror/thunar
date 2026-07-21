@@ -2,21 +2,21 @@
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2011 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2026 The Xfce Development Team
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifdef HAVE_MEMORY_H
@@ -28,7 +28,7 @@
 
 #include <libxfce4kbd-private/xfce-shortcut-dialog.h>
 #include <libxfce4ui/libxfce4ui.h>
-#include <thunar-uca/thunar-uca-editor.h>
+#include <thunar/thunar-uca-editor.h>
 
 
 
@@ -114,7 +114,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   object_class->finalize = thunar_uca_editor_finalize;
 
   /* Setup the template xml */
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca-editor.ui");
 
   /* bind stuff */
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, notebook);
@@ -697,4 +697,101 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                            uca_editor->accel_mods);
 
   g_free (unique_id);
+}
+
+
+
+gboolean
+thunar_uca_editor_show (GtkWindow   *window,
+                        const gchar *item_id,
+                        gchar      **new_item_id)
+{
+  ThunarUcaModel *model;
+  GtkWidget      *editor;
+  GtkTreeIter     iter;
+  gboolean        use_header_bar;
+  gboolean        is_edit = item_id != NULL;
+  gboolean        status;
+
+  model = thunar_uca_model_get_default ();
+
+  /* if item_id is specified, then set the value for iter */
+  if (item_id != NULL)
+    {
+      if (!thunar_uca_model_get_iter_by_unique_id (model, &iter, item_id))
+        {
+          g_warning ("UCA item with unique_id=\"%s\" not found", item_id);
+          g_object_unref (model);
+          return FALSE;
+        }
+    }
+
+  /* allocate the new editor */
+  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+                "gtk-dialogs-use-header", &use_header_bar, NULL);
+
+  editor = g_object_new (THUNAR_UCA_TYPE_EDITOR, "use-header-bar", use_header_bar, NULL);
+  gtk_window_set_title (GTK_WINDOW (editor), is_edit ? _("Edit Action") : _("Create Action"));
+  gtk_window_set_transient_for (GTK_WINDOW (editor), GTK_WINDOW (window));
+
+  if (is_edit)
+    thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+  status = gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK;
+  if (status)
+    {
+      /* append a new iter (when not editing) */
+      if (G_UNLIKELY (!is_edit))
+        thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
+
+      /* save the editor values to the model */
+      thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+      /* get new unique_id */
+      if (!is_edit && new_item_id != NULL)
+        gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, new_item_id, -1);
+
+      /* hide the editor window */
+      gtk_widget_hide (editor);
+
+      /* sync the model to persistent storage */
+      thunar_uca_editor_save_persistently (window, model);
+    }
+
+  g_object_unref (model);
+
+  return status;
+}
+
+
+
+gboolean
+thunar_uca_editor_save_persistently (GtkWindow      *window,
+                                     ThunarUcaModel *uca_model)
+{
+  GtkWidget *dialog;
+  GError    *error = NULL;
+  gboolean   status;
+
+  g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+
+  /* sync the model to persistent storage */
+  status = thunar_uca_model_save (uca_model, &error);
+  if (!status)
+    {
+      dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT
+                                       | GTK_DIALOG_MODAL,
+                                       GTK_MESSAGE_ERROR,
+                                       GTK_BUTTONS_CLOSE,
+                                       _("Failed to save actions to disk."));
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      g_error_free (error);
+    }
+
+  return status;
 }

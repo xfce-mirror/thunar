@@ -2,21 +2,21 @@
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2012 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2026 The Xfce Development Team
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifdef HAVE_ERRNO_H
@@ -43,7 +43,7 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <libxfce4util/libxfce4util.h>
-#include <thunar-uca/thunar-uca-model.h>
+#include <thunar/thunar-uca-model.h>
 
 
 
@@ -55,6 +55,12 @@
 
 
 typedef struct _ThunarUcaModelItem ThunarUcaModelItem;
+
+enum
+{
+  CHANGED,
+  N_SIGNALS,
+};
 
 
 
@@ -84,54 +90,26 @@ typedef enum
 
 
 static void
-thunar_uca_model_tree_model_init (GtkTreeModelIface *iface);
-static void
 thunar_uca_model_finalize (GObject *object);
-static GtkTreeModelFlags
-thunar_uca_model_get_flags (GtkTreeModel *tree_model);
-static gint
-thunar_uca_model_get_n_columns (GtkTreeModel *tree_model);
-static GType
-thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
-                                  gint          column);
-static gboolean
-thunar_uca_model_get_iter (GtkTreeModel *tree_model,
-                           GtkTreeIter  *iter,
-                           GtkTreePath  *path);
-static GtkTreePath *
-thunar_uca_model_get_path (GtkTreeModel *tree_model,
-                           GtkTreeIter  *iter);
-static void
-thunar_uca_model_get_value (GtkTreeModel *tree_model,
-                            GtkTreeIter  *iter,
-                            gint          column,
-                            GValue       *value);
-static gboolean
-thunar_uca_model_iter_next (GtkTreeModel *tree_model,
-                            GtkTreeIter  *iter);
-static gboolean
-thunar_uca_model_iter_children (GtkTreeModel *tree_model,
-                                GtkTreeIter  *iter,
-                                GtkTreeIter  *parent);
-static gboolean
-thunar_uca_model_iter_has_child (GtkTreeModel *tree_model,
-                                 GtkTreeIter  *iter);
-static gint
-thunar_uca_model_iter_n_children (GtkTreeModel *tree_model,
-                                  GtkTreeIter  *iter);
-static gboolean
-thunar_uca_model_iter_nth_child (GtkTreeModel *tree_model,
-                                 GtkTreeIter  *iter,
-                                 GtkTreeIter  *parent,
-                                 gint          n);
-static gboolean
-thunar_uca_model_iter_parent (GtkTreeModel *tree_model,
-                              GtkTreeIter  *iter,
-                              GtkTreeIter  *child);
 static gboolean
 thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
                                  const gchar    *filename,
                                  GError        **error);
+static gint
+thunar_uca_model_get_list_n_columns (XfceItemListModel *model);
+static GType
+thunar_uca_model_get_column_type (XfceItemListModel *model,
+                                  gint               column);
+static gint
+thunar_uca_model_get_n_items (XfceItemListModel *model);
+static void
+thunar_uca_model_get_item_value (XfceItemListModel *model,
+                                 gint               index,
+                                 gint               column,
+                                 GValue            *value);
+static gboolean
+thunar_uca_model_remove (XfceItemListModel *model,
+                         gint               index);
 static void
 thunar_uca_model_item_reset (ThunarUcaModelItem *item);
 static void
@@ -159,15 +137,14 @@ text_handler (GMarkupParseContext *context,
 
 struct _ThunarUcaModelClass
 {
-  GObjectClass __parent__;
+  XfceItemListModelClass __parent__;
 };
 
 struct _ThunarUcaModel
 {
-  GObject __parent__;
+  XfceItemListModel __parent__;
 
   GList *items;
-  gint   stamp;
 };
 
 struct _ThunarUcaModelItem
@@ -222,13 +199,11 @@ static const GMarkupParser markup_parser = {
   NULL,
 };
 
+static gint signals[N_SIGNALS];
 
 
-THUNARX_DEFINE_TYPE_WITH_CODE (ThunarUcaModel,
-                               thunar_uca_model,
-                               G_TYPE_OBJECT,
-                               THUNARX_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
-                                                            thunar_uca_model_tree_model_init));
+
+THUNARX_DEFINE_TYPE (ThunarUcaModel, thunar_uca_model, XFCE_TYPE_ITEM_LIST_MODEL);
 
 
 
@@ -236,28 +211,26 @@ static void
 thunar_uca_model_class_init (ThunarUcaModelClass *klass)
 {
   GObjectClass *gobject_class;
+  XfceItemListModelClass *model_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_uca_model_finalize;
-}
 
+  signals[CHANGED] = g_signal_new ("changed",
+                                   G_TYPE_FROM_CLASS (klass),
+                                   G_SIGNAL_RUN_LAST,
+                                   0,
+                                   NULL, NULL,
+                                   NULL,
+                                   G_TYPE_NONE, 0);
 
-
-static void
-thunar_uca_model_tree_model_init (GtkTreeModelIface *iface)
-{
-  iface->get_flags = thunar_uca_model_get_flags;
-  iface->get_n_columns = thunar_uca_model_get_n_columns;
-  iface->get_column_type = thunar_uca_model_get_column_type;
-  iface->get_iter = thunar_uca_model_get_iter;
-  iface->get_path = thunar_uca_model_get_path;
-  iface->get_value = thunar_uca_model_get_value;
-  iface->iter_next = thunar_uca_model_iter_next;
-  iface->iter_children = thunar_uca_model_iter_children;
-  iface->iter_has_child = thunar_uca_model_iter_has_child;
-  iface->iter_n_children = thunar_uca_model_iter_n_children;
-  iface->iter_nth_child = thunar_uca_model_iter_nth_child;
-  iface->iter_parent = thunar_uca_model_iter_parent;
+  /* XfceItemListModel */
+  model_class = XFCE_ITEM_LIST_MODEL_CLASS (klass);
+  model_class->get_list_n_columns = thunar_uca_model_get_list_n_columns;
+  model_class->get_list_column_type = thunar_uca_model_get_column_type;
+  model_class->get_n_items = thunar_uca_model_get_n_items;
+  model_class->get_item_value = thunar_uca_model_get_item_value;
+  model_class->remove = thunar_uca_model_remove;
 }
 
 
@@ -267,9 +240,6 @@ thunar_uca_model_init (ThunarUcaModel *uca_model)
 {
   GError *error = NULL;
   gchar  *filename;
-
-  /* generate a unique stamp */
-  uca_model->stamp = g_random_int ();
 
   /* determine the path to the uca.xml config */
   filename = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml");
@@ -285,6 +255,11 @@ thunar_uca_model_init (ThunarUcaModel *uca_model)
       /* release the filename */
       g_free (filename);
     }
+
+  /* XfceItemListModel */
+  g_object_set (uca_model, "list-flags",
+                XFCE_ITEM_LIST_MODEL_EDITABLE | XFCE_ITEM_LIST_MODEL_REMOVABLE | XFCE_ITEM_LIST_MODEL_ADDABLE,
+                NULL);
 }
 
 
@@ -302,16 +277,8 @@ thunar_uca_model_finalize (GObject *object)
 
 
 
-static GtkTreeModelFlags
-thunar_uca_model_get_flags (GtkTreeModel *tree_model)
-{
-  return GTK_TREE_MODEL_LIST_ONLY;
-}
-
-
-
 static gint
-thunar_uca_model_get_n_columns (GtkTreeModel *tree_model)
+thunar_uca_model_get_list_n_columns (XfceItemListModel *model)
 {
   return THUNAR_UCA_MODEL_N_COLUMNS;
 }
@@ -319,27 +286,23 @@ thunar_uca_model_get_n_columns (GtkTreeModel *tree_model)
 
 
 static GType
-thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
-                                  gint          column)
+thunar_uca_model_get_column_type (XfceItemListModel *model,
+                                  gint               column)
 {
+  XfceItemListModelClass *parent_model_class = XFCE_ITEM_LIST_MODEL_CLASS (thunar_uca_model_parent_class);
+
   switch (column)
     {
-    case THUNAR_UCA_MODEL_COLUMN_NAME:
-      return G_TYPE_STRING;
-
     case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
-      return G_TYPE_STRING;
-
-    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
       return G_TYPE_STRING;
 
     case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
       return G_TYPE_STRING;
 
-    case THUNAR_UCA_MODEL_COLUMN_GICON:
-      return G_TYPE_ICON;
-
     case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
+      return G_TYPE_STRING;
+
+    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
       return G_TYPE_STRING;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
@@ -360,80 +323,44 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
       return G_TYPE_STRING;
 
+    case THUNAR_UCA_MODEL_COLUMN_NAME:
+      return G_TYPE_STRING;
+
     default:
-      g_assert_not_reached ();
-      return G_TYPE_INVALID;
+      return parent_model_class->get_list_column_type (XFCE_ITEM_LIST_MODEL (model), column);
     }
 }
 
 
 
-static gboolean
-thunar_uca_model_get_iter (GtkTreeModel *tree_model,
-                           GtkTreeIter  *iter,
-                           GtkTreePath  *path)
+static gint
+thunar_uca_model_get_n_items (XfceItemListModel *model)
 {
-  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
+  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (model);
 
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
-  g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
-
-  iter->stamp = uca_model->stamp;
-  iter->user_data = g_list_nth (uca_model->items, gtk_tree_path_get_indices (path)[0]);
-
-  return (iter->user_data != NULL);
-}
-
-
-
-static GtkTreePath *
-thunar_uca_model_get_path (GtkTreeModel *tree_model,
-                           GtkTreeIter  *iter)
-{
-  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
-  gint            idx;
-
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
-  g_return_val_if_fail (iter->stamp == uca_model->stamp, NULL);
-
-  /* determine the index of the iter */
-  idx = g_list_position (uca_model->items, iter->user_data);
-  if (G_UNLIKELY (idx < 0))
-    return NULL;
-
-  return gtk_tree_path_new_from_indices (idx, -1);
+  return g_list_length (uca_model->items);
 }
 
 
 
 static void
-thunar_uca_model_get_value (GtkTreeModel *tree_model,
-                            GtkTreeIter  *iter,
-                            gint          column,
-                            GValue       *value)
+thunar_uca_model_get_item_value (XfceItemListModel *model,
+                                 gint               index,
+                                 gint               column,
+                                 GValue            *value)
 {
-  ThunarUcaModelItem *item = ((GList *) iter->user_data)->data;
-  ThunarUcaModel     *uca_model = THUNAR_UCA_MODEL (tree_model);
+  ThunarUcaModel     *uca_model = THUNAR_UCA_MODEL (model);
+  ThunarUcaModelItem *item = g_list_nth_data (uca_model->items, index);
   gchar              *str;
-
-  g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
-  g_return_if_fail (iter->stamp == uca_model->stamp);
-
-  /* initialize the value with the proper type */
-  g_value_init (value, gtk_tree_model_get_column_type (tree_model, column));
 
   switch (column)
     {
-    case THUNAR_UCA_MODEL_COLUMN_NAME:
-      g_value_set_static_string (value, item->name ? item->name : "");
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE:
+      g_value_set_boolean (value, TRUE);
       break;
 
-    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
-      g_value_set_static_string (value, item->submenu ? item->submenu : "");
-      break;
-
-    case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
-      g_value_set_static_string (value, item->description);
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE:
+      g_value_set_boolean (value, FALSE);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_GICON:
@@ -446,16 +373,43 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
       g_value_set_object (value, item->gicon);
       break;
 
+    case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
+      str = g_markup_printf_escaped ("<b>%s</b>\n%s",
+                                     (item->name != NULL) ? item->name : "",
+                                     (item->description != NULL) ? item->description : "");
+      g_value_take_string (value, str);
+      break;
+
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP:
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE:
+      g_value_set_boolean (value, TRUE);
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE:
+      g_value_set_boolean (value, TRUE);
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
+      g_value_set_string (value, item->submenu ? item->submenu : "");
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
+      g_value_set_string (value, item->description);
+      break;
+
     case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
-      g_value_set_static_string (value, item->icon_name);
+      g_value_set_string (value, item->icon_name);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
-      g_value_set_static_string (value, item->unique_id);
+      g_value_set_string (value, item->unique_id);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
-      g_value_set_static_string (value, item->command);
+      g_value_set_string (value, item->command);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY:
@@ -468,109 +422,47 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_RANGE:
-      g_value_set_static_string (value, item->range);
+      g_value_set_string (value, item->range);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_TYPES:
       g_value_set_uint (value, item->types);
       break;
 
-    case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
-      str = g_markup_printf_escaped ("<b>%s</b>\n%s", (item->name != NULL) ? item->name : "", (item->description != NULL) ? item->description : "");
-      g_value_take_string (value, str);
+    case THUNAR_UCA_MODEL_COLUMN_NAME:
+      g_value_set_string (value, item->name);
       break;
 
     default:
-      g_assert_not_reached ();
+      g_warn_if_reached ();
     }
 }
 
 
 
 static gboolean
-thunar_uca_model_iter_next (GtkTreeModel *tree_model,
-                            GtkTreeIter  *iter)
+thunar_uca_model_remove (XfceItemListModel *model,
+                         gint               index)
 {
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (tree_model), FALSE);
-  g_return_val_if_fail (iter->stamp == THUNAR_UCA_MODEL (tree_model)->stamp, FALSE);
+  ThunarUcaModel     *uca_model = THUNAR_UCA_MODEL (model);
+  GList              *link = g_list_nth (uca_model->items, index);
+  ThunarUcaModelItem *uca_item;
+  gchar              *accel_path;
+  GtkAccelKey         key;
 
-  iter->user_data = g_list_next (iter->user_data);
-  return (iter->user_data != NULL);
-}
+  g_return_val_if_fail (link != NULL, FALSE);
 
+  uca_item = link->data;
 
+  accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", uca_item->unique_id);
+  if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
+    gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
+  g_free (accel_path);
 
-static gboolean
-thunar_uca_model_iter_children (GtkTreeModel *tree_model,
-                                GtkTreeIter  *iter,
-                                GtkTreeIter  *parent)
-{
-  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
+  thunar_uca_model_item_free (link->data);
+  uca_model->items = g_list_delete_link (uca_model->items, link);
 
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
-
-  if (G_LIKELY (parent == NULL && uca_model->items != NULL))
-    {
-      iter->stamp = uca_model->stamp;
-      iter->user_data = uca_model->items;
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_uca_model_iter_has_child (GtkTreeModel *tree_model,
-                                 GtkTreeIter  *iter)
-{
-  return FALSE;
-}
-
-
-
-static gint
-thunar_uca_model_iter_n_children (GtkTreeModel *tree_model,
-                                  GtkTreeIter  *iter)
-{
-  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
-
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), 0);
-
-  return (iter == NULL) ? g_list_length (uca_model->items) : 0;
-}
-
-
-
-static gboolean
-thunar_uca_model_iter_nth_child (GtkTreeModel *tree_model,
-                                 GtkTreeIter  *iter,
-                                 GtkTreeIter  *parent,
-                                 gint          n)
-{
-  ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
-
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
-
-  if (G_LIKELY (parent != NULL))
-    {
-      iter->stamp = uca_model->stamp;
-      iter->user_data = g_list_nth (uca_model->items, n);
-      return (iter->user_data != NULL);
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_uca_model_iter_parent (GtkTreeModel *tree_model,
-                              GtkTreeIter  *iter,
-                              GtkTreeIter  *child)
-{
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -1272,111 +1164,11 @@ thunar_uca_model_append (ThunarUcaModel *uca_model,
   uca_model->items = g_list_append (uca_model->items, item);
 
   /* determine the tree iter of the new item */
-  iter->stamp = uca_model->stamp;
-  iter->user_data = g_list_last (uca_model->items);
+  xfce_item_list_model_set_index (XFCE_ITEM_LIST_MODEL (uca_model), iter, g_list_length (uca_model->items) - 1);
 
   /* notify listeners about the new item */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
   gtk_tree_model_row_inserted (GTK_TREE_MODEL (uca_model), path, iter);
-  gtk_tree_path_free (path);
-}
-
-
-
-/**
- * thunar_uca_model_exchange:
- * @uca_model : a #ThunarUcaModel.
- * @iter_a    : a #GtkTreeIter.
- * @iter_b    : a #GtkTreeIter.
- *
- * Exchanges the items at @iter_a and @iter_b in
- * @uca_model.
- **/
-void
-thunar_uca_model_exchange (ThunarUcaModel *uca_model,
-                           GtkTreeIter    *iter_a,
-                           GtkTreeIter    *iter_b)
-{
-  ThunarUcaModelItem *item;
-  GtkTreePath        *path;
-  GList              *list_a = iter_a->user_data;
-  GList              *list_b = iter_b->user_data;
-  gint               *new_order;
-  gint                n_items;
-  gint                n;
-
-  g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
-  g_return_if_fail (iter_a->stamp == uca_model->stamp);
-  g_return_if_fail (iter_b->stamp == uca_model->stamp);
-
-  /* allocate and initialize the new order array */
-  n_items = g_list_length (uca_model->items);
-  new_order = g_newa (gint, n_items);
-  for (n = 0; n < n_items; ++n)
-    new_order[n] = n;
-
-  /* change new_order appropriately */
-  new_order[g_list_position (uca_model->items, list_a)] = g_list_position (uca_model->items, list_b);
-  new_order[g_list_position (uca_model->items, list_b)] = g_list_position (uca_model->items, list_a);
-
-  /* perform the exchange */
-  item = list_a->data;
-  list_a->data = list_b->data;
-  list_b->data = item;
-
-  /* notify listeners about the new order */
-  path = gtk_tree_path_new ();
-  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (uca_model), path, NULL, new_order);
-  gtk_tree_path_free (path);
-}
-
-
-
-/**
- * thunar_uca_model_remove:
- * @uca_model : a #ThunarUcaModel.
- * @iter      : a #GtkTreeIter.
- *
- * Removes the item at the given @iter from the
- * @uca_model.
- **/
-void
-thunar_uca_model_remove (ThunarUcaModel *uca_model,
-                         GtkTreeIter    *iter)
-{
-  ThunarUcaModelItem *item;
-  GtkTreePath        *path;
-  gchar              *unique_id;
-  gchar              *accel_path;
-  GtkAccelKey         key;
-
-  g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
-  g_return_if_fail (iter->stamp == uca_model->stamp);
-
-  /* clear any accelerator associated to the item */
-  gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
-                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
-                      -1);
-  accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
-  g_free (unique_id);
-
-  if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
-    gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
-
-  g_free (accel_path);
-
-  /* determine the path for the item to remove */
-  path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
-
-  /* remove the node from the list */
-  item = ((GList *) iter->user_data)->data;
-  uca_model->items = g_list_delete_link (uca_model->items, iter->user_data);
-  thunar_uca_model_item_free (item);
-
-  /* notify listeners */
-  gtk_tree_model_row_deleted (GTK_TREE_MODEL (uca_model), path);
-
-  /* cleanup */
   gtk_tree_path_free (path);
 }
 
@@ -1417,12 +1209,13 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   GtkTreePath        *path;
   guint               n, m;
   gchar              *accel_path;
+  gint                index;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
-  g_return_if_fail (iter->stamp == uca_model->stamp);
 
   /* reset the previous item values */
-  item = ((GList *) iter->user_data)->data;
+  index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), iter);
+  item = g_list_nth_data (uca_model->items, index);
   thunar_uca_model_item_reset (item);
 
   /* setup the new item values */
@@ -1598,6 +1391,9 @@ done:
   g_free (tmp_path);
   g_free (path);
 
+  /* signal */
+  g_signal_emit (uca_model, signals[CHANGED], 0);
+
   return result;
 }
 
@@ -1631,13 +1427,14 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   gchar              *path;
   gchar              *expanded;
   GFile              *location;
+  gint                index;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
-  g_return_val_if_fail (iter->stamp == uca_model->stamp, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* verify that a command is set for the item */
-  item = (ThunarUcaModelItem *) ((GList *) iter->user_data)->data;
+  index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), iter);
+  item = g_list_nth_data (uca_model->items, index);
   if (item->command == NULL || *item->command == '\0')
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Command not configured"));
@@ -1746,5 +1543,40 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
 
 error:
   g_string_free (command_line, TRUE);
+  return FALSE;
+}
+
+
+
+gboolean
+thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
+                                        GtkTreeIter    *iter,
+                                        const gchar    *unique_id)
+{
+  gchar *iter_unique_id;
+
+  g_return_val_if_fail (uca_model != NULL, FALSE);
+  g_return_val_if_fail (iter != NULL, FALSE);
+  g_return_val_if_fail (unique_id != NULL, FALSE);
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+
+  if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (uca_model), iter))
+    return FALSE;
+
+  do
+    {
+      gboolean found = FALSE;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
+                          THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &iter_unique_id,
+                          -1);
+      found = g_strcmp0 (iter_unique_id, unique_id) == 0;
+      g_free (iter_unique_id);
+
+      if (found)
+        return TRUE;
+    }
+  while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_model), iter));
+
   return FALSE;
 }

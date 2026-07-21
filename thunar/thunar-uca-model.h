@@ -1,26 +1,27 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2026 The Xfce Development Team
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef __THUNAR_UCA_MODEL_H__
 #define __THUNAR_UCA_MODEL_H__
 
+#include <libxfce4ui/libxfce4ui.h>
 #include <thunarx/thunarx.h>
 
 G_BEGIN_DECLS;
@@ -37,10 +38,10 @@ typedef struct _ThunarUcaModel      ThunarUcaModel;
 
 typedef enum
 {
-  THUNAR_UCA_MODEL_COLUMN_NAME,
-  THUNAR_UCA_MODEL_COLUMN_SUB_MENU,
+  THUNAR_UCA_MODEL_COLUMN_GICON = XFCE_ITEM_LIST_MODEL_COLUMN_ICON,
+  THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL = XFCE_ITEM_LIST_MODEL_COLUMN_NAME,
+  THUNAR_UCA_MODEL_COLUMN_SUB_MENU = XFCE_ITEM_LIST_MODEL_COLUMN_USER,
   THUNAR_UCA_MODEL_COLUMN_DESCRIPTION,
-  THUNAR_UCA_MODEL_COLUMN_GICON,
   THUNAR_UCA_MODEL_COLUMN_ICON_NAME,
   THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID,
   THUNAR_UCA_MODEL_COLUMN_COMMAND,
@@ -48,7 +49,7 @@ typedef enum
   THUNAR_UCA_MODEL_COLUMN_PATTERNS,
   THUNAR_UCA_MODEL_COLUMN_RANGE,
   THUNAR_UCA_MODEL_COLUMN_TYPES,
-  THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL,
+  THUNAR_UCA_MODEL_COLUMN_NAME,
   THUNAR_UCA_MODEL_N_COLUMNS,
 } ThunarUcaModelColumn;
 
@@ -88,15 +89,6 @@ thunar_uca_model_append (ThunarUcaModel *uca_model,
                          GtkTreeIter    *iter);
 
 void
-thunar_uca_model_exchange (ThunarUcaModel *uca_model,
-                           GtkTreeIter    *iter_a,
-                           GtkTreeIter    *iter_b);
-
-void
-thunar_uca_model_remove (ThunarUcaModel *uca_model,
-                         GtkTreeIter    *iter);
-
-void
 thunar_uca_model_update (ThunarUcaModel *uca_model,
                          GtkTreeIter    *iter,
                          const gchar    *name,
@@ -123,6 +115,11 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                              gint           *argcp,
                              gchar        ***argvp,
                              GError        **error);
+
+gboolean
+thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
+                                        GtkTreeIter    *iter,
+                                        const gchar    *unique_id);
 
 G_END_DECLS;
 

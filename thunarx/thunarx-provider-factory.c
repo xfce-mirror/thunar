@@ -19,9 +19,9 @@
  */
 
 #include "thunarx/thunarx-private.h"
-#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-visibility.h"
 
 #include <gdk/gdk.h>
@@ -372,6 +372,35 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 
   return providers;
 }
+
+
+
+/**
+ * thunarx_provider_factory_add_module:
+ * @module : a #ThunarxProviderModule instance.
+ *
+ * Adds a new module to the list of loaded modules. If a module with the same name
+ * is already in the list, this function will not add it again. Used to load
+ * internal modules.
+ **/
+void
+thunarx_provider_factory_add_module (ThunarxProviderModule *module)
+{
+  g_return_if_fail (module != NULL);
+
+  for (GList *l = thunarx_provider_modules; l != NULL; l = l->next)
+    {
+      if (l->data == module)
+        return;
+
+      if (g_str_equal (G_TYPE_MODULE (l->data)->name, G_TYPE_MODULE (module)->name))
+        return;
+    }
+
+  thunarx_provider_modules = g_list_append (thunarx_provider_modules, module);
+}
+
+
 
 #define __THUNARX_PROVIDER_FACTORY_C__
 #include "thunarx-visibility.c"

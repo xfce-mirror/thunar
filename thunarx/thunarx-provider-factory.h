@@ -49,6 +49,9 @@ GList *
 thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
                                          GType                   type) G_GNUC_MALLOC;
 
+void
+thunarx_provider_factory_add_module (ThunarxProviderModule *module);
+
 G_END_DECLS
 
 #endif /* !__THUNARX_PROVIDER_FACTORY_H__ */

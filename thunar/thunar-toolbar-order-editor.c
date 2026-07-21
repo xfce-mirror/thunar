@@ -22,6 +22,8 @@
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
+#include "thunar/thunar-uca-editor.h"
+#include "thunar/thunar-uca-model.h"
 #include "thunar/thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>
@@ -84,6 +86,18 @@ thunar_toolbar_order_editor_compare_order (GObject *a,
 static void
 thunar_toolbar_order_editor_reset (ThunarToolbarOrderEditor *toolbar_editor);
 
+static gboolean
+thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
+                                    gint                     *indexes,
+                                    gint                      n_items);
+
+static gboolean
+thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
+                                  gint                      index);
+
+static void
+thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor);
+
 static void
 thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor);
 
@@ -103,7 +117,7 @@ thunar_toolbar_order_editor_class_init (ThunarToolbarOrderEditorClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_TOOLBAR,
                                    g_param_spec_object ("toolbar", NULL, NULL,
-                                                        GTK_TYPE_WIDGET,
+                                                        GTK_TYPE_TOOLBAR,
                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 }
 
@@ -115,6 +129,14 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
   ThunarOrderEditor *order_editor = THUNAR_ORDER_EDITOR (toolbar_editor);
   GtkWidget         *label;
   GtkWidget         *button;
+  XfceItemListView  *item_view;
+  GMenu             *menu;
+  GMenuItem         *menu_item;
+  GIcon             *icon;
+  GActionGroup      *group;
+  GSimpleAction     *action;
+  GtkWidget         *tree_view;
+  GtkTreeSelection  *selection;
 
   toolbar_editor->application = thunar_application_get ();
   toolbar_editor->preferences = thunar_preferences_get ();
@@ -144,15 +166,50 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
                 "help-enabled", TRUE,
                 NULL);
 
+  /* item view*/
+  item_view = thunar_order_editor_get_item_view (order_editor);
+  xfce_item_list_view_set_label_visibility (item_view, FALSE);
+  g_signal_connect_swapped (item_view, "remove-items", G_CALLBACK (thunar_toolbar_order_editor_remove), toolbar_editor);
+  g_signal_connect_swapped (item_view, "edit-item", G_CALLBACK (thunar_toolbar_order_editor_edit), toolbar_editor);
+
   /* store */
   toolbar_editor->store = xfce_item_list_store_new (-1);
   g_object_set (toolbar_editor, "model", toolbar_editor->store, NULL);
-  g_object_set (toolbar_editor->store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+  g_object_set (toolbar_editor->store, "list-flags",
+                XFCE_ITEM_LIST_MODEL_REORDERABLE
+                | XFCE_ITEM_LIST_MODEL_RESETTABLE
+                | XFCE_ITEM_LIST_MODEL_REMOVABLE
+                | XFCE_ITEM_LIST_MODEL_EDITABLE,
+                NULL);
   g_signal_connect_swapped (toolbar_editor->store, "before-move-item", G_CALLBACK (thunar_toolbar_order_editor_move), toolbar_editor);
   g_signal_connect_swapped (toolbar_editor->store, "activity-changed", G_CALLBACK (thunar_toolbar_order_editor_set_item_visibility), toolbar_editor);
   g_signal_connect_swapped (toolbar_editor->store, "reset", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
   g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_refresh), toolbar_editor);
   g_object_unref (toolbar_editor->store);
+
+  /* menu items */
+  menu = xfce_item_list_view_get_menu (item_view);
+
+  menu_item = g_menu_item_new (_("Add custom action"), "xfce-item-list-view.add-user-custom-action");
+  g_menu_item_set_attribute (menu_item, XFCE_MENU_ATTRIBUTE_TOOLTIP, "s", _("Add user custom action"));
+  icon = g_themed_icon_new ("application-add-symbolic");
+  g_menu_item_set_icon (menu_item, icon);
+  g_clear_object (&icon);
+  g_menu_insert_item (menu, 1, menu_item);
+  g_object_unref (menu_item);
+
+  /* actions */
+  group = gtk_widget_get_action_group (GTK_WIDGET (item_view), "xfce-item-list-view");
+
+  action = g_simple_action_new ("add-user-custom-action", NULL);
+  g_signal_connect_swapped (action, "activate", G_CALLBACK (thunar_toolbar_order_editor_add_uca), toolbar_editor);
+  g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
+  g_object_unref (action);
+
+  /* tree view */
+  tree_view = xfce_item_list_view_get_tree_view (item_view);
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+  gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 }
 
 
@@ -229,6 +286,7 @@ thunar_toolbar_order_editor_refresh (ThunarToolbarOrderEditor *toolbar_editor)
       const gchar *name = g_object_get_data (G_OBJECT (item), "label");
       GtkWidget   *label = gtk_label_new_with_mnemonic (name);
       const gchar *tooltip = is_menu ? _("Only visible when the menubar is hidden") : NULL;
+      gboolean     is_uca = g_str_has_prefix (id, "uca-action-");
 
       xfce_item_list_store_insert_with_values (toolbar_editor->store, -1,
                                                XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, is_menu || gtk_widget_is_visible (item),
@@ -236,6 +294,8 @@ thunar_toolbar_order_editor_refresh (ThunarToolbarOrderEditor *toolbar_editor)
                                                XFCE_ITEM_LIST_MODEL_COLUMN_ICON, icon,
                                                XFCE_ITEM_LIST_MODEL_COLUMN_NAME, gtk_label_get_text (GTK_LABEL (label)),
                                                XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP, tooltip,
+                                               XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE, is_uca,
+                                               XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE, is_uca,
                                                -1);
 
       g_clear_object (&icon);
@@ -316,6 +376,152 @@ thunar_toolbar_order_editor_reset (ThunarToolbarOrderEditor *toolbar_editor)
 
 
 
+static gboolean
+thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
+                                    gint                     *indexes,
+                                    gint                      n_items)
+{
+  ThunarUcaModel *uca_model = thunar_uca_model_get_default ();
+  GtkWidget      *dialog;
+  gint            response;
+
+  /* create the question dialog */
+  dialog = gtk_message_dialog_new (GTK_WINDOW (toolbar_editor),
+                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                   | GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   _("Are you sure you want to delete the selected actions?"));
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Delete action"));
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
+  gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Delete"), GTK_RESPONSE_YES, NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  if (response == GTK_RESPONSE_YES)
+    {
+      /* disable widget rebuilding when UCA changes */
+      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (TRUE));
+
+      /* deletion in reverse order to maintain index validity */
+      for (gint i = n_items - 1; i >= 0; --i)
+        {
+          GtkWidget   *item = g_list_nth_data (toolbar_editor->children, indexes[i]);
+          const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
+          const gchar *unique_id = item_id + strlen ("uca-action-");
+          GtkTreeIter  iter;
+
+          if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
+            {
+              gint index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), &iter);
+
+              /* remove uca item */
+              xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
+
+              /* remove widget */
+              toolbar_editor->children = g_list_remove (toolbar_editor->children, item);
+              gtk_container_remove (GTK_CONTAINER (toolbar_editor->toolbar), item);
+            }
+        }
+
+      /* save uca model */
+      thunar_uca_editor_save_persistently (GTK_WINDOW (toolbar_editor), uca_model);
+
+      /* enable widget rebuilding when UCA changes */
+      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (FALSE));
+
+      return FALSE;
+    }
+
+  g_object_unref (uca_model);
+
+  return TRUE;
+}
+
+
+
+gboolean
+thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
+                                  gint                      index)
+{
+  GtkWidget         *item = g_list_nth_data (toolbar_editor->children, index);
+  const gchar       *item_id = g_object_get_data (G_OBJECT (item), "id");
+  const gchar       *unique_id = item_id + strlen ("uca-action-");
+  XfceItemListView  *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
+  GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
+  XfceItemListModel *model = xfce_item_list_view_get_model (item_view);
+  GtkTreeIter        iter;
+  GtkTreePath       *path;
+
+  /* show dialog */
+  thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), unique_id, NULL);
+
+  /* set cursor */
+  xfce_item_list_model_set_index (model, &iter, index);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+  gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+
+  gtk_tree_path_free (path);
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
+{
+  XfceItemListView  *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
+  GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
+  XfceItemListModel *model = xfce_item_list_view_get_model (item_view);
+  gchar             *new_unique_id = NULL;
+  gint               index;
+  GtkTreeIter        iter;
+  GtkTreePath       *path = NULL;
+
+  /* show dialog */
+  thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), NULL, &new_unique_id);
+
+  /* place the cursor on the new item */
+  if (new_unique_id != NULL)
+    {
+      gboolean found = FALSE;
+
+      index = 0;
+      for (GList *l = toolbar_editor->children; l != NULL; l = l->next, ++index)
+        {
+          GtkWidget   *item = GTK_WIDGET (l->data);
+          const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
+
+          if (g_str_has_prefix (item_id, "uca-action-"))
+            {
+              const gchar *item_unique_id = item_id + strlen ("uca-action-");
+
+              if (g_str_equal (item_unique_id, new_unique_id))
+                {
+                  found = TRUE;
+                  break;
+                }
+            }
+        }
+
+      if (found)
+        {
+          xfce_item_list_model_set_index (model, &iter, index);
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+        }
+    }
+
+  /* cleanup */
+  g_free (new_unique_id);
+  gtk_tree_path_free (path);
+}
+
+
+
 static void
 thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
 {
@@ -358,15 +564,4 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
 
   /* unblock signal */
   g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_refresh, toolbar_editor);
-}
-
-
-
-void
-thunar_toolbar_order_editor_new_and_show (GtkWidget *window,
-                                          GtkWidget *toolbar)
-{
-  ThunarToolbarOrderEditor *toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "toolbar", toolbar, NULL);
-
-  thunar_order_editor_show (THUNAR_ORDER_EDITOR (toolbar_editor), window);
 }

@@ -30,8 +30,9 @@
 #include "thunarx/thunarx-preferences-provider.h"
 #include "thunarx/thunarx-property-page-provider.h"
 #include "thunarx/thunarx-property-page.h"
-#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-provider-module.h"
+#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-renamer-provider.h"
 #include "thunarx/thunarx-renamer.h"
 
