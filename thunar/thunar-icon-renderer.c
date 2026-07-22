@@ -41,7 +41,12 @@ enum
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
   PROP_USE_SYMBOLIC_ICONS,
+  PROP_SELECTION_CHECKMARK,
+  PROP_SELECTION_CHECKMARK_START,
 };
+
+#define THUNAR_ICON_RENDERER_CHECKMARK_SIZE 16
+#define THUNAR_ICON_RENDERER_CHECKMARK_SPACING 4
 
 
 
@@ -216,6 +221,22 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          "use-symbolic-icons",
                                                          FALSE,
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_SELECTION_CHECKMARK,
+                                   g_param_spec_boolean ("selection-checkmark",
+                                                         "selection-checkmark",
+                                                         "selection-checkmark",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_SELECTION_CHECKMARK_START,
+                                   g_param_spec_boolean ("selection-checkmark-start",
+                                                         "selection-checkmark-start",
+                                                         "selection-checkmark-start",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -292,6 +313,14 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, icon_renderer->use_symbolic_icons);
       break;
 
+    case PROP_SELECTION_CHECKMARK:
+      g_value_set_boolean (value, icon_renderer->selection_checkmark);
+      break;
+
+    case PROP_SELECTION_CHECKMARK_START:
+      g_value_set_boolean (value, icon_renderer->selection_checkmark_start);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -351,6 +380,14 @@ thunar_icon_renderer_set_property (GObject      *object,
       icon_renderer->use_symbolic_icons = g_value_get_boolean (value);
       break;
 
+    case PROP_SELECTION_CHECKMARK:
+      icon_renderer->selection_checkmark = g_value_get_boolean (value);
+      break;
+
+    case PROP_SELECTION_CHECKMARK_START:
+      icon_renderer->selection_checkmark_start = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -371,9 +408,15 @@ thunar_icon_renderer_get_preferred_width (GtkCellRenderer *renderer,
   gtk_cell_renderer_get_padding (renderer, &xpad, NULL);
 
   if (G_LIKELY (minimum))
-    *minimum = (gint) xpad * 2 + icon_renderer->size;
+    *minimum = (gint) xpad * 2 + icon_renderer->size
+               + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
+                  ? THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
+                  : 0);
   if (G_LIKELY (natural))
-    *natural = (gint) xpad * 2 + icon_renderer->size;
+    *natural = (gint) xpad * 2 + icon_renderer->size
+               + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
+                  ? THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
+                  : 0);
 }
 
 
@@ -467,6 +510,130 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
 
 
+void
+thunar_icon_renderer_get_selection_checkmark_area (ThunarIconRenderer     *icon_renderer,
+                                                  GtkWidget              *widget,
+                                                  const GdkRectangle     *cell_area,
+                                                  GtkCellRendererState    flags,
+                                                  GdkRectangle           *checkmark_area)
+{
+  GtkTextDirection direction;
+  GdkRectangle     target_area;
+
+  _thunar_return_if_fail (THUNAR_IS_ICON_RENDERER (icon_renderer));
+  _thunar_return_if_fail (GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (cell_area != NULL);
+  _thunar_return_if_fail (checkmark_area != NULL);
+
+  checkmark_area->width = MIN (THUNAR_ICON_RENDERER_CHECKMARK_SIZE, MAX (1, cell_area->width));
+  checkmark_area->height = MIN (THUNAR_ICON_RENDERER_CHECKMARK_SIZE, MAX (1, cell_area->height));
+
+  direction = gtk_widget_get_direction (widget);
+  target_area = *cell_area;
+
+  if (!icon_renderer->selection_checkmark_start)
+    {
+      target_area.width = MIN ((gint) icon_renderer->size, cell_area->width);
+      target_area.height = MIN ((gint) icon_renderer->size, cell_area->height);
+      target_area.x = cell_area->x + (cell_area->width - target_area.width) / 2;
+      target_area.y = cell_area->y + (cell_area->height - target_area.height) / 2;
+    }
+
+  if (direction == GTK_TEXT_DIR_RTL)
+    checkmark_area->x = target_area.x + target_area.width - checkmark_area->width;
+  else
+    checkmark_area->x = target_area.x;
+
+  if (icon_renderer->selection_checkmark_start)
+    checkmark_area->y = target_area.y + (target_area.height - checkmark_area->height) / 2;
+  else
+    checkmark_area->y = target_area.y;
+
+  if ((flags & GTK_CELL_RENDERER_FOCUSED) != 0)
+    {
+      checkmark_area->x = CLAMP (checkmark_area->x, cell_area->x, cell_area->x + cell_area->width - checkmark_area->width);
+      checkmark_area->y = CLAMP (checkmark_area->y, cell_area->y, cell_area->y + cell_area->height - checkmark_area->height);
+    }
+}
+
+
+
+static void
+thunar_icon_renderer_render_selection_checkmark (ThunarIconRenderer    *icon_renderer,
+                                                cairo_t                *cr,
+                                                GtkWidget              *widget,
+                                                const GdkRectangle     *cell_area,
+                                                GtkCellRendererState    flags)
+{
+  GdkRectangle     checkmark_area;
+  GtkStyleContext *context;
+  GtkStateFlags    state;
+  GdkRGBA          color;
+  GdkRGBA         *selected_background;
+  gboolean         selected;
+  gdouble          x;
+  gdouble          y;
+  gdouble          width;
+  gdouble          height;
+
+  if (!icon_renderer->selection_checkmark)
+    return;
+
+  thunar_icon_renderer_get_selection_checkmark_area (icon_renderer, widget, cell_area, flags, &checkmark_area);
+
+  selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  context = gtk_widget_get_style_context (widget);
+  state = gtk_widget_get_state_flags (widget);
+
+  gtk_style_context_save (context);
+  gtk_style_context_set_state (context, selected ? state | GTK_STATE_FLAG_SELECTED : state);
+  gtk_style_context_get_color (context, gtk_style_context_get_state (context), &color);
+  gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &selected_background, NULL);
+
+  x = checkmark_area.x + 0.5;
+  y = checkmark_area.y + 0.5;
+  width = checkmark_area.width - 1.0;
+  height = checkmark_area.height - 1.0;
+
+  cairo_save (cr);
+  cairo_set_line_width (cr, 1.5);
+  cairo_arc (cr, x + width / 2.0, y + height / 2.0, MIN (width, height) / 2.0, 0, 2 * G_PI);
+
+  if (selected)
+    {
+      if (selected_background != NULL)
+        gdk_cairo_set_source_rgba (cr, selected_background);
+      else
+        gdk_cairo_set_source_rgba (cr, &color);
+      cairo_fill_preserve (cr);
+      cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.95);
+      cairo_stroke (cr);
+
+      cairo_set_line_width (cr, 2.0);
+      cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
+      cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
+      cairo_move_to (cr, x + width * 0.28, y + height * 0.52);
+      cairo_line_to (cr, x + width * 0.43, y + height * 0.68);
+      cairo_line_to (cr, x + width * 0.74, y + height * 0.34);
+      cairo_stroke (cr);
+    }
+  else
+    {
+      cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.88);
+      cairo_fill_preserve (cr);
+      color.alpha = 0.65;
+      gdk_cairo_set_source_rgba (cr, &color);
+      cairo_stroke (cr);
+    }
+
+  cairo_restore (cr);
+  if (selected_background != NULL)
+    gdk_rgba_free (selected_background);
+  gtk_style_context_restore (context);
+}
+
+
+
 static void
 thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              cairo_t             *cr,
@@ -483,6 +650,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GtkStyleContext        *context = NULL;
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
+  GdkRectangle            icon_cell_area;
   GdkRectangle            clip_area;
   GdkPixbuf              *emblem;
   GdkPixbuf              *icon;
@@ -507,6 +675,20 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   if (THUNAR_ICON_RENDERER (renderer)->highlighting_enabled)
     thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
+
+  icon_cell_area = *cell_area;
+  if (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start)
+    {
+      const gint checkmark_extent = THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
+
+      if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL)
+        icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
+      else
+        {
+          icon_cell_area.x += checkmark_extent;
+          icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
+        }
+    }
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
@@ -547,10 +729,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
 
   /* scale down the icon on-demand */
-  if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
+  if (G_UNLIKELY (icon_area.width > icon_cell_area.width || icon_area.height > icon_cell_area.height))
     {
       /* scale down to fit */
-      temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
+      temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, icon_cell_area.width * scale_factor), MAX (1, icon_cell_area.height * scale_factor));
       g_object_unref (G_OBJECT (icon));
       icon = temp;
 
@@ -559,8 +741,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
     }
 
-  icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
-  icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
+  icon_area.x = icon_cell_area.x + (icon_cell_area.width - icon_area.width) / 2;
+  icon_area.y = icon_cell_area.y + (icon_cell_area.height - icon_area.height) / 2;
 
   /* bools for cairo transformations */
   color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
@@ -705,6 +887,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           g_list_free_full (emblems, g_free);
         }
     }
+
+  thunar_icon_renderer_render_selection_checkmark (icon_renderer, cr, widget, cell_area, flags);
 
   /* release our reference on the icon factory */
   g_object_unref (G_OBJECT (icon_factory));

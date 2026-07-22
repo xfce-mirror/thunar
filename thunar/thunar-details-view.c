@@ -24,6 +24,7 @@
 #include "thunar/thunar-column-order-editor.h"
 #include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-text-renderer.h"
@@ -110,6 +111,12 @@ static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
                                         ThunarDetailsView *details_view);
+static gboolean
+thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
+                                   GtkTreePath       *path,
+                                   GtkTreeViewColumn *column,
+                                   GdkEventButton    *event,
+                                   ThunarDetailsView *details_view);
 static gboolean
 thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
@@ -414,6 +421,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       if (G_UNLIKELY (column == THUNAR_COLUMN_NAME))
         {
           /* add the icon renderer */
+          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->icon_renderer),
+                        "selection-checkmark", TRUE,
+                        "selection-checkmark-start", TRUE,
+                        NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
                                                "file", THUNAR_COLUMN_FILE,
@@ -933,6 +944,53 @@ thunar_details_view_column_header_clicked (ThunarDetailsView *details_view,
 
 
 static gboolean
+thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
+                                   GtkTreePath       *path,
+                                   GtkTreeViewColumn *column,
+                                   GdkEventButton    *event,
+                                   ThunarDetailsView *details_view)
+{
+  GtkCellRenderer *icon_renderer;
+  GtkTreeSelection *selection;
+  GdkRectangle     cell_area;
+  GdkRectangle     checkmark_area;
+  gint             renderer_x;
+  gint             renderer_width;
+  gint             x;
+  gint             y;
+
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+  _thunar_return_val_if_fail (path != NULL, FALSE);
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW_COLUMN (column), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  if (column != details_view->columns[THUNAR_COLUMN_NAME])
+    return FALSE;
+
+  icon_renderer = THUNAR_STANDARD_VIEW (details_view)->icon_renderer;
+  if (!gtk_tree_view_column_cell_get_position (column, icon_renderer, &renderer_x, &renderer_width))
+    return FALSE;
+
+  gtk_tree_view_get_cell_area (tree_view, path, column, &cell_area);
+  cell_area.x += renderer_x;
+  cell_area.width = renderer_width;
+
+  selection = gtk_tree_view_get_selection (tree_view);
+  thunar_icon_renderer_get_selection_checkmark_area (THUNAR_ICON_RENDERER (icon_renderer),
+                                                     GTK_WIDGET (tree_view),
+                                                     &cell_area,
+                                                     gtk_tree_selection_path_is_selected (selection, path) ? GTK_CELL_RENDERER_SELECTED : 0,
+                                                     &checkmark_area);
+
+  x = (gint) event->x;
+  y = (gint) event->y;
+  return x >= checkmark_area.x && x < checkmark_area.x + checkmark_area.width
+         && y >= checkmark_area.y && y < checkmark_area.y + checkmark_area.height;
+}
+
+
+
+static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
                                         ThunarDetailsView *details_view)
@@ -999,6 +1057,25 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 
       thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
+
+      if (thunar_details_view_checkmark_hit (tree_view, path, column, event, details_view))
+        {
+          if (gtk_tree_model_get_iter (model, &iter, path))
+            {
+              file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
+              if (file != NULL)
+                {
+                  if (!gtk_tree_selection_path_is_selected (selection, path))
+                    gtk_tree_selection_select_path (selection, path);
+
+                  gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+                  g_object_unref (file);
+                }
+            }
+
+          gtk_tree_path_free (path);
+          return TRUE;
+        }
 
       gtk_tree_view_get_cursor (tree_view, &cursor_path, NULL);
       if (cursor_path != NULL)
