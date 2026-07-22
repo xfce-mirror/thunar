@@ -45,7 +45,8 @@ enum
   PROP_SELECTION_CHECKMARK_START,
 };
 
-#define THUNAR_ICON_RENDERER_CHECKMARK_SIZE 16
+#define THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE 16
+#define THUNAR_ICON_RENDERER_CHECKMARK_ICON_SIZE 20
 #define THUNAR_ICON_RENDERER_CHECKMARK_SPACING 4
 
 
@@ -410,12 +411,12 @@ thunar_icon_renderer_get_preferred_width (GtkCellRenderer *renderer,
   if (G_LIKELY (minimum))
     *minimum = (gint) xpad * 2 + icon_renderer->size
                + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
-                  ? THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
+                  ? THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
                   : 0);
   if (G_LIKELY (natural))
     *natural = (gint) xpad * 2 + icon_renderer->size
                + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
-                  ? THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
+                  ? THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
                   : 0);
 }
 
@@ -519,14 +520,18 @@ thunar_icon_renderer_get_selection_checkmark_area (ThunarIconRenderer     *icon_
 {
   GtkTextDirection direction;
   GdkRectangle     target_area;
+  gint             checkmark_size;
 
   _thunar_return_if_fail (THUNAR_IS_ICON_RENDERER (icon_renderer));
   _thunar_return_if_fail (GTK_IS_WIDGET (widget));
   _thunar_return_if_fail (cell_area != NULL);
   _thunar_return_if_fail (checkmark_area != NULL);
 
-  checkmark_area->width = MIN (THUNAR_ICON_RENDERER_CHECKMARK_SIZE, MAX (1, cell_area->width));
-  checkmark_area->height = MIN (THUNAR_ICON_RENDERER_CHECKMARK_SIZE, MAX (1, cell_area->height));
+  checkmark_size = icon_renderer->selection_checkmark_start
+                   ? THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE
+                   : THUNAR_ICON_RENDERER_CHECKMARK_ICON_SIZE;
+  checkmark_area->width = MIN (checkmark_size, MAX (1, cell_area->width));
+  checkmark_area->height = MIN (checkmark_size, MAX (1, cell_area->height));
 
   direction = gtk_widget_get_direction (widget);
   target_area = *cell_area;
@@ -679,7 +684,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_cell_area = *cell_area;
   if (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start)
     {
-      const gint checkmark_extent = THUNAR_ICON_RENDERER_CHECKMARK_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
+      const gint checkmark_extent = THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
 
       if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL)
         icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
