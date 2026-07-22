@@ -584,9 +584,12 @@ thunar_icon_renderer_render_selection_checkmark (ThunarIconRenderer    *icon_ren
   if (!icon_renderer->selection_checkmark)
     return;
 
+  selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  if (!icon_renderer->selection_checkmark_start && !selected && (flags & GTK_CELL_RENDERER_PRELIT) == 0)
+    return;
+
   thunar_icon_renderer_get_selection_checkmark_area (icon_renderer, widget, cell_area, flags, &checkmark_area);
 
-  selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
   context = gtk_widget_get_style_context (widget);
   state = gtk_widget_get_state_flags (widget);
 
