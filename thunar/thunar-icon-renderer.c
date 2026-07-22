@@ -602,7 +602,7 @@ thunar_icon_renderer_render_selection_checkmark (ThunarIconRenderer    *icon_ren
 
   cairo_save (cr);
   cairo_set_line_width (cr, 1.5);
-  cairo_arc (cr, x + width / 2.0, y + height / 2.0, MIN (width, height) / 2.0, 0, 2 * G_PI);
+  cairo_rectangle (cr, x, y, width, height);
 
   if (selected)
     {
