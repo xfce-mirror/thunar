@@ -80,6 +80,10 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
                                          ThunarAbstractIconView *abstract_icon_view,
                                          GtkTreePath           **path_return);
 static gboolean
+thunar_abstract_icon_view_checkmark_button_release_event (XfceIconView           *view,
+                                                          GdkEventButton         *event,
+                                                          ThunarAbstractIconView *abstract_icon_view);
+static gboolean
 thunar_abstract_icon_view_button_release_event (XfceIconView           *view,
                                                 GdkEventButton         *event,
                                                 ThunarAbstractIconView *abstract_icon_view);
@@ -124,6 +128,7 @@ struct _ThunarAbstractIconViewPrivate
   gulong gesture_expose_id;
   gulong gesture_motion_id;
   gulong gesture_release_id;
+  gboolean checkmark_button_pressed;
 };
 
 
@@ -199,6 +204,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   view = xfce_icon_view_new ();
   g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_abstract_icon_view_notify_model), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
+  g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_abstract_icon_view_checkmark_button_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-release-event", G_CALLBACK (thunar_abstract_icon_view_key_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
@@ -433,6 +439,7 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   GtkTreePath     *path = NULL;
   GdkRectangle     cell_area;
   GdkRectangle     checkmark_area;
+  const gint       hit_slop = 4;
   gint             x;
   gint             y;
 
@@ -443,7 +450,8 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   *path_return = NULL;
 
   icon_renderer = THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer;
-  if (!xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+  path = xfce_icon_view_get_path_at_pos (view, event->x, event->y);
+  if (path == NULL)
     return FALSE;
 
   xfce_icon_view_get_cell_area (view, path, icon_renderer, &cell_area);
@@ -458,6 +466,10 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
                                                      &cell_area,
                                                      xfce_icon_view_path_is_selected (view, path) ? GTK_CELL_RENDERER_SELECTED : 0,
                                                      &checkmark_area);
+  checkmark_area.x -= hit_slop;
+  checkmark_area.y -= hit_slop;
+  checkmark_area.width += 2 * hit_slop;
+  checkmark_area.height += 2 * hit_slop;
 
   x = (gint) event->x;
   y = (gint) event->y;
@@ -488,12 +500,15 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
+      abstract_icon_view->priv->checkmark_button_pressed = FALSE;
+
       if (thunar_abstract_icon_view_checkmark_hit (view, event, abstract_icon_view, &path))
         {
           if (!xfce_icon_view_path_is_selected (view, path))
             xfce_icon_view_select_path (view, path);
 
           gtk_tree_path_free (path);
+          abstract_icon_view->priv->checkmark_button_pressed = TRUE;
           return TRUE;
         }
 
@@ -570,6 +585,26 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
       return TRUE;
     }
 
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_abstract_icon_view_checkmark_button_release_event (XfceIconView           *view,
+                                                          GdkEventButton         *event,
+                                                          ThunarAbstractIconView *abstract_icon_view)
+{
+  _thunar_return_val_if_fail (XFCE_IS_ICON_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
+
+  if (abstract_icon_view->priv->checkmark_button_pressed && event->button == 1)
+    {
+      abstract_icon_view->priv->checkmark_button_pressed = FALSE;
+      return TRUE;
+    }
+
+  abstract_icon_view->priv->checkmark_button_pressed = FALSE;
   return FALSE;
 }
 
