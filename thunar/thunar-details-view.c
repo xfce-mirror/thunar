@@ -434,7 +434,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
         {
           /* add the icon renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->icon_renderer),
-                        "selection-checkmark", TRUE,
                         "selection-checkmark-start", TRUE,
                         NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
@@ -968,6 +967,7 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
   GdkRectangle     checkmark_area;
   gint             renderer_x;
   gint             renderer_width;
+  gboolean         selection_checkmark;
   gint             x;
   gint             y;
 
@@ -980,6 +980,10 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
     return FALSE;
 
   icon_renderer = THUNAR_STANDARD_VIEW (details_view)->icon_renderer;
+  g_object_get (G_OBJECT (icon_renderer), "selection-checkmark", &selection_checkmark, NULL);
+  if (!selection_checkmark)
+    return FALSE;
+
   if (!gtk_tree_view_column_cell_get_position (column, icon_renderer, &renderer_x, &renderer_width))
     return FALSE;
 

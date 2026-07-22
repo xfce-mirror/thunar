@@ -220,7 +220,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer),
                 "follow-state", TRUE,
                 "rounded-corners", TRUE,
-                "selection-checkmark", TRUE,
                 NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
@@ -440,6 +439,7 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   GdkRectangle     cell_area;
   GdkRectangle     checkmark_area;
   const gint       hit_slop = 4;
+  gboolean         selection_checkmark;
   gint             x;
   gint             y;
 
@@ -450,6 +450,10 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   *path_return = NULL;
 
   icon_renderer = THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer;
+  g_object_get (G_OBJECT (icon_renderer), "selection-checkmark", &selection_checkmark, NULL);
+  if (!selection_checkmark)
+    return FALSE;
+
   path = xfce_icon_view_get_path_at_pos (view, event->x, event->y);
   if (path == NULL)
     return FALSE;
