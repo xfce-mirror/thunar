@@ -1094,7 +1094,9 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
               if (file != NULL)
                 {
-                  if (!gtk_tree_selection_path_is_selected (selection, path))
+                  if (gtk_tree_selection_path_is_selected (selection, path))
+                    gtk_tree_selection_unselect_path (selection, path);
+                  else
                     gtk_tree_selection_select_path (selection, path);
 
                   g_object_unref (file);
@@ -1149,7 +1151,9 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
               if (file != NULL)
                 {
-                  if (!gtk_tree_selection_path_is_selected (selection, path))
+                  if (gtk_tree_selection_path_is_selected (selection, path))
+                    gtk_tree_selection_unselect_path (selection, path);
+                  else
                     gtk_tree_selection_select_path (selection, path);
 
                   g_object_unref (file);
