@@ -512,11 +512,11 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
 
 void
-thunar_icon_renderer_get_selection_checkmark_area (ThunarIconRenderer     *icon_renderer,
-                                                  GtkWidget              *widget,
-                                                  const GdkRectangle     *cell_area,
-                                                  GtkCellRendererState    flags,
-                                                  GdkRectangle           *checkmark_area)
+thunar_icon_renderer_get_selection_checkmark_area (ThunarIconRenderer  *icon_renderer,
+                                                   GtkWidget           *widget,
+                                                   const GdkRectangle  *cell_area,
+                                                   GtkCellRendererState flags,
+                                                   GdkRectangle        *checkmark_area)
 {
   GtkTextDirection direction;
   GdkRectangle     target_area;
@@ -564,11 +564,11 @@ thunar_icon_renderer_get_selection_checkmark_area (ThunarIconRenderer     *icon_
 
 
 static void
-thunar_icon_renderer_render_selection_checkmark (ThunarIconRenderer    *icon_renderer,
-                                                cairo_t                *cr,
-                                                GtkWidget              *widget,
-                                                const GdkRectangle     *cell_area,
-                                                GtkCellRendererState    flags)
+thunar_icon_renderer_render_selection_checkmark (ThunarIconRenderer  *icon_renderer,
+                                                 cairo_t             *cr,
+                                                 GtkWidget           *widget,
+                                                 const GdkRectangle  *cell_area,
+                                                 GtkCellRendererState flags)
 {
   GdkRectangle     checkmark_area;
   GtkStyleContext *context;
