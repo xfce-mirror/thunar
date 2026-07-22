@@ -112,11 +112,19 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
                                         ThunarDetailsView *details_view);
 static gboolean
+thunar_details_view_button_release_event (GtkTreeView       *tree_view,
+                                          GdkEventButton    *event,
+                                          ThunarDetailsView *details_view);
+static gboolean
 thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
                                    GtkTreePath       *path,
                                    GtkTreeViewColumn *column,
                                    GdkEventButton    *event,
                                    ThunarDetailsView *details_view);
+static GtkTreePath *
+thunar_details_view_get_checkmark_path_at_pos (GtkTreeView       *tree_view,
+                                               GdkEventButton    *event,
+                                               ThunarDetailsView *details_view);
 static gboolean
 thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
@@ -211,6 +219,8 @@ struct _ThunarDetailsView
   XfceTreeView *tree_view;
 
   gboolean expandable_folders;
+
+  gboolean checkmark_button_pressed;
 
   guint update_expand_arrows_timeout_source_id;
 };
@@ -343,6 +353,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_notify_model), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "button-press-event",
                     G_CALLBACK (thunar_details_view_button_press_event), details_view);
+  g_signal_connect (G_OBJECT (details_view->tree_view), "button-release-event",
+                    G_CALLBACK (thunar_details_view_button_release_event), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "key-press-event",
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-activated",
@@ -990,6 +1002,47 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
 
 
 
+static GtkTreePath *
+thunar_details_view_get_checkmark_path_at_pos (GtkTreeView       *tree_view,
+                                               GdkEventButton    *event,
+                                               ThunarDetailsView *details_view)
+{
+  GtkTreePath       *start_path = NULL;
+  GtkTreePath       *end_path = NULL;
+  GtkTreePath       *path = NULL;
+  GtkTreeViewColumn *name_column;
+
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), NULL);
+
+  name_column = details_view->columns[THUNAR_COLUMN_NAME];
+  if (!gtk_tree_view_get_visible_range (tree_view, &start_path, &end_path))
+    return NULL;
+
+  path = gtk_tree_path_copy (start_path);
+  while (TRUE)
+    {
+      if (thunar_details_view_checkmark_hit (tree_view, path, name_column, event, details_view))
+        {
+          gtk_tree_path_free (start_path);
+          gtk_tree_path_free (end_path);
+          return path;
+        }
+
+      if (gtk_tree_path_compare (path, end_path) >= 0)
+        break;
+
+      gtk_tree_path_next (path);
+    }
+
+  gtk_tree_path_free (path);
+  gtk_tree_path_free (start_path);
+  gtk_tree_path_free (end_path);
+  return NULL;
+}
+
+
+
 static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
@@ -1022,6 +1075,33 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
   /* get the column showing the filenames */
   name_column = details_view->columns[THUNAR_COLUMN_NAME];
+
+  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      path = thunar_details_view_get_checkmark_path_at_pos (tree_view, event, details_view);
+      if (path != NULL)
+        {
+          gtk_tree_view_set_rubber_banding (tree_view, TRUE);
+          gtk_widget_grab_focus (GTK_WIDGET (tree_view));
+          thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
+
+          if (gtk_tree_model_get_iter (model, &iter, path))
+            {
+              file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
+              if (file != NULL)
+                {
+                  if (!gtk_tree_selection_path_is_selected (selection, path))
+                    gtk_tree_selection_select_path (selection, path);
+
+                  g_object_unref (file);
+                }
+            }
+
+          gtk_tree_path_free (path);
+          details_view->checkmark_button_pressed = TRUE;
+          return TRUE;
+        }
+    }
 
   /* unselect all selected items if the user clicks on an empty area
    * of the treeview and no modifier key is active */
@@ -1068,12 +1148,12 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                   if (!gtk_tree_selection_path_is_selected (selection, path))
                     gtk_tree_selection_select_path (selection, path);
 
-                  gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
                   g_object_unref (file);
                 }
             }
 
           gtk_tree_path_free (path);
+          details_view->checkmark_button_pressed = TRUE;
           return TRUE;
         }
 
@@ -1208,6 +1288,28 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   gtk_tree_path_free (path);
   return FALSE;
 }
+
+
+
+static gboolean
+thunar_details_view_button_release_event (GtkTreeView       *tree_view,
+                                          GdkEventButton    *event,
+                                          ThunarDetailsView *details_view)
+{
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  if (details_view->checkmark_button_pressed && event->button == 1)
+    {
+      details_view->checkmark_button_pressed = FALSE;
+      return TRUE;
+    }
+
+  details_view->checkmark_button_pressed = FALSE;
+  return FALSE;
+}
+
+
 
 static gboolean
 thunar_details_view_is_shift_pressed (GtkWidget *widget)
