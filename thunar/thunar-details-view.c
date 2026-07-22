@@ -961,15 +961,15 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
                                    GdkEventButton    *event,
                                    ThunarDetailsView *details_view)
 {
-  GtkCellRenderer *icon_renderer;
+  GtkCellRenderer  *icon_renderer;
   GtkTreeSelection *selection;
-  GdkRectangle     cell_area;
-  GdkRectangle     checkmark_area;
-  gint             renderer_x;
-  gint             renderer_width;
-  gboolean         selection_checkmark;
-  gint             x;
-  gint             y;
+  GdkRectangle      cell_area;
+  GdkRectangle      checkmark_area;
+  gint              renderer_x;
+  gint              renderer_width;
+  gboolean          selection_checkmark;
+  gint              x;
+  gint              y;
 
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
   _thunar_return_val_if_fail (path != NULL, FALSE);
