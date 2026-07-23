@@ -44,6 +44,7 @@ struct _ThunarToolbarOrderEditor
   GtkWidget         *toolbar;
   GList             *children;
   XfceItemListStore *store;
+  gboolean           block_clear;
 };
 
 enum
@@ -269,12 +270,15 @@ static void
 thunar_toolbar_order_editor_refresh (ThunarToolbarOrderEditor *toolbar_editor)
 
 {
-  xfce_item_list_store_clear (toolbar_editor->store);
-
   _thunar_return_if_fail (toolbar_editor->toolbar != NULL);
 
   g_clear_pointer (&toolbar_editor->children, g_list_free);
   toolbar_editor->children = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
+
+  if (toolbar_editor->block_clear)
+    return;
+
+  xfce_item_list_store_clear (toolbar_editor->store);
 
   for (GList *l = toolbar_editor->children; l != NULL; l = l->next)
     {
@@ -402,8 +406,7 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
 
   if (response == GTK_RESPONSE_YES)
     {
-      /* disable widget rebuilding when UCA changes */
-      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (TRUE));
+      toolbar_editor->block_clear = TRUE;
 
       /* deletion in reverse order to maintain index validity */
       for (gint i = n_items - 1; i >= 0; --i)
@@ -419,18 +422,13 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
 
               /* remove uca item */
               xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
-
-              /* remove widget */
-              toolbar_editor->children = g_list_remove (toolbar_editor->children, item);
-              gtk_container_remove (GTK_CONTAINER (toolbar_editor->toolbar), item);
             }
         }
 
       /* save uca model */
       thunar_uca_editor_save_persistently (GTK_WINDOW (toolbar_editor), uca_model);
 
-      /* enable widget rebuilding when UCA changes */
-      g_object_set_data (G_OBJECT (toolbar_editor->toolbar), "locked", GINT_TO_POINTER (FALSE));
+      toolbar_editor->block_clear = FALSE;
 
       return FALSE;
     }

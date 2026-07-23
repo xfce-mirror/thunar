@@ -7200,19 +7200,14 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 static void
 thunar_window_update_location_toolbar (ThunarWindow *window)
 {
-  gint locked = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window->location_toolbar), "locked"));
+  gtk_widget_destroy (window->location_toolbar);
+  thunar_window_location_toolbar_create (window);
+  if (gtk_window_get_titlebar (GTK_WINDOW (window)) == NULL)
+    gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
+  thunar_window_csd_update (window);
 
-  if (!locked)
-    {
-      gtk_widget_destroy (window->location_toolbar);
-      thunar_window_location_toolbar_create (window);
-      if (gtk_window_get_titlebar (GTK_WINDOW (window)) == NULL)
-        gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
-      thunar_window_csd_update (window);
-
-      if (window->toolbar_editor != NULL)
-        g_object_set (G_OBJECT (window->toolbar_editor), "toolbar", window->location_toolbar, NULL);
-    }
+  if (window->toolbar_editor != NULL)
+    g_object_set (G_OBJECT (window->toolbar_editor), "toolbar", window->location_toolbar, NULL);
 }
 
 

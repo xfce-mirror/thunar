@@ -691,7 +691,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
                     }
                 }
 
-              if (!added)
+              if (!added && item_data[0] != NULL && !g_str_has_prefix (item_data[0], "custom-action-"))
                 g_warning ("Could not add menu item \"%s\" because the item is not in the list of default items", item_data[0]);
             }
 
