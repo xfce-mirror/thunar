@@ -7386,7 +7386,7 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
   g_free (tmp);
 
   /* now rearrange the toolbar items according to the saved order */
-  for (guint i = 0; i < items_length; i++)
+  for (guint i = 0, order = 0; i < items_length; i++)
     {
       GList  *lp;
       gchar **item_data = g_strsplit (items[i], ":", -1); /* id:visible */
@@ -7405,17 +7405,18 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
               /* set its position */
               g_object_ref (item);
               gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
-              gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), i);
+              gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), order);
               g_object_unref (item);
 
               /* set its visibility */
               hidden = (g_strcmp0 (item_data[1], "0") == 0);
               if (hidden)
-                thunar_window_toolbar_toggle_item_visibility (window, i);
+                thunar_window_toolbar_toggle_item_visibility (window, order);
 
               /* remove it from the list */
               toolbar_items = g_list_remove (toolbar_items, item);
 
+              ++order;
               break;
             }
         }
