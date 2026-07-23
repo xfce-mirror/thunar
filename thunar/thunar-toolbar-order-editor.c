@@ -467,7 +467,7 @@ thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
 
   /* show dialog */
   toolbar_editor->block_clear = TRUE;
-  if (thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), unique_id, NULL))
+  if (thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
     {
       /* update item */
       item = GTK_WIDGET (g_list_nth_data (toolbar_editor->children, index));
@@ -496,7 +496,7 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
 
   /* show dialog */
   toolbar_editor->block_clear = TRUE;
-  added = thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), NULL, &new_unique_id);
+  added = thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), NULL, &new_unique_id, THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD);
   toolbar_editor->block_clear = FALSE;
 
   if (!added)

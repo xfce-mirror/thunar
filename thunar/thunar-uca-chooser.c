@@ -65,7 +65,7 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
 static gboolean
 thunar_uca_chooser_add (ThunarUcaChooser *chooser)
 {
-  if (thunar_uca_editor_show (GTK_WINDOW (chooser), NULL, NULL))
+  if (thunar_uca_editor_show (GTK_WINDOW (chooser), NULL, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
     return FALSE;
 
   /* failed to add element, stop event processing */
@@ -121,7 +121,7 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
   gboolean status;
 
   xfce_item_list_model_get_item_value (XFCE_ITEM_LIST_MODEL (chooser->uca_model), index, THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &value);
-  status = thunar_uca_editor_show (GTK_WINDOW (chooser), g_value_get_string (&value), NULL);
+  status = thunar_uca_editor_show (GTK_WINDOW (chooser), g_value_get_string (&value), NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
   g_value_reset (&value);
 
   if (!status)

@@ -702,9 +702,10 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 
 
 gboolean
-thunar_uca_editor_show (GtkWindow   *window,
-                        const gchar *item_id,
-                        gchar      **new_item_id)
+thunar_uca_editor_show (GtkWindow               *window,
+                        const gchar             *item_id,
+                        gchar                  **new_item_id,
+                        ThunarUcaEditorShowFlags flags)
 {
   ThunarUcaModel *model;
   GtkWidget      *editor;
@@ -735,7 +736,16 @@ thunar_uca_editor_show (GtkWindow   *window,
   gtk_window_set_transient_for (GTK_WINDOW (editor), GTK_WINDOW (window));
 
   if (is_edit)
-    thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+    {
+      thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+    }
+  else if (flags & THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD)
+    {
+      GtkWidget *directories_button = THUNAR_UCA_EDITOR (editor)->directories_button;
+
+      /* only UCAs for directories are visible in the toolbar, so these should be created by default */
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (directories_button), TRUE);
+    }
 
   status = gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK;
   if (status)

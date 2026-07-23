@@ -217,7 +217,7 @@ thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor
   GtkTreePath                     *path;
 
   /* show dialog */
-  thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id, NULL);
+  thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
 
   /* refresh */
   thunar_context_menu_order_model_load (menu_editor->order_model);
@@ -291,7 +291,7 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
 
   /* show dialog */
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
-  added = thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL, &new_unique_id);
+  added = thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL, &new_unique_id, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
 
   if (!added)

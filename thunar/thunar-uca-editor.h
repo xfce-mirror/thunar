@@ -35,6 +35,12 @@ typedef struct _ThunarUcaEditor      ThunarUcaEditor;
 #define THUNAR_UCA_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_EDITOR))
 #define THUNAR_UCA_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
 
+typedef enum
+{
+  THUNAR_UCA_EDITOR_SHOW_FLAG_NONE = 1 << 0,
+  THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD = 1 << 1,
+} ThunarUcaEditorShowFlags;
+
 GType
 thunar_uca_editor_get_type (void);
 void
@@ -50,9 +56,10 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                         GtkTreeIter     *iter);
 
 gboolean
-thunar_uca_editor_show (GtkWindow   *window,
-                        const gchar *item_id,
-                        gchar      **new_item_id);
+thunar_uca_editor_show (GtkWindow               *window,
+                        const gchar             *item_id,
+                        gchar                  **new_item_id,
+                        ThunarUcaEditorShowFlags flags);
 
 gboolean
 thunar_uca_editor_save_persistently (GtkWindow      *window,
