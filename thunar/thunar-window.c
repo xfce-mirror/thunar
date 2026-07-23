@@ -4526,7 +4526,10 @@ thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
   window->toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "toolbar", window->location_toolbar, NULL);
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (window->toolbar_editor), GTK_WIDGET (window));
+
+  /* window->toolbar_editor is freed in thunar_order_editor_show() */
   window->toolbar_editor = NULL;
+
   return TRUE;
 }
 
@@ -7206,6 +7209,7 @@ thunar_window_update_location_toolbar (ThunarWindow *window)
     gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
   thunar_window_csd_update (window);
 
+  /* if the toolbar configuration dialog is open, it must be notified about the new toolbar */
   if (window->toolbar_editor != NULL)
     g_object_set (G_OBJECT (window->toolbar_editor), "toolbar", window->location_toolbar, NULL);
 }
@@ -7416,7 +7420,9 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
               /* remove it from the list */
               toolbar_items = g_list_remove (toolbar_items, item);
 
+              /* item found and positioned; the order counter can be incremented */
               ++order;
+
               break;
             }
         }

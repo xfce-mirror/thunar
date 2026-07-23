@@ -714,6 +714,8 @@ thunar_uca_editor_show (GtkWindow               *window,
   gboolean        is_edit = item_id != NULL;
   gboolean        status;
 
+  g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
+
   model = thunar_uca_model_get_default ();
 
   /* if item_id is specified, then set the value for iter */

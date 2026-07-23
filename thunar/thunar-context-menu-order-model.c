@@ -387,21 +387,23 @@ thunar_context_menu_order_model_remove_uca_item (ThunarContextMenuOrderModel    
   GtkTreeIter     iter;
 
   g_signal_handlers_block_by_func (order_model->uca_model, thunar_context_menu_order_model_load, order_model);
-
   if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
     {
       gint index = xfce_item_list_model_get_index (XFCE_ITEM_LIST_MODEL (uca_model), &iter);
 
+      /* remove from uca_model */
       xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (uca_model), index);
 
+      /* remove from order_model */
       order_model->items = g_list_remove (order_model->items, item);
       thunar_context_menu_order_model_item_free (item);
 
+      /* save */
       thunar_uca_model_save (uca_model, NULL);
     }
-
   g_signal_handlers_unblock_by_func (order_model->uca_model, thunar_context_menu_order_model_load, order_model);
 
+  /* cleanup */
   g_object_unref (uca_model);
 }
 

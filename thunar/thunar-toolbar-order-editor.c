@@ -120,7 +120,7 @@ thunar_toolbar_order_editor_class_init (ThunarToolbarOrderEditorClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_TOOLBAR,
                                    g_param_spec_object ("toolbar", NULL, NULL,
-                                                        GTK_TYPE_TOOLBAR,
+                                                        GTK_TYPE_WIDGET,
                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 }
 
@@ -456,32 +456,33 @@ gboolean
 thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
                                   gint                      index)
 {
-  GtkWidget         *item = g_list_nth_data (toolbar_editor->children, index);
-  const gchar       *item_id = g_object_get_data (G_OBJECT (item), "id");
-  const gchar       *unique_id = item_id + strlen ("uca-action-");
-  XfceItemListView  *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
-  GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
-  XfceItemListModel *model = xfce_item_list_view_get_model (item_view);
-  GtkTreeIter        iter;
-  GtkTreePath       *path = NULL;
+  GtkWidget   *item = g_list_nth_data (toolbar_editor->children, index);
+  const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
+  const gchar *unique_id = item_id + strlen ("uca-action-");
 
   /* show dialog */
   toolbar_editor->block_clear = TRUE;
   if (thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
     {
+      XfceItemListView *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
+      GtkWidget        *tree_view = xfce_item_list_view_get_tree_view (item_view);
+      GtkTreeIter       iter;
+      GtkTreePath      *path = NULL;
+
       /* update item */
       item = GTK_WIDGET (g_list_nth_data (toolbar_editor->children, index));
       xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (toolbar_editor->store), index);
       thunar_toolbar_order_editor_insert_item (toolbar_editor, index, item);
 
       /* set cursor */
-      xfce_item_list_model_set_index (model, &iter, index);
-      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      xfce_item_list_model_set_index (XFCE_ITEM_LIST_MODEL (toolbar_editor->store), &iter, index);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (toolbar_editor->store), &iter);
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+
+      /* cleanup */
+      gtk_tree_path_free (path);
     }
   toolbar_editor->block_clear = FALSE;
-
-  gtk_tree_path_free (path);
 
   return FALSE;
 }
