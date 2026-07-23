@@ -758,6 +758,8 @@ thunar_uca_editor_show (GtkWindow   *window,
       thunar_uca_editor_save_persistently (window, model);
     }
 
+  /* cleanup */
+  gtk_widget_destroy (editor);
   g_object_unref (model);
 
   return status;
