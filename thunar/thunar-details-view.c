@@ -1076,48 +1076,47 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   /* get the column showing the filenames */
   name_column = details_view->columns[THUNAR_COLUMN_NAME];
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
-    {
-      path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
-      if (path != NULL)
-        {
-          gtk_tree_view_set_rubber_banding (tree_view, TRUE);
-          gtk_widget_grab_focus (GTK_WIDGET (tree_view));
-          thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
-
-          if (gtk_tree_model_get_iter (model, &iter, path))
-            {
-              file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
-              if (file != NULL)
-                {
-                  if (gtk_tree_selection_path_is_selected (selection, path))
-                    gtk_tree_selection_unselect_path (selection, path);
-                  else
-                    gtk_tree_selection_select_path (selection, path);
-
-                  g_object_unref (file);
-                }
-            }
-
-          gtk_tree_path_free (path);
-          details_view->checkbox_button_pressed = TRUE;
-          return TRUE;
-        }
-    }
-
   /* unselect all selected items if the user clicks on an empty area
-   * of the treeview and no modifier key is active */
-  if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0
+   * of the treeview and no modifier key is active. Left clicks are handled
+   * below, where checkbox hits get an additional renderer-based lookup. */
+  if ((event->type != GDK_BUTTON_PRESS || event->button != 1)
+      && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0
       && !gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, &column, NULL, NULL))
     gtk_tree_selection_unselect_all (selection);
 
   /* make sure that rubber banding is enabled */
   gtk_tree_view_set_rubber_banding (tree_view, TRUE);
 
-  /* if the user clicked on a row with the left button */
-  if (path != NULL && event->type == GDK_BUTTON_PRESS && event->button == 1)
+  /* handle left clicks on rows and selection checkboxes */
+  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
       GtkTreePath *cursor_path;
+
+      if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
+        {
+          if (!gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, &column, NULL, NULL))
+            {
+              /* The checkbox may be drawn outside GTK's normal row hit area, so
+               * try the renderer geometry before treating the click as empty. */
+              path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
+              if (path != NULL)
+                column = name_column;
+              else
+                gtk_tree_selection_unselect_all (selection);
+            }
+        }
+      else
+        {
+          /* Let GTK handle modifier-assisted row clicks. Checkbox clicks still
+           * need to be intercepted because they toggle without clearing the
+           * existing selection. */
+          path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
+          if (path != NULL)
+            column = name_column;
+        }
+
+      if (path == NULL)
+        return FALSE;
 
       /* find out if the expander was clicked;
        * only needed if expandable folders is enabled */
