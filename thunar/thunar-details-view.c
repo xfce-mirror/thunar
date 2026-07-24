@@ -116,11 +116,11 @@ thunar_details_view_button_release_event (GtkTreeView       *tree_view,
                                           GdkEventButton    *event,
                                           ThunarDetailsView *details_view);
 static gboolean
-thunar_details_view_checkbox_hit (GtkTreeView       *tree_view,
-                                   GtkTreePath       *path,
-                                   GtkTreeViewColumn *column,
-                                   GdkEventButton    *event,
-                                   ThunarDetailsView *details_view);
+thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
+                                                GtkTreePath       *path,
+                                                GtkTreeViewColumn *column,
+                                                GdkEventButton    *event,
+                                                ThunarDetailsView *details_view);
 static GtkTreePath *
 thunar_details_view_get_checkbox_path_at_pos (GtkTreeView       *tree_view,
                                                GdkEventButton    *event,
@@ -955,11 +955,11 @@ thunar_details_view_column_header_clicked (ThunarDetailsView *details_view,
 
 
 static gboolean
-thunar_details_view_checkbox_hit (GtkTreeView       *tree_view,
-                                   GtkTreePath       *path,
-                                   GtkTreeViewColumn *column,
-                                   GdkEventButton    *event,
-                                   ThunarDetailsView *details_view)
+thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
+                                                GtkTreePath       *path,
+                                                GtkTreeViewColumn *column,
+                                                GdkEventButton    *event,
+                                                ThunarDetailsView *details_view)
 {
   GtkCellRenderer  *icon_renderer;
   GtkTreeSelection *selection;
@@ -1022,7 +1022,7 @@ thunar_details_view_get_checkbox_path_at_pos (GtkTreeView       *tree_view,
   path = gtk_tree_path_copy (start_path);
   while (TRUE)
     {
-      if (thunar_details_view_checkbox_hit (tree_view, path, name_column, event, details_view))
+      if (thunar_details_view_selection_checkbox_clicked (tree_view, path, name_column, event, details_view))
         {
           gtk_tree_path_free (start_path);
           gtk_tree_path_free (end_path);
@@ -1140,7 +1140,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
       thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
 
-      if (thunar_details_view_checkbox_hit (tree_view, path, column, event, details_view))
+      if (thunar_details_view_selection_checkbox_clicked (tree_view, path, column, event, details_view))
         {
           if (gtk_tree_model_get_iter (model, &iter, path))
             {
