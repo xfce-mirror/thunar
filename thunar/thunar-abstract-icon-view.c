@@ -81,9 +81,9 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
                                          ThunarAbstractIconView *abstract_icon_view,
                                          GtkTreePath           **path_return);
 static void
-thunar_abstract_icon_view_toggle_checkbox_path (XfceIconView           *view,
-                                                 GtkTreePath            *path,
-                                                 ThunarAbstractIconView *abstract_icon_view);
+thunar_abstract_icon_view_toggle_select_for_path (XfceIconView           *view,
+                                                  GtkTreePath            *path,
+                                                  ThunarAbstractIconView *abstract_icon_view);
 static gboolean
 thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           *view,
                                                           GdkEventButton         *event,
@@ -496,9 +496,9 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
 
 
 static void
-thunar_abstract_icon_view_toggle_checkbox_path (XfceIconView           *view,
-                                                 GtkTreePath            *path,
-                                                 ThunarAbstractIconView *abstract_icon_view)
+thunar_abstract_icon_view_toggle_select_for_path (XfceIconView           *view,
+                                                  GtkTreePath            *path,
+                                                  ThunarAbstractIconView *abstract_icon_view)
 {
   GList *selected_paths;
   GList *lp;
@@ -550,7 +550,7 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
 
       if (thunar_abstract_icon_view_checkbox_hit (view, event, abstract_icon_view, &path))
         {
-          thunar_abstract_icon_view_toggle_checkbox_path (view, path, abstract_icon_view);
+          thunar_abstract_icon_view_toggle_select_for_path (view, path, abstract_icon_view);
 
           gtk_tree_path_free (path);
           abstract_icon_view->priv->checkbox_button_pressed = TRUE;
