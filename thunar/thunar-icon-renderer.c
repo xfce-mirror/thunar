@@ -17,11 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-icon-renderer.h"
+
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 
@@ -530,8 +531,8 @@ thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer  *icon_rend
   _thunar_return_if_fail (checkbox_area != NULL);
 
   checkbox_size = icon_renderer->selection_checkbox_start
-                   ? THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE
-                   : THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE;
+                  ? THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE
+                  : THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE;
   checkbox_area->width = MIN (checkbox_size, MAX (1, cell_area->width));
   checkbox_area->height = MIN (checkbox_size, MAX (1, cell_area->height));
 

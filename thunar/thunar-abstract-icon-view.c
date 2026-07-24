@@ -77,17 +77,17 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
                                               ThunarAbstractIconView *abstract_icon_view);
 static gboolean
 thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
-                                         GdkEventButton         *event,
-                                         ThunarAbstractIconView *abstract_icon_view,
-                                         GtkTreePath           **path_return);
+                                        GdkEventButton         *event,
+                                        ThunarAbstractIconView *abstract_icon_view,
+                                        GtkTreePath           **path_return);
 static void
 thunar_abstract_icon_view_toggle_select_for_path (XfceIconView           *view,
                                                   GtkTreePath            *path,
                                                   ThunarAbstractIconView *abstract_icon_view);
 static gboolean
 thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           *view,
-                                                          GdkEventButton         *event,
-                                                          ThunarAbstractIconView *abstract_icon_view);
+                                                         GdkEventButton         *event,
+                                                         ThunarAbstractIconView *abstract_icon_view);
 static gboolean
 thunar_abstract_icon_view_button_release_event (XfceIconView           *view,
                                                 GdkEventButton         *event,
@@ -126,13 +126,13 @@ thunar_abstract_icon_view_unblock_selection_changed (ThunarStandardView *standar
 struct _ThunarAbstractIconViewPrivate
 {
   /* mouse gesture support */
-  gint   gesture_start_x;
-  gint   gesture_start_y;
-  gint   gesture_current_x;
-  gint   gesture_current_y;
-  gulong gesture_expose_id;
-  gulong gesture_motion_id;
-  gulong gesture_release_id;
+  gint     gesture_start_x;
+  gint     gesture_start_y;
+  gint     gesture_current_x;
+  gint     gesture_current_y;
+  gulong   gesture_expose_id;
+  gulong   gesture_motion_id;
+  gulong   gesture_release_id;
   gboolean checkbox_button_pressed;
 };
 
@@ -434,9 +434,9 @@ thunar_abstract_icon_view_notify_model (XfceIconView           *view,
 
 static gboolean
 thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
-                                         GdkEventButton         *event,
-                                         ThunarAbstractIconView *abstract_icon_view,
-                                         GtkTreePath           **path_return)
+                                        GdkEventButton         *event,
+                                        ThunarAbstractIconView *abstract_icon_view,
+                                        GtkTreePath           **path_return)
 {
   GtkCellRenderer *icon_renderer;
   GtkAdjustment   *adjustment;
@@ -471,10 +471,10 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
   cell_area.y -= (gint) gtk_adjustment_get_value (adjustment);
 
   thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
-                                                     GTK_WIDGET (view),
-                                                     &cell_area,
-                                                     xfce_icon_view_path_is_selected (view, path) ? GTK_CELL_RENDERER_SELECTED : 0,
-                                                     &checkbox_area);
+                                                    GTK_WIDGET (view),
+                                                    &cell_area,
+                                                    xfce_icon_view_path_is_selected (view, path) ? GTK_CELL_RENDERER_SELECTED : 0,
+                                                    &checkbox_area);
   checkbox_area.x -= hit_slop;
   checkbox_area.y -= hit_slop;
   checkbox_area.width += 2 * hit_slop;
@@ -637,8 +637,8 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
 
 static gboolean
 thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           *view,
-                                                          GdkEventButton         *event,
-                                                          ThunarAbstractIconView *abstract_icon_view)
+                                                         GdkEventButton         *event,
+                                                         ThunarAbstractIconView *abstract_icon_view)
 {
   _thunar_return_val_if_fail (XFCE_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
