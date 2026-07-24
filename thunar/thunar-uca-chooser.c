@@ -107,7 +107,8 @@ thunar_uca_chooser_remove (ThunarUcaChooser *chooser,
       thunar_uca_editor_save_persistently (GTK_WINDOW (chooser), chooser->uca_model);
     }
 
-  /* cancelled, stop event processing */
+  /* prevent event propagation; we remove the items manually, as this requires an additional step with
+   * thunar_uca_editor_save_persistently() */
   return TRUE;
 }
 
@@ -125,7 +126,10 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
   g_value_reset (&value);
 
   if (!status)
-    return TRUE;
+    {
+      /* cancel event propagation; the user clicked cancel */
+      return TRUE;
+    }
 
   return FALSE;
 }
