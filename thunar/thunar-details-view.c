@@ -968,8 +968,6 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
   gint              renderer_x;
   gint              renderer_width;
   gboolean          selection_checkmark;
-  gint              x;
-  gint              y;
 
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
   _thunar_return_val_if_fail (path != NULL, FALSE);
@@ -998,10 +996,8 @@ thunar_details_view_checkmark_hit (GtkTreeView       *tree_view,
                                                      gtk_tree_selection_path_is_selected (selection, path) ? GTK_CELL_RENDERER_SELECTED : 0,
                                                      &checkmark_area);
 
-  x = (gint) event->x;
-  y = (gint) event->y;
-  return x >= checkmark_area.x && x < checkmark_area.x + checkmark_area.width
-         && y >= checkmark_area.y && y < checkmark_area.y + checkmark_area.height;
+  return event->x >= checkmark_area.x && event->x < checkmark_area.x + checkmark_area.width
+         && event->y >= checkmark_area.y && event->y < checkmark_area.y + checkmark_area.height;
 }
 
 
