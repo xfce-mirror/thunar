@@ -23,6 +23,7 @@
 
 #define THUNARX_INSIDE_THUNARX_H
 
+/* clang-format off */
 #include "thunarx/thunarx-config.h"
 #include "thunarx/thunarx-file-info.h"
 #include "thunarx/thunarx-menu-provider.h"
@@ -35,6 +36,7 @@
 #include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-renamer-provider.h"
 #include "thunarx/thunarx-renamer.h"
+/* clang-format on */
 
 #undef THUNARX_INSIDE_THUNARX_H
 

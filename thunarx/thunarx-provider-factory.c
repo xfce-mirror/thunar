@@ -18,11 +18,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* clang-format off */
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
 #include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-visibility.h"
+/* clang-format on */
 
 #include <gdk/gdk.h>
 
