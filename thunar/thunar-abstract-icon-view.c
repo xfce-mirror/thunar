@@ -76,16 +76,16 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
                                               GdkEventButton         *event,
                                               ThunarAbstractIconView *abstract_icon_view);
 static gboolean
-thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
+thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
                                          GdkEventButton         *event,
                                          ThunarAbstractIconView *abstract_icon_view,
                                          GtkTreePath           **path_return);
 static void
-thunar_abstract_icon_view_toggle_checkmark_path (XfceIconView           *view,
+thunar_abstract_icon_view_toggle_checkbox_path (XfceIconView           *view,
                                                  GtkTreePath            *path,
                                                  ThunarAbstractIconView *abstract_icon_view);
 static gboolean
-thunar_abstract_icon_view_checkmark_button_release_event (XfceIconView           *view,
+thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           *view,
                                                           GdkEventButton         *event,
                                                           ThunarAbstractIconView *abstract_icon_view);
 static gboolean
@@ -133,7 +133,7 @@ struct _ThunarAbstractIconViewPrivate
   gulong gesture_expose_id;
   gulong gesture_motion_id;
   gulong gesture_release_id;
-  gboolean checkmark_button_pressed;
+  gboolean checkbox_button_pressed;
 };
 
 
@@ -209,7 +209,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   view = xfce_icon_view_new ();
   g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_abstract_icon_view_notify_model), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
-  g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_abstract_icon_view_checkmark_button_release_event), abstract_icon_view);
+  g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_abstract_icon_view_checkbox_button_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-release-event", G_CALLBACK (thunar_abstract_icon_view_key_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
@@ -433,7 +433,7 @@ thunar_abstract_icon_view_notify_model (XfceIconView           *view,
 
 
 static gboolean
-thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
+thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
                                          GdkEventButton         *event,
                                          ThunarAbstractIconView *abstract_icon_view,
                                          GtkTreePath           **path_return)
@@ -442,9 +442,9 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   GtkAdjustment   *adjustment;
   GtkTreePath     *path = NULL;
   GdkRectangle     cell_area;
-  GdkRectangle     checkmark_area;
+  GdkRectangle     checkbox_area;
   const gint       hit_slop = 4;
-  gboolean         selection_checkmark;
+  gboolean         selection_checkbox;
   gint             x;
   gint             y;
 
@@ -455,8 +455,8 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   *path_return = NULL;
 
   icon_renderer = THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer;
-  g_object_get (G_OBJECT (icon_renderer), "selection-checkmark", &selection_checkmark, NULL);
-  if (!selection_checkmark)
+  g_object_get (G_OBJECT (icon_renderer), "selection-checkbox", &selection_checkbox, NULL);
+  if (!selection_checkbox)
     return FALSE;
 
   path = xfce_icon_view_get_path_at_pos (view, event->x, event->y);
@@ -470,20 +470,20 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
   adjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (view));
   cell_area.y -= (gint) gtk_adjustment_get_value (adjustment);
 
-  thunar_icon_renderer_get_selection_checkmark_area (THUNAR_ICON_RENDERER (icon_renderer),
+  thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
                                                      GTK_WIDGET (view),
                                                      &cell_area,
                                                      xfce_icon_view_path_is_selected (view, path) ? GTK_CELL_RENDERER_SELECTED : 0,
-                                                     &checkmark_area);
-  checkmark_area.x -= hit_slop;
-  checkmark_area.y -= hit_slop;
-  checkmark_area.width += 2 * hit_slop;
-  checkmark_area.height += 2 * hit_slop;
+                                                     &checkbox_area);
+  checkbox_area.x -= hit_slop;
+  checkbox_area.y -= hit_slop;
+  checkbox_area.width += 2 * hit_slop;
+  checkbox_area.height += 2 * hit_slop;
 
   x = (gint) event->x;
   y = (gint) event->y;
-  if (x >= checkmark_area.x && x < checkmark_area.x + checkmark_area.width
-      && y >= checkmark_area.y && y < checkmark_area.y + checkmark_area.height)
+  if (x >= checkbox_area.x && x < checkbox_area.x + checkbox_area.width
+      && y >= checkbox_area.y && y < checkbox_area.y + checkbox_area.height)
     {
       *path_return = path;
       return TRUE;
@@ -496,7 +496,7 @@ thunar_abstract_icon_view_checkmark_hit (XfceIconView           *view,
 
 
 static void
-thunar_abstract_icon_view_toggle_checkmark_path (XfceIconView           *view,
+thunar_abstract_icon_view_toggle_checkbox_path (XfceIconView           *view,
                                                  GtkTreePath            *path,
                                                  ThunarAbstractIconView *abstract_icon_view)
 {
@@ -546,14 +546,14 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
-      abstract_icon_view->priv->checkmark_button_pressed = FALSE;
+      abstract_icon_view->priv->checkbox_button_pressed = FALSE;
 
-      if (thunar_abstract_icon_view_checkmark_hit (view, event, abstract_icon_view, &path))
+      if (thunar_abstract_icon_view_checkbox_hit (view, event, abstract_icon_view, &path))
         {
-          thunar_abstract_icon_view_toggle_checkmark_path (view, path, abstract_icon_view);
+          thunar_abstract_icon_view_toggle_checkbox_path (view, path, abstract_icon_view);
 
           gtk_tree_path_free (path);
-          abstract_icon_view->priv->checkmark_button_pressed = TRUE;
+          abstract_icon_view->priv->checkbox_button_pressed = TRUE;
           return TRUE;
         }
 
@@ -636,20 +636,20 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
 
 
 static gboolean
-thunar_abstract_icon_view_checkmark_button_release_event (XfceIconView           *view,
+thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           *view,
                                                           GdkEventButton         *event,
                                                           ThunarAbstractIconView *abstract_icon_view)
 {
   _thunar_return_val_if_fail (XFCE_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
 
-  if (abstract_icon_view->priv->checkmark_button_pressed && event->button == 1)
+  if (abstract_icon_view->priv->checkbox_button_pressed && event->button == 1)
     {
-      abstract_icon_view->priv->checkmark_button_pressed = FALSE;
+      abstract_icon_view->priv->checkbox_button_pressed = FALSE;
       return TRUE;
     }
 
-  abstract_icon_view->priv->checkmark_button_pressed = FALSE;
+  abstract_icon_view->priv->checkbox_button_pressed = FALSE;
   return FALSE;
 }
 

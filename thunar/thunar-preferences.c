@@ -109,7 +109,7 @@ enum
   PROP_MISC_SHOW_DELETE_ACTION,
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
-  PROP_MISC_SELECTION_CHECKMARKS,
+  PROP_MISC_ITEM_SELECTION_CHECKBOXES,
   PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
@@ -1024,13 +1024,13 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:misc-selection-checkmarks:
+   * ThunarPreferences:misc-item-selection-checkboxes:
    *
-   * Whether file views show checkmarks for selecting multiple items.
+   * Whether file views show item selection checkboxes.
    **/
-  preferences_props[PROP_MISC_SELECTION_CHECKMARKS] =
-  g_param_spec_boolean ("misc-selection-checkmarks",
-                        "MiscSelectionCheckmarks",
+  preferences_props[PROP_MISC_ITEM_SELECTION_CHECKBOXES] =
+  g_param_spec_boolean ("misc-item-selection-checkboxes",
+                        "MiscItemSelectionCheckboxes",
                         NULL,
                         TRUE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
