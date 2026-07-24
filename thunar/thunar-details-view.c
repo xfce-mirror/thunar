@@ -123,8 +123,8 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
                                                 ThunarDetailsView *details_view);
 static GtkTreePath *
 thunar_details_view_get_checkbox_path_at_pos (GtkTreeView       *tree_view,
-                                               GdkEventButton    *event,
-                                               ThunarDetailsView *details_view);
+                                              GdkEventButton    *event,
+                                              ThunarDetailsView *details_view);
 static gboolean
 thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
@@ -991,10 +991,10 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
 
   selection = gtk_tree_view_get_selection (tree_view);
   thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
-                                                     GTK_WIDGET (tree_view),
-                                                     &cell_area,
-                                                     gtk_tree_selection_path_is_selected (selection, path) ? GTK_CELL_RENDERER_SELECTED : 0,
-                                                     &checkbox_area);
+                                                    GTK_WIDGET (tree_view),
+                                                    &cell_area,
+                                                    gtk_tree_selection_path_is_selected (selection, path) ? GTK_CELL_RENDERER_SELECTED : 0,
+                                                    &checkbox_area);
 
   return event->x >= checkbox_area.x && event->x < checkbox_area.x + checkbox_area.width
          && event->y >= checkbox_area.y && event->y < checkbox_area.y + checkbox_area.height;
@@ -1004,8 +1004,8 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
 
 static GtkTreePath *
 thunar_details_view_get_checkbox_path_at_pos (GtkTreeView       *tree_view,
-                                               GdkEventButton    *event,
-                                               ThunarDetailsView *details_view)
+                                              GdkEventButton    *event,
+                                              ThunarDetailsView *details_view)
 {
   GtkTreePath       *start_path = NULL;
   GtkTreePath       *end_path = NULL;
