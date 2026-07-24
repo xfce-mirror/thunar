@@ -409,15 +409,17 @@ thunar_icon_renderer_get_preferred_width (GtkCellRenderer *renderer,
   gtk_cell_renderer_get_padding (renderer, &xpad, NULL);
 
   if (G_LIKELY (minimum))
-    *minimum = (gint) xpad * 2 + icon_renderer->size
-               + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
-                  ? THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
-                  : 0);
+    {
+      *minimum = (gint) xpad * 2 + icon_renderer->size;
+      if (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start)
+        *minimum = *minimum + THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
+    }
   if (G_LIKELY (natural))
-    *natural = (gint) xpad * 2 + icon_renderer->size
-               + (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start
-                  ? THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING
-                  : 0);
+    {
+      *natural = (gint) xpad * 2 + icon_renderer->size;
+      if (icon_renderer->selection_checkmark && icon_renderer->selection_checkmark_start)
+        *natural = *natural + THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
+    }
 }
 
 
