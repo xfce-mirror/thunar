@@ -332,7 +332,7 @@ thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor
       thunar_context_menu_order_editor_insert_item (menu_editor, index, item);
 
       /* set cursor */
-      xfce_item_list_model_set_index (XFCE_ITEM_LIST_MODEL(menu_editor->store), &iter, index);
+      xfce_item_list_model_set_index (XFCE_ITEM_LIST_MODEL (menu_editor->store), &iter, index);
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (menu_editor->store), &iter);
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
     }
