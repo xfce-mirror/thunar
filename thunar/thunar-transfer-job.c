@@ -828,7 +828,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob  *job,
             {
               /* update the target file */
               g_object_unref (node->target_file);
-              node->target_file = g_object_ref (target);
+              node->target_file = target;
               return;
             }
           else /* go to error case */
