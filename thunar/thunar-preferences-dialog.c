@@ -421,7 +421,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("Enable item selection check_boxes"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-selection-checkmarks",
+                          "misc-item-selection-checkboxes",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
