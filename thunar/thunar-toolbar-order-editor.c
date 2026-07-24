@@ -534,14 +534,14 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
 
       if (found)
         {
-          XfceItemListView  *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
-          GtkWidget         *tree_view = xfce_item_list_view_get_tree_view (item_view);
-          gint               new_index = -1;
-          gint              *selected = NULL;
-          gint               n_selected;
-          GtkWidget         *item;
-          GtkTreeIter        iter;
-          GtkTreePath       *path;
+          XfceItemListView *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (toolbar_editor));
+          GtkWidget        *tree_view = xfce_item_list_view_get_tree_view (item_view);
+          gint              new_index = -1;
+          gint             *selected = NULL;
+          gint              n_selected;
+          GtkWidget        *item;
+          GtkTreeIter       iter;
+          GtkTreePath      *path;
 
           /* show item */
           thunar_toolbar_order_editor_set_item_visibility (toolbar_editor, index, TRUE);

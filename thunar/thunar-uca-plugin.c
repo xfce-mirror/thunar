@@ -52,7 +52,7 @@ static void
 thunar_extension_initialize (ThunarxProviderModule *module)
 {
   ThunarxProviderPlugin *plugin = THUNARX_PROVIDER_PLUGIN (module);
-  const gchar *mismatch;
+  const gchar           *mismatch;
 
   /* verify that the thunarx versions are compatible */
   mismatch = thunarx_check_version (THUNARX_MAJOR_VERSION, THUNARX_MINOR_VERSION, THUNARX_MICRO_VERSION);
