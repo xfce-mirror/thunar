@@ -45,7 +45,8 @@ struct _ThunarToolbarOrderEditor
   GList             *children;
   XfceItemListStore *store;
 
-  /* if TRUE, the store is not rebuilt when the toolbar changes */
+  /* If TRUE, thunar_toolbar_order_editor_refresh() will only update pointers and the children list, without completely
+   * rebuilding the store via clear-and-refill. Used to prevent interface jitter when editing list items. */
   gboolean block_clear;
 };
 
@@ -415,6 +416,8 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
 
   if (response == GTK_RESPONSE_YES)
     {
+      /* Block the full store update triggered by UCA changes; store deletions will be performed selectively when this
+       * function returns FALSE */
       toolbar_editor->block_clear = TRUE;
 
       /* deletion in reverse order to maintain index validity */
@@ -460,7 +463,8 @@ thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
   const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
   const gchar *unique_id = item_id + strlen ("uca-action-");
 
-  /* show dialog */
+  /* Show dialog. Block the store update triggered by the UCA update; instead, we will manually remove and recreate
+   * the item being updated */
   toolbar_editor->block_clear = TRUE;
   if (thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
     {
@@ -469,7 +473,7 @@ thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
       GtkTreeIter       iter;
       GtkTreePath      *path = NULL;
 
-      /* update item */
+      /* update item (remove+insert) */
       item = GTK_WIDGET (g_list_nth_data (toolbar_editor->children, index));
       xfce_item_list_model_remove (XFCE_ITEM_LIST_MODEL (toolbar_editor->store), index);
       thunar_toolbar_order_editor_insert_item (toolbar_editor, index, item);
@@ -495,7 +499,8 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
   gchar   *new_unique_id = NULL;
   gboolean added;
 
-  /* show dialog */
+  /* Show dialog. Block the store update triggered by the UCA update; instead, we will create a new item and place it
+   * in the appropriate position in the store. */
   toolbar_editor->block_clear = TRUE;
   added = thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), NULL, &new_unique_id, THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD);
   toolbar_editor->block_clear = FALSE;
