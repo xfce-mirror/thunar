@@ -691,13 +691,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     {
       const gint checkmark_extent = THUNAR_ICON_RENDERER_CHECKMARK_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKMARK_SPACING;
 
-      if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL)
-        icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
-      else
-        {
-          icon_cell_area.x += checkmark_extent;
-          icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
-        }
+      if (gtk_widget_get_direction (widget) != GTK_TEXT_DIR_RTL)
+        icon_cell_area.x += checkmark_extent;
+      icon_cell_area.width = MAX (1, icon_cell_area.width - checkmark_extent);
     }
 
   /* determine the icon state */
