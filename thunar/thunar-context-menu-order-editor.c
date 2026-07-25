@@ -298,6 +298,7 @@ thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_edit
       thunar_context_menu_order_model_remove (menu_editor->order_model, indexes, n_items);
       g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
 
+      /* continue event propagation; let XfceItemListView remove the selected items from the store */
       return FALSE;
     }
 
@@ -314,15 +315,18 @@ thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor
   GList                           *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
   ThunarContextMenuOrderModelItem *item = g_list_nth_data (items, index);
   const gchar                     *unique_id = thunar_context_menu_order_model_item_get_uca_unique_id (item);
-  XfceItemListView                *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
-  GtkWidget                       *tree_view = xfce_item_list_view_get_tree_view (item_view);
-  GtkTreeIter                      iter;
-  GtkTreePath                     *path = NULL;
+  gboolean                         stop_event;
 
   /* show dialog */
   g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
-  if (thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
+  stop_event = !thunar_uca_editor_show (GTK_WINDOW (menu_editor), unique_id, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
+  if (!stop_event)
     {
+      XfceItemListView *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
+      GtkWidget        *tree_view = xfce_item_list_view_get_tree_view (item_view);
+      GtkTreeIter       iter;
+      GtkTreePath      *path = NULL;
+
       /* update item */
       g_list_free (items);
       items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
@@ -335,14 +339,16 @@ thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor
       xfce_item_list_model_set_index (XFCE_ITEM_LIST_MODEL (menu_editor->store), &iter, index);
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (menu_editor->store), &iter);
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+
+      /* cleanup */
+      gtk_tree_path_free (path);
     }
   g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
 
   /* cleanup */
   g_list_free (items);
-  gtk_tree_path_free (path);
 
-  return FALSE;
+  return stop_event;
 }
 
 

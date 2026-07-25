@@ -23,6 +23,7 @@
 
 #define THUNARX_INSIDE_THUNARX_H
 
+/* disable clang-format, as a specific header inclusion order is required */
 /* clang-format off */
 #include "thunarx/thunarx-config.h"
 #include "thunarx/thunarx-file-info.h"

@@ -398,6 +398,7 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
   ThunarUcaModel *uca_model = thunar_uca_model_get_default ();
   GtkWidget      *dialog;
   gint            response;
+  gboolean        stop_event;
 
   /* create the question dialog */
   dialog = gtk_message_dialog_new (GTK_WINDOW (toolbar_editor),
@@ -414,7 +415,11 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
 
-  if (response == GTK_RESPONSE_YES)
+  /* if the user clicked cancel, stop event propagation; otherwise, allow XfceItemListView to remove items
+   * from the store */
+  stop_event = response != GTK_RESPONSE_YES;
+
+  if (!stop_event)
     {
       /* Block the full store update triggered by UCA changes; store deletions will be performed selectively when this
        * function returns FALSE */
@@ -444,13 +449,12 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
       thunar_toolbar_order_editor_save (toolbar_editor);
 
       toolbar_editor->block_clear = FALSE;
-
-      return FALSE;
     }
 
+  /* cleanup */
   g_object_unref (uca_model);
 
-  return TRUE;
+  return stop_event;
 }
 
 
@@ -488,6 +492,7 @@ thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
     }
   toolbar_editor->block_clear = FALSE;
 
+  /* continue event propagation */
   return FALSE;
 }
 

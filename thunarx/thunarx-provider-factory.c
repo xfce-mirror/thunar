@@ -18,6 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* disable clang-format, as a specific header inclusion order is required */
 /* clang-format off */
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-module.h"
