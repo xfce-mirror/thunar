@@ -105,6 +105,9 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor);
 static void
 thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor);
 
+static const gchar *
+_get_uca_widget_unique_id(GtkWidget *uca_widget);
+
 
 G_DEFINE_TYPE (ThunarToolbarOrderEditor, thunar_toolbar_order_editor, THUNAR_TYPE_ORDER_EDITOR)
 
@@ -432,8 +435,7 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
           for (gint i = n_items - 1; i >= 0; --i)
             {
               GtkWidget   *item = g_list_nth_data (toolbar_editor->children, indexes[i]);
-              const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
-              const gchar *unique_id = item_id + strlen ("uca-action-");
+              const gchar *unique_id = _get_uca_widget_unique_id (item);
               GtkTreeIter  iter;
 
               if (thunar_uca_model_get_iter_by_unique_id (uca_model, &iter, unique_id))
@@ -476,12 +478,11 @@ thunar_toolbar_order_editor_edit (ThunarToolbarOrderEditor *toolbar_editor,
 {
   ThunarUcaModel *uca_model = thunar_uca_model_get_default ();
   GtkWidget      *item = g_list_nth_data (toolbar_editor->children, index);
-  const gchar    *item_id = g_object_get_data (G_OBJECT (item), "id");
-  const gchar    *unique_id = item_id + strlen ("uca-action-");
+  const gchar    *unique_id = _get_uca_widget_unique_id (item);
   gboolean        stop_event = FALSE;
 
   /* lock uca_model for exclusive write access */
-  if (thunar_uca_editor_lock_model (GTK_WINDOW (toolbar_editor), uca_model))
+  if (thunar_uca_editor_lock_model (GTK_WINDOW (toolbar_editor), uca_model) && unique_id != NULL)
     {
       /* Show dialog. Block the store update triggered by the UCA update; instead, we will manually remove and recreate
        * the item being updated */
@@ -555,18 +556,10 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
           /* search for a new item in the toolbar */
           for (GList *l = toolbar_editor->children; l != NULL; l = l->next, ++index)
             {
-              GtkWidget   *item = GTK_WIDGET (l->data);
-              const gchar *item_id = g_object_get_data (G_OBJECT (item), "id");
-
-              if (g_str_has_prefix (item_id, "uca-action-"))
+              if (g_strcmp0 (_get_uca_widget_unique_id (GTK_WIDGET (l->data)), new_unique_id) == 0)
                 {
-                  const gchar *item_unique_id = item_id + strlen ("uca-action-");
-
-                  if (g_str_equal (item_unique_id, new_unique_id))
-                    {
-                      found = TRUE;
-                      break;
-                    }
+                  found = TRUE;
+                  break;
                 }
             }
 
@@ -665,4 +658,24 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
 
   /* unblock signal */
   g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_refresh, toolbar_editor);
+}
+
+
+
+static const gchar *
+_get_uca_widget_unique_id (GtkWidget *uca_widget)
+{
+  const gchar *id;
+
+  if (uca_widget == NULL || !GTK_IS_WIDGET (uca_widget))
+    return NULL;
+
+  id = g_object_get_data (G_OBJECT (uca_widget), "id");
+  if (id == NULL)
+    return NULL;
+
+  if (!g_str_has_prefix (id, "uca-action-"))
+    return NULL;
+
+  return id + strlen ("uca-action-");
 }
