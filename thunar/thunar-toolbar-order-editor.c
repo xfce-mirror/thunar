@@ -455,7 +455,9 @@ thunar_toolbar_order_editor_remove (ThunarToolbarOrderEditor *toolbar_editor,
 
           /* unlocking the uca_model */
           thunar_uca_model_unlock (uca_model);
-        } else {
+        }
+      else
+        {
           stop_event = TRUE;
         }
     }
