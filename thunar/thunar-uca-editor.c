@@ -809,3 +809,19 @@ thunar_uca_editor_save_persistently (GtkWindow      *window,
 
   return status;
 }
+
+
+
+gboolean
+thunar_uca_editor_lock_model (GtkWindow      *window,
+                              ThunarUcaModel *uca_model)
+{
+  g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+
+  if (thunar_uca_model_lock (uca_model))
+    return TRUE;
+
+  xfce_message_dialog (window, _("Editing is not possible"), "dialog-error", NULL, _("Unable to apply changes, close other settings dialogs before editing."), NULL, NULL);
+  return FALSE;
+}

@@ -65,8 +65,22 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
 static gboolean
 thunar_uca_chooser_add (ThunarUcaChooser *chooser)
 {
-  if (thunar_uca_editor_show (GTK_WINDOW (chooser), NULL, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE))
-    return FALSE;
+  gboolean status;
+
+  /* if the write lock could not be obtained, cancel the action */
+  if (!thunar_uca_editor_lock_model (GTK_WINDOW (chooser), chooser->uca_model))
+    return TRUE;
+
+  status = thunar_uca_editor_show (GTK_WINDOW (chooser), NULL, NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
+
+  /* unlocking the model */
+  thunar_uca_model_unlock (chooser->uca_model);
+
+  if (status)
+    {
+      /* item added, continue event execution */
+      return FALSE;
+    }
 
   /* failed to add element, stop event processing */
   return TRUE;
@@ -81,6 +95,10 @@ thunar_uca_chooser_remove (ThunarUcaChooser *chooser,
 {
   GtkWidget *dialog;
   gint       response;
+
+  /* if the write lock could not be obtained, cancel the action */
+  if (!thunar_uca_editor_lock_model (GTK_WINDOW (chooser), chooser->uca_model))
+    return TRUE;
 
   /* create the question dialog */
   dialog = gtk_message_dialog_new (GTK_WINDOW (chooser),
@@ -107,6 +125,9 @@ thunar_uca_chooser_remove (ThunarUcaChooser *chooser,
       thunar_uca_editor_save_persistently (GTK_WINDOW (chooser), chooser->uca_model);
     }
 
+  /* unlocking the model */
+  thunar_uca_model_unlock (chooser->uca_model);
+
   /* prevent event propagation; we remove the items manually, as this requires an additional step with
    * thunar_uca_editor_save_persistently() */
   return TRUE;
@@ -121,9 +142,16 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
   GValue   value = G_VALUE_INIT;
   gboolean status;
 
+  /* if the write lock could not be obtained, cancel the action */
+  if (!thunar_uca_editor_lock_model (GTK_WINDOW (chooser), chooser->uca_model))
+    return TRUE;
+
   xfce_item_list_model_get_item_value (XFCE_ITEM_LIST_MODEL (chooser->uca_model), index, THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &value);
   status = thunar_uca_editor_show (GTK_WINDOW (chooser), g_value_get_string (&value), NULL, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
   g_value_reset (&value);
+
+  /* unlocking the model */
+  thunar_uca_model_unlock (chooser->uca_model);
 
   if (!status)
     {
@@ -131,6 +159,7 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
       return TRUE;
     }
 
+  /* the item was modified; continue event execution */
   return FALSE;
 }
 

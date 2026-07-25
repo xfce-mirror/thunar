@@ -121,6 +121,13 @@ thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
                                         GtkTreeIter    *iter,
                                         const gchar    *unique_id);
 
+/* function to acquire an exclusive lock; used to prevent simultaneous model modifications */
+gboolean
+thunar_uca_model_lock (ThunarUcaModel *uca_model);
+
+void
+thunar_uca_model_unlock (ThunarUcaModel *uca_model);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UCA_MODEL_H__ */

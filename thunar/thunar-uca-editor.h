@@ -65,6 +65,11 @@ gboolean
 thunar_uca_editor_save_persistently (GtkWindow      *window,
                                      ThunarUcaModel *uca_model);
 
+/* attempts to acquire a unique lock for the model; if the lock cannot be acquired, it displays an error dialog */
+gboolean
+thunar_uca_editor_lock_model (GtkWindow      *window,
+                              ThunarUcaModel *uca_model);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UCA_EDITOR_H__ */

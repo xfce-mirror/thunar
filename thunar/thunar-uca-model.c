@@ -144,7 +144,8 @@ struct _ThunarUcaModel
 {
   XfceItemListModel __parent__;
 
-  GList *items;
+  GList   *items;
+  gboolean locked;
 };
 
 struct _ThunarUcaModelItem
@@ -1579,4 +1580,27 @@ thunar_uca_model_get_iter_by_unique_id (ThunarUcaModel *uca_model,
   while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_model), iter));
 
   return FALSE;
+}
+
+
+
+gboolean
+thunar_uca_model_lock (ThunarUcaModel *uca_model)
+{
+  if (uca_model->locked)
+    return FALSE;
+
+  uca_model->locked = TRUE;
+  return TRUE;
+}
+
+
+
+void
+thunar_uca_model_unlock (ThunarUcaModel *uca_model)
+{
+  if (!uca_model->locked)
+    g_warning ("Attempt to unlock an unlocked model");
+
+  uca_model->locked = FALSE;
 }
