@@ -137,6 +137,17 @@ thunar_uca_chooser_edit (ThunarUcaChooser *chooser,
 
 
 static void
+thunar_uca_chooser_help (ThunarUcaChooser *chooser)
+{
+  xfce_dialog_show_help (GTK_WINDOW (chooser),
+                         "thunar",
+                         "custom-actions",
+                         NULL);
+}
+
+
+
+static void
 thunar_uca_chooser_init (ThunarUcaChooser *chooser)
 {
   GtkWidget         *label;
@@ -154,7 +165,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *chooser)
                         _("Configure custom actions that will appear in the file manager's context menus and/or toolbar.\n"
                            "These actions are applicable to folders or certain kinds of files.\n"
                            "\n"
-                           "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."));
+                           "If you want to change the order of the items, use the context menu configuration dialog or the toolbar configuration dialog."));
 
   gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
@@ -163,7 +174,12 @@ thunar_uca_chooser_init (ThunarUcaChooser *chooser)
   gtk_container_add (thunar_order_editor_get_description_area (THUNAR_ORDER_EDITOR (chooser)), label);
   gtk_widget_show (label);
 
-  g_object_set (chooser, "title", _("Custom Actions"), NULL);
+  g_signal_connect (chooser, "help", G_CALLBACK (thunar_uca_chooser_help), NULL);
+
+  g_object_set (chooser,
+                "title", _("Custom Actions"),
+                "help-enabled", TRUE,
+                NULL);
 
   /* item view */
   item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (chooser));
