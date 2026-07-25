@@ -106,7 +106,7 @@ static void
 thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor);
 
 static const gchar *
-_get_uca_widget_unique_id(GtkWidget *uca_widget);
+_get_uca_widget_unique_id (GtkWidget *uca_widget);
 
 
 G_DEFINE_TYPE (ThunarToolbarOrderEditor, thunar_toolbar_order_editor, THUNAR_TYPE_ORDER_EDITOR)
