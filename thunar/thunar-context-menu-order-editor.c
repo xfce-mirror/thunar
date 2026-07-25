@@ -443,11 +443,8 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
       added = thunar_uca_editor_show (GTK_WINDOW (menu_editor), NULL, &new_unique_id, THUNAR_UCA_EDITOR_SHOW_FLAG_NONE);
       g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
 
-      if (!added)
-        return;
-
       /* place the cursor on the new item */
-      if (new_unique_id != NULL)
+      if (added && new_unique_id != NULL)
         {
           XfceItemListView                *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
           GtkWidget                       *tree_view = xfce_item_list_view_get_tree_view (item_view);

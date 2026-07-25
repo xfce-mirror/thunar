@@ -544,11 +544,8 @@ thunar_toolbar_order_editor_add_uca (ThunarToolbarOrderEditor *toolbar_editor)
       added = thunar_uca_editor_show (GTK_WINDOW (toolbar_editor), NULL, &new_unique_id, THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD);
       toolbar_editor->block_clear = FALSE;
 
-      if (!added)
-        return;
-
       /* place the cursor on the new item */
-      if (new_unique_id != NULL)
+      if (added && new_unique_id != NULL)
         {
           gint     index = 0;
           gboolean found = FALSE;
