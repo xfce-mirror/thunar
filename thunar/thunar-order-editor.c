@@ -322,9 +322,6 @@ thunar_order_editor_show (ThunarOrderEditor *order_editor,
   if (screen != NULL && GDK_IS_SCREEN (screen))
     gtk_window_set_screen (GTK_WINDOW (order_editor), screen);
 
-  /* run the dialog */
-  gtk_dialog_run (GTK_DIALOG (order_editor));
-
-  /* destroy the dialog */
-  gtk_widget_destroy (GTK_WIDGET (order_editor));
+  /* show the dialog */
+  gtk_window_present (GTK_WINDOW (order_editor));
 }
