@@ -4525,11 +4525,8 @@ static gboolean
 thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
   window->toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "toolbar", window->location_toolbar, NULL);
+  g_object_add_weak_pointer (G_OBJECT (window->toolbar_editor), (gpointer) &window->toolbar_editor);
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (window->toolbar_editor), GTK_WIDGET (window));
-
-  /* window->toolbar_editor is freed in thunar_order_editor_show() */
-  window->toolbar_editor = NULL;
-
   return TRUE;
 }
 
