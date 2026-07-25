@@ -516,6 +516,7 @@ thunar_context_menu_order_editor_add_uca (ThunarContextMenuOrderEditor *menu_edi
     }
 
   /* cleanup */
+  g_object_unref (uca_model);
   g_free (new_unique_id);
 }
 
