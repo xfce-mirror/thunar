@@ -439,7 +439,6 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
                                         GtkTreePath           **path_return)
 {
   GtkCellRenderer *icon_renderer;
-  GtkAdjustment   *adjustment;
   GtkTreePath     *path = NULL;
   GdkRectangle     cell_area;
   GdkRectangle     checkbox_area;
@@ -451,16 +450,15 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
   *path_return = NULL;
 
   icon_renderer = THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer;
-  path = xfce_icon_view_get_path_at_pos (view, event->x, event->y);
-  if (path == NULL)
+  /* Button events and cell areas both use icon-window coordinates. */
+  if (!xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
     return FALSE;
 
-  xfce_icon_view_get_cell_area (view, path, icon_renderer, &cell_area);
-
-  adjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (view));
-  cell_area.x -= (gint) gtk_adjustment_get_value (adjustment);
-  adjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (view));
-  cell_area.y -= (gint) gtk_adjustment_get_value (adjustment);
+  if (!xfce_icon_view_get_cell_area (view, path, icon_renderer, &cell_area))
+    {
+      gtk_tree_path_free (path);
+      return FALSE;
+    }
 
   thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
                                                     GTK_WIDGET (view),
