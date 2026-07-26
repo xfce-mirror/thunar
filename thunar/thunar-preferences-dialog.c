@@ -433,7 +433,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("_Touch screen mode: Show all checkboxes for easily selecting multiple items"));
+  button = gtk_check_button_new_with_mnemonic (_("_Touch screen mode: Always show checkboxes for easily selecting multiple items"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-item-selection-checkboxes",
                           G_OBJECT (button),
