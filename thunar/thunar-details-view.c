@@ -961,13 +961,11 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
                                                 GdkEventButton    *event,
                                                 ThunarDetailsView *details_view)
 {
-  GtkCellRenderer  *icon_renderer;
-  GtkTreeSelection *selection;
-  GdkRectangle      cell_area;
-  GdkRectangle      checkbox_area;
-  gint              renderer_x;
-  gint              renderer_width;
-  gboolean          selection_checkbox;
+  GtkCellRenderer *icon_renderer;
+  GdkRectangle     cell_area;
+  GdkRectangle     checkbox_area;
+  gint             renderer_x;
+  gint             renderer_width;
 
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
   _thunar_return_val_if_fail (path != NULL, FALSE);
@@ -978,10 +976,6 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
     return FALSE;
 
   icon_renderer = THUNAR_STANDARD_VIEW (details_view)->icon_renderer;
-  g_object_get (G_OBJECT (icon_renderer), "selection-checkbox", &selection_checkbox, NULL);
-  if (!selection_checkbox)
-    return FALSE;
-
   if (!gtk_tree_view_column_cell_get_position (column, icon_renderer, &renderer_x, &renderer_width))
     return FALSE;
 
@@ -989,11 +983,9 @@ thunar_details_view_selection_checkbox_clicked (GtkTreeView       *tree_view,
   cell_area.x += renderer_x;
   cell_area.width = renderer_width;
 
-  selection = gtk_tree_view_get_selection (tree_view);
   thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
                                                     GTK_WIDGET (tree_view),
                                                     &cell_area,
-                                                    gtk_tree_selection_path_is_selected (selection, path) ? GTK_CELL_RENDERER_SELECTED : 0,
                                                     &checkbox_area);
 
   return event->x >= checkbox_area.x && event->x < checkbox_area.x + checkbox_area.width
@@ -1098,7 +1090,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
             {
               /* The checkbox may be drawn outside GTK's normal row hit area, so
                * try the renderer geometry before treating the click as empty. */
-              path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
+              if (THUNAR_STANDARD_VIEW (details_view)->selection_checkboxes_enabled)
+                path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
               if (path != NULL)
                 column = name_column;
               else
@@ -1110,7 +1103,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           /* Let GTK handle modifier-assisted row clicks. Checkbox clicks still
            * need to be intercepted because they toggle without clearing the
            * existing selection. */
-          path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
+          if (THUNAR_STANDARD_VIEW (details_view)->selection_checkboxes_enabled)
+            path = thunar_details_view_get_checkbox_path_at_pos (tree_view, event, details_view);
           if (path != NULL)
             column = name_column;
         }
@@ -1139,7 +1133,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
       thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
 
-      if (thunar_details_view_selection_checkbox_clicked (tree_view, path, column, event, details_view))
+      if (THUNAR_STANDARD_VIEW (details_view)->selection_checkboxes_enabled
+          && thunar_details_view_selection_checkbox_clicked (tree_view, path, column, event, details_view))
         {
           if (gtk_tree_model_get_iter (model, &iter, path))
             {
@@ -1302,6 +1297,8 @@ thunar_details_view_button_release_event (GtkTreeView       *tree_view,
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
+  /* The checkbox press handler consumes the press before GtkTreeView can
+   * replace the selection. Consume its matching release for the same reason. */
   if (details_view->checkbox_button_pressed && event->button == 1)
     {
       details_view->checkbox_button_pressed = FALSE;

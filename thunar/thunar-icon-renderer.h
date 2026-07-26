@@ -64,11 +64,10 @@ GtkCellRenderer *
 thunar_icon_renderer_new (void) G_GNUC_MALLOC;
 
 void
-thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer  *icon_renderer,
-                                                  GtkWidget           *widget,
-                                                  const GdkRectangle  *cell_area,
-                                                  GtkCellRendererState flags,
-                                                  GdkRectangle        *checkbox_area);
+thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer *icon_renderer,
+                                                  GtkWidget          *widget,
+                                                  const GdkRectangle *cell_area,
+                                                  GdkRectangle       *checkbox_area);
 
 G_END_DECLS;
 
