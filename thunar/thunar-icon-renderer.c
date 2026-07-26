@@ -697,6 +697,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (THUNAR_ICON_RENDERER (renderer)->highlighting_enabled)
     thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
 
+  /* Add extra space for checkboxes in list view, if required. */
   icon_cell_area = *cell_area;
   if (icon_renderer->selection_checkbox && icon_renderer->list_view_mode)
     {
