@@ -443,10 +443,6 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
   GtkTreePath     *path = NULL;
   GdkRectangle     cell_area;
   GdkRectangle     checkbox_area;
-  const gint       hit_slop = 4;
-  gboolean         selection_checkbox;
-  gint             x;
-  gint             y;
 
   _thunar_return_val_if_fail (XFCE_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
@@ -455,10 +451,6 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
   *path_return = NULL;
 
   icon_renderer = THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer;
-  g_object_get (G_OBJECT (icon_renderer), "selection-checkbox", &selection_checkbox, NULL);
-  if (!selection_checkbox)
-    return FALSE;
-
   path = xfce_icon_view_get_path_at_pos (view, event->x, event->y);
   if (path == NULL)
     return FALSE;
@@ -473,17 +465,10 @@ thunar_abstract_icon_view_checkbox_hit (XfceIconView           *view,
   thunar_icon_renderer_get_selection_checkbox_area (THUNAR_ICON_RENDERER (icon_renderer),
                                                     GTK_WIDGET (view),
                                                     &cell_area,
-                                                    xfce_icon_view_path_is_selected (view, path) ? GTK_CELL_RENDERER_SELECTED : 0,
                                                     &checkbox_area);
-  checkbox_area.x -= hit_slop;
-  checkbox_area.y -= hit_slop;
-  checkbox_area.width += 2 * hit_slop;
-  checkbox_area.height += 2 * hit_slop;
 
-  x = (gint) event->x;
-  y = (gint) event->y;
-  if (x >= checkbox_area.x && x < checkbox_area.x + checkbox_area.width
-      && y >= checkbox_area.y && y < checkbox_area.y + checkbox_area.height)
+  if (event->x >= checkbox_area.x && event->x < checkbox_area.x + checkbox_area.width
+      && event->y >= checkbox_area.y && event->y < checkbox_area.y + checkbox_area.height)
     {
       *path_return = path;
       return TRUE;
@@ -548,7 +533,8 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
     {
       abstract_icon_view->priv->checkbox_button_pressed = FALSE;
 
-      if (thunar_abstract_icon_view_checkbox_hit (view, event, abstract_icon_view, &path))
+      if (THUNAR_STANDARD_VIEW (abstract_icon_view)->selection_checkboxes_enabled
+          && thunar_abstract_icon_view_checkbox_hit (view, event, abstract_icon_view, &path))
         {
           thunar_abstract_icon_view_toggle_select_for_path (view, path, abstract_icon_view);
 
@@ -643,6 +629,8 @@ thunar_abstract_icon_view_checkbox_button_release_event (XfceIconView           
   _thunar_return_val_if_fail (XFCE_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
 
+  /* The checkbox press handler consumes the press before XfceIconView can
+   * replace the selection. Consume its matching release for the same reason. */
   if (abstract_icon_view->priv->checkbox_button_pressed && event->button == 1)
     {
       abstract_icon_view->priv->checkbox_button_pressed = FALSE;

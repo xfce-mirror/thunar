@@ -47,7 +47,7 @@ enum
 };
 
 #define THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE 16
-#define THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE 20
+#define THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE 24
 #define THUNAR_ICON_RENDERER_CHECKBOX_SPACING 4
 
 
@@ -525,52 +525,44 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
 
 void
-thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer  *icon_renderer,
-                                                  GtkWidget           *widget,
-                                                  const GdkRectangle  *cell_area,
-                                                  GtkCellRendererState flags,
-                                                  GdkRectangle        *checkbox_area)
+thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer *icon_renderer,
+                                                  GtkWidget          *widget,
+                                                  const GdkRectangle *cell_area,
+                                                  GdkRectangle       *checkbox_area)
 {
   GtkTextDirection direction;
-  GdkRectangle     target_area;
-  gint             checkbox_size;
+  gint             icon_width;
+  gint             icon_height;
 
   _thunar_return_if_fail (THUNAR_IS_ICON_RENDERER (icon_renderer));
   _thunar_return_if_fail (GTK_IS_WIDGET (widget));
   _thunar_return_if_fail (cell_area != NULL);
   _thunar_return_if_fail (checkbox_area != NULL);
 
-  checkbox_size = icon_renderer->list_view_mode
-                  ? THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE
-                  : THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE;
-  checkbox_area->width = MIN (checkbox_size, MAX (1, cell_area->width));
-  checkbox_area->height = MIN (checkbox_size, MAX (1, cell_area->height));
-
   direction = gtk_widget_get_direction (widget);
-  target_area = *cell_area;
-
-  if (!icon_renderer->list_view_mode)
-    {
-      target_area.width = MIN ((gint) icon_renderer->size, cell_area->width);
-      target_area.height = MIN ((gint) icon_renderer->size, cell_area->height);
-      target_area.x = cell_area->x + (cell_area->width - target_area.width) / 2;
-      target_area.y = cell_area->y + (cell_area->height - target_area.height) / 2;
-    }
-
-  if (direction == GTK_TEXT_DIR_RTL)
-    checkbox_area->x = target_area.x + target_area.width - checkbox_area->width;
-  else
-    checkbox_area->x = target_area.x;
 
   if (icon_renderer->list_view_mode)
-    checkbox_area->y = target_area.y + (target_area.height - checkbox_area->height) / 2;
-  else
-    checkbox_area->y = target_area.y;
-
-  if ((flags & GTK_CELL_RENDERER_FOCUSED) != 0)
     {
-      checkbox_area->x = CLAMP (checkbox_area->x, cell_area->x, cell_area->x + cell_area->width - checkbox_area->width);
-      checkbox_area->y = CLAMP (checkbox_area->y, cell_area->y, cell_area->y + cell_area->height - checkbox_area->height);
+      checkbox_area->width = MIN (THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE, MAX (1, cell_area->width));
+      checkbox_area->height = MIN (THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE, MAX (1, cell_area->height));
+      checkbox_area->x = direction == GTK_TEXT_DIR_RTL
+                         ? cell_area->x + cell_area->width - checkbox_area->width
+                         : cell_area->x;
+      checkbox_area->y = cell_area->y + (cell_area->height - checkbox_area->height) / 2;
+    }
+  else
+    {
+      /* Icon and compact views may allocate a cell larger than the icon.
+       * Center the nominal icon area just as the renderer does, then place
+       * the checkbox in its upper corner. */
+      icon_width = MIN ((gint) icon_renderer->size, MAX (1, cell_area->width));
+      icon_height = MIN ((gint) icon_renderer->size, MAX (1, cell_area->height));
+      checkbox_area->width = MIN (THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE, icon_width);
+      checkbox_area->height = MIN (THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE, icon_height);
+      checkbox_area->x = cell_area->x + (cell_area->width - icon_width) / 2;
+      if (direction == GTK_TEXT_DIR_RTL)
+        checkbox_area->x += icon_width - checkbox_area->width;
+      checkbox_area->y = cell_area->y + (cell_area->height - icon_height) / 2;
     }
 }
 
@@ -589,6 +581,7 @@ thunar_icon_renderer_render_selection_checkbox (ThunarIconRenderer  *icon_render
   GdkRGBA          color;
   GdkRGBA         *selected_background;
   gboolean         selected;
+  const gdouble    border_width = 1.5;
   gdouble          x;
   gdouble          y;
   gdouble          width;
@@ -598,10 +591,12 @@ thunar_icon_renderer_render_selection_checkbox (ThunarIconRenderer  *icon_render
     return;
 
   selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  /* In icon and compact views, show an unselected checkbox only while the
+   * pointer is over the item. Selected checkboxes remain visible. */
   if (!icon_renderer->list_view_mode && !selected && (flags & GTK_CELL_RENDERER_PRELIT) == 0)
     return;
 
-  thunar_icon_renderer_get_selection_checkbox_area (icon_renderer, widget, cell_area, flags, &checkbox_area);
+  thunar_icon_renderer_get_selection_checkbox_area (icon_renderer, widget, cell_area, &checkbox_area);
 
   context = gtk_widget_get_style_context (widget);
   state = gtk_widget_get_state_flags (widget);
@@ -611,13 +606,15 @@ thunar_icon_renderer_render_selection_checkbox (ThunarIconRenderer  *icon_render
   gtk_style_context_get_color (context, gtk_style_context_get_state (context), &color);
   gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &selected_background, NULL);
 
-  x = checkbox_area.x + 0.5;
-  y = checkbox_area.y + 0.5;
-  width = checkbox_area.width - 1.0;
-  height = checkbox_area.height - 1.0;
+  /* Cairo centers a stroke on its path, so inset by half the border width
+   * to keep the complete border inside the checkbox area. */
+  x = checkbox_area.x + border_width / 2.0;
+  y = checkbox_area.y + border_width / 2.0;
+  width = MAX (0.0, checkbox_area.width - border_width);
+  height = MAX (0.0, checkbox_area.height - border_width);
 
   cairo_save (cr);
-  cairo_set_line_width (cr, 1.5);
+  cairo_set_line_width (cr, border_width);
   cairo_rectangle (cr, x, y, width, height);
 
   if (selected)
