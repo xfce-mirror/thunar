@@ -434,7 +434,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
         {
           /* add the icon renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->icon_renderer),
-                        "selection-checkbox-start", TRUE,
+                        "list-view-mode", TRUE,
                         NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer,

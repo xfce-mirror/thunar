@@ -54,7 +54,7 @@ struct _ThunarIconRenderer
   gboolean       highlighting_enabled;
   gboolean       use_symbolic_icons;
   gboolean       selection_checkbox;
-  gboolean       selection_checkbox_start;
+  gboolean       list_view_mode;
 };
 
 GType
