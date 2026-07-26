@@ -43,6 +43,7 @@ enum
   PROP_HIGHLIGHTING_ENABLED,
   PROP_USE_SYMBOLIC_ICONS,
   PROP_SELECTION_CHECKBOX,
+  PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE,
   PROP_LIST_VIEW_MODE,
 };
 
@@ -238,6 +239,19 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
+   * ThunarIconRenderer:selection-checkbox-always-visible:
+   *
+   * Whether to always render unselected checkboxes in icon and compact views.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE,
+                                   g_param_spec_boolean ("selection-checkbox-always-visible",
+                                                         "selection-checkbox-always-visible",
+                                                         "selection-checkbox-always-visible",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
    * ThunarIconRenderer:list-view-mode:
    *
    * Whether the renderer is used in list view mode.
@@ -329,6 +343,10 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, icon_renderer->selection_checkbox);
       break;
 
+    case PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE:
+      g_value_set_boolean (value, icon_renderer->selection_checkbox_always_visible);
+      break;
+
     case PROP_LIST_VIEW_MODE:
       g_value_set_boolean (value, icon_renderer->list_view_mode);
       break;
@@ -394,6 +412,10 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_SELECTION_CHECKBOX:
       icon_renderer->selection_checkbox = g_value_get_boolean (value);
+      break;
+
+    case PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE:
+      icon_renderer->selection_checkbox_always_visible = g_value_get_boolean (value);
       break;
 
     case PROP_LIST_VIEW_MODE:
@@ -591,9 +613,12 @@ thunar_icon_renderer_render_selection_checkbox (ThunarIconRenderer  *icon_render
     return;
 
   selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
-  /* In icon and compact views, show an unselected checkbox only while the
-   * pointer is over the item. Selected checkboxes remain visible. */
-  if (!icon_renderer->list_view_mode && !selected && (flags & GTK_CELL_RENDERER_PRELIT) == 0)
+  /* Icon and compact views normally show unselected checkboxes only while
+   * the pointer is over the item. Selected checkboxes remain visible. */
+  if (!icon_renderer->list_view_mode
+      && !icon_renderer->selection_checkbox_always_visible
+      && !selected
+      && (flags & GTK_CELL_RENDERER_PRELIT) == 0)
     return;
 
   thunar_icon_renderer_get_selection_checkbox_area (icon_renderer, widget, cell_area, &checkbox_area);

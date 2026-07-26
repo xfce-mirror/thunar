@@ -110,6 +110,7 @@ enum
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
   PROP_MISC_ITEM_SELECTION_CHECKBOXES,
+  PROP_MISC_ITEM_SELECTION_CHECKBOXES_TOUCHSCREEN_MODE,
   PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
@@ -1033,6 +1034,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscItemSelectionCheckboxes",
                         NULL,
                         TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-item-selection-checkboxes-touchscreen-mode:
+   *
+   * Whether item selection checkboxes are always visible for touchscreen use.
+   **/
+  preferences_props[PROP_MISC_ITEM_SELECTION_CHECKBOXES_TOUCHSCREEN_MODE] =
+  g_param_spec_boolean ("misc-item-selection-checkboxes-touchscreen-mode",
+                        "MiscItemSelectionCheckboxesTouchscreenMode",
+                        NULL,
+                        FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
