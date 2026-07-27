@@ -53,6 +53,9 @@ struct _ThunarIconRenderer
   gboolean       rounded_corners;
   gboolean       highlighting_enabled;
   gboolean       use_symbolic_icons;
+  gboolean       selection_checkbox;
+  gboolean       selection_checkbox_always_visible;
+  gboolean       list_view_mode;
 };
 
 GType
@@ -60,6 +63,12 @@ thunar_icon_renderer_get_type (void);
 
 GtkCellRenderer *
 thunar_icon_renderer_new (void) G_GNUC_MALLOC;
+
+void
+thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer *icon_renderer,
+                                                  GtkWidget          *widget,
+                                                  const GdkRectangle *cell_area,
+                                                  GdkRectangle       *checkbox_area);
 
 G_END_DECLS;
 
