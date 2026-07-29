@@ -2820,7 +2820,7 @@ static void
 thunar_tree_view_model_dir_files_changed (Node       *node_parent,
                                           GHashTable *files)
 {
-  ThunarTreeViewModel *model = node_parent->model;
+  ThunarTreeViewModel *model;
   GSequenceIter       *iter;
   GtkTreeIter          tree_iter;
   GHashTableIter       files_iter;
@@ -2832,6 +2832,16 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
   gboolean             dummy_added = FALSE;
   ThunarFile          *file;
   gpointer             key;
+
+  /* SANITY CHECK: Protect against Use-After-Free race conditions where the parent
+   * directory was renamed/detached before the child file's monitor event finished. */
+  if (node_parent == NULL || (node_parent->ptr == NULL && node_parent->parent == NULL))
+    {
+      g_message ("ThunarTreeViewModel: Caught and ignored files_changed on a detached node.");
+      return; /* Abort the entire update for this ghost directory */
+    }
+
+  model = node_parent->model;
 
   g_hash_table_iter_init (&files_iter, files);
   while (g_hash_table_iter_next (&files_iter, &key, NULL))
