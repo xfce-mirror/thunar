@@ -1,0 +1,75 @@
+/* vi:set et ai sw=2 sts=2 ts=2: */
+/*-
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2026 The Xfce Development Team
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifndef __THUNAR_UCA_EDITOR_H__
+#define __THUNAR_UCA_EDITOR_H__
+
+#include <thunar/thunar-uca-model.h>
+
+G_BEGIN_DECLS;
+
+typedef struct _ThunarUcaEditorClass ThunarUcaEditorClass;
+typedef struct _ThunarUcaEditor      ThunarUcaEditor;
+
+#define THUNAR_UCA_TYPE_EDITOR (thunar_uca_editor_get_type ())
+#define THUNAR_UCA_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditor))
+#define THUNAR_UCA_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
+#define THUNAR_UCA_IS_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_UCA_TYPE_EDITOR))
+#define THUNAR_UCA_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_EDITOR))
+#define THUNAR_UCA_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
+
+typedef enum
+{
+  THUNAR_UCA_EDITOR_SHOW_FLAG_NONE = 1 << 0,
+  THUNAR_UCA_EDITOR_SHOW_FLAG_FOR_TOOLBAR_ADD = 1 << 1,
+} ThunarUcaEditorShowFlags;
+
+GType
+thunar_uca_editor_get_type (void);
+void
+thunar_uca_editor_register_type (ThunarxProviderPlugin *plugin);
+
+void
+thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
+                        ThunarUcaModel  *uca_model,
+                        GtkTreeIter     *iter);
+void
+thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
+                        ThunarUcaModel  *uca_model,
+                        GtkTreeIter     *iter);
+
+gboolean
+thunar_uca_editor_show (GtkWindow               *window,
+                        const gchar             *item_id,
+                        gchar                  **new_item_id,
+                        ThunarUcaEditorShowFlags flags);
+
+gboolean
+thunar_uca_editor_save_persistently (GtkWindow      *window,
+                                     ThunarUcaModel *uca_model);
+
+/* attempts to acquire a unique lock for the model; if the lock cannot be acquired, it displays an error dialog */
+gboolean
+thunar_uca_editor_lock_model (GtkWindow      *window,
+                              ThunarUcaModel *uca_model);
+
+G_END_DECLS;
+
+#endif /* !__THUNAR_UCA_EDITOR_H__ */

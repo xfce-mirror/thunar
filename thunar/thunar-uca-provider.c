@@ -2,31 +2,30 @@
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2026 The Xfce Development Team
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include <gio/gio.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
-#include <thunar-uca/thunar-uca-chooser.h>
-#include <thunar-uca/thunar-uca-context.h>
-#include <thunar-uca/thunar-uca-model.h>
-#include <thunar-uca/thunar-uca-private.h>
-#include <thunar-uca/thunar-uca-provider.h>
+#include <thunar/thunar-uca-chooser.h>
+#include <thunar/thunar-uca-context.h>
+#include <thunar/thunar-uca-model.h>
+#include <thunar/thunar-uca-provider.h>
 
 
 
@@ -47,6 +46,8 @@ static GList *
 thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
                                            GtkWidget           *window,
                                            ThunarxFileInfo     *folder);
+static GList *
+thunar_uca_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider);
 static void
 thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
                                ThunarxMenuItem   *item);
@@ -118,6 +119,7 @@ thunar_uca_provider_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
   iface->get_file_menu_items = thunar_uca_provider_get_file_menu_items;
   iface->get_folder_menu_items = thunar_uca_provider_get_folder_menu_items;
+  iface->get_all_right_click_menu_items = thunar_uca_provider_get_all_right_click_menu_items;
 }
 
 
@@ -133,9 +135,6 @@ thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface *
 static void
 thunar_uca_provider_init (ThunarUcaProvider *uca_provider)
 {
-  /* setup the i18n support first */
-  thunar_uca_i18n_init ();
-
   /* grab a reference on the default model */
   uca_provider->model = thunar_uca_model_get_default ();
 }
@@ -161,15 +160,7 @@ thunar_uca_provider_finalize (GObject *object)
 static void
 manage_menu_items (GtkWindow *window)
 {
-  GtkWidget *dialog;
-  gboolean   use_header_bar = FALSE;
-
-  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
-                "gtk-dialogs-use-header", &use_header_bar, NULL);
-
-  dialog = g_object_new (THUNAR_UCA_TYPE_CHOOSER, "use-header-bar", use_header_bar, NULL);
-  gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
-  gtk_widget_show (dialog);
+  thunar_uca_chooser_show (window);
 }
 
 
@@ -434,6 +425,51 @@ thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
 
   /* mark the menu items as folder menu items, so we can properly detect the working directory */
   set_folder_quarks_recursive (items);
+
+  return items;
+}
+
+
+
+static GList *
+thunar_uca_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
+{
+  ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (menu_provider);
+  GtkTreeIter        iter;
+  GList             *items = NULL;
+
+  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (uca_provider->model), &iter))
+    {
+      do
+        {
+          ThunarxMenuItem *menu_item;
+          gchar           *unique_id;
+          gchar           *label;
+          gchar           *tooltip;
+          gchar           *icon;
+          gchar           *name;
+
+          gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
+                              THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
+                              THUNAR_UCA_MODEL_COLUMN_NAME, &label,
+                              THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
+                              THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon,
+                              -1);
+
+          /* generate a unique action name */
+          name = g_strdup_printf ("uca-%s", unique_id);
+
+          menu_item = thunarx_menu_item_new (name, label, tooltip, icon);
+          items = g_list_append (items, menu_item);
+
+          g_free (unique_id);
+          g_free (label);
+          g_free (tooltip);
+          g_free (icon);
+          g_free (name);
+        }
+      while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_provider->model), &iter));
+    }
 
   return items;
 }

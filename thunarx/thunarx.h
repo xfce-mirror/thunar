@@ -23,6 +23,8 @@
 
 #define THUNARX_INSIDE_THUNARX_H
 
+/* disable clang-format, as a specific header inclusion order is required */
+/* clang-format off */
 #include "thunarx/thunarx-config.h"
 #include "thunarx/thunarx-file-info.h"
 #include "thunarx/thunarx-menu-provider.h"
@@ -30,10 +32,12 @@
 #include "thunarx/thunarx-preferences-provider.h"
 #include "thunarx/thunarx-property-page-provider.h"
 #include "thunarx/thunarx-property-page.h"
-#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-provider-module.h"
+#include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-renamer-provider.h"
 #include "thunarx/thunarx-renamer.h"
+/* clang-format on */
 
 #undef THUNARX_INSIDE_THUNARX_H
 

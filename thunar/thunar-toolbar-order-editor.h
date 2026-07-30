@@ -39,10 +39,6 @@ typedef struct _ThunarToolbarOrderEditorClass ThunarToolbarOrderEditorClass;
 GType
 thunar_toolbar_order_editor_get_type (void);
 
-void
-thunar_toolbar_order_editor_new_and_show (GtkWidget *window,
-                                          GtkWidget *toolbar);
-
 G_END_DECLS
 
 #endif /* !__THUNAR_TOOLBAR_ORDER_EDITOR_H__ */

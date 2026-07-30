@@ -69,6 +69,9 @@ struct _ThunarxProviderModule
 {
   GTypeModule __parent__;
 
+  /* Internal modules are not loaded via dynamic libraries; they are statically linked. */
+  gboolean internal;
+
   GModule *library;
   gboolean resident;
 
@@ -182,6 +185,14 @@ thunarx_provider_module_load (GTypeModule *type_module)
   gchar                **dirs;
   gboolean               found;
 
+  if (module->internal)
+    {
+      /* initialize the plugin */
+      (*module->initialize) (module);
+
+      return TRUE;
+    }
+
   if (g_strcmp0 (THUNARX_ENABLE_CUSTOM_DIRS, "TRUE") == 0)
     dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
 
@@ -241,14 +252,17 @@ thunarx_provider_module_unload (GTypeModule *type_module)
   /* shutdown the plugin */
   (*module->shutdown) ();
 
-  /* unload the plugin from memory */
-  g_module_close (module->library);
+  if (!module->internal)
+    {
+      /* unload the plugin from memory */
+      g_module_close (module->library);
 
-  /* reset module state */
-  module->library = NULL;
-  module->shutdown = NULL;
-  module->initialize = NULL;
-  module->list_types = NULL;
+      /* reset module state */
+      module->library = NULL;
+      module->shutdown = NULL;
+      module->initialize = NULL;
+      module->list_types = NULL;
+    }
 }
 
 
@@ -294,6 +308,42 @@ thunarx_provider_module_new (const gchar *filename)
 
   module = g_object_new (THUNARX_TYPE_PROVIDER_MODULE, NULL);
   g_type_module_set_name (G_TYPE_MODULE (module), filename);
+
+  return module;
+}
+
+
+
+/**
+ * thunarx_provider_module_new_internal:
+ * @name         : module name.
+ * @method_table : table of pointers to method implementations.
+ *
+ * Allocates a new #ThunarxProviderModule and initializes it
+ * using @method_table.
+ *
+ * Return value: the newly allocated #ThunarxProviderModule.
+ **/
+ThunarxProviderModule *
+thunarx_provider_module_new_internal (const gchar                      *name,
+                                      ThunarxProviderModuleMethodTable *method_table)
+{
+  ThunarxProviderModule *module;
+
+  g_return_val_if_fail (name != NULL, NULL);
+  g_return_val_if_fail (*name != '\0', NULL);
+  g_return_val_if_fail (method_table != NULL, NULL);
+  g_return_val_if_fail (method_table->initialize != NULL, NULL);
+  g_return_val_if_fail (method_table->shutdown != NULL, NULL);
+  g_return_val_if_fail (method_table->list_types != NULL, NULL);
+
+  module = g_object_new (THUNARX_TYPE_PROVIDER_MODULE, NULL);
+  g_type_module_set_name (G_TYPE_MODULE (module), name);
+
+  module->internal = TRUE;
+  module->initialize = method_table->initialize;
+  module->shutdown = method_table->shutdown;
+  module->list_types = method_table->list_types;
 
   return module;
 }

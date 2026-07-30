@@ -67,6 +67,7 @@
 #include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-uca-plugin.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-view.h"
 
@@ -464,6 +465,9 @@ thunar_application_startup (GApplication *gapp)
   application->accel_map = NULL;
 
   thunar_application_load_css ();
+
+  /* internal plugins */
+  thunar_uca_plugin_init ();
 }
 
 

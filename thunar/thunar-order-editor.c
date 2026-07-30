@@ -61,6 +61,9 @@ static void
 thunar_order_editor_finalize (GObject *object);
 
 static void
+thunar_order_editor_destroy (GtkWidget *widget);
+
+static void
 thunar_order_editor_set_property (GObject      *object,
                                   guint         prop_id,
                                   const GValue *value,
@@ -69,6 +72,9 @@ thunar_order_editor_set_property (GObject      *object,
 static void
 thunar_order_editor_help_clicked (ThunarOrderEditor *order_editor);
 
+static void
+thunar_order_editor_response (ThunarOrderEditor *order_editor,
+                              gint               response_id);
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarOrderEditor, thunar_order_editor, THUNAR_TYPE_ABSTRACT_DIALOG,
@@ -161,7 +167,6 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   /* create item_view */
   priv->item_view = xfce_item_list_view_new (NULL);
   xfce_item_list_view_set_label_visibility (XFCE_ITEM_LIST_VIEW (priv->item_view), TRUE);
-  gtk_widget_set_size_request (priv->item_view, 100, 250);
   gtk_box_pack_start (GTK_BOX (hbox), priv->item_view, TRUE, TRUE, 0);
   gtk_widget_show (priv->item_view);
 
@@ -174,6 +179,10 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   priv->preferences = thunar_preferences_get ();
   swin = gtk_widget_get_parent (xfce_item_list_view_get_tree_view (XFCE_ITEM_LIST_VIEW (priv->item_view)));
   g_object_bind_property (G_OBJECT (priv->preferences), "misc-support-overlay-scrolling", G_OBJECT (swin), "overlay-scrolling", G_BINDING_SYNC_CREATE);
+
+  /* signals */
+  g_signal_connect (order_editor, "response", G_CALLBACK (thunar_order_editor_response), NULL);
+  g_signal_connect (order_editor, "destroy", G_CALLBACK (thunar_order_editor_destroy), NULL);
 }
 
 
@@ -186,6 +195,16 @@ thunar_order_editor_finalize (GObject *object)
   g_object_unref (G_OBJECT (priv->preferences));
 
   (*G_OBJECT_CLASS (thunar_order_editor_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_order_editor_destroy (GtkWidget *widget)
+{
+  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (THUNAR_ORDER_EDITOR (widget));
+
+  xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
 }
 
 
@@ -224,6 +243,20 @@ static void
 thunar_order_editor_help_clicked (ThunarOrderEditor *order_editor)
 {
   g_signal_emit (order_editor, signals[HELP], 0);
+}
+
+
+
+static void
+thunar_order_editor_response (ThunarOrderEditor *order_editor,
+                              gint               response_id)
+{
+  switch (response_id)
+    {
+    case GTK_RESPONSE_CLOSE:
+      gtk_window_close (GTK_WINDOW (order_editor));
+      break;
+    }
 }
 
 
@@ -323,9 +356,6 @@ thunar_order_editor_show (ThunarOrderEditor *order_editor,
   if (screen != NULL && GDK_IS_SCREEN (screen))
     gtk_window_set_screen (GTK_WINDOW (order_editor), screen);
 
-  /* run the dialog */
-  gtk_dialog_run (GTK_DIALOG (order_editor));
-
-  /* destroy the dialog */
-  gtk_widget_destroy (GTK_WIDGET (order_editor));
+  /* show the dialog */
+  gtk_window_present (GTK_WINDOW (order_editor));
 }

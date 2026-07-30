@@ -166,6 +166,17 @@ thunar_sources = [
   'thunar-tree-view-model.h',
   'thunar-tree-view.c',
   'thunar-tree-view.h',
+  'thunar-uca-chooser.c',
+  'thunar-uca-chooser.h',
+  'thunar-uca-context.c',
+  'thunar-uca-context.h',
+  'thunar-uca-editor.c',
+  'thunar-uca-editor.h',
+  'thunar-uca-model.c',
+  'thunar-uca-model.h',
+  'thunar-uca-plugin.c',
+  'thunar-uca-provider.c',
+  'thunar-uca-provider.h',
   'thunar-user.c',
   'thunar-user.h',
   'thunar-util.c',
@@ -206,6 +217,16 @@ endforeach
 thunar_sources += gnome.compile_resources(
   'thunar.gresource',
   'thunar.gresource.xml',
+)
+
+i18n.merge_file(
+  input: 'uca.xml.in',
+  output: 'uca.xml',
+  data_dirs: '..',
+  po_dir: '..' / 'po',
+  type: 'xml',
+  install: true,
+  install_dir: get_option('prefix') / get_option('sysconfdir') / 'xdg' / 'Thunar',
 )
 
 thunar_dependencies = [
