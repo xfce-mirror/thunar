@@ -61,6 +61,9 @@ static void
 thunar_order_editor_finalize (GObject *object);
 
 static void
+thunar_order_editor_destroy (GtkWidget *widget);
+
+static void
 thunar_order_editor_set_property (GObject      *object,
                                   guint         prop_id,
                                   const GValue *value,
@@ -179,6 +182,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
 
   /* signals */
   g_signal_connect (order_editor, "response", G_CALLBACK (thunar_order_editor_response), NULL);
+  g_signal_connect (order_editor, "destroy", G_CALLBACK (thunar_order_editor_destroy), NULL);
 }
 
 
@@ -191,6 +195,16 @@ thunar_order_editor_finalize (GObject *object)
   g_object_unref (G_OBJECT (priv->preferences));
 
   (*G_OBJECT_CLASS (thunar_order_editor_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_order_editor_destroy (GtkWidget *widget)
+{
+  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (THUNAR_ORDER_EDITOR (widget));
+
+  xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
 }
 
 
@@ -237,12 +251,9 @@ static void
 thunar_order_editor_response (ThunarOrderEditor *order_editor,
                               gint               response_id)
 {
-  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (order_editor);
-
   switch (response_id)
     {
     case GTK_RESPONSE_CLOSE:
-      xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
       gtk_window_close (GTK_WINDOW (order_editor));
       break;
     }
