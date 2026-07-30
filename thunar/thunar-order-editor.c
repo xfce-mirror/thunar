@@ -237,9 +237,12 @@ static void
 thunar_order_editor_response (ThunarOrderEditor *order_editor,
                               gint               response_id)
 {
+  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (order_editor);
+
   switch (response_id)
     {
     case GTK_RESPONSE_CLOSE:
+      xfce_item_list_view_set_model (XFCE_ITEM_LIST_VIEW (priv->item_view), NULL);
       gtk_window_close (GTK_WINDOW (order_editor));
       break;
     }
