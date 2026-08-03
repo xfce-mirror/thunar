@@ -641,6 +641,7 @@ thunar_browser_poke_device (ThunarBrowser              *browser,
       thunar_device_mount (device,
                            mount_operation,
                            NULL,
+                           FALSE,
                            thunar_browser_poke_device_finish,
                            poke_data);
 

@@ -718,6 +718,7 @@ void
 thunar_device_mount (ThunarDevice        *device,
                      GMountOperation     *mount_operation,
                      GCancellable        *cancellable,
+                     gboolean             readonly,
                      ThunarDeviceCallback callback,
                      gpointer             user_data)
 {
@@ -733,7 +734,7 @@ thunar_device_mount (ThunarDevice        *device,
       op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                         g_volume_mount_finish);
       g_volume_mount (G_VOLUME (device->device),
-                      G_MOUNT_MOUNT_NONE,
+                      readonly ? G_MOUNT_MOUNT_READ_ONLY : G_MOUNT_MOUNT_NONE,
                       mount_operation,
                       cancellable,
                       thunar_device_operation_finish,

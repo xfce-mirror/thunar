@@ -529,6 +529,7 @@ thunar_menu_add_sections (ThunarMenu        *menu,
     {
       item_added = FALSE;
       item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MOUNT, FALSE) != NULL);
+      item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MOUNT_READ_ONLY, FALSE) != NULL);
       item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_UNMOUNT, FALSE) != NULL);
       item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EJECT, FALSE) != NULL);
       if (item_added)
