@@ -842,8 +842,6 @@ thunar_details_view_get_visible_files (ThunarDetailsView *details_view)
   GtkTreeIter          end_iter;
   GList               *files = 0;
 
-  details_view->update_expand_arrows_timeout_source_id = 0;
-
   if (!thunar_details_view_get_visible_range (THUNAR_STANDARD_VIEW (details_view), &start_path, &end_path))
     return NULL;
 
@@ -1716,23 +1714,21 @@ thunar_details_view_update_visible_expand_arrows_timeout (gpointer data)
   ThunarTreeViewModel *model = (THUNAR_STANDARD_VIEW (details_view))->model;
 
   GList   *files_for_update = 0;
-  gboolean remove_source = TRUE;
-
-  details_view->update_expand_arrows_timeout_source_id = 0;
+  gboolean res = G_SOURCE_REMOVE;
 
   files_for_update = thunar_details_view_get_visible_files (details_view);
 
   if (files_for_update != 0)
     {
       /* In case some previous job is still running, take another try later */
-      remove_source = thunar_tree_view_model_update_expand_arrows (model, files_for_update, FALSE);
+      if (!thunar_tree_view_model_update_expand_arrows (model, files_for_update, FALSE))
+        res = G_SOURCE_CONTINUE;
       g_list_free_full (files_for_update, g_object_unref);
     }
 
-  if (remove_source)
-    return G_SOURCE_REMOVE;
-  else
-    return G_SOURCE_CONTINUE;
+  if (G_SOURCE_REMOVE == res)
+    details_view->update_expand_arrows_timeout_source_id = 0;
+  return res;
 }
 
 
