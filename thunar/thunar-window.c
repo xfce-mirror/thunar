@@ -2468,7 +2468,9 @@ thunar_window_switch_current_view (ThunarWindow *window,
   ThunarFile    *current_directory;
   ThunarHistory *history;
   gchar         *search_query;
+#ifdef HAVE_VTE
   GtkWidget     *terminal;
+#endif
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
