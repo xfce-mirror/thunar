@@ -95,6 +95,7 @@ void
 thunar_device_mount (ThunarDevice        *device,
                      GMountOperation     *mount_operation,
                      GCancellable        *cancellable,
+                     gboolean             readonly,
                      ThunarDeviceCallback callback,
                      gpointer             user_data);
 

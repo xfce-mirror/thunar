@@ -363,6 +363,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_CUT_ALT,            "<Actions>/ThunarActionManager/cut-2",              "",                  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                                        NULL,                  G_CALLBACK (thunar_action_manager_action_cut),                 },
 
     { THUNAR_ACTION_MANAGER_ACTION_MOUNT,              "<Actions>/ThunarActionManager/mount",              "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                            NULL,                  G_CALLBACK (thunar_action_manager_action_mount),               },
+    { THUNAR_ACTION_MANAGER_ACTION_MOUNT_READ_ONLY,    "<Actions>/ThunarActionManager/mount-read-only",    "",                  XFCE_GTK_MENU_ITEM,       N_ ("Mount _Read-Only"),                  N_ ("Mount the selected device read-only"),                                                                  NULL,                  G_CALLBACK (thunar_action_manager_action_mount_read_only),       },
     { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,            "<Actions>/ThunarActionManager/unmount",            "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                                          NULL,                  G_CALLBACK (thunar_action_manager_action_unmount),             },
     { THUNAR_ACTION_MANAGER_ACTION_EJECT,              "<Actions>/ThunarActionManager/eject",              "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                            NULL,                  G_CALLBACK (thunar_action_manager_action_eject),               },
 };
@@ -1960,6 +1961,12 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
       break;
 
+    case THUNAR_ACTION_MANAGER_ACTION_MOUNT_READ_ONLY:
+      if (action_mgr->device_to_process == NULL || thunar_device_is_mounted (action_mgr->device_to_process) == TRUE)
+        return NULL;
+      item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+      break;
+
     case THUNAR_ACTION_MANAGER_ACTION_UNMOUNT:
       if (action_mgr->device_to_process == NULL || thunar_device_is_mounted (action_mgr->device_to_process) == FALSE)
         return NULL;
@@ -2113,6 +2120,7 @@ thunar_action_manager_action_sendto_device (ThunarActionManager *action_mgr,
       thunar_device_mount (device,
                            mount_operation,
                            NULL,
+                           FALSE,
                            thunar_action_manager_sendto_mount_finish,
                            action_mgr);
 
@@ -3232,6 +3240,64 @@ thunar_action_manager_action_mount (ThunarActionManager *action_mgr)
 
 
 
+/**
+ * thunar_action_manager_action_mount_read_only:
+ * @action_mgr : a #ThunarActionManager instance
+ *
+ * Will mount the selected device read-only, if any.
+ **/
+void
+thunar_action_manager_action_mount_read_only (ThunarActionManager *action_mgr)
+{
+  ThunarDevice *device;
+  GMountOperation *mount_operation;
+
+  _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
+
+  device = action_mgr->device_to_process;
+  if (device == NULL)
+    return;
+
+  g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_STARTED], 0, device);
+
+  mount_operation = thunar_gtk_mount_operation_new (action_mgr->widget);
+
+  thunar_device_mount (device,
+                       mount_operation,
+                       NULL,
+                       TRUE,
+                       thunar_action_manager_mount_read_only_finish,
+                       action_mgr);
+
+  g_object_unref (mount_operation);
+}
+
+
+
+static void
+thunar_action_manager_mount_read_only_finish (ThunarDevice *device,
+                                              const GError *error,
+                                              gpointer      user_data)
+{
+  ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (user_data);
+  gchar               *device_name;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
+
+  if (error != NULL)
+    {
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (GTK_WIDGET (action_mgr->widget), error,
+                                 _("Failed to mount \"%s\" read-only"), device_name);
+      g_free (device_name);
+    }
+
+  g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, device);
+}
+
+
+
 static void
 thunar_action_manager_action_eject_finish (ThunarDevice *device,
                                            const GError *error,
@@ -3647,6 +3713,7 @@ thunar_action_manager_get_right_click_context_menu_items (void)
     THUNAR_ACTION_MANAGER_ACTION_COPY,
     THUNAR_ACTION_MANAGER_ACTION_CUT,
     THUNAR_ACTION_MANAGER_ACTION_MOUNT,
+    THUNAR_ACTION_MANAGER_ACTION_MOUNT_READ_ONLY,
     THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,
     THUNAR_ACTION_MANAGER_ACTION_EJECT,
   };

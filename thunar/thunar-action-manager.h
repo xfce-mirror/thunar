@@ -78,6 +78,7 @@ typedef enum
   THUNAR_ACTION_MANAGER_ACTION_CUT,
   THUNAR_ACTION_MANAGER_ACTION_CUT_ALT,
   THUNAR_ACTION_MANAGER_ACTION_MOUNT,
+  THUNAR_ACTION_MANAGER_ACTION_MOUNT_READ_ONLY,
   THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,
   THUNAR_ACTION_MANAGER_ACTION_EJECT,
 
@@ -129,6 +130,8 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
                                                 GdkEventKey         *key_event);
 void
 thunar_action_manager_action_mount (ThunarActionManager *action_mgr);
+void
+thunar_action_manager_action_mount_read_only (ThunarActionManager *action_mgr);
 gboolean
 thunar_action_manager_action_unmount (ThunarActionManager *action_mgr);
 gboolean
