@@ -92,6 +92,10 @@ gint
 thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *order_model,
                                                   gint                         index);
 
+/* loads the model from a file and also adds current menu items from plugins */
+void
+thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model);
+
 ThunarContextMenuOrderModelItem *
 thunar_context_menu_order_model_item_new_from_entry (const XfceGtkActionEntry *entry);
 
@@ -100,6 +104,9 @@ thunar_context_menu_order_model_item_new_list_from_entries (const XfceGtkActionE
                                                             guint                     n_entries,
                                                             const guint              *ids_of_entries,
                                                             guint                     n_ids_of_entries);
+
+const gchar *
+thunar_context_menu_order_model_item_get_uca_unique_id (ThunarContextMenuOrderModelItem *item);
 
 /* Sets the menu item id based on the accel_path. For more information about id, see the
  * description of ThunarContextMenuOrderModel. */

@@ -102,6 +102,8 @@ thunar_column_order_editor_init (ThunarColumnOrderEditor *column_editor)
   GtkWidget *vbox;
   gint       row;
 
+  gtk_window_set_default_size (GTK_WINDOW (column_editor), 600, 700);
+
   column_editor->preferences = thunar_preferences_get ();
   column_editor->column_model = thunar_column_model_get_default ();
 
