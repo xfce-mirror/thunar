@@ -86,6 +86,7 @@ enum
   PROP_ACCEL_GROUP,
   PROP_MODEL_TYPE,
   PROP_PRELOAD_PREVIEW_IMAGES,
+  PROP_SELECTION_CHECKBOXES_ENABLED,
   N_PROPERTIES
 };
 
@@ -967,6 +968,18 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                         FALSE,
                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * ThunarStandardView:selection-checkboxes-enabled:
+   *
+   * Whether item selection checkboxes are enabled in this view.
+   **/
+  standard_view_props[PROP_SELECTION_CHECKBOXES_ENABLED] =
+  g_param_spec_boolean ("selection-checkboxes-enabled",
+                        "selection-checkboxes-enabled",
+                        "selection-checkboxes-enabled",
+                        TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, standard_view_props);
 
@@ -1069,6 +1082,25 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences),
+                          "misc-item-selection-checkboxes",
+                          G_OBJECT (standard_view),
+                          "selection-checkboxes-enabled",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view),
+                          "selection-checkboxes-enabled",
+                          G_OBJECT (standard_view->icon_renderer),
+                          "selection-checkbox",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences),
+                          "misc-item-selection-checkboxes-touchscreen-mode",
+                          G_OBJECT (standard_view->icon_renderer),
+                          "selection-checkbox-always-visible",
+                          G_BINDING_SYNC_CREATE);
+  g_signal_connect_swapped (G_OBJECT (standard_view->preferences),
+                            "notify::misc-item-selection-checkboxes-touchscreen-mode",
+                            G_CALLBACK (thunar_standard_view_queue_redraw),
+                            standard_view);
   g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
   /* setup the name renderer */
@@ -1476,6 +1508,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_gtype (value, THUNAR_STANDARD_VIEW (object)->priv->model_type);
       break;
 
+    case PROP_SELECTION_CHECKBOXES_ENABLED:
+      g_value_set_boolean (value, THUNAR_STANDARD_VIEW (object)->selection_checkboxes_enabled);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1563,6 +1599,10 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_PRELOAD_PREVIEW_IMAGES:
       standard_view->priv->preload_preview_images = g_value_get_boolean (value);
+      break;
+
+    case PROP_SELECTION_CHECKBOXES_ENABLED:
+      standard_view->selection_checkboxes_enabled = g_value_get_boolean (value);
       break;
 
     default:
@@ -3282,7 +3322,7 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
                                           GdkEventMotion     *event,
                                           ThunarStandardView *standard_view)
 {
-  GtkTargetList *target_list;
+  GtkTargetList     *target_list;
   ThunarFileDragMode drag_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);

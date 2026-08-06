@@ -416,6 +416,42 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Enable item selection check_boxes"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-item-selection-checkboxes",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to show checkboxes for adding files to the selection."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("_Touch screen mode: Always show checkboxes for easily selecting multiple items"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-item-selection-checkboxes",
+                          G_OBJECT (button),
+                          "sensitive",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-item-selection-checkboxes-touchscreen-mode",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  label = gtk_bin_get_child (GTK_BIN (button));
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_max_width_chars (GTK_LABEL (label), 60);
+  gtk_widget_set_margin_start (button, 24);
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);

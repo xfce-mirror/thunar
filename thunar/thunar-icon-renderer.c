@@ -17,11 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-icon-renderer.h"
+
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 
@@ -41,7 +42,14 @@ enum
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
   PROP_USE_SYMBOLIC_ICONS,
+  PROP_SELECTION_CHECKBOX,
+  PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE,
+  PROP_LIST_VIEW_MODE,
 };
+
+#define THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE 16
+#define THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE 24
+#define THUNAR_ICON_RENDERER_CHECKBOX_SPACING 4
 
 
 
@@ -216,6 +224,45 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          "use-symbolic-icons",
                                                          FALSE,
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * ThunarIconRenderer:selection-checkbox:
+   *
+   * Whether to render an item selection checkbox.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SELECTION_CHECKBOX,
+                                   g_param_spec_boolean ("selection-checkbox",
+                                                         "selection-checkbox",
+                                                         "selection-checkbox",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * ThunarIconRenderer:selection-checkbox-always-visible:
+   *
+   * Whether to always render unselected checkboxes in icon and compact views.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE,
+                                   g_param_spec_boolean ("selection-checkbox-always-visible",
+                                                         "selection-checkbox-always-visible",
+                                                         "selection-checkbox-always-visible",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * ThunarIconRenderer:list-view-mode:
+   *
+   * Whether the renderer is used in list view mode.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LIST_VIEW_MODE,
+                                   g_param_spec_boolean ("list-view-mode",
+                                                         "list-view-mode",
+                                                         "list-view-mode",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -292,6 +339,18 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, icon_renderer->use_symbolic_icons);
       break;
 
+    case PROP_SELECTION_CHECKBOX:
+      g_value_set_boolean (value, icon_renderer->selection_checkbox);
+      break;
+
+    case PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE:
+      g_value_set_boolean (value, icon_renderer->selection_checkbox_always_visible);
+      break;
+
+    case PROP_LIST_VIEW_MODE:
+      g_value_set_boolean (value, icon_renderer->list_view_mode);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -351,6 +410,18 @@ thunar_icon_renderer_set_property (GObject      *object,
       icon_renderer->use_symbolic_icons = g_value_get_boolean (value);
       break;
 
+    case PROP_SELECTION_CHECKBOX:
+      icon_renderer->selection_checkbox = g_value_get_boolean (value);
+      break;
+
+    case PROP_SELECTION_CHECKBOX_ALWAYS_VISIBLE:
+      icon_renderer->selection_checkbox_always_visible = g_value_get_boolean (value);
+      break;
+
+    case PROP_LIST_VIEW_MODE:
+      icon_renderer->list_view_mode = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -371,9 +442,17 @@ thunar_icon_renderer_get_preferred_width (GtkCellRenderer *renderer,
   gtk_cell_renderer_get_padding (renderer, &xpad, NULL);
 
   if (G_LIKELY (minimum))
-    *minimum = (gint) xpad * 2 + icon_renderer->size;
+    {
+      *minimum = (gint) xpad * 2 + icon_renderer->size;
+      if (icon_renderer->selection_checkbox && icon_renderer->list_view_mode)
+        *minimum = *minimum + THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKBOX_SPACING;
+    }
   if (G_LIKELY (natural))
-    *natural = (gint) xpad * 2 + icon_renderer->size;
+    {
+      *natural = (gint) xpad * 2 + icon_renderer->size;
+      if (icon_renderer->selection_checkbox && icon_renderer->list_view_mode)
+        *natural = *natural + THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKBOX_SPACING;
+    }
 }
 
 
@@ -467,6 +546,137 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
 
 
+void
+thunar_icon_renderer_get_selection_checkbox_area (ThunarIconRenderer *icon_renderer,
+                                                  GtkWidget          *widget,
+                                                  const GdkRectangle *cell_area,
+                                                  GdkRectangle       *checkbox_area)
+{
+  GtkTextDirection direction;
+  gint             icon_width;
+  gint             icon_height;
+
+  _thunar_return_if_fail (THUNAR_IS_ICON_RENDERER (icon_renderer));
+  _thunar_return_if_fail (GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (cell_area != NULL);
+  _thunar_return_if_fail (checkbox_area != NULL);
+
+  direction = gtk_widget_get_direction (widget);
+
+  if (icon_renderer->list_view_mode)
+    {
+      checkbox_area->width = MIN (THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE, MAX (1, cell_area->width));
+      checkbox_area->height = MIN (THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE, MAX (1, cell_area->height));
+      checkbox_area->x = direction == GTK_TEXT_DIR_RTL
+                         ? cell_area->x + cell_area->width - checkbox_area->width
+                         : cell_area->x;
+      checkbox_area->y = cell_area->y + (cell_area->height - checkbox_area->height) / 2;
+    }
+  else
+    {
+      /* Icon and compact views may allocate a cell larger than the icon.
+       * Center the nominal icon area just as the renderer does, then place
+       * the checkbox in its upper corner. */
+      icon_width = MIN ((gint) icon_renderer->size, MAX (1, cell_area->width));
+      icon_height = MIN ((gint) icon_renderer->size, MAX (1, cell_area->height));
+      checkbox_area->width = MIN (THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE, icon_width);
+      checkbox_area->height = MIN (THUNAR_ICON_RENDERER_CHECKBOX_ICON_SIZE, icon_height);
+      checkbox_area->x = cell_area->x + (cell_area->width - icon_width) / 2;
+      if (direction == GTK_TEXT_DIR_RTL)
+        checkbox_area->x += icon_width - checkbox_area->width;
+      checkbox_area->y = cell_area->y + (cell_area->height - icon_height) / 2;
+    }
+}
+
+
+
+static void
+thunar_icon_renderer_render_selection_checkbox (ThunarIconRenderer  *icon_renderer,
+                                                cairo_t             *cr,
+                                                GtkWidget           *widget,
+                                                const GdkRectangle  *cell_area,
+                                                GtkCellRendererState flags)
+{
+  GdkRectangle     checkbox_area;
+  GtkStyleContext *context;
+  GtkStateFlags    state;
+  GdkRGBA          color;
+  GdkRGBA         *selected_background;
+  gboolean         selected;
+  const gdouble    border_width = 1.5;
+  gdouble          x;
+  gdouble          y;
+  gdouble          width;
+  gdouble          height;
+
+  if (!icon_renderer->selection_checkbox)
+    return;
+
+  selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  /* Icon and compact views normally show unselected checkboxes only while
+   * the pointer is over the item. Selected checkboxes remain visible. */
+  if (!icon_renderer->list_view_mode
+      && !icon_renderer->selection_checkbox_always_visible
+      && !selected
+      && (flags & GTK_CELL_RENDERER_PRELIT) == 0)
+    return;
+
+  thunar_icon_renderer_get_selection_checkbox_area (icon_renderer, widget, cell_area, &checkbox_area);
+
+  context = gtk_widget_get_style_context (widget);
+  state = gtk_widget_get_state_flags (widget);
+
+  gtk_style_context_save (context);
+  gtk_style_context_set_state (context, selected ? state | GTK_STATE_FLAG_SELECTED : state);
+  gtk_style_context_get_color (context, gtk_style_context_get_state (context), &color);
+  gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &selected_background, NULL);
+
+  /* Cairo centers a stroke on its path, so inset by half the border width
+   * to keep the complete border inside the checkbox area. */
+  x = checkbox_area.x + border_width / 2.0;
+  y = checkbox_area.y + border_width / 2.0;
+  width = MAX (0.0, checkbox_area.width - border_width);
+  height = MAX (0.0, checkbox_area.height - border_width);
+
+  cairo_save (cr);
+  cairo_set_line_width (cr, border_width);
+  cairo_rectangle (cr, x, y, width, height);
+
+  if (selected)
+    {
+      if (selected_background != NULL)
+        gdk_cairo_set_source_rgba (cr, selected_background);
+      else
+        gdk_cairo_set_source_rgba (cr, &color);
+      cairo_fill_preserve (cr);
+      cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.95);
+      cairo_stroke (cr);
+
+      cairo_set_line_width (cr, 2.0);
+      cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
+      cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
+      cairo_move_to (cr, x + width * 0.28, y + height * 0.52);
+      cairo_line_to (cr, x + width * 0.43, y + height * 0.68);
+      cairo_line_to (cr, x + width * 0.74, y + height * 0.34);
+      cairo_stroke (cr);
+    }
+  else
+    {
+      cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.88);
+      cairo_fill_preserve (cr);
+      color.alpha = 0.65;
+      gdk_cairo_set_source_rgba (cr, &color);
+      cairo_stroke (cr);
+    }
+
+  cairo_restore (cr);
+  if (selected_background != NULL)
+    gdk_rgba_free (selected_background);
+  gtk_style_context_restore (context);
+}
+
+
+
 static void
 thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              cairo_t             *cr,
@@ -483,6 +693,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GtkStyleContext        *context = NULL;
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
+  GdkRectangle            icon_cell_area;
   GdkRectangle            clip_area;
   GdkPixbuf              *emblem;
   GdkPixbuf              *icon;
@@ -507,6 +718,17 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   if (THUNAR_ICON_RENDERER (renderer)->highlighting_enabled)
     thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
+
+  /* Add extra space for checkboxes in list view, if required. */
+  icon_cell_area = *cell_area;
+  if (icon_renderer->selection_checkbox && icon_renderer->list_view_mode)
+    {
+      const gint checkbox_extent = THUNAR_ICON_RENDERER_CHECKBOX_LIST_SIZE + THUNAR_ICON_RENDERER_CHECKBOX_SPACING;
+
+      if (gtk_widget_get_direction (widget) != GTK_TEXT_DIR_RTL)
+        icon_cell_area.x += checkbox_extent;
+      icon_cell_area.width = MAX (1, icon_cell_area.width - checkbox_extent);
+    }
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
@@ -547,10 +769,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
 
   /* scale down the icon on-demand */
-  if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
+  if (G_UNLIKELY (icon_area.width > icon_cell_area.width || icon_area.height > icon_cell_area.height))
     {
       /* scale down to fit */
-      temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
+      temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, icon_cell_area.width * scale_factor), MAX (1, icon_cell_area.height * scale_factor));
       g_object_unref (G_OBJECT (icon));
       icon = temp;
 
@@ -559,8 +781,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
     }
 
-  icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
-  icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
+  icon_area.x = icon_cell_area.x + (icon_cell_area.width - icon_area.width) / 2;
+  icon_area.y = icon_cell_area.y + (icon_cell_area.height - icon_area.height) / 2;
 
   /* bools for cairo transformations */
   color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
@@ -705,6 +927,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           g_list_free_full (emblems, g_free);
         }
     }
+
+  thunar_icon_renderer_render_selection_checkbox (icon_renderer, cr, widget, cell_area, flags);
 
   /* release our reference on the icon factory */
   g_object_unref (G_OBJECT (icon_factory));

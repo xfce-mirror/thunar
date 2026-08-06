@@ -173,6 +173,7 @@ struct _ThunarStandardView
   ThunarIconFactory *icon_factory;
   GtkCellRenderer   *icon_renderer;
   GtkCellRenderer   *name_renderer;
+  gboolean           selection_checkboxes_enabled;
 
   GBinding      *loading_binding;
   gboolean       loading;
